@@ -1,6 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class EventHandlerApplicationTests {
 

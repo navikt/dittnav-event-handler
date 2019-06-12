@@ -38,6 +38,15 @@ dependencies {
 	testCompile"org.assertj:assertj-core:3.12.1"
 }
 
+jar {
+	manifest {
+		attributes(
+				'Main-Class': 'no.nav.personbruker.dittnav.eventhandler.EventHandlerApplicationKt'
+		)
+	}
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+
 task hello {
 	doLast {
 		println 'Hello world!'

@@ -14,7 +14,7 @@ fun Routing.healthApi() {
         call.respondText(text = "ALIVE", contentType = ContentType.Text.Plain)
     }
 
-    get("/ping"){
+    get("/isReady"){
         call.respondText(pingJsonResponse,ContentType.Application.Json)
     }
 }

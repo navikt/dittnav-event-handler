@@ -15,6 +15,10 @@ fun Routing.healthApi() {
     }
 
     get("/isReady"){
+        call.respondText(text = "READY", contentType = ContentType.Text.Plain)
+    }
+
+    get("/ping"){
         call.respondText(pingJsonResponse,ContentType.Application.Json)
     }
 }

@@ -6,7 +6,7 @@ metadata:
   labels:
     team: personbruker
 spec:
-  image: navikt/dittnav-event-handler:0.0.2
+  image: navikt/dittnav-event-handler:0.0.14
   team: personbruker
   port: 8080
   liveness:
@@ -21,6 +21,7 @@ spec:
     min: 2
     max: 4
   ingresses:
+    - "https://dittnav-event-handler.dev-sbs.nais.io"
     - "https://dittnav-event-handler.nais.oera-q.local"
   vault:
     enabled: true

@@ -35,11 +35,10 @@ dependencies {
 	compile "io.ktor:ktor-server-netty:$ktor_version"
 	compile "ch.qos.logback:logback-classic:1.2.1"
 	compile "io.ktor:ktor-gson:$ktor_version"
+	compile("io.ktor:ktor-auth:$ktor_version")
+	compile("io.ktor:ktor-auth-jwt:$ktor_version")
 	testCompile "org.junit.jupiter:junit-jupiter-api:5.4.1"
 	testCompile"org.assertj:assertj-core:3.12.1"
-	implementation("io.ktor:ktor-auth:$ktor_version")
-	implementation("io.ktor:ktor-auth-jwt:$ktor_version")
-	implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
 }
 
 jar {

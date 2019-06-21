@@ -6,14 +6,15 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import no.nav.personbruker.dittnav.eventhandler.api.healthApi
 import no.nav.personbruker.dittnav.eventhandler.api.regelApi
+import java.net.URL
 import java.util.concurrent.TimeUnit
 
 object Server {
 
     val disableJwt = false
-    val jwkUrl = "https://security-token-service.nais.adeo.no/rest/v1/sts/jwks"
+    var jwkUrl = "https://security-token-service.nais.adeo.no/rest/v1/sts/jwks"
     val jwkIssuer = "https://security-token-service.nais.adeo.no"
-    val jwkProvider = JwkProviderBuilder(jwkUrl)
+    val jwkProvider = JwkProviderBuilder(URL(jwkUrl))
             .cached(10, 24, TimeUnit.HOURS)
             .rateLimited(10, 1, TimeUnit.MINUTES)
             .build()

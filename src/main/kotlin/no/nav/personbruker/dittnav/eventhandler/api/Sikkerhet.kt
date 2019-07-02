@@ -15,7 +15,6 @@ import io.ktor.routing.get
 import java.net.URL
 import java.security.interfaces.RSAPublicKey
 
-
 fun Routing.regelApi() {
     get("/sikkerhet") {
         val authToken : String? = getAuthToken(call.request)
@@ -27,7 +26,6 @@ fun Routing.regelApi() {
             call.response.status(HttpStatusCode.Unauthorized)
         }
     }
-
 }
 
 fun getAuthToken(request: ApplicationRequest): String?{
@@ -36,7 +34,7 @@ fun getAuthToken(request: ApplicationRequest): String?{
 
 fun validateToken(authToken: String?): Boolean {
     var result: Boolean
-    val jwks_uri = "***REMOVED***"
+    var jwks_uri: String = System.getenv("jwks_uri") ?: "default_value"
     val jwkProvider = UrlJwkProvider( URL(jwks_uri) )
 
     val jwt =  decodeToken(authToken)

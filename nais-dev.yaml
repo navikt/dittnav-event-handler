@@ -6,30 +6,43 @@ metadata:
   labels:
     team: personbruker
 spec:
-  image: navikt/dittnav-event-handler:0.0.29
-  team: personbruker
-  port: 8080
-  liveness:
-    path: /isAlive
-    initialDelay: 10
-  readiness:
-    path: /isReady
-    initialDelay: 10
-  prometheus:
-    path: /metrics
-  replicas:
-    min: 1
-    max: 1
-  webproxy: true
-  ingresses:
-    - "https://dittnav-event-handler.dev-sbs.nais.io"
-    - "https://dittnav-event-handler.nais.oera-q.local"
-  vault:
-    enabled: true
-  resources:
-    limits:
-      cpu: 500m
-      memory: 512Mi
-    requests:
-      cpu: 200m
-      memory: 256Mi
+    image: navikt/dittnav-event-handler:0.0.50
+    team: personbruker
+    port: 8080
+    liveness:
+      path: /isAlive
+      initialDelay: 10
+    readiness:
+      path: /isReady
+      initialDelay: 10
+    prometheus:
+      path: /metrics
+    replicas:
+      min: 1
+      max: 1
+    webproxy: true
+    ingresses:
+      - "https://dittnav-event-handler.dev-sbs.nais.io"
+      - "https://dittnav-event-handler.nais.oera-q.local"
+    vault:
+      enabled: true
+    env:
+      - name: KAFKA_BOOTSTRAP_SERVERS
+        value: "SSL://b27apvl00045.preprod.local:8443,SSL://b27apvl00046.preprod.local:8443,SSL://b27apvl00047.preprod.local:8443"
+      - name: KAFKA_SCHEMAREGISTRY_SERVERS
+        value: "https://kafka-schema-registry.nais-q.adeo.no"
+      - name: GROUP_ID
+        value: "dittnav-handler-alpha-001"
+      - name: DB_NAME
+        value: "dittnav-event-cache-preprod"
+      - name: DB_HOST
+        value: "b27dbvl008.preprod.local"
+      - name: DB_MOUNT_PATH
+        value: "postgresql/preprod-fss"
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 200m
+        memory: 256Mi

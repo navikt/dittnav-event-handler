@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventhandler
+package no.nav.personbruker.dittnav.eventhandler.config
 
 import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
@@ -10,7 +10,10 @@ import java.util.concurrent.TimeUnit
 object Server {
     fun start() {
         val app = embeddedServer(Netty, port = 8080) {
-            routing { healthApi(); regelApi() }
+            routing {
+                healthApi()
+                regelApi()
+            }
         }
         app.start(wait = false)
         Runtime.getRuntime().addShutdownHook(Thread {

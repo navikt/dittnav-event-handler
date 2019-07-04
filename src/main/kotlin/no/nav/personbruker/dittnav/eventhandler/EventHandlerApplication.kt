@@ -1,11 +1,5 @@
 package no.nav.personbruker.dittnav.eventhandler
 
-import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.runApplication
-
-@SpringBootApplication
-class EventHandlerApplication
-
-fun main(args: Array<String>) {
-	runApplication<EventHandlerApplication>(*args)
+fun main(args: Array<String>){
+	Server.startServer(System.getenv("PORT")?.toInt() ?: 8080).start(wait = true)
 }

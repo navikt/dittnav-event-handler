@@ -10,13 +10,13 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "build.gradle.kts" }}
+            - v1-dependencies-{{ checksum "build.gradle" }}
             - v1-dependencies-
       - run: gradle build
       - save_cache:
           paths:
             - ~/.gradle
-          key: v1-dependencies-{{ checksum "build.gradle.kts" }}
+          key: v1-dependencies-{{ checksum "build.gradle" }}
       - nais/docker-deploy:
           image: navikt/dittnav-event-handler
 

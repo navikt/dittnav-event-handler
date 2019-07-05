@@ -16,10 +16,6 @@ object Flyway {
         val configBuilder = Flyway.configure()
         val dataSource = createCorrectAdminDatasourceForEnvironment(env)
         configBuilder.dataSource(dataSource)
-
-        if (ConfigUtil.isCurrentlyRunningOnNais()) {
-            configBuilder.initSql("SET ROLE \"${env.dbAdmin}\"")
-        }
         return configBuilder
     }
 
@@ -31,11 +27,11 @@ object Flyway {
     }
 
     private fun createDataSourceViaVaultWithAdminUser(env: Environment): HikariDataSource {
-        return DatabaseConnectionFactory.hikariDatasourceViaVault(env, env.dbUser)
+        return DatabaseConnectionFactory.hikariDatasourceViaVault(env, env.dbReadOnlyUser)
     }
 
     private fun createDataSourceForLocalDbWithAdminUser(env: Environment): HikariDataSource {
-        return DatabaseConnectionFactory.hikariFromLocalDb(env, env.dbAdmin)
+        return DatabaseConnectionFactory.hikariFromLocalDb(env, env.dbUser)
     }
 
 }

@@ -26,11 +26,11 @@ object DatabaseConnectionFactory {
     }
 
     private fun createDataSourceForLocalDbWithDbUser(env: Environment): HikariDataSource {
-        return hikariFromLocalDb(env, env.dbAdmin)
+        return hikariFromLocalDb(env, env.dbUser)
     }
 
     private fun createDataSourceViaVaultWithDbUser(env: Environment): HikariDataSource {
-        return hikariDatasourceViaVault(env, env.dbUser)
+        return hikariDatasourceViaVault(env, env.dbReadOnlyUser)
     }
 
     fun hikariFromLocalDb(env: Environment, dbUser: String): HikariDataSource {
@@ -42,10 +42,8 @@ object DatabaseConnectionFactory {
     }
 
     fun hikariDatasourceViaVault(env: Environment, dbUser: String): HikariDataSource {
-        var config = hikariCommonConfig(env)
+        val config = hikariCommonConfig(env)
         config.validate()
-        log.info("- - - -- - - - - - *  env.dbMountPath" + env.dbMountPath)
-        log.info("- - - -- - - - - - *  dbUser" + dbUser)
         return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(config, env.dbMountPath, dbUser)
     }
 

@@ -10,7 +10,7 @@ class InformasjonRepository {
 
     suspend fun getInformasjonByIdent(ident: String): List<Informasjon> = dbQuery {
         InformasjonTable.select {
-            (InformasjonTable.aktorid eq ident)
+            (InformasjonTable.aktorId eq ident)
         }.mapNotNull {
             toInformasjon(it)
         }.toMutableList()
@@ -21,7 +21,7 @@ class InformasjonRepository {
                     id = row[InformasjonTable.id].value,
                     produsent = row[InformasjonTable.produsent],
                     eventTidspunkt = row[InformasjonTable.eventTidspunkt],
-                    aktorid = row[InformasjonTable.aktorid],
+                    aktorId = row[InformasjonTable.aktorId],
                     eventId = row[InformasjonTable.eventId],
                     dokumentId = row[InformasjonTable.dokumentId],
                     tekst = row[InformasjonTable.tekst],

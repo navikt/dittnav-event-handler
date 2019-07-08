@@ -2,12 +2,12 @@ package no.nav.personbruker.dittnav.eventhandler
 
 import no.nav.personbruker.dittnav.eventhandler.config.*
 
-suspend fun main(args: Array<String>) {
+fun main() {
     val environment = Environment()
 
-    Server.start()
+    Server.configure().start()
 
-    if(!ConfigUtil.isCurrentlyRunningOnNais()) {
+    if (!ConfigUtil.isCurrentlyRunningOnNais()) {
         Flyway.runFlywayMigrations(environment)
     }
 

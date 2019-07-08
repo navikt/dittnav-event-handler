@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val prometheusVersion = "0.6.0"
-val ktorVersion = "1.1.3"
+val ktorVersion = "1.2.2"
 val junitVersion = "5.4.1"
 val kafkaVersion = "2.2.0"
 val confluentVersion = "5.2.0"
@@ -13,6 +13,7 @@ val flywayVersion = "5.2.4"
 val exposedVersion = "0.14.1"
 val hikariCPVersion = "3.2.0"
 val postgresVersion = "42.2.5"
+val jacksonVersion = "2.9.9"
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin on the JVM.
@@ -51,6 +52,8 @@ dependencies {
     compile("io.prometheus:simpleclient_hotspot:$prometheusVersion")
     compile("io.ktor:ktor-server-netty:$ktorVersion")
     compile("io.ktor:ktor-auth-jwt:$ktorVersion")
+    compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+    compile("io.ktor:ktor-jackson:$ktorVersion")
     compile("org.apache.kafka:kafka-clients:$kafkaVersion")
     compile("io.confluent:kafka-avro-serializer:$confluentVersion")
     compile("no.nav.personbruker.dittnav:event-schemas:$dittNavSkjemaVersion")
@@ -76,6 +79,6 @@ tasks.withType<Jar> {
 }
 
 tasks.register("runServer", JavaExec::class) {
-    main = "no.nav.personbruker.dittnav.eventhandler.EventHandlerApplicationKt"
+    main = "no.nav.personbruker.dittnav.eventhandler.AppKt"
     classpath = sourceSets["main"].runtimeClasspath
 }

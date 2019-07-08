@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit
 
 object Server {
 
-    const val portNumber = 8080
+    const val portNumber = 8090
 
     fun configure(): NettyApplicationEngine {
         DefaultExports.initialize()

@@ -18,6 +18,8 @@ import java.security.interfaces.RSAPublicKey
 
 object AuthenticationUtil {
 
+    private val defaultJwksUri = "***REMOVED***"
+
     fun PipelineContext<Unit, ApplicationCall>.authenticateRequest(runIfAuthenticated: (ident: String) -> Unit) {
         try {
             val authToken = getAuthToken(call.request)
@@ -37,7 +39,7 @@ object AuthenticationUtil {
     }
 
     fun validateToken(authToken: String?): DecodedJWT {
-        val jwksUri: String = System.getenv("jwks_uri") ?: "changemeForRunningLocally"
+        val jwksUri: String = System.getenv("jwks_uri") ?: defaultJwksUri
         val jwkProvider = UrlJwkProvider(URL(jwksUri))
 
         val jwt = decodeToken(authToken)

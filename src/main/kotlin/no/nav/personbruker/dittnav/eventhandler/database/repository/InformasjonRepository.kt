@@ -18,7 +18,7 @@ class InformasjonRepository {
 
     private fun toInformasjon(row: ResultRow): Informasjon =
             Informasjon(
-                    id = row[InformasjonTable.id],
+                    id = row[InformasjonTable.id].value,
                     produsent = row[InformasjonTable.produsent],
                     eventTidspunkt = row[InformasjonTable.eventTidspunkt],
                     aktorid = row[InformasjonTable.aktorid],

@@ -1,10 +1,9 @@
 package no.nav.personbruker.dittnav.eventhandler.database.entity
 
-import org.jetbrains.exposed.dao.EntityID
 import org.joda.time.DateTime
 
 data class Informasjon(
-        val id: EntityID<Int>?,
+        val id: Int?,
         val produsent: String,
         val eventTidspunkt: DateTime,
         val aktorid: String,

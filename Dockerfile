@@ -1,3 +1,3 @@
 FROM navikt/java:12
 COPY build/libs/event-handler.jar /app/app.jar
-EXPOSE 8080
+EXPOSE 8090

@@ -1,63 +1,51 @@
 package no.nav.personbruker.dittnav.eventhandler.database.repository
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import no.nav.personbruker.dittnav.eventhandler.config.DatabaseConnectionFactory.dbQuery
 import no.nav.personbruker.dittnav.eventhandler.database.entity.Informasjon
 import no.nav.personbruker.dittnav.eventhandler.database.tables.InformasjonTable
-import no.nav.personbruker.dittnav.eventhandler.service.InformasjonEventService
-import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
-import org.slf4j.LoggerFactory
+import java.time.Instant
+import java.time.ZoneId
+import java.time.ZonedDateTime
+
 
 class InformasjonRepository {
 
-    val log = LoggerFactory.getLogger(InformasjonEventService::class.java)
-
-    suspend fun getInformasjonById(id: Int): Informasjon? = dbQuery {
+    suspend fun getInformasjonByIdent(ident: String): List<Informasjon> = dbQuery {
         InformasjonTable.select {
-            (InformasjonTable.id eq id)
-        }.mapNotNull { toInformasjon(it) }
-                .singleOrNull()
+            (InformasjonTable.aktorId eq ident)
+        }.mapNotNull {
+            toInformasjon(it)
+        }.toMutableList()
     }
 
-    private fun toInformasjon(row: ResultRow): Informasjon =
-            Informasjon(
-                    id = row[InformasjonTable.id],
-                    produsent = row[InformasjonTable.produsent],
-                    eventTidspunkt = row[InformasjonTable.eventTidspunkt],
-                    aktorid = row[InformasjonTable.aktorid],
-                    eventId = row[InformasjonTable.eventId],
-                    dokumentId = row[InformasjonTable.dokumentId],
-                    tekst = row[InformasjonTable.tekst],
-                    link = row[InformasjonTable.link],
-                    sikkerhetsnivaa = row[InformasjonTable.sikkerhetsnivaa],
-                    sistOppdatert = row[InformasjonTable.sistOppdatert],
-                    aktiv = row[InformasjonTable.aktiv]
-            )
+    private fun toInformasjon(row: ResultRow): Informasjon {
+        val eventTidspunktJoda = row[InformasjonTable.eventTidspunkt]
+        val eventTidspunkt = convertToZonedDateTime(eventTidspunktJoda)
 
-    suspend fun createInfo(): EntityID<Int> {
-        return withContext(Dispatchers.IO) {
-            transaction {
-                val generatedId = InformasjonTable.insertAndGetId {
-                    it[produsent] = "produsent1"
-                    it[eventTidspunkt] = DateTime.now()
-                    it[aktorid] = "1"
-                    it[eventId] = "eventId1"
-                    it[dokumentId] = "dokumentId1"
-                    it[tekst] = "tekst1"
-                    it[link] = "link1"
-                    it[sikkerhetsnivaa] = 3
-                    it[sistOppdatert] = DateTime.now()
-                    it[aktiv] = true
-                }
-                return@transaction generatedId
-            }
-        }
+        val sistOppdatertJoda = row[InformasjonTable.sistOppdatert]
+        val sistOppdatert = convertToZonedDateTime(sistOppdatertJoda)
+
+        return Informasjon(
+                id = row[InformasjonTable.id].value,
+                produsent = row[InformasjonTable.produsent],
+                eventTidspunkt = eventTidspunkt,
+                aktorId = row[InformasjonTable.aktorId],
+                eventId = row[InformasjonTable.eventId],
+                dokumentId = row[InformasjonTable.dokumentId],
+                tekst = row[InformasjonTable.tekst],
+                link = row[InformasjonTable.link],
+                sikkerhetsnivaa = row[InformasjonTable.sikkerhetsnivaa],
+                sistOppdatert = sistOppdatert,
+                aktiv = row[InformasjonTable.aktiv]
+        )
     }
+}
 
+fun convertToZonedDateTime(dateTime: DateTime): ZonedDateTime {
+    val milliSeconds = dateTime.toInstant().millis
+    val javaInstant = Instant.ofEpochMilli(milliSeconds)
+    return javaInstant.atZone(ZoneId.of(dateTime.zone.id))
 }

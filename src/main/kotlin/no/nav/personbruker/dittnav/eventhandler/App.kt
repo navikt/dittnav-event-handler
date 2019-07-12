@@ -5,7 +5,7 @@ import no.nav.personbruker.dittnav.eventhandler.config.*
 fun main() {
     val environment = Environment()
 
-    Server.configure().start()
+    Server.configure(environment).start()
 
     if (!ConfigUtil.isCurrentlyRunningOnNais()) {
         Flyway.runFlywayMigrations(environment)

@@ -17,7 +17,6 @@ import io.prometheus.client.hotspot.DefaultExports
 import no.nav.personbruker.dittnav.eventhandler.api.fetchEventsApi
 import no.nav.personbruker.dittnav.eventhandler.api.healthApi
 import no.nav.personbruker.dittnav.eventhandler.api.produceEventsApi
-import no.nav.personbruker.dittnav.eventhandler.api.regelApi
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
 
@@ -47,7 +46,6 @@ object Server {
 
             routing {
                 healthApi()
-                regelApi()
                 authenticate {
                     fetchEventsApi()
                     produceEventsApi()

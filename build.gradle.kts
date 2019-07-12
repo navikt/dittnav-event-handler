@@ -51,6 +51,7 @@ dependencies {
     compile("io.prometheus:simpleclient_common:$prometheusVersion")
     compile("io.prometheus:simpleclient_hotspot:$prometheusVersion")
     compile("io.ktor:ktor-server-netty:$ktorVersion")
+    compile("io.ktor:ktor-auth:$ktorVersion")
     compile("io.ktor:ktor-auth-jwt:$ktorVersion")
     compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
     compile("io.ktor:ktor-jackson:$ktorVersion")
@@ -67,7 +68,7 @@ dependencies {
 }
 
 application {
-    mainClassName = "no.nav.personbruker.dittnav.eventhandler.EventHandlerApplicationKt"
+    mainClassName = "no.nav.personbruker.dittnav.eventhandler.AppKt"
 }
 
 tasks.withType<Jar> {
@@ -79,6 +80,6 @@ tasks.withType<Jar> {
 }
 
 tasks.register("runServer", JavaExec::class) {
-    main = "no.nav.personbruker.dittnav.eventhandler.AppKt"
+    main = application.mainClassName
     classpath = sourceSets["main"].runtimeClasspath
 }

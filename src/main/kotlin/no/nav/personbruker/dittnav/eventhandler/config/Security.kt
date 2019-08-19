@@ -26,15 +26,6 @@ fun PipelineContext<Unit, ApplicationCall>.extractIdentFromLoginContext() =
 
 object Security {
 
-    fun JWTAuthenticationProvider.Configuration.setupOidcAuthentication(environment: Environment) {
-        val jwkProvider = initJwkProvider(environment.securityJwksUri)
-        verifier(jwkProvider, environment.securityJwksIssuer)
-        realm = "dittnav-event-handler"
-        validate { credentials ->
-            return@validate validationLogicPerRequest(credentials, environment)
-        }
-    }
-
     fun initJwkProvider(securityJwksUri: URL): JwkProvider {
         val jwkProvider = JwkProviderBuilder(securityJwksUri)
                 .cached(10, 24, TimeUnit.HOURS)

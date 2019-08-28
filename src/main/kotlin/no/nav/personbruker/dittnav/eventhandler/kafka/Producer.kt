@@ -1,6 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.kafka
 
-import no.nav.personbruker.dittnav.event.schemas.Informasjon
+import no.nav.brukernotifikasjon.schemas.Informasjon
 import no.nav.personbruker.dittnav.eventhandler.api.ProduceDto
 import no.nav.personbruker.dittnav.eventhandler.config.Environment
 import no.nav.personbruker.dittnav.eventhandler.config.Kafka

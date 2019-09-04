@@ -1,18 +1,20 @@
 package no.nav.personbruker.dittnav.eventhandler.service
 
 import kotlinx.coroutines.runBlocking
+import no.nav.personbruker.dittnav.eventhandler.config.Environment
+import no.nav.personbruker.dittnav.eventhandler.database.Database
 import no.nav.personbruker.dittnav.eventhandler.database.entity.Informasjon
-import no.nav.personbruker.dittnav.eventhandler.database.repository.InformasjonRepository
+import no.nav.personbruker.dittnav.eventhandler.database.entity.getInformasjonByAktorid
 
 class InformasjonEventService(
-        val repository: InformasjonRepository = InformasjonRepository()
+        val database: Database = Database(Environment())
 ) {
 
-    fun getEventsFromCacheForUser(ident: String): List<Informasjon> {
+    fun getEventsFromCacheForUser(aktorid: String): List<Informasjon> {
         var fetchedRows = emptyList<Informasjon>()
 
         runBlocking {
-            fetchedRows = repository.getInformasjonByIdent(ident)
+            fetchedRows = database.dbQuery {getInformasjonByAktorid(aktorid)}
         }
 
         return fetchedRows

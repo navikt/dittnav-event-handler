@@ -1,6 +1,9 @@
 package no.nav.personbruker.dittnav.eventhandler
 
-import no.nav.personbruker.dittnav.eventhandler.config.*
+import no.nav.personbruker.dittnav.eventhandler.config.ConfigUtil
+import no.nav.personbruker.dittnav.eventhandler.config.Environment
+import no.nav.personbruker.dittnav.eventhandler.config.Flyway
+import no.nav.personbruker.dittnav.eventhandler.config.Server
 
 fun main() {
     val environment = Environment()
@@ -10,6 +13,4 @@ fun main() {
     if (!ConfigUtil.isCurrentlyRunningOnNais()) {
         Flyway.runFlywayMigrations(environment)
     }
-
-    DatabaseConnectionFactory.initDatabase(environment)
 }

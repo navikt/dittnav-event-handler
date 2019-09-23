@@ -38,7 +38,7 @@ workflows:
           nais-template: nais-dev.yaml
           build-and-push-docker-image: false
           github-app-id: 34043
-          repo: navikt/dittnav-event-aggregator
+          repo: navikt/dittnav-event-handler
           team: personbruker
           environment: dev-sbs
           requires:

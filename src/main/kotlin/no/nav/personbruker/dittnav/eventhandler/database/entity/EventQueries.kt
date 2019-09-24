@@ -5,17 +5,26 @@ import java.sql.ResultSet
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-fun Connection.getInformasjonByAktorid(aktorid: String): List<Informasjon> =
+fun Connection.getInformasjonByAktorid(aktorid: String): List<Event> =
         prepareStatement("""SELECT * FROM INFORMASJON WHERE aktorid = ?""")
                 .use {
                     it.setString(1, aktorid)
                     it.executeQuery().list {
-                        toInformasjon()
+                        toEvent()
                     }
                 }
 
-private fun ResultSet.toInformasjon(): Informasjon {
-    return Informasjon(
+fun Connection.getOppgaveByAktorid(aktorid: String): List<Event> =
+        prepareStatement("""SELECT * FROM OPPGAVE WHERE aktorid = ?""")
+                .use {
+                    it.setString(1, aktorid)
+                    it.executeQuery().list {
+                        toEvent()
+                    }
+                }
+
+private fun ResultSet.toEvent(): Event {
+    return Event(
             id = getInt("id"),
             produsent = getString("produsent"),
             eventTidspunkt = ZonedDateTime.ofInstant(getTimestamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),

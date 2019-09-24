@@ -2,7 +2,7 @@ package no.nav.personbruker.dittnav.eventhandler.database.entity
 
 import java.time.ZonedDateTime
 
-data class Informasjon(
+data class Event(
         val id: Int?,
         val produsent: String,
         val eventTidspunkt: ZonedDateTime,

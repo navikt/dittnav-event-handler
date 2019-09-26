@@ -2,7 +2,7 @@ package no.nav.personbruker.dittnav.eventaggregator.database.entity
 
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventaggregator.database.H2Database
-import no.nav.personbruker.dittnav.eventhandler.database.entity.getInformasjonByAktorid
+import no.nav.personbruker.dittnav.eventhandler.database.entity.informasjon.getInformasjonByAktorid
 import org.junit.jupiter.api.Test
 import org.amshove.kluent.*
 

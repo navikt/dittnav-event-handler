@@ -1,30 +1,22 @@
-package no.nav.personbruker.dittnav.eventhandler.database.entity
+package no.nav.personbruker.dittnav.eventhandler.database.entity.informasjon
 
+import Informasjon
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-fun Connection.getInformasjonByAktorid(aktorid: String): List<Event> =
-        prepareStatement("""SELECT * FROM INFORMASJON WHERE aktorid = ?""")
+fun Connection.getInformasjonByAktorid(aktorId: String): List<Informasjon> =
+        prepareStatement("""SELECT * FROM INFORMASJON WHERE aktorId = ?""")
                 .use {
-                    it.setString(1, aktorid)
+                    it.setString(1, aktorId)
                     it.executeQuery().list {
-                        toEvent()
+                        toInformasjon()
                     }
                 }
 
-fun Connection.getOppgaveByAktorid(aktorid: String): List<Event> =
-        prepareStatement("""SELECT * FROM OPPGAVE WHERE aktorid = ?""")
-                .use {
-                    it.setString(1, aktorid)
-                    it.executeQuery().list {
-                        toEvent()
-                    }
-                }
-
-private fun ResultSet.toEvent(): Event {
-    return Event(
+private fun ResultSet.toInformasjon(): Informasjon {
+    return Informasjon(
             id = getInt("id"),
             produsent = getString("produsent"),
             eventTidspunkt = ZonedDateTime.ofInstant(getTimestamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),

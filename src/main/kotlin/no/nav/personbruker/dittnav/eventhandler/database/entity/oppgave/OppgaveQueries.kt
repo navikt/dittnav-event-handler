@@ -6,7 +6,7 @@ import java.sql.ResultSet
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-fun Connection.getOppgaveByAktorid(aktorId: String): List<Brukernotifikasjon> =
+fun Connection.getOppgaveByAktorId(aktorId: String): List<Brukernotifikasjon> =
         prepareStatement("""SELECT * FROM OPPGAVE WHERE aktorId = ?""")
                 .use {
                     it.setString(1, aktorId)

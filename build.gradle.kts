@@ -13,9 +13,8 @@ val flywayVersion = "5.2.4"
 val hikariCPVersion = "3.2.0"
 val postgresVersion = "42.2.5"
 val h2Version = "1.4.199"
-val spekVersion = "2.0.6"
-val assertJVersion = "3.12.2"
 val jacksonVersion = "2.9.9"
+val kluentVersion = "1.52"
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin on the JVM.
@@ -60,15 +59,14 @@ dependencies {
     compile("io.confluent:kafka-avro-serializer:$confluentVersion")
     compile("no.nav:brukernotifikasjon-schemas:$brukernotifikasjonSchemaVersion")
     testCompile("org.junit.jupiter:junit-jupiter-api:$junitVersion")
-    testCompile("org.assertj:assertj-core:$assertJVersion")
     testCompile(kotlin("test-junit5"))
     testImplementation("no.nav:kafka-embedded-env:2.1.1")
     testImplementation("org.apache.kafka:kafka_2.12:$kafkaVersion")
     testImplementation("org.apache.kafka:kafka-streams:$kafkaVersion")
     testImplementation("io.confluent:kafka-schema-registry:$confluentVersion")
     testImplementation("com.h2database:h2:$h2Version")
-    testImplementation("org.spekframework.spek2:spek-dsl-jvm:$spekVersion")
-    testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:$spekVersion")
+    testImplementation("org.amshove.kluent:kluent:$kluentVersion")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 }
 
 application {
@@ -84,8 +82,9 @@ tasks {
     }
 
     withType<Test> {
-        useJUnitPlatform {
-            includeEngines("spek2")
+        useJUnitPlatform()
+        testLogging {
+            events("passed", "skipped", "failed")
         }
     }
 

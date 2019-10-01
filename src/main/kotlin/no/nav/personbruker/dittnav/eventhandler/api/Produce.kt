@@ -21,6 +21,15 @@ fun Route.produceEventsApi() {
         call.respondText(text = msg, contentType = ContentType.Text.Plain)
     }
 
+    post("/produce/oppgave") {
+        val postParametersDto = call.receive<ProduceDto>()
+        val ident = extractIdentFromLoginContext()
+        producer.produceOppgaveEventForIdent(ident, postParametersDto)
+        val msg = "Et oppgave-event for identen: $ident har blitt lagt på kafka."
+        call.respondText(text = msg, contentType = ContentType.Text.Plain)
+    }
+
+
 }
 
 class ProduceDto(val tekst: String, val link: String) {

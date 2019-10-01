@@ -4,9 +4,9 @@ import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.config.Environment
 import no.nav.personbruker.dittnav.eventhandler.database.Database
 import no.nav.personbruker.dittnav.eventhandler.database.entity.Brukernotifikasjon
-import no.nav.personbruker.dittnav.eventhandler.database.entity.informasjon.getInformasjonByAktorId
+import no.nav.personbruker.dittnav.eventhandler.database.entity.oppgave.getOppgaveByAktorId
 
-class InformasjonEventService(
+class OppgaveEventService(
         val database: Database = Database(Environment())
 ) {
 
@@ -14,7 +14,7 @@ class InformasjonEventService(
         var fetchedRows = emptyList<Brukernotifikasjon>()
 
         runBlocking {
-            fetchedRows = database.dbQuery {getInformasjonByAktorId(aktorId)}
+            fetchedRows = database.dbQuery {getOppgaveByAktorId(aktorId)}
         }
 
         return fetchedRows

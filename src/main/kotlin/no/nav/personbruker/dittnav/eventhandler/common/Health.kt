@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventhandler.api
+package no.nav.personbruker.dittnav.eventhandler.common
 
 import io.ktor.application.call
 import io.ktor.http.ContentType

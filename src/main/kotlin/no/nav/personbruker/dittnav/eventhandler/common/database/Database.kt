@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventhandler.database
+package no.nav.personbruker.dittnav.eventhandler.common.database
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource

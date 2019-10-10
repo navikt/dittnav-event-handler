@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventhandler.database.entity.informasjon
+package no.nav.personbruker.dittnav.eventhandler.informasjon
 
 import Informasjon
 import java.sql.Connection

@@ -14,9 +14,9 @@ data class Environment(val bootstrapServers: String = getEnvVar("KAFKA_BOOTSTRAP
                        val dbUrl: String = "jdbc:postgresql://$dbHost/$dbName",
                        val dbPassword: String = getEnvVar("DB_PASSWORD", "testpassword"),
                        val dbMountPath: String = getEnvVar("DB_MOUNT_PATH", "notUsedOnLocalhost"),
-                       val securityAudience: String = getEnvVar("AUDIENCE", "dummyAudience"),
-                       val securityJwksIssuer: String = getEnvVar("JWKS_ISSUER", "dummyIssuer"),
-                       val securityJwksUri: URL = URL(getEnvVar("JWKS_URI", "https://dummyUrl.com"))
+                       val securityAudience: String = getEnvVar("AUDIENCE", "0090b6e1-ffcc-4c37-bc21-049f7d1f0fe5"),
+                       val securityJwksIssuer: String = getEnvVar("JWKS_ISSUER", "https://login.microsoftonline.com/d38f25aa-eab8-4c50-9f28-ebf92c1256f2/v2.0/"),
+                       val securityJwksUri: URL = URL(getEnvVar("JWKS_URI", "https://login.microsoftonline.com/navtestb2c.onmicrosoft.com/discovery/v2.0/keys?p=b2c_1a_idporten_ver1"))
 )
 
 fun getEnvVar(varName: String, defaultValue: String? = null): String {

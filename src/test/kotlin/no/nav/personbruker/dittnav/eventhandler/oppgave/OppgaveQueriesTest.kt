@@ -1,8 +1,7 @@
-package no.nav.personbruker.dittnav.eventaggregator.database.entity
+package no.nav.personbruker.dittnav.eventhandler.oppgave
 
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.eventaggregator.database.H2Database
-import no.nav.personbruker.dittnav.eventhandler.database.entity.oppgave.getOppgaveByAktorId
+import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
 import org.junit.jupiter.api.Test
 import org.amshove.kluent.*
 

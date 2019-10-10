@@ -2,10 +2,10 @@ package no.nav.personbruker.dittnav.eventhandler.oppgave
 
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.database.Brukernotifikasjon
-import no.nav.personbruker.dittnav.eventhandler.common.database.Database
+import no.nav.personbruker.dittnav.eventhandler.common.database.PostgresDatabase
 
 class OppgaveEventService(
-        private val database: Database
+        private val database: PostgresDatabase
 ) {
 
     fun getEventsFromCacheForUser(aktorId: String): List<Brukernotifikasjon> {

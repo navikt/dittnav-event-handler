@@ -9,7 +9,6 @@ import io.ktor.response.respondText
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
-import no.nav.personbruker.dittnav.eventhandler.common.kafka.Producer
 import no.nav.personbruker.dittnav.eventhandler.config.extractIdentFromLoginContext
 
 fun Route.oppgaveApi(oppgaveEventService: OppgaveEventService) {
@@ -23,7 +22,7 @@ fun Route.oppgaveApi(oppgaveEventService: OppgaveEventService) {
     post("/produce/oppgave") {
         val postParametersDto = call.receive<ProduceOppgaveDto>()
         val ident = extractIdentFromLoginContext()
-        Producer.produceOppgaveEventForIdent(ident, postParametersDto)
+        OppgaveProducer.produceOppgaveEventForIdent(ident, postParametersDto)
         val msg = "Et oppgave-event for identen: $ident har blitt lagt på kafka."
         call.respondText(text = msg, contentType = ContentType.Text.Plain)
     }

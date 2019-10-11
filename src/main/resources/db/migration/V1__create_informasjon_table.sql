@@ -11,4 +11,3 @@ create TABLE INFORMASJON (
     sistOppdatert timestamp,
     aktiv boolean
 )
-

@@ -19,6 +19,12 @@ fun Route.informasjonApi(informasjonEventService: InformasjonEventService) {
         call.respond(HttpStatusCode.OK, events)
     }
 
+    get("/fetch/informasjon/all") {
+        val ident = extractIdentFromLoginContext()
+        val events = informasjonEventService.getAllEventsFromCacheForUser(ident)
+        call.respond(HttpStatusCode.OK, events)
+    }
+
     post("/produce/informasjon") {
         val postParametersDto = call.receive<ProduceInformasjonDto>()
         val ident = extractIdentFromLoginContext()

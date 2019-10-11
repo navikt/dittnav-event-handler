@@ -6,8 +6,17 @@ import java.sql.ResultSet
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-fun Connection.getInformasjonByAktorId(aktorId: String): List<Informasjon> =
+fun Connection.getAllInformasjonByAktorId(aktorId: String): List<Informasjon> =
         prepareStatement("""SELECT * FROM INFORMASJON WHERE aktorId = ?""")
+                .use {
+                    it.setString(1, aktorId)
+                    it.executeQuery().list {
+                        toInformasjon()
+                    }
+                }
+
+fun Connection.getInformasjonByAktorId(aktorId: String): List<Informasjon> =
+        prepareStatement("""SELECT * FROM INFORMASJON WHERE aktorId = ? AND aktiv = true""")
                 .use {
                     it.setString(1, aktorId)
                     it.executeQuery().list {

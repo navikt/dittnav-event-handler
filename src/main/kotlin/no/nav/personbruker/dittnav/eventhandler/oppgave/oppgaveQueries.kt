@@ -1,12 +1,11 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
-import no.nav.personbruker.dittnav.eventhandler.common.database.Brukernotifikasjon
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-fun Connection.getOppgaveByAktorId(aktorId: String): List<Brukernotifikasjon> =
+fun Connection.getAllOppgaveByAktorId(aktorId: String): List<Oppgave> =
         prepareStatement("""SELECT * FROM OPPGAVE WHERE aktorId = ?""")
                 .use {
                     it.setString(1, aktorId)
@@ -15,7 +14,16 @@ fun Connection.getOppgaveByAktorId(aktorId: String): List<Brukernotifikasjon> =
                     }
                 }
 
-private fun ResultSet.toOppgave(): Brukernotifikasjon {
+fun Connection.getOppgaveByAktorId(aktorId: String): List<Oppgave> =
+        prepareStatement("""SELECT * FROM OPPGAVE WHERE aktorId = ? AND aktiv = true""")
+                .use {
+                    it.setString(1, aktorId)
+                    it.executeQuery().list {
+                        toOppgave()
+                    }
+                }
+
+private fun ResultSet.toOppgave(): Oppgave {
     return Oppgave(
             id = getInt("id"),
             produsent = getString("produsent"),

@@ -11,7 +11,7 @@ import java.time.Instant
 
 object OppgaveProducer {
 
-    val log = LoggerFactory.getLogger(OppgaveProducer::class.java)
+    private val log = LoggerFactory.getLogger(OppgaveProducer::class.java)
 
     fun produceOppgaveEventForIdent(ident: String, dto: ProduceOppgaveDto) {
         KafkaProducer<String, Oppgave>(Kafka.producerProps(Environment())).use { producer ->

@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventhandler.common.kafka
+package no.nav.personbruker.dittnav.eventhandler.informasjon
 
 import no.nav.brukernotifikasjon.schemas.Informasjon
 import no.nav.brukernotifikasjon.schemas.Oppgave
@@ -13,9 +13,9 @@ import org.apache.kafka.clients.producer.ProducerRecord
 import org.slf4j.LoggerFactory
 import java.time.Instant
 
-object Producer {
+object InformasjonProducer {
 
-    val log = LoggerFactory.getLogger(Producer::class.java)
+    val log = LoggerFactory.getLogger(InformasjonProducer::class.java)
 
     fun produceInformasjonEventForIdent(ident: String, dto: ProduceInformasjonDto) {
         KafkaProducer<String, Informasjon>(Kafka.producerProps(Environment())).use { producer ->
@@ -24,30 +24,9 @@ object Producer {
         log.info("Har produsert et informasjons-event for identen: $ident")
     }
 
-    fun produceOppgaveEventForIdent(ident: String, dto: ProduceOppgaveDto) {
-        KafkaProducer<String, Oppgave>(Kafka.producerProps(Environment())).use { producer ->
-            producer.send(ProducerRecord(oppgaveTopicName, createOppgaveForIdent(ident, dto)))
-        }
-        log.info("Har produsert et oppgace-event for identen: $ident")
-    }
-
     private fun createInformasjonForIdent(ident: String, dto: ProduceInformasjonDto): Informasjon {
         val nowInMs = Instant.now().toEpochMilli()
         val build = Informasjon.newBuilder()
-                .setAktorId(ident)
-                .setDokumentId("100$nowInMs")
-                .setEventId("$nowInMs")
-                .setProdusent("DittNAV")
-                .setLink(dto.link)
-                .setTekst(dto.tekst)
-                .setTidspunkt(nowInMs)
-                .setSikkerhetsniva(4)
-        return build.build()
-    }
-
-    private fun createOppgaveForIdent(ident: String, dto: ProduceOppgaveDto): Oppgave {
-        val nowInMs = Instant.now().toEpochMilli()
-        val build = Oppgave.newBuilder()
                 .setAktorId(ident)
                 .setDokumentId("100$nowInMs")
                 .setEventId("$nowInMs")

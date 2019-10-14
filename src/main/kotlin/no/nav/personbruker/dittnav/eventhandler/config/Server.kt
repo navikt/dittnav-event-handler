@@ -15,6 +15,7 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
 import io.prometheus.client.hotspot.DefaultExports
 import no.nav.personbruker.dittnav.eventhandler.common.healthApi
+import no.nav.personbruker.dittnav.eventhandler.done.doneApi
 import no.nav.personbruker.dittnav.eventhandler.informasjon.informasjonApi
 import no.nav.personbruker.dittnav.eventhandler.oppgave.oppgaveApi
 import org.slf4j.LoggerFactory
@@ -47,6 +48,7 @@ object Server {
                 authenticate {
                     oppgaveApi(appContext.oppgaveEventService)
                     informasjonApi(appContext.informasjonEventService)
+                    doneApi(appContext.doneEventService)
                 }
             }
         }

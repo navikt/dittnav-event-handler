@@ -10,21 +10,28 @@ class OppgaveQueriesTest {
     private val database = H2Database()
 
     @Test
-    fun `Finner cachede Oppgave-eventer for aktørID`() {
+    fun `Finn alle cachede Oppgave-eventer for aktorID`() {
+        runBlocking {
+            database.dbQuery { getAllOppgaveByAktorId("12345") }.size `should be equal to` 3
+        }
+    }
+
+    @Test
+    fun `Finn alle aktive cachede Oppgave-eventer for aktorID`() {
         runBlocking {
             database.dbQuery { getOppgaveByAktorId("12345") }.size `should be equal to` 2
         }
     }
 
     @Test
-    fun `Returnerer tom liste hvis Oppgave-eventer for aktørID ikke finnes`() {
+    fun `Returnerer tom liste hvis Oppgave-eventer for aktorID ikke finnes`() {
         runBlocking {
             database.dbQuery { getOppgaveByAktorId("finnesikke") }.isEmpty()
         }
     }
 
     @Test
-    fun `Returnerer tom liste hvis Oppgave-eventer hvis tom aktørID`() {
+    fun `Returnerer tom liste hvis Oppgave-eventer hvis tom aktorID`() {
         runBlocking {
             database.dbQuery { getOppgaveByAktorId("") }.isEmpty()
         }

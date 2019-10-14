@@ -19,6 +19,12 @@ fun Route.oppgaveApi(oppgaveEventService: OppgaveEventService) {
         call.respond(HttpStatusCode.OK, events)
     }
 
+    get("/fetch/oppgave/all") {
+        val ident = extractIdentFromLoginContext()
+        val events = oppgaveEventService.getAllEventsFromCacheForUser(ident)
+        call.respond(HttpStatusCode.OK, events)
+    }
+
     post("/produce/oppgave") {
         val postParametersDto = call.receive<ProduceOppgaveDto>()
         val ident = extractIdentFromLoginContext()

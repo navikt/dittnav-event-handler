@@ -14,21 +14,19 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
 import io.prometheus.client.hotspot.DefaultExports
-import no.nav.personbruker.dittnav.eventhandler.api.fetchEventsApi
-import no.nav.personbruker.dittnav.eventhandler.api.healthApi
-import no.nav.personbruker.dittnav.eventhandler.api.produceEventsApi
+import no.nav.personbruker.dittnav.eventhandler.common.healthApi
+import no.nav.personbruker.dittnav.eventhandler.informasjon.informasjonApi
+import no.nav.personbruker.dittnav.eventhandler.oppgave.oppgaveApi
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
 
 object Server {
 
-    const val portNumber = 8090
+    private val log = LoggerFactory.getLogger(Server::class.java)
 
-    val log = LoggerFactory.getLogger(Server::class.java)
-
-    fun configure(environment: Environment): NettyApplicationEngine {
+    fun configure(appContext: ApplicationContext): NettyApplicationEngine {
         DefaultExports.initialize()
-        val app = embeddedServer(Netty, port = portNumber) {
+        val app = embeddedServer(Netty, port = appContext.portNumber) {
             install(DefaultHeaders)
 
             install(ContentNegotiation) {
@@ -40,15 +38,15 @@ object Server {
 
             install(Authentication) {
                 jwt {
-                    setupOidcAuthentication(environment)
+                    setupOidcAuthentication(appContext.environment)
                 }
             }
 
             routing {
                 healthApi()
                 authenticate {
-                    fetchEventsApi()
-                    produceEventsApi()
+                    oppgaveApi(appContext.oppgaveEventService)
+                    informasjonApi(appContext.informasjonEventService)
                 }
             }
         }

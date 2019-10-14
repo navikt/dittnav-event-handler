@@ -1,11 +1,10 @@
-package no.nav.personbruker.dittnav.eventaggregator.database
+package no.nav.personbruker.dittnav.eventhandler.common.database
 
 import com.zaxxer.hikari.HikariDataSource
-import no.nav.personbruker.dittnav.eventhandler.database.IDatabase
 import org.flywaydb.core.Flyway
 import javax.sql.DataSource
 
-class H2Database : IDatabase {
+class H2Database : Database {
 
     private val memDataSource: DataSource
 

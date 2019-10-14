@@ -1,7 +1,9 @@
-import no.nav.personbruker.dittnav.eventhandler.database.entity.Brukernotifikasjon
+package no.nav.personbruker.dittnav.eventhandler.oppgave
+
+import no.nav.personbruker.dittnav.eventhandler.common.database.Brukernotifikasjon
 import java.time.ZonedDateTime
 
-data class Informasjon(
+data class Oppgave(
         override val aktiv: Boolean,
         override val aktorId: String,
         override val dokumentId: String,

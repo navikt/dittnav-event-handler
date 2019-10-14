@@ -1,6 +1,6 @@
-package no.nav.personbruker.dittnav.eventhandler.database.entity.oppgave
+package no.nav.personbruker.dittnav.eventhandler.oppgave
 
-import no.nav.personbruker.dittnav.eventhandler.database.entity.Brukernotifikasjon
+import no.nav.personbruker.dittnav.eventhandler.common.database.Brukernotifikasjon
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId

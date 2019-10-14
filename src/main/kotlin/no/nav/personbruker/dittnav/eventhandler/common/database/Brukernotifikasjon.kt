@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventhandler.database.entity
+package no.nav.personbruker.dittnav.eventhandler.common.database
 
 import java.time.ZonedDateTime
 

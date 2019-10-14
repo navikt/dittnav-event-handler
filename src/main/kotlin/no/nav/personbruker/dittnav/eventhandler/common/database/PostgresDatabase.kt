@@ -1,34 +1,13 @@
-package no.nav.personbruker.dittnav.eventhandler.database
+package no.nav.personbruker.dittnav.eventhandler.common.database
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import no.nav.personbruker.dittnav.eventhandler.config.ConfigUtil
 import no.nav.personbruker.dittnav.eventhandler.config.Environment
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
-import java.lang.Exception
-import java.sql.Connection
 import javax.sql.DataSource
 
-interface IDatabase {
-
-    val dataSource: DataSource
-
-    suspend fun <T> dbQuery(block: Connection.() -> T): T =
-            dataSource.connection.use {
-                try {
-                    it.block().apply { it.commit() }
-                } catch (e: Exception) {
-                    try {
-                        it.rollback()
-                    } catch (rollbackException: Exception) {
-                        e.addSuppressed(rollbackException)
-                    }
-                    throw e
-                }
-            }
-}
-
-class Database(env: Environment) : IDatabase {
+class PostgresDatabase(env: Environment) : Database {
 
     private val envDataSource: DataSource
 
@@ -40,7 +19,7 @@ class Database(env: Environment) : IDatabase {
         get() = envDataSource
 
 
-    private fun createCorrectConnectionForEnvironment(env: Environment) : HikariDataSource {
+    private fun createCorrectConnectionForEnvironment(env: Environment): HikariDataSource {
         return when (ConfigUtil.isCurrentlyRunningOnNais()) {
             true -> createConnectionViaVaultWithDbUser(env)
             false -> createConnectionForLocalDbWithDbUser(env)

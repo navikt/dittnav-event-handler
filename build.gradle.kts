@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val prometheusVersion = "0.6.0"
-val ktorVersion = "1.2.2"
+val ktorVersion = "1.2.4"
 val junitVersion = "5.4.1"
 val kafkaVersion = "2.2.0"
 val confluentVersion = "5.2.0"
@@ -18,8 +18,9 @@ val kluentVersion = "1.52"
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin on the JVM.
-    kotlin("jvm").version("1.3.31")
-    kotlin("plugin.allopen").version("1.3.31")
+    val kotlinVersion = "1.3.50"
+    kotlin("jvm").version(kotlinVersion)
+    kotlin("plugin.allopen").version(kotlinVersion)
 
     id("org.flywaydb.flyway") version("5.2.4")
 
@@ -70,7 +71,7 @@ dependencies {
 }
 
 application {
-    mainClassName = "no.nav.personbruker.dittnav.eventhandler.AppKt"
+    mainClassName = "io.ktor.server.netty.EngineMain"
 }
 
 tasks {

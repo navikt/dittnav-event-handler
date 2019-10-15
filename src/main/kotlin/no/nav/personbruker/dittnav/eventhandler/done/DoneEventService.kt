@@ -2,12 +2,12 @@ package no.nav.personbruker.dittnav.eventhandler.done
 
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.database.Brukernotifikasjon
-import no.nav.personbruker.dittnav.eventhandler.common.database.PostgresDatabase
+import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.informasjon.getInformasjonByAktorId
 import no.nav.personbruker.dittnav.eventhandler.oppgave.getOppgaveByAktorId
 
 class DoneEventService(
-        private val database: PostgresDatabase) {
+        private val database: Database) {
 
     fun markAllBrukernotifikasjonerAsDone(aktorId: String) = runBlocking {
         val alleBrukernotifikasjoner = mutableListOf<Brukernotifikasjon>()

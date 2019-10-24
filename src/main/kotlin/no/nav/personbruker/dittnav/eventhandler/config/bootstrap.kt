@@ -10,6 +10,7 @@ import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
 import io.ktor.jackson.jackson
 import io.ktor.routing.routing
+import io.ktor.util.KtorExperimentalAPI
 import io.prometheus.client.hotspot.DefaultExports
 import no.nav.personbruker.dittnav.eventhandler.common.healthApi
 import no.nav.personbruker.dittnav.eventhandler.done.doneApi
@@ -17,8 +18,8 @@ import no.nav.personbruker.dittnav.eventhandler.informasjon.informasjonApi
 import no.nav.personbruker.dittnav.eventhandler.oppgave.oppgaveApi
 import no.nav.security.token.support.ktor.tokenValidationSupport
 
+@KtorExperimentalAPI
 fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()) {
-    doDatabaseMigrationsIfApplicable(appContext)
     DefaultExports.initialize()
     install(DefaultHeaders)
 
@@ -45,11 +46,3 @@ fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()
     }
 
 }
-
-private fun doDatabaseMigrationsIfApplicable(appContext: ApplicationContext) {
-    if (isRunningOnLocalhost()) {
-        Flyway.runFlywayMigrations(appContext.environment)
-    }
-}
-
-private fun isRunningOnLocalhost() = !ConfigUtil.isCurrentlyRunningOnNais()

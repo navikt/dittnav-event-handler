@@ -2,8 +2,7 @@ version: '3.7'
 services:
 
   postgres:
-    image: "postgres:11"
-    restart: "always"
+    image: "postgres:11.5"
     volumes:
       - "dittnav-event-cache-data:/var/lib/postgresql/data"
     ports:
@@ -14,7 +13,7 @@ services:
       POSTGRES_DB: "dittnav-event-cache-preprod"
 
   kafka:
-    image: landoop/fast-data-dev:2.2.0
+    image: "landoop/fast-data-dev:2.2.0"
     ports:
       - "3030:3030"
       - "9092:9092"
@@ -24,6 +23,24 @@ services:
       - "2181:2181"
     environment:
       - "ADV_HOST=127.0.0.1"
+
+  oidc-provier:
+    image: "navikt/pb-oidc-provider:0.5.0"
+    ports:
+      - "9000:9000"
+
+  oidc-provider-gui:
+    image: "navikt/pb-oidc-provider-gui:0.8.0"
+    ports:
+      - "5000:5000"
+
+  dittnav-event-aggregator:
+    image: "navikt/dittnav-event-aggregator:04325f31dff0076d87c6368e5bca58cd8a14e740"
+    network_mode: host
+    ports:
+      - "8080:8093"
+    depends_on:
+      - postgres
 
 volumes:
   dittnav-event-cache-data:

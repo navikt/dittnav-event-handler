@@ -21,8 +21,7 @@ spec:
     max: 1
   webproxy: true
   ingresses:
-    - "https://dittnav-event-handler.nais.oera-q.local"
-    - "https://dittnav-event-handler.dev-sbs.nais.io"
+    - "https://dittnav-event-handler-q1.dev-sbs.nais.io"
   vault:
     enabled: true
   env:

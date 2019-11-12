@@ -16,6 +16,8 @@ fun PipelineContext<Unit, ApplicationCall>.extractIdentFromToken(): String {
     return extractSubject(authToken)
 }
 
+val PipelineContext<Unit, ApplicationCall>.userIdent get() = extractIdentFromToken()
+
 private fun verifyThatATokenWasFound(authToken: String?) {
     if (authToken == null) {
         throw Exception("Token ble ikke funnet. Dette skal ikke kunne skje.")

@@ -9,23 +9,15 @@ class InformasjonEventService(
 ) {
 
     fun getEventsFromCacheForUser(aktorId: String): List<Informasjon> {
-        var fetchedRows = emptyList<Informasjon>()
-
-        runBlocking {
-            fetchedRows = database.dbQuery { getInformasjonByAktorId(aktorId) }
+        return runBlocking {
+            database.dbQuery { getActiveInformasjonByAktorId(aktorId) }
         }
-
-        return fetchedRows
     }
 
     fun getAllEventsFromCacheForUser(aktorId: String): List<Informasjon> {
-        var fetchedRows = emptyList<Informasjon>()
-
-        runBlocking {
-            fetchedRows = database.dbQuery { getAllInformasjonByAktorId(aktorId) }
+        return runBlocking {
+            database.dbQuery { getAllInformasjonByAktorId(aktorId) }
         }
-
-        return fetchedRows
     }
 
 }

@@ -5,20 +5,20 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.get
-import no.nav.personbruker.dittnav.eventhandler.config.extractIdentFromToken
+import no.nav.personbruker.dittnav.eventhandler.config.userIdent
 
 fun Route.informasjonApi(informasjonEventService: InformasjonEventService) {
 
     get("/fetch/informasjon") {
-        val ident = extractIdentFromToken()
-        val events = informasjonEventService.getEventsFromCacheForUser(ident)
-        call.respond(HttpStatusCode.OK, events)
+        informasjonEventService.getEventsFromCacheForUser(userIdent).let { events ->
+            call.respond(HttpStatusCode.OK, events)
+        }
     }
 
     get("/fetch/informasjon/all") {
-        val ident = extractIdentFromToken()
-        val events = informasjonEventService.getAllEventsFromCacheForUser(ident)
-        call.respond(HttpStatusCode.OK, events)
+        informasjonEventService.getEventsFromCacheForUser(userIdent).let { events ->
+            call.respond(HttpStatusCode.OK, events)
+        }
     }
 
 }

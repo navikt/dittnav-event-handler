@@ -19,21 +19,21 @@ class OppgaveQueriesTest {
     @Test
     fun `Finn alle aktive cachede Oppgave-eventer for aktorID`() {
         runBlocking {
-            database.dbQuery { getOppgaveByAktorId("12345") }.size `should be equal to` 2
+            database.dbQuery { getActiveOppgaveByAktorId("12345") }.size `should be equal to` 2
         }
     }
 
     @Test
     fun `Returnerer tom liste hvis Oppgave-eventer for aktorID ikke finnes`() {
         runBlocking {
-            database.dbQuery { getOppgaveByAktorId("finnesikke") }.isEmpty()
+            database.dbQuery { getActiveOppgaveByAktorId("finnesikke") }.isEmpty()
         }
     }
 
     @Test
     fun `Returnerer tom liste hvis Oppgave-eventer hvis tom aktorID`() {
         runBlocking {
-            database.dbQuery { getOppgaveByAktorId("") }.isEmpty()
+            database.dbQuery { getActiveOppgaveByAktorId("") }.isEmpty()
         }
     }
 }

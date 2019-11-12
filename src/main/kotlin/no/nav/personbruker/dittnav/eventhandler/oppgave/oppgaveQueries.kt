@@ -1,5 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
+import no.nav.personbruker.dittnav.eventhandler.common.database.map
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId
@@ -9,16 +10,16 @@ fun Connection.getAllOppgaveByAktorId(aktorId: String): List<Oppgave> =
         prepareStatement("""SELECT * FROM OPPGAVE WHERE aktorId = ?""")
                 .use {
                     it.setString(1, aktorId)
-                    it.executeQuery().list {
+                    it.executeQuery().map {
                         toOppgave()
                     }
                 }
 
-fun Connection.getOppgaveByAktorId(aktorId: String): List<Oppgave> =
+fun Connection.getActiveOppgaveByAktorId(aktorId: String): List<Oppgave> =
         prepareStatement("""SELECT * FROM OPPGAVE WHERE aktorId = ? AND aktiv = true""")
                 .use {
                     it.setString(1, aktorId)
-                    it.executeQuery().list {
+                    it.executeQuery().map {
                         toOppgave()
                     }
                 }
@@ -38,10 +39,3 @@ private fun ResultSet.toOppgave(): Oppgave {
             aktiv = getBoolean("aktiv")
     )
 }
-
-private fun <T> ResultSet.list(result: ResultSet.() -> T): List<T> =
-        mutableListOf<T>().apply {
-            while (next()) {
-                add(result())
-            }
-        }

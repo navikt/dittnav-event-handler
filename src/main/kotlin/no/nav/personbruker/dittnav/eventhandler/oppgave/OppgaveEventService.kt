@@ -11,7 +11,7 @@ class OppgaveEventService(
         var fetchedRows = emptyList<Oppgave>()
 
         runBlocking {
-            fetchedRows = database.dbQuery { getOppgaveByAktorId(aktorId) }
+            fetchedRows = database.dbQuery { getActiveOppgaveByAktorId(aktorId) }
         }
 
         return fetchedRows

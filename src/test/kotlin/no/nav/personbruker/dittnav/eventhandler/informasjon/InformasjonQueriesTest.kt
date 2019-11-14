@@ -19,14 +19,14 @@ class InformasjonQueriesTest {
     @Test
     fun `Finner kun aktive cachede Informasjon-eventer for aktorID`() {
         runBlocking {
-            database.dbQuery { getInformasjonByAktorId("12345") }.size `should be equal to` 2
+            database.dbQuery { getActiveInformasjonByAktorId("12345") }.size `should be equal to` 2
         }
     }
 
     @Test
     fun `Returnerer tom liste hvis Informasjon-eventer for aktorID ikke finnes`() {
         runBlocking {
-            database.dbQuery { getInformasjonByAktorId("finnesikke") }.`should be empty`()
+            database.dbQuery { getActiveInformasjonByAktorId("finnesikke") }.`should be empty`()
         }
     }
 
@@ -34,7 +34,7 @@ class InformasjonQueriesTest {
     @Test
     fun `Returnerer tom liste hvis Informasjon-eventer hvis tom aktorID`() {
         runBlocking {
-            database.dbQuery { getInformasjonByAktorId("") }.`should be empty`()
+            database.dbQuery { getActiveInformasjonByAktorId("") }.`should be empty`()
         }
     }
 }

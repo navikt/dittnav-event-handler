@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventhandler.oppgave
+package no.nav.personbruker.dittnav.eventhandler.melding
 
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
@@ -7,18 +7,17 @@ import io.ktor.routing.Route
 import io.ktor.routing.get
 import no.nav.personbruker.dittnav.eventhandler.config.userIdent
 
-fun Route.oppgaveApi(oppgaveEventService: OppgaveEventService) {
+fun Route.meldingApi(meldingEventService: MeldingEventService) {
 
-    get("/fetch/oppgave") {
-        oppgaveEventService.getEventsFromCacheForUser(userIdent).let { events ->
+    get("/fetch/melding") {
+        meldingEventService.getCachedActiveEventsForUser(userIdent).let { events->
             call.respond(HttpStatusCode.OK, events)
         }
     }
 
-    get("/fetch/oppgave/all") {
-        oppgaveEventService.getEventsFromCacheForUser(userIdent).let { events ->
+    get("/fetch/melding/all") {
+        meldingEventService.getAllCachedEventsForUser(userIdent).let { events ->
             call.respond(HttpStatusCode.OK, events)
         }
     }
-
 }

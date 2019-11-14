@@ -1,32 +1,31 @@
-package no.nav.personbruker.dittnav.eventhandler.informasjon
+package no.nav.personbruker.dittnav.eventhandler.melding
 
-import Informasjon
 import no.nav.personbruker.dittnav.eventhandler.common.database.map
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-fun Connection.getAllInformasjonByAktorId(aktorId: String): List<Informasjon> =
-        prepareStatement("""SELECT * FROM INFORMASJON WHERE aktorId = ?""")
-                .use {
-                    it.setString(1, aktorId)
-                    it.executeQuery().map {
-                        toInformasjon()
-                    }
+fun Connection.getAllMeldingByAktorId(aktorId: String): List<Melding> =
+        prepareStatement("""SELECT * FROM MELDING WHERE aktorId = ?""")
+            .use {
+                it.setString(1, aktorId)
+                it.executeQuery().map {
+                    toMelding()
                 }
+            }
 
-fun Connection.getActiveInformasjonByAktorId(aktorId: String): List<Informasjon> =
-        prepareStatement("""SELECT * FROM INFORMASJON WHERE aktorId = ? AND aktiv = true""")
-                .use {
-                    it.setString(1, aktorId)
-                    it.executeQuery().map {
-                        toInformasjon()
-                    }
+fun Connection.getActiveMeldingByAktorId(aktorId: String): List<Melding> =
+        prepareStatement("""SELECT * FROM MELDING WHERE aktiv = true AND aktorId = ?""")
+            .use {
+                it.setString(1, aktorId)
+                it.executeQuery().map {
+                    toMelding()
                 }
+            }
 
-private fun ResultSet.toInformasjon(): Informasjon {
-    return Informasjon(
+private fun ResultSet.toMelding(): Melding {
+    return Melding(
             id = getInt("id"),
             produsent = getString("produsent"),
             eventTidspunkt = ZonedDateTime.ofInstant(getTimestamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),

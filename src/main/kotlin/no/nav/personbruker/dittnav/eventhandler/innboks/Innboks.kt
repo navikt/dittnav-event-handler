@@ -1,9 +1,9 @@
-package no.nav.personbruker.dittnav.eventhandler.melding
+package no.nav.personbruker.dittnav.eventhandler.innboks
 
 import no.nav.personbruker.dittnav.eventhandler.common.database.Brukernotifikasjon
 import java.time.ZonedDateTime
 
-data class Melding (
+data class Innboks (
         override val id: Int,
         override val produsent: String,
         override val eventTidspunkt: ZonedDateTime,

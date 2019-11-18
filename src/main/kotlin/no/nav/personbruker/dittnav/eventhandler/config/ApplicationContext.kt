@@ -3,7 +3,7 @@ package no.nav.personbruker.dittnav.eventhandler.config
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.database.PostgresDatabase
 import no.nav.personbruker.dittnav.eventhandler.informasjon.InformasjonEventService
-import no.nav.personbruker.dittnav.eventhandler.melding.MeldingEventService
+import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksEventService
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveEventService
 
 class ApplicationContext {
@@ -12,6 +12,6 @@ class ApplicationContext {
     val database: Database = PostgresDatabase(environment)
     val informasjonEventService = InformasjonEventService(database)
     val oppgaveEventService = OppgaveEventService(database)
-    val meldingEventService = MeldingEventService(database)
+    val innboksEventService = InnboksEventService(database)
 
 }

@@ -1,32 +1,31 @@
-package no.nav.personbruker.dittnav.eventhandler.informasjon
+package no.nav.personbruker.dittnav.eventhandler.innboks
 
-import Informasjon
 import no.nav.personbruker.dittnav.eventhandler.common.database.map
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-fun Connection.getAllInformasjonByAktorId(aktorId: String): List<Informasjon> =
-        prepareStatement("""SELECT * FROM INFORMASJON WHERE aktorId = ?""")
-                .use {
-                    it.setString(1, aktorId)
-                    it.executeQuery().map {
-                        toInformasjon()
-                    }
+fun Connection.getAllInnboksByAktorId(aktorId: String): List<Innboks> =
+        prepareStatement("""SELECT * FROM INNBOKS WHERE aktorId = ?""")
+            .use {
+                it.setString(1, aktorId)
+                it.executeQuery().map {
+                    toInnboks()
                 }
+            }
 
-fun Connection.getActiveInformasjonByAktorId(aktorId: String): List<Informasjon> =
-        prepareStatement("""SELECT * FROM INFORMASJON WHERE aktorId = ? AND aktiv = true""")
-                .use {
-                    it.setString(1, aktorId)
-                    it.executeQuery().map {
-                        toInformasjon()
-                    }
+fun Connection.getActiveInnboksByAktorId(aktorId: String): List<Innboks> =
+        prepareStatement("""SELECT * FROM INNBOKS WHERE aktiv = true AND aktorId = ?""")
+            .use {
+                it.setString(1, aktorId)
+                it.executeQuery().map {
+                    toInnboks()
                 }
+            }
 
-private fun ResultSet.toInformasjon(): Informasjon {
-    return Informasjon(
+private fun ResultSet.toInnboks(): Innboks {
+    return Innboks(
             id = getInt("id"),
             produsent = getString("produsent"),
             eventTidspunkt = ZonedDateTime.ofInstant(getTimestamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),

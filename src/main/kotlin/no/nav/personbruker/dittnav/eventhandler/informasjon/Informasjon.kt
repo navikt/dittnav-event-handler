@@ -1,13 +1,14 @@
+import com.fasterxml.jackson.annotation.JsonIgnore
 import no.nav.personbruker.dittnav.eventhandler.common.database.Brukernotifikasjon
 import java.time.ZonedDateTime
 
 data class Informasjon(
+        @JsonIgnore override val id: Int?,
         override val aktiv: Boolean,
         override val aktorId: String,
         override val dokumentId: String,
         override val eventId: String,
         override val eventTidspunkt: ZonedDateTime,
-        override val id: Int?,
         override val produsent: String,
         override val sikkerhetsnivaa: Int,
         override val sistOppdatert: ZonedDateTime,

@@ -1,32 +1,32 @@
-package no.nav.personbruker.dittnav.eventhandler.informasjon
+package no.nav.personbruker.dittnav.eventhandler.beskjed
 
-import Informasjon
+import Beskjed
 import no.nav.personbruker.dittnav.eventhandler.common.database.map
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-fun Connection.getAllInformasjonByAktorId(aktorId: String): List<Informasjon> =
-        prepareStatement("""SELECT * FROM INFORMASJON WHERE aktorId = ?""")
+fun Connection.getAllBeskjedByAktorId(aktorId: String): List<Beskjed> =
+        prepareStatement("""SELECT * FROM BESKJED WHERE aktorId = ?""")
                 .use {
                     it.setString(1, aktorId)
                     it.executeQuery().map {
-                        toInformasjon()
+                        toBeskjed()
                     }
                 }
 
-fun Connection.getActiveInformasjonByAktorId(aktorId: String): List<Informasjon> =
-        prepareStatement("""SELECT * FROM INFORMASJON WHERE aktorId = ? AND aktiv = true""")
+fun Connection.getActiveBeskjedByAktorId(aktorId: String): List<Beskjed> =
+        prepareStatement("""SELECT * FROM BESKJED WHERE aktorId = ? AND aktiv = true""")
                 .use {
                     it.setString(1, aktorId)
                     it.executeQuery().map {
-                        toInformasjon()
+                        toBeskjed()
                     }
                 }
 
-private fun ResultSet.toInformasjon(): Informasjon {
-    return Informasjon(
+private fun ResultSet.toBeskjed(): Beskjed {
+    return Beskjed(
             id = getInt("id"),
             produsent = getString("produsent"),
             eventTidspunkt = ZonedDateTime.ofInstant(getTimestamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),

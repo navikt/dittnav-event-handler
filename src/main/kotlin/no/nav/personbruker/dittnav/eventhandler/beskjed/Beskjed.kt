@@ -2,7 +2,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import no.nav.personbruker.dittnav.eventhandler.common.database.Brukernotifikasjon
 import java.time.ZonedDateTime
 
-data class Informasjon(
+data class Beskjed(
         @JsonIgnore override val id: Int?,
         override val aktiv: Boolean,
         override val aktorId: String,

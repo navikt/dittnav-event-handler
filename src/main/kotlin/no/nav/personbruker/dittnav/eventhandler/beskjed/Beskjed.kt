@@ -5,8 +5,8 @@ import java.time.ZonedDateTime
 data class Beskjed(
         @JsonIgnore override val id: Int?,
         override val aktiv: Boolean,
-        override val aktorId: String,
-        override val dokumentId: String,
+        override val fodselsnummer: String,
+        override val grupperingsId: String,
         override val eventId: String,
         override val eventTidspunkt: ZonedDateTime,
         override val produsent: String,

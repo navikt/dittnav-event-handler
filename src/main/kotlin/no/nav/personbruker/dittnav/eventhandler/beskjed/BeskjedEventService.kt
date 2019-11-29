@@ -8,15 +8,15 @@ class BeskjedEventService(
         private val database: Database
 ) {
 
-    fun getEventsFromCacheForUser(aktorId: String): List<Beskjed> {
+    fun getEventsFromCacheForUser(fodselsnummer: String): List<Beskjed> {
         return runBlocking {
-            database.dbQuery { getActiveBeskjedByAktorId(aktorId) }
+            database.dbQuery { getActiveBeskjedByFodselsnummer(fodselsnummer) }
         }
     }
 
-    fun getAllEventsFromCacheForUser(aktorId: String): List<Beskjed> {
+    fun getAllEventsFromCacheForUser(fodselsnummer: String): List<Beskjed> {
         return runBlocking {
-            database.dbQuery { getAllBeskjedByAktorId(aktorId) }
+            database.dbQuery { getAllBeskjedByFodselsnummer(fodselsnummer) }
         }
     }
 

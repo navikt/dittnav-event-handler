@@ -6,19 +6,19 @@ import java.sql.ResultSet
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-fun Connection.getAllInnboksByAktorId(aktorId: String): List<Innboks> =
-        prepareStatement("""SELECT * FROM INNBOKS WHERE aktorId = ?""")
+fun Connection.getAllInnboksByFodselsnummer(fodselsnummer: String): List<Innboks> =
+        prepareStatement("""SELECT * FROM INNBOKS WHERE fodselsnummer = ?""")
             .use {
-                it.setString(1, aktorId)
+                it.setString(1, fodselsnummer)
                 it.executeQuery().map {
                     toInnboks()
                 }
             }
 
-fun Connection.getActiveInnboksByAktorId(aktorId: String): List<Innboks> =
-        prepareStatement("""SELECT * FROM INNBOKS WHERE aktiv = true AND aktorId = ?""")
+fun Connection.getActiveInnboksByFodselsnummer(fodselsnummer: String): List<Innboks> =
+        prepareStatement("""SELECT * FROM INNBOKS WHERE aktiv = true AND fodselsnummer = ?""")
             .use {
-                it.setString(1, aktorId)
+                it.setString(1, fodselsnummer)
                 it.executeQuery().map {
                     toInnboks()
                 }
@@ -29,9 +29,9 @@ private fun ResultSet.toInnboks(): Innboks {
             id = getInt("id"),
             produsent = getString("produsent"),
             eventTidspunkt = ZonedDateTime.ofInstant(getTimestamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),
-            aktorId = getString("aktorId"),
+            fodselsnummer = getString("fodselsnummer"),
             eventId = getString("eventId"),
-            dokumentId = getString("dokumentId"),
+            grupperingsId = getString("grupperingsId"),
             tekst = getString("tekst"),
             link = getString("link"),
             sikkerhetsnivaa = getInt("sikkerhetsnivaa"),

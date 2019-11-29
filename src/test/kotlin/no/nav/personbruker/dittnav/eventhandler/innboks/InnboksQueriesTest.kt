@@ -9,29 +9,29 @@ class InnboksQueriesTest {
 
     private val database = H2Database()
 
-    private val aktorId1 = "12345"
-    private val aktorId2 = "67890"
+    private val fodselsnummer1 = "12345"
+    private val fodselsnummer2 = "67890"
 
     @Test
-    fun `should find all active events for aktorIds`() {
+    fun `should find all active events for fodselsnummers`() {
         runBlocking {
-            database.dbQuery { getActiveInnboksByAktorId(aktorId1) }.size `should be equal to` 2
-            database.dbQuery { getActiveInnboksByAktorId(aktorId2) }.size `should be equal to` 1
+            database.dbQuery { getActiveInnboksByFodselsnummer(fodselsnummer1) }.size `should be equal to` 2
+            database.dbQuery { getActiveInnboksByFodselsnummer(fodselsnummer2) }.size `should be equal to` 1
         }
     }
 
     @Test
-    fun `should find all events for aktorIds`() {
+    fun `should find all events for fodselsnummers`() {
         runBlocking {
-            database.dbQuery { getAllInnboksByAktorId(aktorId1) }.size `should be equal to` 2
-            database.dbQuery { getAllInnboksByAktorId(aktorId2) }.size `should be equal to` 2
+            database.dbQuery { getAllInnboksByFodselsnummer(fodselsnummer1) }.size `should be equal to` 2
+            database.dbQuery { getAllInnboksByFodselsnummer(fodselsnummer2) }.size `should be equal to` 2
         }
     }
 
     @Test
-    fun `should return empty list if no events exists for aktorId`() {
+    fun `should return empty list if no events exists for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getAllInnboksByAktorId("VOID") }.size `should be equal to` 0
+            database.dbQuery { getAllInnboksByFodselsnummer("VOID") }.size `should be equal to` 0
         }
     }
 }

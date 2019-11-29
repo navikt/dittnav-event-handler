@@ -5,16 +5,16 @@ import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 
 class InnboksEventService(private val database: Database) {
 
-    fun getCachedActiveEventsForUser(aktorId: String): List<Innboks> {
+    fun getCachedActiveEventsForUser(fodselsnummer: String): List<Innboks> {
         return runBlocking {
-            database.dbQuery { getActiveInnboksByAktorId(aktorId) }
+            database.dbQuery { getActiveInnboksByFodselsnummer(fodselsnummer) }
         }
     }
 
-    fun getAllCachedEventsForUser(aktorId: String): List<Innboks> {
+    fun getAllCachedEventsForUser(fodselsnummer: String): List<Innboks> {
         return runBlocking {
             database.dbQuery {
-                getAllInnboksByAktorId(aktorId) }
+                getAllInnboksByFodselsnummer(fodselsnummer) }
         }
     }
 }

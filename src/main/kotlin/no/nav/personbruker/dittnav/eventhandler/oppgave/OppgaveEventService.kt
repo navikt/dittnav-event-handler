@@ -7,21 +7,21 @@ class OppgaveEventService(
         private val database: Database
 ) {
 
-    fun getEventsFromCacheForUser(aktorId: String): List<Oppgave> {
+    fun getEventsFromCacheForUser(fodselsnummer: String): List<Oppgave> {
         var fetchedRows = emptyList<Oppgave>()
 
         runBlocking {
-            fetchedRows = database.dbQuery { getActiveOppgaveByAktorId(aktorId) }
+            fetchedRows = database.dbQuery { getActiveOppgaveByFodselsnummer(fodselsnummer) }
         }
 
         return fetchedRows
     }
 
-    fun getAllEventsFromCacheForUser(aktorId: String): List<Oppgave> {
+    fun getAllEventsFromCacheForUser(fodselsnummer: String): List<Oppgave> {
         var fetchedRows = emptyList<Oppgave>()
 
         runBlocking {
-            fetchedRows = database.dbQuery { getAllOppgaveByAktorId(aktorId) }
+            fetchedRows = database.dbQuery { getAllOppgaveByFodselsnummer(fodselsnummer) }
         }
 
         return fetchedRows

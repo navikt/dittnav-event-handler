@@ -37,6 +37,11 @@ private fun ResultSet.toBeskjed(): Beskjed {
             link = getString("link"),
             sikkerhetsnivaa = getInt("sikkerhetsnivaa"),
             sistOppdatert = ZonedDateTime.ofInstant(getTimestamp("sistOppdatert").toInstant(), ZoneId.of("Europe/Oslo")),
+            synligFremTil = getNullableZonedDateTime("synligFremTil"),
             aktiv = getBoolean("aktiv")
     )
+}
+
+private fun ResultSet.getNullableZonedDateTime(label: String) : ZonedDateTime? {
+    return getTimestamp(label)?.let { timestamp -> ZonedDateTime.ofInstant(timestamp.toInstant(), ZoneId.of("Europe/Oslo")) }
 }

@@ -12,6 +12,7 @@ data class Beskjed(
         override val produsent: String,
         override val sikkerhetsnivaa: Int,
         override val sistOppdatert: ZonedDateTime,
+        @JsonIgnore val synligFremTil: ZonedDateTime?,
         override val tekst: String,
         override val link: String
 ) : Brukernotifikasjon

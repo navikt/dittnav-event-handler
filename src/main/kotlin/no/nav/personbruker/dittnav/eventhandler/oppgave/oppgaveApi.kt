@@ -16,7 +16,7 @@ fun Route.oppgaveApi(oppgaveEventService: OppgaveEventService) {
     }
 
     get("/fetch/oppgave/all") {
-        oppgaveEventService.getEventsFromCacheForUser(userIdent).let { events ->
+        oppgaveEventService.getAllEventsFromCacheForUser(userIdent).let { events ->
             call.respond(HttpStatusCode.OK, events)
         }
     }

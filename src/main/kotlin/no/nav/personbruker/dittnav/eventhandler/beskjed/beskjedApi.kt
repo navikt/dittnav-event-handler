@@ -16,21 +16,8 @@ fun Route.beskjedApi(beskjedEventService: BeskjedEventService) {
     }
 
     get("/fetch/beskjed/all") {
-        beskjedEventService.getEventsFromCacheForUser(userIdent).let { events ->
+        beskjedEventService.getAllEventsFromCacheForUser(userIdent).let { events ->
             call.respond(HttpStatusCode.OK, events)
         }
     }
-
-    get("/fetch/informasjon") {
-        beskjedEventService.getEventsFromCacheForUser(userIdent).let { events ->
-            call.respond(HttpStatusCode.OK, events)
-        }
-    }
-
-    get("/fetch/informasjon/all") {
-        beskjedEventService.getEventsFromCacheForUser(userIdent).let { events ->
-            call.respond(HttpStatusCode.OK, events)
-        }
-    }
-
 }

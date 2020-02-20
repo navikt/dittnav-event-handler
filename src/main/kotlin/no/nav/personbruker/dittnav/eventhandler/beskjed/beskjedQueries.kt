@@ -1,25 +1,26 @@
 package no.nav.personbruker.dittnav.eventhandler.beskjed
 
 import Beskjed
+import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.map
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-fun Connection.getAllBeskjedByFodselsnummer(fodselsnummer: String): List<Beskjed> =
+fun Connection.getAllBeskjedByFodselsnummer(bruker: InnloggetBruker): List<Beskjed> =
         prepareStatement("""SELECT * FROM BESKJED WHERE fodselsnummer = ?""")
                 .use {
-                    it.setString(1, fodselsnummer)
+                    it.setString(1, bruker.getIdent())
                     it.executeQuery().map {
                         toBeskjed()
                     }
                 }
 
-fun Connection.getActiveBeskjedByFodselsnummer(fodselsnummer: String): List<Beskjed> =
+fun Connection.getActiveBeskjedByFodselsnummer(bruker: InnloggetBruker): List<Beskjed> =
         prepareStatement("""SELECT * FROM BESKJED WHERE fodselsnummer = ? AND aktiv = true""")
                 .use {
-                    it.setString(1, fodselsnummer)
+                    it.setString(1, bruker.getIdent())
                     it.executeQuery().map {
                         toBeskjed()
                     }

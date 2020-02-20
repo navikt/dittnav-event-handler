@@ -5,7 +5,7 @@ import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 
 class DoneEventService(private val database: Database) {
 
-    suspend fun getBeskjedFromCacheForUser(fodselsnummer: String, uid: String, eventId: String): List<Beskjed> {
+    suspend fun getBeskjedFromCacheForUser(fodselsnummer: String, uid: Int, eventId: String): List<Beskjed> {
         return database.dbQuery {
             getActiveBeskjedByIds(fodselsnummer, uid, eventId)
         }

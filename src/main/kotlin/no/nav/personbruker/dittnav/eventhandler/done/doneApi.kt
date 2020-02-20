@@ -8,22 +8,19 @@ import io.ktor.response.respondText
 import io.ktor.routing.Route
 import io.ktor.routing.post
 import io.ktor.util.pipeline.PipelineContext
-import no.nav.personbruker.dittnav.eventhandler.config.userIdent
+import no.nav.personbruker.dittnav.eventhandler.common.innloggetBruker
 
 fun Route.doneApi(doneEventService: DoneEventService) {
 
     post("/handler/produce/done") {
         respondForParameterType<Done> { doneDto ->
-            val uid = doneDto.uid
-            val eventId = doneDto.eventId
-            val fodselsnummer = userIdent
-            val beskjed = doneEventService.getBeskjedFromCacheForUser(userIdent, doneDto.uid, doneDto.eventId)
+            val beskjed = doneEventService.getBeskjedFromCacheForUser(innloggetBruker.getIdent(), doneDto.uid.toInt(), doneDto.eventId)
 
             if (beskjed.isNotEmpty()) {
-                doneEventService.markEventAsDone(userIdent, doneDto.eventId, beskjed.get(0).produsent, beskjed.get(0).grupperingsId)
-                "Done-event er produsert for identen: ${userIdent} sitt event med eventID: ${doneDto.eventId}. Uid: ${doneDto.uid}"
+                doneEventService.markEventAsDone(innloggetBruker.getIdent(), doneDto.eventId, beskjed.get(0).produsent, beskjed.get(0).grupperingsId)
+                "Done-event er produsert for identen: ${innloggetBruker.getIdent()} sitt event med eventID: ${doneDto.eventId}. Uid: ${doneDto.uid}"
             } else {
-                "Done-event ble -ikke- produsert fordi vi fant ikke eventet. Identen: ${userIdent} . EventID: ${doneDto.eventId}. Uid: ${doneDto.uid}"
+                "Done-event ble -ikke- produsert fordi vi fant ikke eventet. Identen: ${innloggetBruker.getIdent()} . EventID: ${doneDto.eventId}. Uid: ${doneDto.uid}"
             }
         }
     }

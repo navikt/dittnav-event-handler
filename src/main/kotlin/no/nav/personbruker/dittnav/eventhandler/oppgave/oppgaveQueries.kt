@@ -1,24 +1,25 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
+import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.map
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-fun Connection.getAllOppgaveByFodselsnummer(fodselsnummer: String): List<Oppgave> =
+fun Connection.getAllOppgaveByUser(bruker: InnloggetBruker): List<Oppgave> =
         prepareStatement("""SELECT * FROM OPPGAVE WHERE fodselsnummer = ?""")
                 .use {
-                    it.setString(1, fodselsnummer)
+                    it.setString(1, bruker.getIdent())
                     it.executeQuery().map {
                         toOppgave()
                     }
                 }
 
-fun Connection.getActiveOppgaveByFodselsnummer(fodselsnummer: String): List<Oppgave> =
+fun Connection.getActiveOppgaveByUser(bruker: InnloggetBruker): List<Oppgave> =
         prepareStatement("""SELECT * FROM OPPGAVE WHERE fodselsnummer = ? AND aktiv = true""")
                 .use {
-                    it.setString(1, fodselsnummer)
+                    it.setString(1, bruker.getIdent())
                     it.executeQuery().map {
                         toOppgave()
                     }

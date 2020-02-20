@@ -14,10 +14,17 @@ fun Route.doneApi(doneEventService: DoneEventService) {
 
     post("/handler/produce/done") {
         respondForParameterType<Done> { doneDto ->
+            val uid = doneDto.uid
             val eventId = doneDto.eventId
-            val ident = userIdent
-            doneEventService.markEventAsDone(ident, eventId)
-            "Done-event er produsert for identen: xxx sitt event med eventID: ${doneDto.eventId}."
+            val fodselsnummer = userIdent
+            val beskjed = doneEventService.getBeskjedFromCacheForUser(userIdent, doneDto.uid, doneDto.eventId)
+
+            if (beskjed.isNotEmpty()) {
+                doneEventService.markEventAsDone(userIdent, doneDto.eventId, beskjed.get(0).produsent, beskjed.get(0).grupperingsId)
+                "Done-event er produsert for identen: ${userIdent} sitt event med eventID: ${doneDto.eventId}. Uid: ${doneDto.uid}"
+            } else {
+                "Done-event ble -ikke- produsert fordi vi fant ikke eventet. Identen: ${userIdent} . EventID: ${doneDto.eventId}. Uid: ${doneDto.uid}"
+            }
         }
     }
 }

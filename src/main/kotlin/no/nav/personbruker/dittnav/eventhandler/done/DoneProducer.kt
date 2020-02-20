@@ -14,11 +14,11 @@ object DoneProducer {
 
     private val log = LoggerFactory.getLogger(DoneProducer::class.java)
 
-    fun produceDoneEventForSuppliedEventId(ident: String, eventId: String) {
-        val doneEvent = createDoneEvent(ident)
-        val doneKey = createKeyForEvent(eventId)
+    fun produceDoneEventForSuppliedEventId(fodselsnummer: String, eventId: String, produser: String, grupperingsId: String) {
+        val doneEvent = createDoneEvent(fodselsnummer, grupperingsId)
+        val doneKey = createKeyForEvent(eventId, produser)
         produceDoneEvent(doneEvent, doneKey)
-        log.info("Har produsert et done-event for identen: $ident sitt event med eventId: $eventId")
+        log.info("Har produsert et done-event for identen: $fodselsnummer sitt event med eventId: $eventId")
     }
 
     private fun produceDoneEvent(doneEvent : Done, doneKey: Nokkel) {
@@ -27,12 +27,12 @@ object DoneProducer {
         }
     }
 
-    private fun createDoneEvent(ident: String): Done {
+    private fun createDoneEvent(fodselsnummer: String, grupperingsId: String): Done {
         val nowInMs = Instant.now().toEpochMilli()
         val build = Done.newBuilder()
-                .setFodselsnummer(ident)
+                .setFodselsnummer(fodselsnummer)
                 .setTidspunkt(nowInMs)
-                .setGrupperingsId("100$nowInMs")
+                .setGrupperingsId(grupperingsId)
         return build.build()
     }
 }

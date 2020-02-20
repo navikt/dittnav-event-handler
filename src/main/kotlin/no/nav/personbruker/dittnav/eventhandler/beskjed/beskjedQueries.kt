@@ -25,7 +25,7 @@ fun Connection.getActiveBeskjedByFodselsnummer(fodselsnummer: String): List<Besk
                     }
                 }
 
-private fun ResultSet.toBeskjed(): Beskjed {
+fun ResultSet.toBeskjed(): Beskjed {
     return Beskjed(
             id = getInt("id"),
             produsent = getString("produsent"),

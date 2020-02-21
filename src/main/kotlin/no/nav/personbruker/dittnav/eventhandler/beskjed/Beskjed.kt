@@ -4,13 +4,13 @@ import java.time.ZonedDateTime
 
 data class Beskjed(
         @JsonIgnore override val id: Int?,
-        val uid: Int,
+        val uid: String?,
         override val aktiv: Boolean,
         override val fodselsnummer: String,
         override val grupperingsId: String,
         override val eventId: String,
         override val eventTidspunkt: ZonedDateTime,
-        override val produsent: String,
+        @JsonIgnore override val produsent: String,
         override val sikkerhetsnivaa: Int,
         override val sistOppdatert: ZonedDateTime,
         @JsonIgnore val synligFremTil: ZonedDateTime?,

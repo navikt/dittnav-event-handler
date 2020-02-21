@@ -1,5 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.done
 
+import Beskjed
 import org.slf4j.LoggerFactory
 import java.time.Instant
 import no.nav.brukernotifikasjon.schemas.Done
@@ -14,11 +15,11 @@ object DoneProducer {
 
     private val log = LoggerFactory.getLogger(DoneProducer::class.java)
 
-    fun produceDoneEventForSuppliedEventId(fodselsnummer: String, eventId: String, produser: String, grupperingsId: String) {
-        val doneEvent = createDoneEvent(fodselsnummer, grupperingsId)
-        val doneKey = createKeyForEvent(eventId, produser)
+    fun produceDoneEventForSuppliedEventId(fodselsnummer: String, eventId: String, beskjed: Beskjed) {
+        val doneKey = createKeyForEvent(eventId, beskjed.produsent)
+        val doneEvent = createDoneEvent(fodselsnummer, beskjed.grupperingsId)
         produceDoneEvent(doneEvent, doneKey)
-        log.info("Har produsert et done-event for identen: $fodselsnummer sitt event med eventId: $eventId")
+        log.info("Har produsert et done-event for identen: $fodselsnummer, eventId: $eventId, produsent: ${beskjed.produsent}")
     }
 
     private fun produceDoneEvent(doneEvent : Done, doneKey: Nokkel) {

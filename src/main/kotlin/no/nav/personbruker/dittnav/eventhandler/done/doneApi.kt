@@ -22,12 +22,12 @@ fun Route.doneApi(doneEventService: DoneEventService) {
         respondForParameterType<Done> { doneDto ->
             try {
                 doneEventService.markEventAsDone(innloggetBruker, doneDto)
-                log.info("Done-event er produsert. EventID: ${doneDto.eventId}. Uid: ${doneDto.uid} ")
-                "Done-event er produsert. Identen: ${innloggetBruker.getIdent()}, EventID: ${doneDto.eventId}. Uid: ${doneDto.uid}"
+                val msg = "Done-event er produsert. EventID: ${doneDto.eventId}. Uid: ${doneDto.uid}"
+                log.info(msg)
+                msg
             } catch (e: NoEventsException) {
                 val msg = "Det ble ikke produsert et done-event fordi vi fant ikke eventet i cachen. EventId: ${doneDto.eventId}, Uid: ${doneDto.uid}"
                 log.error(msg, e)
-                "Done-event ble -ikke- produsert fordi vi fant ikke eventet. Identen: ${innloggetBruker.getIdent()} . EventID: ${doneDto.eventId}. Uid: ${doneDto.uid}"
                 msg
             } catch (e: DuplicateEventException) {
                 val msg ="Det ble ikke produsert done-event fordi det finnes duplikat av events. EventId: ${doneDto.eventId}, Uid: ${doneDto.uid}"

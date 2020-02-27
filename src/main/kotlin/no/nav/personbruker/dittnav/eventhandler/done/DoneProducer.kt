@@ -28,12 +28,19 @@ object DoneProducer {
         }
     }
 
-    private fun createDoneEvent(fodselsnummer: String, grupperingsId: String): Done {
+    fun createDoneEvent(fodselsnummer: String, grupperingsId: String): Done {
         val nowInMs = Instant.now().toEpochMilli()
         val build = Done.newBuilder()
                 .setFodselsnummer(fodselsnummer)
                 .setTidspunkt(nowInMs)
                 .setGrupperingsId(grupperingsId)
         return build.build()
+    }
+
+    fun createKeyForEvent(eventId: String, producer: String): Nokkel {
+        return Nokkel.newBuilder()
+                .setEventId(eventId)
+                .setSystembruker(producer)
+                .build()
     }
 }

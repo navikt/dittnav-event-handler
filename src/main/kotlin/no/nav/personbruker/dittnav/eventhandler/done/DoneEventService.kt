@@ -20,12 +20,11 @@ class DoneEventService(private val database: Database) {
         }
     }
 
-    private fun isEventBeskjedListValid(events: List<Beskjed>) {
+    fun isEventBeskjedListValid(events: List<Beskjed>) {
         if (events.isEmpty()) {
-          throw NoEventsException("Det ble ikke produsert et done-event fordi vi fant ikke eventet i cachen.")
-        }
-        if (events.size > 1) {
-            throw DuplicateEventException("Det ble ikke produsert done-event fordi det finnes duplikat av events. Produsent: ${events.first().produsent}, Str beskjed liste(skal være maks 1): ${events.size}")
+          throw NoEventsException("Listen(beskjed) var tom.")
+        } else if (events.size > 1) {
+            throw DuplicateEventException("Producer: ${events.first().produsent}, ListSize: ${events.size}")
         }
     }
 }

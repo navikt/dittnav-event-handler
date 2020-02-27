@@ -18,7 +18,7 @@ fun Route.doneApi(doneEventService: DoneEventService) {
 
     val log = LoggerFactory.getLogger(DoneEventService::class.java)
 
-    post("/handler/produce/done") {
+    post("/produce/done") {
         respondForParameterType<Done> { doneDto ->
             try {
                 doneEventService.markEventAsDone(innloggetBruker, doneDto)

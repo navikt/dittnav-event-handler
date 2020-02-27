@@ -19,7 +19,7 @@ object DoneProducer {
         val doneKey = createKeyForEvent(eventId, beskjed.produsent)
         val doneEvent = createDoneEvent(fodselsnummer, beskjed.grupperingsId)
         produceDoneEvent(doneEvent, doneKey)
-        log.info("Har produsert et done-event for identen: $fodselsnummer, eventId: $eventId, produsent: ${beskjed.produsent}")
+        log.info("Har produsert et done-event. EventId: $eventId, produsent: ${beskjed.produsent}")
     }
 
     private fun produceDoneEvent(doneEvent : Done, doneKey: Nokkel) {

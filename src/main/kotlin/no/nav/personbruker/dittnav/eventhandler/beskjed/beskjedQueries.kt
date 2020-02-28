@@ -29,7 +29,7 @@ fun Connection.getActiveBeskjedByFodselsnummer(bruker: InnloggetBruker): List<Be
 fun ResultSet.toBeskjed(): Beskjed {
     return Beskjed(
             id = getInt("id"),
-            uid = getNullableUid("uid"),
+            uid = getString("uid"),
             produsent = getString("produsent"),
             eventTidspunkt = ZonedDateTime.ofInstant(getTimestamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),
             fodselsnummer = getString("fodselsnummer"),
@@ -46,12 +46,4 @@ fun ResultSet.toBeskjed(): Beskjed {
 
 private fun ResultSet.getNullableZonedDateTime(label: String) : ZonedDateTime? {
     return getTimestamp(label)?.let { timestamp -> ZonedDateTime.ofInstant(timestamp.toInstant(), ZoneId.of("Europe/Oslo")) }
-}
-
-private fun ResultSet.getNullableUid(label: String): String {
-    if (getString(label).isNullOrBlank()) {
-        return "0"
-    } else {
-        return getString(label)
-    }
 }

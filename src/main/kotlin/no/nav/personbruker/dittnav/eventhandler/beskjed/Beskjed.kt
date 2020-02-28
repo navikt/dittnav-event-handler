@@ -4,7 +4,7 @@ import java.time.ZonedDateTime
 
 data class Beskjed(
         @JsonIgnore override val id: Int?,
-        val uid: String?,
+        val uid: String,
         override val aktiv: Boolean,
         override val fodselsnummer: String,
         override val grupperingsId: String,

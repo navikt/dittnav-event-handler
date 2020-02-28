@@ -17,6 +17,7 @@ class DoneEventServiceTest {
     private val doneEventService = DoneEventService(database)
     private val fodselsnummer = "12345"
     private val uid = "1"
+    private val eventId = "125"
 
     @Test
     fun `Kaster exception hvis listen er tom`() {
@@ -30,11 +31,11 @@ class DoneEventServiceTest {
 
     @Test
     fun `Kaster exception hvis det er duplikat i listen`() {
-        val beskjedList = listOf<Beskjed>(createBeskjed(1, "dummyEventId1", "dummmyFnr1", null, "dummyUid1"),
-                                                        createBeskjed(2, "dummyEventId1", "dummyFnr2", null, "dummyUid2"))
+        val beskjedListDuplicate = listOf<Beskjed>(createBeskjed(1, "dummyEventId1", "dummmyFnr1", null, "dummyUid1"),
+                                                                createBeskjed(1, "dummyEventId1", "dummyFnr1", null, "dummyUid1"))
         invoking {
             runBlocking {
-                doneEventService.isEventBeskjedListValid(beskjedList)
+                doneEventService.isEventBeskjedListValid(beskjedListDuplicate)
             }
         } `should throw` DuplicateEventException::class
     }
@@ -42,7 +43,7 @@ class DoneEventServiceTest {
     @Test
     fun `should find event that matches input parameter`() {
         runBlocking {
-            doneEventService.getBeskjedFromCacheForUser(fodselsnummer, uid, "125").size `should be equal to` 1
+            doneEventService.getBeskjedFromCacheForUser(fodselsnummer, uid, eventId).size `should be equal to` 1
         }
     }
 

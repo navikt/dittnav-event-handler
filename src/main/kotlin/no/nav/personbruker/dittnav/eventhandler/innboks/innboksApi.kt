@@ -9,8 +9,14 @@ import no.nav.personbruker.dittnav.eventhandler.common.innloggetBruker
 
 fun Route.innboksApi(innboksEventService: InnboksEventService) {
 
-    get("/fetch/innboks") {
-        innboksEventService.getCachedActiveEventsForUser(innloggetBruker).let { events->
+    get("/fetch/innboks/aktive") {
+        innboksEventService.getActiveCachedEventsForUser(innloggetBruker).let { events->
+            call.respond(HttpStatusCode.OK, events)
+        }
+    }
+
+    get("/fetch/innboks/inaktive") {
+        innboksEventService.getInctiveCachedEventsForUser(innloggetBruker).let { events->
             call.respond(HttpStatusCode.OK, events)
         }
     }

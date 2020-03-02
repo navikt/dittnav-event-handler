@@ -8,7 +8,7 @@ import java.sql.ResultSet
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-fun Connection.getAllBeskjedByFodselsnummer(bruker: InnloggetBruker): List<Beskjed> =
+fun Connection.getAllBeskjedForInnloggetBruker(bruker: InnloggetBruker): List<Beskjed> =
         prepareStatement("""SELECT * FROM BESKJED WHERE fodselsnummer = ?""")
                 .use {
                     it.setString(1, bruker.getIdent())
@@ -17,14 +17,29 @@ fun Connection.getAllBeskjedByFodselsnummer(bruker: InnloggetBruker): List<Beskj
                     }
                 }
 
-fun Connection.getActiveBeskjedByFodselsnummer(bruker: InnloggetBruker): List<Beskjed> =
-        prepareStatement("""SELECT * FROM BESKJED WHERE fodselsnummer = ? AND aktiv = true""")
+fun Connection.getInaktivBeskjedForInnloggetBruker(bruker: InnloggetBruker): List<Beskjed> =
+        getBeskjedForInnloggetBruker(bruker, false)
+
+fun Connection.getAktivBeskjedForInnloggetBruker(bruker: InnloggetBruker): List<Beskjed> =
+        prepareStatement("""SELECT * FROM BESKJED WHERE fodselsnummer = ? AND aktiv = ?""")
                 .use {
                     it.setString(1, bruker.getIdent())
+                    it.setBoolean(2, true)
                     it.executeQuery().map {
                         toBeskjed()
                     }
                 }
+
+private fun Connection.getBeskjedForInnloggetBruker(bruker: InnloggetBruker, aktiv: Boolean): List<Beskjed> {
+    return prepareStatement("""SELECT * FROM BESKJED WHERE fodselsnummer = ? AND aktiv = ?""")
+            .use {
+                it.setString(1, bruker.getIdent())
+                it.setBoolean(2, aktiv)
+                it.executeQuery().map {
+                    toBeskjed()
+                }
+            }
+}
 
 private fun ResultSet.toBeskjed(): Beskjed {
     return Beskjed(

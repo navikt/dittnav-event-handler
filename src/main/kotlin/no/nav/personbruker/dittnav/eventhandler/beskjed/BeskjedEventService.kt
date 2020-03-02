@@ -10,15 +10,22 @@ class BeskjedEventService(
         private val database: Database
 ) {
 
-    suspend fun getEventsFromCacheForUser(bruker: InnloggetBruker): List<Beskjed> {
+    suspend fun getActiveCachedEventsForUser(bruker: InnloggetBruker): List<Beskjed> {
         return database.dbQuery {
-            getActiveBeskjedByFodselsnummer(bruker)
+            getAktivBeskjedForInnloggetBruker(bruker)
         }.filter { beskjed -> !beskjed.isExpired() }
     }
 
-    suspend fun getAllEventsFromCacheForUser(bruker: InnloggetBruker): List<Beskjed> {
-        return database.dbQuery { getAllBeskjedByFodselsnummer(bruker) }
+    suspend fun getInactiveCachedEventsForUser(bruker: InnloggetBruker): List<Beskjed> {
+        val all = getAllEventsFromCacheForUser(bruker)
+        val inactive = all.filter { beskjed -> !beskjed.aktiv }
+        val expired = all.filter { beskjed -> beskjed.isExpired() }
+        return inactive + expired
     }
 
-    fun Beskjed.isExpired() : Boolean = synligFremTil?.isBefore(Instant.now().atZone(ZoneId.of("Europe/Oslo")))?: false
+    suspend fun getAllEventsFromCacheForUser(bruker: InnloggetBruker): List<Beskjed> {
+        return database.dbQuery { getAllBeskjedForInnloggetBruker(bruker) }
+    }
+
+    private fun Beskjed.isExpired() : Boolean = synligFremTil?.isBefore(Instant.now().atZone(ZoneId.of("Europe/Oslo")))?: false
 }

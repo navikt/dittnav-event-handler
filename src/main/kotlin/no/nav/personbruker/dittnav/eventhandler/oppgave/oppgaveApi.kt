@@ -9,16 +9,21 @@ import no.nav.personbruker.dittnav.eventhandler.common.innloggetBruker
 
 fun Route.oppgaveApi(oppgaveEventService: OppgaveEventService) {
 
-    get("/fetch/oppgave") {
-        oppgaveEventService.getEventsFromCacheForUser(innloggetBruker).let { events ->
+    get("/fetch/oppgave/aktive") {
+        oppgaveEventService.getActiveCachedEventsForUser(innloggetBruker).let { events ->
+            call.respond(HttpStatusCode.OK, events)
+        }
+    }
+
+    get("/fetch/oppgave/inaktive") {
+        oppgaveEventService.getInactiveCachedEventsForUser(innloggetBruker).let { events ->
             call.respond(HttpStatusCode.OK, events)
         }
     }
 
     get("/fetch/oppgave/all") {
-        oppgaveEventService.getAllEventsFromCacheForUser(innloggetBruker).let { events ->
+        oppgaveEventService.getAllCachedEventsForUser(innloggetBruker).let { events ->
             call.respond(HttpStatusCode.OK, events)
         }
     }
-
 }

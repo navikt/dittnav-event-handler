@@ -4,7 +4,7 @@ import Beskjed
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-fun createBeskjed(id: Int, eventId: String, fodselsnummer: String, synligFremTil: ZonedDateTime?): Beskjed {
+fun createBeskjed(id: Int, eventId: String, fodselsnummer: String, synligFremTil: ZonedDateTime?, aktiv: Boolean): Beskjed {
         return Beskjed(
                 id = id,
                 produsent = "DittNav",
@@ -17,5 +17,5 @@ fun createBeskjed(id: Int, eventId: String, fodselsnummer: String, synligFremTil
                 sistOppdatert = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
                 synligFremTil = synligFremTil,
                 sikkerhetsnivaa = 4,
-                aktiv = true)
+                aktiv = aktiv)
         }

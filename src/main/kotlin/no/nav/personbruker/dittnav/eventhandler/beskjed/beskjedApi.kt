@@ -9,8 +9,14 @@ import no.nav.personbruker.dittnav.eventhandler.common.innloggetBruker
 
 fun Route.beskjedApi(beskjedEventService: BeskjedEventService) {
 
-    get("/fetch/beskjed") {
-        beskjedEventService.getEventsFromCacheForUser(innloggetBruker).let { events ->
+    get("/fetch/beskjed/aktive") {
+        beskjedEventService.getActiveCachedEventsForUser(innloggetBruker).let { events ->
+            call.respond(HttpStatusCode.OK, events)
+        }
+    }
+
+    get("/fetch/beskjed/inaktive") {
+        beskjedEventService.getInactiveCachedEventsForUser(innloggetBruker).let { events ->
             call.respond(HttpStatusCode.OK, events)
         }
     }

@@ -15,14 +15,21 @@ class OppgaveQueriesTest {
     @Test
     fun `Finn alle cachede Oppgave-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getAllOppgaveByUser(bruker) }.size `should be equal to` 3
+            database.dbQuery { getAllOppgaveForInnloggetBruker(bruker) }.size `should be equal to` 3
         }
     }
 
     @Test
-    fun `Finn alle aktive cachede Oppgave-eventer for fodselsnummer`() {
+    fun `Finn kun aktive cachede Oppgave-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getActiveOppgaveByUser(bruker) }.size `should be equal to` 2
+            database.dbQuery { getAktivOppgaveForInnloggetBruker(bruker) }.size `should be equal to` 2
+        }
+    }
+
+    @Test
+    fun `Finn kun inaktive cachede Oppgave-eventer for fodselsnummer`() {
+        runBlocking {
+            database.dbQuery { getInaktivOppgaveForInnloggetBruker(bruker) }.size `should be equal to` 1
         }
     }
 
@@ -30,15 +37,15 @@ class OppgaveQueriesTest {
     fun `Returnerer tom liste hvis Oppgave-eventer for fodselsnummer ikke finnes`() {
         val brukerSomIkkeFinnes = InnloggetBrukerObjectMother.createInnloggetBrukerWithSubject("0")
         runBlocking {
-            database.dbQuery { getActiveOppgaveByUser(brukerSomIkkeFinnes) }.isEmpty()
+            database.dbQuery { getAktivOppgaveForInnloggetBruker(brukerSomIkkeFinnes) }.isEmpty()
         }
     }
 
     @Test
-    fun `Returnerer tom liste hvis Oppgave-eventer hvis tom fodselsnummer`() {
+    fun `Returnerer tom liste hvis fodselsnummer er tomt`() {
         val fodselsnummerMangler = InnloggetBrukerObjectMother.createInnloggetBrukerWithSubject("")
         runBlocking {
-            database.dbQuery { getActiveOppgaveByUser(fodselsnummerMangler) }.isEmpty()
+            database.dbQuery { getAktivOppgaveForInnloggetBruker(fodselsnummerMangler) }.isEmpty()
         }
     }
 }

@@ -3,6 +3,7 @@ package no.nav.personbruker.dittnav.eventhandler.innboks
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.api.common.InnloggetBrukerObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
+import org.amshove.kluent.`should be empty`
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 
@@ -14,26 +15,43 @@ class InnboksQueriesTest {
     private val bruker2 = InnloggetBrukerObjectMother.createInnloggetBrukerWithSubject("67890")
 
     @Test
-    fun `should find all active events for fodselsnummers`() {
+    fun `Finn alle cachede Innboks-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getActiveInnboksByUser(bruker1) }.size `should be equal to` 2
-            database.dbQuery { getActiveInnboksByUser(bruker2) }.size `should be equal to` 1
+            database.dbQuery { getAllInnboksForInnloggetBruker(bruker1) }.size `should be equal to` 2
+            database.dbQuery { getAllInnboksForInnloggetBruker(bruker2) }.size `should be equal to` 2
         }
     }
 
     @Test
-    fun `should find all events for fodselsnummers`() {
+    fun `Finn kun aktive cachede Innboks-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getAllInnboksByUser(bruker1) }.size `should be equal to` 2
-            database.dbQuery { getAllInnboksByUser(bruker2) }.size `should be equal to` 2
+            database.dbQuery { getAktivInnboksForInnloggetBruker(bruker1) }.size `should be equal to` 2
+            database.dbQuery { getAktivInnboksForInnloggetBruker(bruker2) }.size `should be equal to` 1
         }
     }
 
     @Test
-    fun `should return empty list if no events exists for fodselsnummer`() {
+    fun `Finn kun inaktive cachede Innboks-eventer for fodselsnummer`() {
+        runBlocking {
+            database.dbQuery { getInaktivInnboksForInnloggetBruker(bruker1) }.`should be empty`()
+            database.dbQuery { getInaktivInnboksForInnloggetBruker(bruker2) }.size `should be equal to` 1
+        }
+    }
+
+    @Test
+    fun `Returnerer tom liste hvis Innboks-eventer for fodselsnummer ikke finnes`() {
         val brukerUtenEventer = InnloggetBrukerObjectMother.createInnloggetBrukerWithSubject("0")
         runBlocking {
-            database.dbQuery { getAllInnboksByUser(brukerUtenEventer) }.size `should be equal to` 0
+            database.dbQuery { getAllInnboksForInnloggetBruker(brukerUtenEventer) }.size `should be equal to` 0
         }
     }
+
+    @Test
+    fun `Returnerer tom liste hvis fodselsnummer er tomt`() {
+        val brukerUtenEventer = InnloggetBrukerObjectMother.createInnloggetBrukerWithSubject("")
+        runBlocking {
+            database.dbQuery { getAllInnboksForInnloggetBruker(brukerUtenEventer) }.size `should be equal to` 0
+        }
+    }
+
 }

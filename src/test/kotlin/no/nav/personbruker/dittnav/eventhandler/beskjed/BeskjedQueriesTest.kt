@@ -15,14 +15,25 @@ class BeskjedQueriesTest {
     @Test
     fun `Finn alle cachede Beskjed-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getAllBeskjedByFodselsnummer(bruker) }.size `should be equal to` 3
+            database.dbQuery { getAllBeskjedForInnloggetBruker(bruker) }.size `should be equal to` 3
         }
     }
 
     @Test
-    fun `Finner kun aktive cachede Beskjed-eventer for fodselsnummer`() {
+    fun `Finn kun aktive cachede Beskjed-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getActiveBeskjedByFodselsnummer(bruker) }.size `should be equal to` 2
+            database.dbQuery { val aktivBeskjedByUser = getAktivBeskjedForInnloggetBruker(bruker)
+                aktivBeskjedByUser
+            }.size `should be equal to` 2
+        }
+    }
+
+    @Test
+    fun `Finn kun inaktive cachede Beskjed-eventer for fodselsnummer`() {
+        runBlocking {
+            database.dbQuery { val inaktivBeskjedByUser = getInaktivBeskjedForInnloggetBruker(bruker)
+                inaktivBeskjedByUser
+            }.size `should be equal to` 1
         }
     }
 
@@ -30,15 +41,15 @@ class BeskjedQueriesTest {
     fun `Returnerer tom liste hvis Beskjed-eventer for fodselsnummer ikke finnes`() {
         val brukerSomIkkeFinnes = InnloggetBrukerObjectMother.createInnloggetBrukerWithSubject("0")
         runBlocking {
-            database.dbQuery { getActiveBeskjedByFodselsnummer(brukerSomIkkeFinnes) }.`should be empty`()
+            database.dbQuery { getAktivBeskjedForInnloggetBruker(brukerSomIkkeFinnes) }.`should be empty`()
         }
     }
 
     @Test
-    fun `Returnerer tom liste hvis Beskjed-eventer hvis tom fodselsnummer`() {
+    fun `Returnerer tom liste hvis fodselsnummer er tomt`() {
         val fodselsnummerMangler = InnloggetBrukerObjectMother.createInnloggetBrukerWithSubject("")
         runBlocking {
-            database.dbQuery { getActiveBeskjedByFodselsnummer(fodselsnummerMangler) }.`should be empty`()
+            database.dbQuery { getAktivBeskjedForInnloggetBruker(fodselsnummerMangler) }.`should be empty`()
         }
     }
 }

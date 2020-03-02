@@ -18,7 +18,7 @@ class BeskjedEventServiceTest {
 
     @Test
     fun `Should not filter on expiry date when requesting all Beskjeds`() {
-
+        val beskjedList = getBeskjedList()
         runBlocking {
             coEvery {
                 database.dbQuery<List<Beskjed>>(any())
@@ -31,19 +31,35 @@ class BeskjedEventServiceTest {
 
     @Test
     fun `Should filter on expiry date when requesting active Beskjeds`() {
+        val beskjedList = getBeskjedList()
         runBlocking {
             coEvery {
                 database.dbQuery<List<Beskjed>>(any())
             }.returns(beskjedList)
 
-            val actualBeskjeds = beskjedEventService.getEventsFromCacheForUser(bruker)
+            val actualBeskjeds = beskjedEventService.getActiveCachedEventsForUser(bruker)
             actualBeskjeds.size `should be equal to` 1
         }
     }
 
-    val beskjedList
-        get() = listOf(
-                createBeskjed(1, "1", bruker.getIdent(), null),
-                createBeskjed(2, "2", bruker.getIdent(), ZonedDateTime.now().minusDays(2))
-        )
+    @Test
+    fun `Should return expired as inactive`() {
+        val beskjedList = getBeskjedList()
+        beskjedList.add(createBeskjed(3, "3", bruker.getIdent(), null, false))
+        beskjedList.add(createBeskjed(4, "4", bruker.getIdent(), ZonedDateTime.now().minusDays(1), true))
+        runBlocking {
+            coEvery {
+                database.dbQuery<List<Beskjed>>(any())
+            }.returns(beskjedList)
+
+            val actualBeskjeds = beskjedEventService.getInactiveCachedEventsForUser(bruker)
+            actualBeskjeds.size `should be equal to` 3
+        }
+    }
+
+    fun getBeskjedList(): MutableList<Beskjed> {
+        return mutableListOf(
+                createBeskjed(1, "1", bruker.getIdent(), null, true),
+                createBeskjed(2, "2", bruker.getIdent(), ZonedDateTime.now().minusDays(2), true))
+    }
 }

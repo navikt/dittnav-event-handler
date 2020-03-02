@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.api.common
+package no.nav.personbruker.dittnav.eventhandler.common
 
 import io.mockk.coEvery
 import kotlinx.coroutines.runBlocking

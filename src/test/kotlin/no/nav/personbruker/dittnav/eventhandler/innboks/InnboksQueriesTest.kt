@@ -1,7 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.innboks
 
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.api.common.InnloggetBrukerObjectMother
+import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBrukerObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test

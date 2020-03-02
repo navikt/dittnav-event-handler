@@ -4,7 +4,7 @@ import Beskjed
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.api.common.InnloggetBrukerObjectMother
+import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBrukerObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test

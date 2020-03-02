@@ -1,7 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.done
 
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.api.common.InnloggetBrukerObjectMother
+import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBrukerObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
 import org.amshove.kluent.`should be empty`
 import org.amshove.kluent.`should be equal to`

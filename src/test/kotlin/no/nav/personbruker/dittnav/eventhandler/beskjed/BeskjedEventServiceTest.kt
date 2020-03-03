@@ -43,7 +43,7 @@ class BeskjedEventServiceTest {
 
     val beskjedList
         get() = listOf(
-                createBeskjed(1, "1", bruker.getIdent(), null),
-                createBeskjed(2, "2", bruker.getIdent(), ZonedDateTime.now().minusDays(2))
+                createBeskjed(1, "1", bruker.getIdent(), null, "1"),
+                createBeskjed(2, "2", bruker.getIdent(), ZonedDateTime.now().minusDays(2), "2")
         )
 }

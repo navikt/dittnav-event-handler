@@ -15,6 +15,7 @@ val h2Version = "1.4.199"
 val jacksonVersion = "2.9.9"
 val kluentVersion = "1.52"
 val mockkVersion = "1.9.3"
+val brukernotifikasjonSchemaVersion = "1.2020.02.07-13.16-fa9d319688b1"
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin on the JVM.
@@ -62,6 +63,7 @@ dependencies {
     compile("io.ktor:ktor-jackson:$ktorVersion")
     compile("org.apache.kafka:kafka-clients:$kafkaVersion")
     compile("io.confluent:kafka-avro-serializer:$confluentVersion")
+    compile("no.nav:brukernotifikasjon-schemas:$brukernotifikasjonSchemaVersion")
     testCompile("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testCompile(kotlin("test-junit5"))
     testImplementation("no.nav:kafka-embedded-env:2.1.1")

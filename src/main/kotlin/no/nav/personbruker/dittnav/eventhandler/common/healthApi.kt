@@ -2,14 +2,16 @@ package no.nav.personbruker.dittnav.eventhandler.common
 
 import io.ktor.application.call
 import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
 import io.ktor.response.respondText
 import io.ktor.response.respondTextWriter
 import io.ktor.routing.Routing
 import io.ktor.routing.get
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
+import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 
-fun Routing.healthApi(collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry) {
+fun Routing.healthApi(database: Database, collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry) {
 
     val pingJsonResponse = """{"ping": "pong"}"""
 
@@ -18,7 +20,12 @@ fun Routing.healthApi(collectorRegistry: CollectorRegistry = CollectorRegistry.d
     }
 
     get("/isReady") {
-        call.respondText(text = "READY", contentType = ContentType.Text.Plain)
+        if (isDataSourceRunning(database)) {
+            call.respondText(text = "READY", contentType = ContentType.Text.Plain)
+
+        } else {
+            call.respondText(text = "NOTREADY", contentType = ContentType.Text.Plain, status = HttpStatusCode.FailedDependency)
+        }
     }
 
     get("/ping") {
@@ -32,4 +39,8 @@ fun Routing.healthApi(collectorRegistry: CollectorRegistry = CollectorRegistry.d
         }
     }
 
+}
+
+fun isDataSourceRunning(database: Database): Boolean {
+    return database.dataSource.isRunning
 }

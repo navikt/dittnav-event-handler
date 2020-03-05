@@ -57,7 +57,7 @@ class PostgresDatabase(env: Environment) : Database {
             config.jdbcUrl = env.dbUrl
             config.minimumIdle = 0
             config.maxLifetime = 30001
-            config.maximumPoolSize = 2
+            config.maximumPoolSize = 3
             config.connectionTimeout = 500
             config.validationTimeout = 250
             config.idleTimeout = 10001

@@ -2,6 +2,6 @@
   "namespace": "q1",
   "ingresses": [
     "https://dittnav-event-handler-q1.dev-sbs.nais.io",
-    "https://dittnav-event-handler.nais.oera-q.local"
+    "https://dittnav-event-handler-q1.nais.oera-q.local"
   ]
 }

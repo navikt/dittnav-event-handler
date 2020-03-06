@@ -7,7 +7,7 @@ import java.sql.ResultSet
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-fun Connection.getAllOppgaveByUser(bruker: InnloggetBruker): List<Oppgave> =
+fun Connection.getAllOppgaveForInnloggetBruker(bruker: InnloggetBruker): List<Oppgave> =
         prepareStatement("""SELECT * FROM OPPGAVE WHERE fodselsnummer = ?""")
                 .use {
                     it.setString(1, bruker.getIdent())
@@ -16,10 +16,17 @@ fun Connection.getAllOppgaveByUser(bruker: InnloggetBruker): List<Oppgave> =
                     }
                 }
 
-fun Connection.getActiveOppgaveByUser(bruker: InnloggetBruker): List<Oppgave> =
-        prepareStatement("""SELECT * FROM OPPGAVE WHERE fodselsnummer = ? AND aktiv = true""")
+fun Connection.getInaktivOppgaveForInnloggetBruker(bruker: InnloggetBruker): List<Oppgave> =
+        getOppgaveForInnloggetBruker(bruker, false)
+
+fun Connection.getAktivOppgaveForInnloggetBruker(bruker: InnloggetBruker): List<Oppgave> =
+        getOppgaveForInnloggetBruker(bruker, true)
+
+private fun Connection.getOppgaveForInnloggetBruker(bruker: InnloggetBruker, aktiv: Boolean): List<Oppgave> =
+        prepareStatement("""SELECT * FROM OPPGAVE WHERE fodselsnummer = ? AND aktiv = ?""")
                 .use {
                     it.setString(1, bruker.getIdent())
+                    it.setBoolean(2, aktiv)
                     it.executeQuery().map {
                         toOppgave()
                     }

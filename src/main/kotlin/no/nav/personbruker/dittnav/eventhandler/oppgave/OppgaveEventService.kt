@@ -7,12 +7,16 @@ class OppgaveEventService(
         private val database: Database
 ) {
 
-    suspend fun getEventsFromCacheForUser(bruker: InnloggetBruker): List<Oppgave> {
-        return database.dbQuery { getActiveOppgaveByUser(bruker) }
+    suspend fun getActiveCachedEventsForUser(bruker: InnloggetBruker): List<Oppgave> {
+        return database.dbQuery { getAktivOppgaveForInnloggetBruker(bruker) }
     }
 
-    suspend fun getAllEventsFromCacheForUser(bruker: InnloggetBruker): List<Oppgave> {
-        return database.dbQuery { getAllOppgaveByUser(bruker) }
+    suspend fun getInactiveCachedEventsForUser(bruker: InnloggetBruker): List<Oppgave> {
+        return database.dbQuery { getInaktivOppgaveForInnloggetBruker(bruker) }
+    }
+
+    suspend fun getAllCachedEventsForUser(bruker: InnloggetBruker): List<Oppgave> {
+        return database.dbQuery { getAllOppgaveForInnloggetBruker(bruker) }
     }
 
 }

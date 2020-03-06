@@ -1,0 +1,6 @@
+https://dittnav-event-handler-q1.dev-sbs.nais.io/fetch/oppgave
+https://dittnav-event-handler-q1.dev-sbs.nais.io/fetch/oppgave/all
+https://dittnav-event-handler-q1.dev-sbs.nais.io/fetch/beskjed
+https://dittnav-event-handler-q1.dev-sbs.nais.io/fetch/beskjed/all
+https://dittnav-event-handler-q1.dev-sbs.nais.io/fetch/innboks
+https://dittnav-event-handler-q1.dev-sbs.nais.io/fetch/innboks/all

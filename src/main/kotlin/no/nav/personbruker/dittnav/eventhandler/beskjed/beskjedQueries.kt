@@ -30,20 +30,10 @@ fun Connection.getAktivBeskjedForInnloggetBruker(bruker: InnloggetBruker): List<
                     }
                 }
 
-private fun Connection.getBeskjedForInnloggetBruker(bruker: InnloggetBruker, aktiv: Boolean): List<Beskjed> {
-    return prepareStatement("""SELECT * FROM BESKJED WHERE fodselsnummer = ? AND aktiv = ?""")
-            .use {
-                it.setString(1, bruker.getIdent())
-                it.setBoolean(2, aktiv)
-                it.executeQuery().map {
-                    toBeskjed()
-                }
-            }
-}
-
-private fun ResultSet.toBeskjed(): Beskjed {
+fun ResultSet.toBeskjed(): Beskjed {
     return Beskjed(
             id = getInt("id"),
+            uid = getString("uid"),
             produsent = getString("produsent"),
             eventTidspunkt = ZonedDateTime.ofInstant(getTimestamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),
             fodselsnummer = getString("fodselsnummer"),
@@ -56,6 +46,17 @@ private fun ResultSet.toBeskjed(): Beskjed {
             synligFremTil = getNullableZonedDateTime("synligFremTil"),
             aktiv = getBoolean("aktiv")
     )
+}
+
+private fun Connection.getBeskjedForInnloggetBruker(bruker: InnloggetBruker, aktiv: Boolean): List<Beskjed> {
+    return prepareStatement("""SELECT * FROM BESKJED WHERE fodselsnummer = ? AND aktiv = ?""")
+            .use {
+                it.setString(1, bruker.getIdent())
+                it.setBoolean(2, aktiv)
+                it.executeQuery().map {
+                    toBeskjed()
+                }
+            }
 }
 
 private fun ResultSet.getNullableZonedDateTime(label: String) : ZonedDateTime? {

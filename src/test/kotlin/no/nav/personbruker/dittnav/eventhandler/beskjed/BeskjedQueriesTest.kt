@@ -1,7 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.beskjed
 
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.api.common.InnloggetBrukerObjectMother
+import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBrukerObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
 import org.junit.jupiter.api.Test
 import org.amshove.kluent.*

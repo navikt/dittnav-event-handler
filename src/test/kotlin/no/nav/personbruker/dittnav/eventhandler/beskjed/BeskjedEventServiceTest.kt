@@ -4,7 +4,7 @@ import Beskjed
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.api.common.InnloggetBrukerObjectMother
+import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBrukerObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
@@ -45,8 +45,8 @@ class BeskjedEventServiceTest {
     @Test
     fun `Should return expired as inactive`() {
         val beskjedList = getBeskjedList()
-        beskjedList.add(createBeskjed(3, "3", bruker.getIdent(), null, false))
-        beskjedList.add(createBeskjed(4, "4", bruker.getIdent(), ZonedDateTime.now().minusDays(1), true))
+        beskjedList.add(createBeskjed(3, "3", bruker.getIdent(), null, "123", false))
+        beskjedList.add(createBeskjed(4, "4", bruker.getIdent(), ZonedDateTime.now().minusDays(1), "123", true))
         runBlocking {
             coEvery {
                 database.dbQuery<List<Beskjed>>(any())
@@ -59,7 +59,7 @@ class BeskjedEventServiceTest {
 
     fun getBeskjedList(): MutableList<Beskjed> {
         return mutableListOf(
-                createBeskjed(1, "1", bruker.getIdent(), null, true),
-                createBeskjed(2, "2", bruker.getIdent(), ZonedDateTime.now().minusDays(2), true))
+                createBeskjed(1, "1", bruker.getIdent(), null, "123", true),
+                createBeskjed(2, "2", bruker.getIdent(), ZonedDateTime.now().minusDays(2), "123", true))
     }
 }

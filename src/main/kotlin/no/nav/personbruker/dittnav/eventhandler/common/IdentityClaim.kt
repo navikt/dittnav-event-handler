@@ -2,7 +2,7 @@ package no.nav.personbruker.dittnav.eventhandler.common
 
 enum class IdentityClaim(val claimName : String) {
 
-    SUBECT("sub"),
+    SUBJECT("sub"),
     PID("pid");
 
     companion object {

@@ -14,7 +14,7 @@ class BeskjedEventServiceTest {
 
     private val database = mockk<Database>()
     private val beskjedEventService = BeskjedEventService(database)
-    private val bruker = InnloggetBrukerObjectMother.createInnloggetBrukerWithSubject("123")
+    private val bruker = InnloggetBrukerObjectMother.createInnloggetBruker("123")
 
     @Test
     fun `Should not filter on expiry date when requesting all Beskjeds`() {
@@ -45,8 +45,8 @@ class BeskjedEventServiceTest {
     @Test
     fun `Should return expired as inactive`() {
         val beskjedList = getBeskjedList()
-        beskjedList.add(createBeskjed(3, "3", bruker.getIdent(), null, "123", false))
-        beskjedList.add(createBeskjed(4, "4", bruker.getIdent(), ZonedDateTime.now().minusDays(1), "123", true))
+        beskjedList.add(createBeskjed(3, "3", bruker.ident, null, "123", false))
+        beskjedList.add(createBeskjed(4, "4", bruker.ident, ZonedDateTime.now().minusDays(1), "123", true))
         runBlocking {
             coEvery {
                 database.dbQuery<List<Beskjed>>(any())
@@ -59,7 +59,7 @@ class BeskjedEventServiceTest {
 
     fun getBeskjedList(): MutableList<Beskjed> {
         return mutableListOf(
-                createBeskjed(1, "1", bruker.getIdent(), null, "123", true),
-                createBeskjed(2, "2", bruker.getIdent(), ZonedDateTime.now().minusDays(2), "123", true))
+                createBeskjed(1, "1", bruker.ident, null, "123", true),
+                createBeskjed(2, "2", bruker.ident, ZonedDateTime.now().minusDays(2), "123", true))
     }
 }

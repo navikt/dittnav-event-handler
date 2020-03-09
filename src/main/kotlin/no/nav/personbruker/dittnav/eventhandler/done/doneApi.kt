@@ -10,7 +10,7 @@ import io.ktor.routing.post
 import io.ktor.util.pipeline.PipelineContext
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.DuplicateEventException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.NoEventsException
-import no.nav.personbruker.dittnav.eventhandler.common.innloggetBruker
+import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
 import org.slf4j.LoggerFactory
 
 fun Route.doneApi(doneEventService: DoneEventService) {

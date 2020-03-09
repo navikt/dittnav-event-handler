@@ -1,26 +1,32 @@
 package no.nav.personbruker.dittnav.eventhandler.common
 
-import io.mockk.every
-import io.mockk.mockk
-import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
+import io.jsonwebtoken.Jwts
+import io.jsonwebtoken.SignatureAlgorithm
+import io.jsonwebtoken.security.Keys
 import no.nav.security.token.support.core.jwt.JwtToken
+import java.security.Key
 
 object InnloggetBrukerObjectMother {
 
+    private val key: Key = Keys.secretKeyFor(SignatureAlgorithm.HS256)
+
     fun createInnloggetBruker(): InnloggetBruker {
-        val dummyJwtToken = mockk<JwtToken>()
-        val dummyTokenAsString = "dummyToken"
-        every { dummyJwtToken.tokenAsString } returns dummyTokenAsString
-        every { dummyJwtToken.jwtTokenClaims.getStringClaim("sub") } returns "12345"
-        return InnloggetBruker(dummyJwtToken)
+        val ident = "12345"
+        return createInnloggetBruker(ident)
     }
 
-    fun createInnloggetBrukerWithSubject(subject: String): InnloggetBruker {
-        val dummyJwtToken = mockk<JwtToken>()
-        val dummyTokenAsString = "dummyToken"
-        every { dummyJwtToken.tokenAsString } returns dummyTokenAsString
-        every { dummyJwtToken.jwtTokenClaims.getStringClaim("sub") } returns subject
-        return InnloggetBruker(dummyJwtToken)
+    fun createInnloggetBruker(ident: String): InnloggetBruker {
+        val innloggingsnivaa = 4
+        return createInnloggetBruker(ident, innloggingsnivaa)
+    }
+
+    fun createInnloggetBruker(ident: String, innloggingsnivaa : Int): InnloggetBruker {
+        val jws = Jwts.builder()
+                .setSubject(ident)
+                .addClaims(mutableMapOf(Pair("acr", "Level$innloggingsnivaa")) as Map<String, Any>?)
+                .signWith(key).compact()
+        val token = JwtToken(jws)
+        return InnloggetBruker(ident, innloggingsnivaa, token.tokenAsString)
     }
 
 }

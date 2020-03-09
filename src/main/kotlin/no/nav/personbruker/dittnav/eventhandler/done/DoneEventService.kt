@@ -9,9 +9,9 @@ import no.nav.personbruker.dittnav.eventhandler.common.exceptions.NoEventsExcept
 class DoneEventService(private val database: Database) {
 
     suspend fun markEventAsDone(innloggetBruker: InnloggetBruker, doneDto: Done) {
-        val eventBeskjedListe = getBeskjedFromCacheForUser(innloggetBruker.getIdent(), doneDto.uid, doneDto.eventId)
+        val eventBeskjedListe = getBeskjedFromCacheForUser(innloggetBruker.ident, doneDto.uid, doneDto.eventId)
         isEventBeskjedListValid(eventBeskjedListe)
-        DoneProducer.produceDoneEventForSuppliedEventId(innloggetBruker.getIdent(),doneDto.eventId, eventBeskjedListe.first())
+        DoneProducer.produceDoneEventForSuppliedEventId(innloggetBruker.ident, doneDto.eventId, eventBeskjedListe.first())
     }
 
     suspend fun getBeskjedFromCacheForUser(fodselsnummer: String, uid: String, eventId: String): List<Beskjed> {
@@ -22,7 +22,7 @@ class DoneEventService(private val database: Database) {
 
     fun isEventBeskjedListValid(events: List<Beskjed>) {
         if (events.isEmpty()) {
-          throw NoEventsException("Listen(beskjed) var tom.")
+            throw NoEventsException("Listen(beskjed) var tom.")
         } else if (events.size > 1) {
             throw DuplicateEventException("Producer: ${events.first().produsent}, ListSize: ${events.size}")
         }

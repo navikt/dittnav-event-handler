@@ -10,7 +10,7 @@ class BeskjedQueriesTest {
 
     private val database = H2Database()
 
-    private val bruker = InnloggetBrukerObjectMother.createInnloggetBrukerWithSubject("12345")
+    private val bruker = InnloggetBrukerObjectMother.createInnloggetBruker("12345")
 
     @Test
     fun `Finn alle cachede Beskjed-eventer for fodselsnummer`() {
@@ -39,7 +39,7 @@ class BeskjedQueriesTest {
 
     @Test
     fun `Returnerer tom liste hvis Beskjed-eventer for fodselsnummer ikke finnes`() {
-        val brukerSomIkkeFinnes = InnloggetBrukerObjectMother.createInnloggetBrukerWithSubject("0")
+        val brukerSomIkkeFinnes = InnloggetBrukerObjectMother.createInnloggetBruker("0")
         runBlocking {
             database.dbQuery { getAktivBeskjedForInnloggetBruker(brukerSomIkkeFinnes) }.`should be empty`()
         }
@@ -47,7 +47,7 @@ class BeskjedQueriesTest {
 
     @Test
     fun `Returnerer tom liste hvis fodselsnummer er tomt`() {
-        val fodselsnummerMangler = InnloggetBrukerObjectMother.createInnloggetBrukerWithSubject("")
+        val fodselsnummerMangler = InnloggetBrukerObjectMother.createInnloggetBruker("")
         runBlocking {
             database.dbQuery { getAktivBeskjedForInnloggetBruker(fodselsnummerMangler) }.`should be empty`()
         }

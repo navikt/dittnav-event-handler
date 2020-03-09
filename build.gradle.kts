@@ -43,6 +43,10 @@ repositories {
 
 
 dependencies {
+    compile("io.jsonwebtoken:jjwt-api:0.11.0")
+    runtime("io.jsonwebtoken:jjwt-impl:0.11.0")
+    runtime("io.jsonwebtoken:jjwt-jackson:0.11.0")
+    runtime("org.bouncycastle:bcprov-jdk15on:1.60")
     implementation(kotlin("stdlib-jdk8"))
     compile("no.nav.security:token-validation-ktor:1.1.0")
     compile("no.nav:vault-jdbc:$vaultJdbcVersion")

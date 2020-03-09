@@ -10,7 +10,7 @@ import java.time.ZonedDateTime
 fun Connection.getAllInnboksForInnloggetBruker(bruker: InnloggetBruker): List<Innboks> =
         prepareStatement("""SELECT * FROM INNBOKS WHERE fodselsnummer = ?""")
             .use {
-                it.setString(1, bruker.getIdent())
+                it.setString(1, bruker.ident)
                 it.executeQuery().map {
                     toInnboks()
                 }
@@ -25,7 +25,7 @@ fun Connection.getAktivInnboksForInnloggetBruker(bruker: InnloggetBruker): List<
 private fun Connection.getInnboksForInnloggetBruker(bruker: InnloggetBruker, aktiv: Boolean): List<Innboks> =
         prepareStatement("""SELECT * FROM INNBOKS WHERE fodselsnummer = ? AND aktiv = ?""")
             .use {
-                it.setString(1, bruker.getIdent())
+                it.setString(1, bruker.ident)
                 it.setBoolean(2, aktiv)
                 it.executeQuery().map {
                     toInnboks()

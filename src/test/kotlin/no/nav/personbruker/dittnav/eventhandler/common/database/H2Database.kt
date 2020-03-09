@@ -2,18 +2,17 @@ package no.nav.personbruker.dittnav.eventhandler.common.database
 
 import com.zaxxer.hikari.HikariDataSource
 import org.flywaydb.core.Flyway
-import javax.sql.DataSource
 
 class H2Database : Database {
 
-    private val memDataSource: DataSource
+    private val memDataSource: HikariDataSource
 
     init {
         memDataSource = createDataSource()
         flyway()
     }
 
-    override val dataSource: DataSource
+    override val dataSource: HikariDataSource
         get() = memDataSource
 
     private fun createDataSource(): HikariDataSource {

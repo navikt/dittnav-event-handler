@@ -45,7 +45,7 @@ fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()
     }
 
     routing {
-        healthApi()
+        healthApi(appContext.database)
         authenticate {
             oppgaveApi(appContext.oppgaveEventService)
             beskjedApi(appContext.beskjedEventService)

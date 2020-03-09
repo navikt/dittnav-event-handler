@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val prometheusVersion = "0.6.0"
-val ktorVersion = "1.3.0"
+val prometheusVersion = "0.8.1"
+val ktorVersion = "1.3.1"
 val junitVersion = "5.4.1"
 val kafkaVersion = "2.2.0"
 val confluentVersion = "5.2.0"
@@ -55,9 +55,11 @@ dependencies {
     compile("org.flywaydb:flyway-core:$flywayVersion")
     compile("ch.qos.logback:logback-classic:$logbackVersion")
     compile("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
-    compile("io.prometheus:simpleclient_common:$prometheusVersion")
+    compile("io.prometheus:simpleclient:$prometheusVersion")
     compile("io.prometheus:simpleclient_hotspot:$prometheusVersion")
+    compile("io.prometheus:simpleclient_common:$prometheusVersion")
     compile("io.prometheus:simpleclient_logback:$prometheusVersion")
+    compile("io.prometheus:simpleclient_httpserver:$prometheusVersion")
     compile("io.ktor:ktor-server-netty:$ktorVersion")
     compile("io.ktor:ktor-auth:$ktorVersion")
     compile("io.ktor:ktor-auth-jwt:$ktorVersion")

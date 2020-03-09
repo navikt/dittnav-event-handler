@@ -1,13 +1,13 @@
 package no.nav.personbruker.dittnav.eventhandler.common.database
 
+import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.sql.Connection
-import javax.sql.DataSource
 
 interface Database {
 
-    val dataSource: DataSource
+    val dataSource: HikariDataSource
 
     suspend fun <T> dbQuery(operationToExecute: Connection.() -> T): T = withContext(Dispatchers.IO) {
         dataSource.connection.use { openConnection ->

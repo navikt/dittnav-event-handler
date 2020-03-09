@@ -5,17 +5,16 @@ import com.zaxxer.hikari.HikariDataSource
 import no.nav.personbruker.dittnav.eventhandler.config.ConfigUtil
 import no.nav.personbruker.dittnav.eventhandler.config.Environment
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
-import javax.sql.DataSource
 
 class PostgresDatabase(env: Environment) : Database {
 
-    private val envDataSource: DataSource
+    private val envDataSource: HikariDataSource
 
     init {
         envDataSource = createCorrectConnectionForEnvironment(env)
     }
 
-    override val dataSource: DataSource
+    override val dataSource: HikariDataSource
         get() = envDataSource
 
 
@@ -57,8 +56,9 @@ class PostgresDatabase(env: Environment) : Database {
             config.jdbcUrl = env.dbUrl
             config.minimumIdle = 0
             config.maxLifetime = 30001
-            config.maximumPoolSize = 2
-            config.connectionTimeout = 250
+            config.maximumPoolSize = 3
+            config.connectionTimeout = 500
+            config.validationTimeout = 250
             config.idleTimeout = 10001
             config.isAutoCommit = false
             config.transactionIsolation = "TRANSACTION_REPEATABLE_READ"

@@ -5,7 +5,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.get
-import no.nav.personbruker.dittnav.eventhandler.common.innloggetBruker
+import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
 
 fun Route.innboksApi(innboksEventService: InnboksEventService) {
 

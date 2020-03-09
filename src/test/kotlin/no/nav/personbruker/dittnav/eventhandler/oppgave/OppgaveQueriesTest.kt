@@ -10,7 +10,7 @@ class OppgaveQueriesTest {
 
     private val database = H2Database()
 
-    private val bruker = InnloggetBrukerObjectMother.createInnloggetBrukerWithSubject("12345")
+    private val bruker = InnloggetBrukerObjectMother.createInnloggetBruker("12345")
 
     @Test
     fun `Finn alle cachede Oppgave-eventer for fodselsnummer`() {
@@ -35,7 +35,7 @@ class OppgaveQueriesTest {
 
     @Test
     fun `Returnerer tom liste hvis Oppgave-eventer for fodselsnummer ikke finnes`() {
-        val brukerSomIkkeFinnes = InnloggetBrukerObjectMother.createInnloggetBrukerWithSubject("0")
+        val brukerSomIkkeFinnes = InnloggetBrukerObjectMother.createInnloggetBruker("0")
         runBlocking {
             database.dbQuery { getAktivOppgaveForInnloggetBruker(brukerSomIkkeFinnes) }.isEmpty()
         }
@@ -43,7 +43,7 @@ class OppgaveQueriesTest {
 
     @Test
     fun `Returnerer tom liste hvis fodselsnummer er tomt`() {
-        val fodselsnummerMangler = InnloggetBrukerObjectMother.createInnloggetBrukerWithSubject("")
+        val fodselsnummerMangler = InnloggetBrukerObjectMother.createInnloggetBruker("")
         runBlocking {
             database.dbQuery { getAktivOppgaveForInnloggetBruker(fodselsnummerMangler) }.isEmpty()
         }

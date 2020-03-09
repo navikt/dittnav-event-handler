@@ -11,8 +11,8 @@ class InnboksQueriesTest {
 
     private val database = H2Database()
 
-    private val bruker1 = InnloggetBrukerObjectMother.createInnloggetBrukerWithSubject("12345")
-    private val bruker2 = InnloggetBrukerObjectMother.createInnloggetBrukerWithSubject("67890")
+    private val bruker1 = InnloggetBrukerObjectMother.createInnloggetBruker("12345")
+    private val bruker2 = InnloggetBrukerObjectMother.createInnloggetBruker("67890")
 
     @Test
     fun `Finn alle cachede Innboks-eventer for fodselsnummer`() {
@@ -40,7 +40,7 @@ class InnboksQueriesTest {
 
     @Test
     fun `Returnerer tom liste hvis Innboks-eventer for fodselsnummer ikke finnes`() {
-        val brukerUtenEventer = InnloggetBrukerObjectMother.createInnloggetBrukerWithSubject("0")
+        val brukerUtenEventer = InnloggetBrukerObjectMother.createInnloggetBruker("0")
         runBlocking {
             database.dbQuery { getAllInnboksForInnloggetBruker(brukerUtenEventer) }.size `should be equal to` 0
         }
@@ -48,7 +48,7 @@ class InnboksQueriesTest {
 
     @Test
     fun `Returnerer tom liste hvis fodselsnummer er tomt`() {
-        val brukerUtenEventer = InnloggetBrukerObjectMother.createInnloggetBrukerWithSubject("")
+        val brukerUtenEventer = InnloggetBrukerObjectMother.createInnloggetBruker("")
         runBlocking {
             database.dbQuery { getAllInnboksForInnloggetBruker(brukerUtenEventer) }.size `should be equal to` 0
         }

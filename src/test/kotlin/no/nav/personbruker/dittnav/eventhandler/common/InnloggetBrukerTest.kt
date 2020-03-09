@@ -1,50 +1,43 @@
 package no.nav.personbruker.dittnav.eventhandler.common
 
-import io.mockk.coEvery
-import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should contain`
+import org.amshove.kluent.`should not contain`
+import org.amshove.kluent.shouldNotBeNullOrBlank
 import org.junit.jupiter.api.Test
 
 internal class InnloggetBrukerTest {
 
-    val innloggetBruker = InnloggetBrukerObjectMother.createInnloggetBruker()
-
     @Test
-    fun `should return string with ident from pid token claim`() {
+    fun `should return expected values`() {
         val expectedIdent = "12345"
-        val subClaimThatIsNotAnIdent ="6b06bb69-4c9c-46cd-9c5b-dda8fd5ee1be"
+        val expectedInnloggingsnivaa = 4
 
-        coEvery { innloggetBruker.token.jwtTokenClaims.getStringClaim("sub")} returns subClaimThatIsNotAnIdent
-        coEvery { innloggetBruker.token.jwtTokenClaims.getStringClaim("pid")} returns expectedIdent
+        val innloggetbruker = InnloggetBrukerObjectMother.createInnloggetBruker(expectedIdent, expectedInnloggingsnivaa)
 
-        runBlocking {
-            val actualIdent = innloggetBruker.getIdent()
-            actualIdent `should be equal to` expectedIdent
-        }
+        innloggetbruker.ident `should be equal to` expectedIdent
+        innloggetbruker.innloggingsnivaa `should be equal to` expectedInnloggingsnivaa
+        innloggetbruker.token.shouldNotBeNullOrBlank()
     }
 
     @Test
-    fun `should return string with ident from sub token claim, valid length`() {
-        val expectedIdent = "12345678901"
+    fun `should create authentication header`() {
+        val innloggetBruker = InnloggetBrukerObjectMother.createInnloggetBruker()
 
-        coEvery { innloggetBruker.token.jwtTokenClaims.getStringClaim("sub")} returns expectedIdent
+        val generatedAuthHeader = innloggetBruker.createAuthenticationHeader()
 
-        runBlocking {
-            val actualIdent = innloggetBruker.getIdent()
-            actualIdent `should be equal to` expectedIdent
-        }
+        generatedAuthHeader `should be equal to` "Bearer ${innloggetBruker.token}"
     }
 
     @Test
-    fun `should return string with ident from sub token claim, minimal length`() {
-        val expectedIdent = "1"
+    fun `should not include sensitive values in the output for the toString method`() {
+        val innloggetBruker = InnloggetBrukerObjectMother.createInnloggetBruker()
 
-        coEvery { innloggetBruker.token.jwtTokenClaims.getStringClaim("sub")} returns expectedIdent
+        val outputOfToString = innloggetBruker.toString()
 
-        runBlocking {
-            val actualIdent = innloggetBruker.getIdent()
-            actualIdent `should be equal to` expectedIdent
-        }
+        outputOfToString `should contain`(innloggetBruker.innloggingsnivaa.toString())
+        outputOfToString `should not contain`(innloggetBruker.ident)
+        outputOfToString `should not contain`(innloggetBruker.token)
     }
 
 }

@@ -7,7 +7,7 @@ import no.nav.security.token.support.ktor.OIDCValidationContextPrincipal
 object InnloggetBrukerFactory {
 
     private val IDENT_CLAIM: IdentityClaim
-    private val defaultClaim = IdentityClaim.SUBECT
+    private val defaultClaim = IdentityClaim.SUBJECT
     private val oidcIdentityClaimName = "OIDC_CLAIM_CONTAINING_THE_IDENTITY"
 
     init {

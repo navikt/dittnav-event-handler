@@ -11,8 +11,8 @@ internal class IdentityClaimTest {
     fun `should convert valid strings to enum`() {
         IdentityClaim.fromClaimName("pid") `should equal` IdentityClaim.PID
         IdentityClaim.fromClaimName("PID") `should equal` IdentityClaim.PID
-        IdentityClaim.fromClaimName("sub") `should equal` IdentityClaim.SUBECT
-        IdentityClaim.fromClaimName("SUB") `should equal` IdentityClaim.SUBECT
+        IdentityClaim.fromClaimName("sub") `should equal` IdentityClaim.SUBJECT
+        IdentityClaim.fromClaimName("SUB") `should equal` IdentityClaim.SUBJECT
     }
 
     @Test

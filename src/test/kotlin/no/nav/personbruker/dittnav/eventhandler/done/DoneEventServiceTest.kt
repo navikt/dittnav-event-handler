@@ -31,8 +31,8 @@ class DoneEventServiceTest {
 
     @Test
     fun `Kaster exception hvis det er duplikat i listen`() {
-        val beskjedListDuplicate = listOf<Beskjed>(createBeskjed(1, "dummyEventId1", "dummmyFnr1", null, "dummyUid1"),
-                                                                createBeskjed(1, "dummyEventId1", "dummyFnr1", null, "dummyUid1"))
+        val beskjedListDuplicate = listOf<Beskjed>(createBeskjed(1, "dummyEventId1", "dummmyFnr1", null, "dummyUid1", true),
+                                                                createBeskjed(1, "dummyEventId1", "dummyFnr1", null, "dummyUid1", true))
         invoking {
             runBlocking {
                 doneEventService.isEventBeskjedListValid(beskjedListDuplicate)

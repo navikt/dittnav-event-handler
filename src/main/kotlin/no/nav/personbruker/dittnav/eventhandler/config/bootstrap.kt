@@ -2,10 +2,7 @@ package no.nav.personbruker.dittnav.eventhandler.config
 
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import io.ktor.application.Application
-import io.ktor.application.ApplicationCall
-import io.ktor.application.call
-import io.ktor.application.install
+import io.ktor.application.*
 import io.ktor.auth.Authentication
 import io.ktor.auth.authenticate
 import io.ktor.auth.authentication
@@ -54,6 +51,17 @@ fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()
         }
     }
 
+    configureShutdownHook(appContext)
+}
+
+private fun Application.configureShutdownHook(appContext: ApplicationContext) {
+    environment.monitor.subscribe(ApplicationStopPreparing) {
+        closeTheDatabaseConectionPool(appContext)
+    }
+}
+
+private fun closeTheDatabaseConectionPool(appContext: ApplicationContext) {
+    appContext.database.dataSource.close()
 }
 
 val PipelineContext<Unit, ApplicationCall>.innloggetBruker: InnloggetBruker

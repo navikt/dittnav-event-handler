@@ -15,6 +15,10 @@ val h2Version = "1.4.199"
 val jacksonVersion = "2.9.9"
 val kluentVersion = "1.52"
 val mockkVersion = "1.9.3"
+val jjwtVersion = "0.11.0"
+val bcproVersion = "1.64"
+val kafkaEmbeddedEnv = "2.1.1"
+val navTokenValidator = "1.1.0"
 val brukernotifikasjonSchemaVersion = "1.2020.02.07-13.16-fa9d319688b1"
 
 plugins {
@@ -41,14 +45,9 @@ repositories {
     mavenLocal()
 }
 
-
 dependencies {
-    compile("io.jsonwebtoken:jjwt-api:0.11.0")
-    runtime("io.jsonwebtoken:jjwt-impl:0.11.0")
-    runtime("io.jsonwebtoken:jjwt-jackson:0.11.0")
-    runtime("org.bouncycastle:bcprov-jdk15on:1.60")
     implementation(kotlin("stdlib-jdk8"))
-    compile("no.nav.security:token-validation-ktor:1.1.0")
+    compile("no.nav.security:token-validation-ktor:$navTokenValidator")
     compile("no.nav:vault-jdbc:$vaultJdbcVersion")
     compile("com.zaxxer:HikariCP:$hikariCPVersion")
     compile("org.postgresql:postgresql:$postgresVersion")
@@ -60,17 +59,17 @@ dependencies {
     compile("io.prometheus:simpleclient_common:$prometheusVersion")
     compile("io.prometheus:simpleclient_logback:$prometheusVersion")
     compile("io.prometheus:simpleclient_httpserver:$prometheusVersion")
-    compile("io.ktor:ktor-server-netty:$ktorVersion")
     compile("io.ktor:ktor-auth:$ktorVersion")
     compile("io.ktor:ktor-auth-jwt:$ktorVersion")
-    compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
     compile("io.ktor:ktor-jackson:$ktorVersion")
+    compile("io.ktor:ktor-server-netty:$ktorVersion")
+    compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
     compile("org.apache.kafka:kafka-clients:$kafkaVersion")
     compile("io.confluent:kafka-avro-serializer:$confluentVersion")
     compile("no.nav:brukernotifikasjon-schemas:$brukernotifikasjonSchemaVersion")
     testCompile("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testCompile(kotlin("test-junit5"))
-    testImplementation("no.nav:kafka-embedded-env:2.1.1")
+    testImplementation("no.nav:kafka-embedded-env:$kafkaEmbeddedEnv")
     testImplementation("org.apache.kafka:kafka_2.12:$kafkaVersion")
     testImplementation("org.apache.kafka:kafka-streams:$kafkaVersion")
     testImplementation("io.confluent:kafka-schema-registry:$confluentVersion")
@@ -78,6 +77,10 @@ dependencies {
     testImplementation("org.amshove.kluent:kluent:$kluentVersion")
     testImplementation("io.mockk:mockk:$mockkVersion")
     testRuntime("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
+    testCompile("io.jsonwebtoken:jjwt-api:$jjwtVersion")
+    testRuntime("io.jsonwebtoken:jjwt-impl:$jjwtVersion")
+    testRuntime("io.jsonwebtoken:jjwt-jackson:$jjwtVersion")
+    testRuntime("org.bouncycastle:bcprov-jdk15on:$bcproVersion")
 }
 
 application {

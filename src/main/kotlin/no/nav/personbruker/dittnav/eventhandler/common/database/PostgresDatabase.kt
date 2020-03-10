@@ -57,10 +57,11 @@ class PostgresDatabase(env: Environment) : Database {
             config.minimumIdle = 0
             config.maxLifetime = 30001
             config.maximumPoolSize = 3
-            config.connectionTimeout = 500
+            config.connectionTimeout = 1000
             config.validationTimeout = 250
             config.idleTimeout = 10001
             config.isAutoCommit = false
+            config.isReadOnly = true
             config.transactionIsolation = "TRANSACTION_REPEATABLE_READ"
             return config
         }

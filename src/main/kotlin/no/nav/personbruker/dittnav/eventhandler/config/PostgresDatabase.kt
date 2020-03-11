@@ -1,9 +1,8 @@
-package no.nav.personbruker.dittnav.eventhandler.common.database
+package no.nav.personbruker.dittnav.eventhandler.config
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import no.nav.personbruker.dittnav.eventhandler.config.ConfigUtil
-import no.nav.personbruker.dittnav.eventhandler.config.Environment
+import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
 
 class PostgresDatabase(env: Environment) : Database {
@@ -36,16 +35,17 @@ class PostgresDatabase(env: Environment) : Database {
     companion object {
 
         fun hikariFromLocalDb(env: Environment, dbUser: String): HikariDataSource {
+            val dbPassword: String = getEnvVar("DB_PASSWORD")
             val config = hikariCommonConfig(env).apply {
                 username = dbUser
-                password = env.dbPassword
+                password = dbPassword
                 validate()
             }
             return HikariDataSource(config)
         }
 
         fun hikariDatasourceViaVault(env: Environment, dbUser: String): HikariDataSource {
-            var config = hikariCommonConfig(env)
+            val config = hikariCommonConfig(env)
             config.validate()
             return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(config, env.dbMountPath, dbUser)
         }

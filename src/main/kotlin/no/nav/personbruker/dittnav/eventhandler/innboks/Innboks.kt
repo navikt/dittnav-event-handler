@@ -1,19 +1,33 @@
 package no.nav.personbruker.dittnav.eventhandler.innboks
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import no.nav.personbruker.dittnav.eventhandler.common.database.Brukernotifikasjon
 import java.time.ZonedDateTime
 
 data class Innboks (
-        @JsonIgnore override val id: Int,
-        @JsonIgnore override val produsent: String,
-        override val eventTidspunkt: ZonedDateTime,
-        override val fodselsnummer: String,
-        override val eventId: String,
-        override val grupperingsId: String,
-        override val tekst: String,
-        override val link: String,
-        override val sikkerhetsnivaa: Int,
-        override val sistOppdatert: ZonedDateTime,
-        override val aktiv: Boolean
-) : Brukernotifikasjon
+        @JsonIgnore val id: Int,
+        @JsonIgnore val produsent: String,
+        val eventTidspunkt: ZonedDateTime,
+        val fodselsnummer: String,
+        val eventId: String,
+        val grupperingsId: String,
+        val tekst: String,
+        val link: String,
+        val sikkerhetsnivaa: Int,
+        val sistOppdatert: ZonedDateTime,
+        val aktiv: Boolean
+) {
+    override fun toString(): String {
+        return "Innboks(" +
+                "id=$id, " +
+                "produsent=$produsent, " +
+                "eventTidspunkt=$eventTidspunkt, " +
+                "fodselsnummer=***, " +
+                "eventId=$eventId, " +
+                "grupperingsId=$grupperingsId, " +
+                "tekst=***, " +
+                "link=***, " +
+                "sikkerhetsnivaa=$sikkerhetsnivaa, " +
+                "sistOppdatert=$sistOppdatert, " +
+                "aktiv=$aktiv"
+    }
+}

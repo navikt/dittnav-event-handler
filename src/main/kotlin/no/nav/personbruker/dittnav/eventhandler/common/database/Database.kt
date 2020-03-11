@@ -3,6 +3,7 @@ package no.nav.personbruker.dittnav.eventhandler.common.database
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import no.nav.personbruker.dittnav.eventhandler.common.exceptions.EventCacheException
 import java.sql.Connection
 
 interface Database {
@@ -22,7 +23,7 @@ interface Database {
                 } catch (rollbackException: Exception) {
                     e.addSuppressed(rollbackException)
                 }
-                throw e
+                throw EventCacheException("En feil oppstod ved henting av eventer fra event-cache", e)
             }
         }
     }

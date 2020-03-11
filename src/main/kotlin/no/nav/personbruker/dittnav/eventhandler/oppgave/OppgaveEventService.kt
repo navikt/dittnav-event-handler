@@ -18,5 +18,4 @@ class OppgaveEventService(
     suspend fun getAllCachedEventsForUser(bruker: InnloggetBruker): List<Oppgave> {
         return database.dbQuery { getAllOppgaveForInnloggetBruker(bruker) }
     }
-
 }

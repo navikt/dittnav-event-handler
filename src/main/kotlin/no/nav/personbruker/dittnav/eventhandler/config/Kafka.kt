@@ -8,7 +8,6 @@ import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.config.SaslConfigs
 import org.apache.kafka.common.config.SslConfigs
-import org.apache.kafka.common.serialization.StringSerializer
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.net.InetSocketAddress
@@ -16,10 +15,7 @@ import java.util.*
 
 object Kafka {
 
-    // Har midlertidig lag på et -testing postfix på topic-navene, slik at vi ikke ved et uhell kludrer til de reelle topic-ene.
-    val doneTopicName = "aapen-brukernotifikasjon-done-v1-testing"
-    val beskjedTopicName = "aapen-brukernotifikasjon-nyBeskjed-v1-testing"
-    val oppgaveTopicName = "aapen-brukernotifikasjon-nyOppgave-v1-testing"
+    val doneTopicName = "aapen-brukernotifikasjon-done-v1"
 
     private fun credentialProps(env: Environment): Properties {
         return Properties().apply {

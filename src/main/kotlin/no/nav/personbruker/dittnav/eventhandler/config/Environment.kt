@@ -13,7 +13,8 @@ data class Environment(val bootstrapServers: String = getEnvVar("KAFKA_BOOTSTRAP
                        val dbReadOnlyUser: String = getEnvVar("DB_NAME", "test") + "-readonly",
                        val dbUrl: String = "jdbc:postgresql://$dbHost/$dbName",
                        val dbPassword: String = getEnvVar("DB_PASSWORD", "testpassword"),
-                       val dbMountPath: String = getEnvVar("DB_MOUNT_PATH", "notUsedOnLocalhost")
+                       val dbMountPath: String = getEnvVar("DB_MOUNT_PATH", "notUsedOnLocalhost"),
+                       val dittnavApiURL: URL = URL(getEnvVar("DITTNAV_API_URL").trimEnd('/'))
 )
 
 fun getEnvVar(varName: String, defaultValue: String? = null): String {

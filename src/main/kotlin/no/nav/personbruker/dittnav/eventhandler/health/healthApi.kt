@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventhandler.common
+package no.nav.personbruker.dittnav.eventhandler.health
 
 import io.ktor.application.call
 import io.ktor.http.ContentType
@@ -10,16 +10,17 @@ import io.ktor.routing.get
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
+import no.nav.personbruker.dittnav.eventhandler.config.Environment
 
-fun Routing.healthApi(database: Database, collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry) {
+fun Routing.healthApi(environment: Environment, database: Database, collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry) {
 
     val pingJsonResponse = """{"ping": "pong"}"""
 
-    get("/isAlive") {
+    get("/internal/isAlive") {
         call.respondText(text = "ALIVE", contentType = ContentType.Text.Plain)
     }
 
-    get("/isReady") {
+    get("/internal/isReady") {
         if (isDataSourceRunning(database)) {
             call.respondText(text = "READY", contentType = ContentType.Text.Plain)
 
@@ -28,8 +29,12 @@ fun Routing.healthApi(database: Database, collectorRegistry: CollectorRegistry =
         }
     }
 
-    get("/ping") {
+    get("/internal/ping") {
         call.respondText(pingJsonResponse, ContentType.Application.Json)
+    }
+
+    get("/internal/selftest") {
+        call.pingDependencies(environment, database)
     }
 
     get("/metrics") {

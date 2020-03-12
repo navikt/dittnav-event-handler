@@ -16,7 +16,7 @@ import io.prometheus.client.hotspot.DefaultExports
 import no.nav.personbruker.dittnav.eventhandler.beskjed.beskjedApi
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBrukerFactory
-import no.nav.personbruker.dittnav.eventhandler.common.healthApi
+import no.nav.personbruker.dittnav.eventhandler.health.healthApi
 import no.nav.personbruker.dittnav.eventhandler.done.doneApi
 import no.nav.personbruker.dittnav.eventhandler.innboks.innboksApi
 import no.nav.personbruker.dittnav.eventhandler.oppgave.oppgaveApi
@@ -24,6 +24,7 @@ import no.nav.security.token.support.ktor.tokenValidationSupport
 
 @KtorExperimentalAPI
 fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()) {
+    val environment = Environment()
     DefaultExports.initialize()
     install(DefaultHeaders)
 
@@ -42,7 +43,7 @@ fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()
     }
 
     routing {
-        healthApi(appContext.database)
+        healthApi(environment, appContext.database)
         authenticate {
             oppgaveApi(appContext.oppgaveEventService)
             beskjedApi(appContext.beskjedEventService)

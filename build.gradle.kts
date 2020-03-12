@@ -67,6 +67,11 @@ dependencies {
     compile("org.apache.kafka:kafka-clients:$kafkaVersion")
     compile("io.confluent:kafka-avro-serializer:$confluentVersion")
     compile("no.nav:brukernotifikasjon-schemas:$brukernotifikasjonSchemaVersion")
+    compile("io.ktor:ktor-html-builder:$ktorVersion")
+    compile("io.ktor:ktor-client-apache:$ktorVersion")
+    compile("io.ktor:ktor-client-json:$ktorVersion")
+    compile("io.ktor:ktor-client-serialization-jvm:$ktorVersion")
+    compile("io.ktor:ktor-client-jackson:$ktorVersion")
     testCompile("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testCompile(kotlin("test-junit5"))
     testImplementation("no.nav:kafka-embedded-env:$kafkaEmbeddedEnv")
@@ -118,6 +123,7 @@ tasks {
         environment("DB_NAME", "dittnav-event-cache-preprod")
         environment("DB_PASSWORD", "testpassword")
         environment("DB_MOUNT_PATH", "notUsedOnLocalhost")
+        environment("DITTNAV_API_URL", "http://localhost:8091/person/dittnav-api")
 
         main = application.mainClassName
         classpath = sourceSets["main"].runtimeClasspath

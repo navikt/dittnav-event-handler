@@ -1,5 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.config
 
+import java.net.URL
+
 data class Environment(val bootstrapServers: String = getEnvVar("KAFKA_BOOTSTRAP_SERVERS"),
                        val schemaRegistryUrl: String = getEnvVar("KAFKA_SCHEMAREGISTRY_SERVERS"),
                        val username: String = getEnvVar("FSS_SYSTEMUSER_USERNAME"),
@@ -10,7 +12,8 @@ data class Environment(val bootstrapServers: String = getEnvVar("KAFKA_BOOTSTRAP
                        val dbUser: String = getEnvVar("DB_NAME") + "-user",
                        val dbReadOnlyUser: String = getEnvVar("DB_NAME") + "-readonly",
                        val dbUrl: String = "jdbc:postgresql://$dbHost/$dbName",
-                       val dbMountPath: String = getEnvVar("DB_MOUNT_PATH")
+                       val dbMountPath: String = getEnvVar("DB_MOUNT_PATH"),
+                       val dittnavApiURL: URL = URL(getEnvVar("DITTNAV_API_URL"))
 )
 
 fun getEnvVar(varName: String): String {

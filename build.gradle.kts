@@ -108,6 +108,22 @@ tasks {
     }
 
     register("runServer", JavaExec::class) {
+        environment("OIDC_ISSUER", "http://localhost:9000")
+        environment("OIDC_DISCOVERY_URL", "http://localhost:9000/.well-known/openid-configuration")
+        environment("OIDC_ACCEPTED_AUDIENCE", "stubOidcClient")
+        environment("OIDC_CLAIM_CONTAINING_THE_IDENTITY", "pid")
+
+        environment("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
+        environment("KAFKA_SCHEMAREGISTRY_SERVERS", "http://localhost:8081")
+        environment("FSS_SYSTEMUSER_USERNAME", "username")
+        environment("FSS_SYSTEMUSER_PASSWORD", "password")
+        environment("GROUP_ID", "dittnav_events")
+
+        environment("DB_HOST", "localhost:5432")
+        environment("DB_NAME", "dittnav-event-cache-preprod")
+        environment("DB_PASSWORD", "testpassword")
+        environment("DB_MOUNT_PATH", "notUsedOnLocalhost")
+
         main = application.mainClassName
         classpath = sourceSets["main"].runtimeClasspath
     }

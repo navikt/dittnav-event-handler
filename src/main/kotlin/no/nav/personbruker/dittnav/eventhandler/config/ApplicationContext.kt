@@ -1,8 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.config
 
-import no.nav.personbruker.dittnav.eventhandler.common.database.Database
-import no.nav.personbruker.dittnav.eventhandler.common.database.PostgresDatabase
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService
+import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.done.DoneEventService
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksEventService
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveEventService

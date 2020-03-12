@@ -27,6 +27,11 @@ spec:
 {{/each}}
   vault:
     enabled: true
+    paths:
+      - kvPath: /kv/{{cluster}}/sbs/dittnav-event-handler/{{namespace}}
+        mountPath: /var/run/secrets/nais.io/vault
+      - kvPath: /serviceuser/data/{{environment}}/srvdn-e-handler
+        mountPath: /secret/serviceuser
   resources:
     limits:
       cpu: "1"

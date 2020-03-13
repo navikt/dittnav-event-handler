@@ -5,13 +5,19 @@ import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.DuplicateEventException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.NoEventsException
+import no.nav.personbruker.dittnav.eventhandler.config.isOtherEnvironmentThanProd
 
 class DoneEventService(private val database: Database) {
 
     suspend fun markEventAsDone(innloggetBruker: InnloggetBruker, doneDto: Done) {
-        val eventBeskjedListe = getBeskjedFromCacheForUser(innloggetBruker.ident, doneDto.uid, doneDto.eventId)
-        isEventBeskjedListValid(eventBeskjedListe)
-        DoneProducer.produceDoneEventForSuppliedEventId(innloggetBruker.ident, doneDto.eventId, eventBeskjedListe.first())
+        if(isOtherEnvironmentThanProd()) {
+            val eventBeskjedListe = getBeskjedFromCacheForUser(innloggetBruker.ident, doneDto.uid, doneDto.eventId)
+            isEventBeskjedListValid(eventBeskjedListe)
+            DoneProducer.produceDoneEventForSuppliedEventId(innloggetBruker.ident, doneDto.eventId, eventBeskjedListe.first())
+        } else {
+            throw Exception("Funksjonaliteten er ikke tilgjengelig i dette miljøet.")
+        }
+
     }
 
     suspend fun getBeskjedFromCacheForUser(fodselsnummer: String, uid: String, eventId: String): List<Beskjed> {

@@ -24,7 +24,6 @@ import no.nav.security.token.support.ktor.tokenValidationSupport
 
 @KtorExperimentalAPI
 fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()) {
-    val environment = Environment()
     DefaultExports.initialize()
     install(DefaultHeaders)
 
@@ -43,7 +42,7 @@ fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()
     }
 
     routing {
-        healthApi(environment, appContext.database)
+        healthApi(appContext.database)
         authenticate {
             oppgaveApi(appContext.oppgaveEventService)
             beskjedApi(appContext.beskjedEventService)

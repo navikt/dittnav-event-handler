@@ -6,22 +6,18 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.html.*
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
-import no.nav.personbruker.dittnav.eventhandler.config.Environment
 import no.nav.personbruker.dittnav.eventhandler.config.HttpClientBuilder
-import java.net.URL
 
-suspend fun ApplicationCall.pingDependencies(environment: Environment, database: Database) = coroutineScope {
+suspend fun ApplicationCall.pingDependencies(database: Database) = coroutineScope {
     val client = HttpClientBuilder.build()
 
-    val dittnavApiPingableURL = URL("${environment.dittnavApiURL}/internal/isAlive")
-
-    val dittnavApiSelftestStatus = async { getStatus(dittnavApiPingableURL, client) }
-    val dataSourceSelftestStatus = async { getDataSourceRunningStatus(database) }
+    val kafkaSelftestStatus = async { getKafkaHealthStatus() }
+    val datasourceSelftestStatus = async { getDatasourceConnectionStatus(database) }
 
     val services =
             mapOf(
-                    "DITTNAV_API:" to dittnavApiSelftestStatus.await(),
-                    "DATABASE:" to dataSourceSelftestStatus.await()
+                    "DATABASE:" to datasourceSelftestStatus.await(),
+                    "KAFKA:" to kafkaSelftestStatus.await()
             )
 
     client.close()
@@ -45,7 +41,6 @@ suspend fun ApplicationCall.pingDependencies(environment: Environment, database:
                     services.map {
                         tr {
                             td { +it.key }
-                            td { +it.value.pingedURL.let { url -> url?.toString() ?: "" } }
                             td {
                                 style = if (it.value.status == Status.OK) "background: green" else "background: red;font-weight:bold"
                                 +it.value.status.toString()

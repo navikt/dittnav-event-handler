@@ -34,7 +34,7 @@ spec:
         mountPath: /secret/serviceuser
   resources:
     limits:
-      cpu: "1"
+      cpu: "3"
       memory: 768Mi
     requests:
       cpu: "500m"

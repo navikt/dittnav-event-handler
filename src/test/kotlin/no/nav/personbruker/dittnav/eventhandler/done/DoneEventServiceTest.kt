@@ -1,6 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.done
 
 import Beskjed
+import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
@@ -14,7 +15,8 @@ import org.junit.jupiter.api.Test
 class DoneEventServiceTest {
 
     private val database = H2Database()
-    private val doneEventService = DoneEventService(database)
+    private val doneProducer = mockk<DoneProducer>()
+    private val doneEventService = DoneEventService(database, doneProducer)
     private val fodselsnummer = "12345"
     private val uid = "1"
     private val eventId = "125"

@@ -57,6 +57,7 @@ fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()
 private fun Application.configureShutdownHook(appContext: ApplicationContext) {
     environment.monitor.subscribe(ApplicationStopPreparing) {
         closeTheDatabaseConectionPool(appContext)
+        appContext.doneProducer.close()
     }
 }
 

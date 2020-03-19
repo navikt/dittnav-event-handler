@@ -4,9 +4,8 @@ import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 
-class DoneProducerTest {
+class doneCreatorTest {
 
-    private val doneProducer = DoneProducer
     private val fodselsnummer = "123"
     private val grupperingsid = "789"
     private val eventId = "11"
@@ -15,7 +14,7 @@ class DoneProducerTest {
     @Test
     fun `should create done-event`() {
         runBlocking {
-            val doneEvent = doneProducer.createDoneEvent(fodselsnummer, grupperingsid)
+            val doneEvent = createDoneEvent(fodselsnummer, grupperingsid)
             doneEvent.getFodselsnummer() `should be equal to` fodselsnummer
             doneEvent.getGrupperingsId() `should be equal to` grupperingsid
         }
@@ -24,10 +23,9 @@ class DoneProducerTest {
     @Test
     fun `should create done-key`() {
         runBlocking {
-            val doneNnokkel = doneProducer.createKeyForEvent(eventId, produser)
+            val doneNnokkel = createKeyForEvent(eventId, produser)
             doneNnokkel.getEventId() `should be equal to` eventId
             doneNnokkel.getSystembruker() `should be equal to` produser
         }
     }
-
 }

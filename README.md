@@ -1,5 +1,3 @@
-[![CircleCI](https://circleci.com/gh/navikt/dittnav-event-handler.svg?style=svg&circle-token=0bcffed7e5c4f4a3e1edad6da8046b719a16d0f2)](https://circleci.com/gh/navikt/dittnav-event-handler)
-
 # DittNAV event handler
 
 Microservice som brukes for å lese inn eventer fra DittNAV sin event-cache (database). Den skriver også done-event-er til DittNAV sin kafka-topic.

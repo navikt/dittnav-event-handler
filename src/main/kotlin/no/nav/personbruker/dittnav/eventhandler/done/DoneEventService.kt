@@ -6,12 +6,12 @@ import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.DuplicateEventException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.NoEventsException
 
-class DoneEventService(private val database: Database) {
+class DoneEventService(private val database: Database, private val doneProducer: DoneProducer) {
 
     suspend fun markEventAsDone(innloggetBruker: InnloggetBruker, doneDto: Done) {
         val eventBeskjedListe = getBeskjedFromCacheForUser(innloggetBruker.ident, doneDto.uid, doneDto.eventId)
         isEventBeskjedListValid(eventBeskjedListe)
-        DoneProducer.produceDoneEventForSuppliedEventId(innloggetBruker.ident, doneDto.eventId, eventBeskjedListe.first())
+        doneProducer.produceDoneEventForSuppliedEventId(innloggetBruker.ident, doneDto.eventId, eventBeskjedListe.first())
     }
 
     suspend fun getBeskjedFromCacheForUser(fodselsnummer: String, uid: String, eventId: String): List<Beskjed> {

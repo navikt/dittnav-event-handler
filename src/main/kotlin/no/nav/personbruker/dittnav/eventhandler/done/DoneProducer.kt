@@ -1,46 +1,42 @@
 package no.nav.personbruker.dittnav.eventhandler.done
 
 import Beskjed
-import org.slf4j.LoggerFactory
-import java.time.Instant
 import no.nav.brukernotifikasjon.schemas.Done
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.personbruker.dittnav.eventhandler.config.Environment
-import org.apache.kafka.clients.producer.KafkaProducer
-import org.apache.kafka.clients.producer.ProducerRecord
 import no.nav.personbruker.dittnav.eventhandler.config.Kafka
 import no.nav.personbruker.dittnav.eventhandler.config.Kafka.doneTopicName
+import org.apache.kafka.clients.producer.Callback
+import org.apache.kafka.clients.producer.KafkaProducer
+import org.apache.kafka.clients.producer.ProducerRecord
+import org.apache.kafka.common.errors.TimeoutException
+import org.slf4j.LoggerFactory
 
-object DoneProducer {
+class DoneProducer(private val env: Environment) {
 
     private val log = LoggerFactory.getLogger(DoneProducer::class.java)
+
+    private val kafkaProducer = KafkaProducer<Nokkel, Done>(Kafka.producerProps(env))
 
     fun produceDoneEventForSuppliedEventId(fodselsnummer: String, eventId: String, beskjed: Beskjed) {
         val doneKey = createKeyForEvent(eventId, beskjed.produsent)
         val doneEvent = createDoneEvent(fodselsnummer, beskjed.grupperingsId)
-        produceDoneEvent(doneEvent, doneKey)
-        log.info("Har produsert et done-event. EventId: $eventId, produsent: ${beskjed.produsent}")
+        kafkaProducer.send(ProducerRecord(doneTopicName, doneKey, doneEvent), Callback { metadata, exception ->
+            if(exception != null) {
+                when(exception) {
+                    TimeoutException::class.java -> log.warn("Fikk timeout ved produsering av Done-event for Beskjed-event med eventId $eventId.", exception)
+                    else -> log.error("Klarte ikke produsere Done-event for Beskjed-event med eventId $eventId.", exception)
+                }
+            }
+        })
     }
 
-    private fun produceDoneEvent(doneEvent : Done, doneKey: Nokkel) {
-        KafkaProducer<Nokkel, Done>(Kafka.producerProps(Environment())).use { producer ->
-            producer.send(ProducerRecord(doneTopicName, doneKey, doneEvent))
+    fun close() {
+        try {
+            kafkaProducer.close()
+            log.info("Produsent for Done-eventer er lukket.")
+        } catch(e: Exception) {
+            log.warn("Klarte ikke å lukke produsent for Done-eventer. Det kan være eventer som ikke ble produsert.")
         }
-    }
-
-    fun createDoneEvent(fodselsnummer: String, grupperingsId: String): Done {
-        val nowInMs = Instant.now().toEpochMilli()
-        val build = Done.newBuilder()
-                .setFodselsnummer(fodselsnummer)
-                .setTidspunkt(nowInMs)
-                .setGrupperingsId(grupperingsId)
-        return build.build()
-    }
-
-    fun createKeyForEvent(eventId: String, producer: String): Nokkel {
-        return Nokkel.newBuilder()
-                .setEventId(eventId)
-                .setSystembruker(producer)
-                .build()
     }
 }

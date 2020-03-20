@@ -10,8 +10,9 @@ import io.ktor.routing.get
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
+import no.nav.personbruker.dittnav.eventhandler.config.ApplicationContext
 
-fun Routing.healthApi(database: Database, collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry) {
+fun Routing.healthApi(appContext: ApplicationContext, collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry) {
 
     val pingJsonResponse = """{"ping": "pong"}"""
 
@@ -21,7 +22,7 @@ fun Routing.healthApi(database: Database, collectorRegistry: CollectorRegistry =
 
     get("/internal/isReady") {
         try {
-            isDataSourceRunning(database)
+            isDataSourceRunning(appContext.database)
             call.respondText(text = "READY", contentType = ContentType.Text.Plain)
         } catch (e: Exception) {
             call.respondText(text = "NOTREADY", contentType = ContentType.Text.Plain, status = HttpStatusCode.FailedDependency)
@@ -33,7 +34,7 @@ fun Routing.healthApi(database: Database, collectorRegistry: CollectorRegistry =
     }
 
     get("/internal/selftest") {
-        call.pingDependencies(database)
+        call.pingDependencies(appContext)
     }
 
     get("/metrics") {
@@ -44,6 +45,8 @@ fun Routing.healthApi(database: Database, collectorRegistry: CollectorRegistry =
     }
 }
 
-fun isDataSourceRunning(database: Database) {
-    database.dataSource.getConnection()
+suspend fun isDataSourceRunning(database: Database) {
+    database.dbQuery {
+        prepareStatement("""SELECT 1""").execute()
+    }
 }

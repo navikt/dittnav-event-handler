@@ -39,4 +39,9 @@ class DoneProducer(private val env: Environment) {
             log.warn("Klarte ikke å lukke produsent for Done-eventer. Det kan være eventer som ikke ble produsert.")
         }
     }
+
+    fun getKafkaStatus() {
+        kafkaProducer.partitionsFor(doneTopicName)
+    }
+
 }

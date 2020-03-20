@@ -5,14 +5,14 @@ import io.ktor.html.respondHtml
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.html.*
-import no.nav.personbruker.dittnav.eventhandler.common.database.Database
+import no.nav.personbruker.dittnav.eventhandler.config.ApplicationContext
 import no.nav.personbruker.dittnav.eventhandler.config.HttpClientBuilder
 
-suspend fun ApplicationCall.pingDependencies(database: Database) = coroutineScope {
+suspend fun ApplicationCall.pingDependencies(appContext: ApplicationContext) = coroutineScope {
     val client = HttpClientBuilder.build()
 
-    val kafkaSelftestStatus = async { getKafkaHealthStatus() }
-    val datasourceSelftestStatus = async { getDatasourceConnectionStatus(database) }
+    val kafkaSelftestStatus = async { getKafkaHealthStatus(appContext.doneProducer) }
+    val datasourceSelftestStatus = async { getDatasourceConnectionStatus(appContext.database) }
 
     val services =
             mapOf(

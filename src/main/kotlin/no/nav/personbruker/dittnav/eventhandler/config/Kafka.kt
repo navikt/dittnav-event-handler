@@ -39,6 +39,7 @@ object Kafka {
             put(ConsumerConfig.CLIENT_ID_CONFIG, env.groupId + getHostname(InetSocketAddress(0)))
             put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer::class.java)
             put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer::class.java)
+            put(ProducerConfig.MAX_BLOCK_MS_CONFIG, 4000)
             if (ConfigUtil.isCurrentlyRunningOnNais()) {
                 putAll(credentialProps(env))
             }

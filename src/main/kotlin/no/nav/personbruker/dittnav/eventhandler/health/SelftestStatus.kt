@@ -15,6 +15,7 @@ import org.apache.kafka.common.errors.TimeoutException
 import org.slf4j.LoggerFactory
 import java.sql.SQLException
 
+
 enum class Status {
     OK, ERROR
 }
@@ -23,9 +24,11 @@ data class SelftestStatus(val status: Status, val statusMessage: String)
 
 private val log = LoggerFactory.getLogger(SelftestStatus::class.java)
 
-fun getDatasourceConnectionStatus(database: Database): SelftestStatus {
+suspend fun getDatasourceConnectionStatus(database: Database): SelftestStatus {
     return try {
-        database.dataSource.getConnection()
+        database.dbQuery {
+            prepareStatement("""SELECT 1""").execute()
+        }
         SelftestStatus(Status.OK, "200 OK")
     } catch (e: SQLException) {
         log.error("HikariDataSource er lukket, vi får derfor en feil mot event-cachen.", e)
@@ -38,10 +41,7 @@ fun getDatasourceConnectionStatus(database: Database): SelftestStatus {
 
 fun getKafkaHealthStatus(): SelftestStatus {
     return try {
-        KafkaProducer<Nokkel, Done>(Kafka.producerProps(Environment())).use { producer ->
-            producer.partitionsFor(doneTopicName)
-        }
-        SelftestStatus(Status.OK, "200 OK")
+        getKafkaStatus()
     } catch (e: AuthenticationException) {
         log.error("SelftestStatus klarte ikke å autentisere seg mot Kafka. TopicName: ${doneTopicName}", e)
         SelftestStatus(Status.ERROR, "Feil mot Kafka")
@@ -56,3 +56,11 @@ fun getKafkaHealthStatus(): SelftestStatus {
         SelftestStatus(Status.ERROR, "Feil mot Kafka")
     }
 }
+
+private fun getKafkaStatus(): SelftestStatus {
+    KafkaProducer<Nokkel, Done>(Kafka.producerProps(Environment())).use { producer ->
+        producer.partitionsFor(doneTopicName)
+    }
+    return SelftestStatus(Status.OK, "200 OK")
+}
+

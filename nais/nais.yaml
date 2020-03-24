@@ -9,10 +9,10 @@ spec:
   image: {{version}}
   port: 8080
   liveness:
-    path: /isAlive
+    path: /internal/isAlive
     initialDelay: 5
   readiness:
-    path: /isReady
+    path: /internal/isReady
     initialDelay: 5
   prometheus:
     enabled: true
@@ -22,9 +22,9 @@ spec:
     max: 4
   webproxy: true
   ingresses:
-{{#each ingresses}}
-  - "{{this}}"
-{{/each}}
+  {{#each ingresses}}
+    - "{{this}}"
+  {{/each}}
   vault:
     enabled: true
     paths:

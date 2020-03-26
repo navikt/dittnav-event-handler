@@ -9,7 +9,6 @@ import io.ktor.routing.Routing
 import io.ktor.routing.get
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
-import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.config.ApplicationContext
 
 fun Routing.healthApi(appContext: ApplicationContext, collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry) {
@@ -22,7 +21,6 @@ fun Routing.healthApi(appContext: ApplicationContext, collectorRegistry: Collect
 
     get("/internal/isReady") {
         try {
-            isDataSourceRunning(appContext.database)
             call.respondText(text = "READY", contentType = ContentType.Text.Plain)
         } catch (e: Exception) {
             call.respondText(text = "NOTREADY", contentType = ContentType.Text.Plain, status = HttpStatusCode.FailedDependency)
@@ -42,11 +40,5 @@ fun Routing.healthApi(appContext: ApplicationContext, collectorRegistry: Collect
         call.respondTextWriter(ContentType.parse(TextFormat.CONTENT_TYPE_004)) {
             TextFormat.write004(this, collectorRegistry.filteredMetricFamilySamples(names))
         }
-    }
-}
-
-suspend fun isDataSourceRunning(database: Database) {
-    database.dbQuery {
-        prepareStatement("""SELECT 1""").execute()
     }
 }

@@ -4,9 +4,10 @@ import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.EventCacheException
+import no.nav.personbruker.dittnav.eventhandler.common.health.HealthCheck
 import java.sql.Connection
 
-interface Database {
+interface Database: HealthCheck {
 
     val dataSource: HikariDataSource
 

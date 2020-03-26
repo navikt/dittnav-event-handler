@@ -3,16 +3,21 @@ package no.nav.personbruker.dittnav.eventhandler.done
 import Beskjed
 import no.nav.brukernotifikasjon.schemas.Done
 import no.nav.brukernotifikasjon.schemas.Nokkel
+import no.nav.personbruker.dittnav.eventhandler.common.health.HealthCheck
+import no.nav.personbruker.dittnav.eventhandler.common.health.HealthStatus
+import no.nav.personbruker.dittnav.eventhandler.common.health.Status
 import no.nav.personbruker.dittnav.eventhandler.config.Environment
 import no.nav.personbruker.dittnav.eventhandler.config.Kafka
 import no.nav.personbruker.dittnav.eventhandler.config.Kafka.doneTopicName
 import org.apache.kafka.clients.producer.Callback
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
+import org.apache.kafka.common.KafkaException
+import org.apache.kafka.common.errors.AuthenticationException
 import org.apache.kafka.common.errors.TimeoutException
 import org.slf4j.LoggerFactory
 
-class DoneProducer(private val env: Environment) {
+class DoneProducer(private val env: Environment): HealthCheck {
 
     private val log = LoggerFactory.getLogger(DoneProducer::class.java)
 
@@ -40,8 +45,21 @@ class DoneProducer(private val env: Environment) {
         }
     }
 
-    fun getKafkaStatus() {
-        kafkaProducer.partitionsFor(doneTopicName)
-    }
 
+    override fun status(): HealthStatus {
+        val serviceName = "Done-producer"
+        return try {
+            kafkaProducer.partitionsFor(doneTopicName)
+            HealthStatus(serviceName, Status.OK, "200 OK")
+        } catch (e: AuthenticationException) {
+            log.error("SelftestStatus klarte ikke å autentisere seg mot Kafka. TopicName: ${doneTopicName}", e)
+            HealthStatus(serviceName, Status.ERROR, "Feil mot Kafka")
+        } catch (e: TimeoutException) {
+            log.error("Noe gikk galt, vi fikk timeout mot Kafka. TopicName: ${doneTopicName}", e)
+            HealthStatus(serviceName, Status.ERROR, "Feil mot Kafka")
+        } catch (e: KafkaException) {
+            log.error("Fikk en uventet feil mot Kafka. TopicName: ${doneTopicName}", e)
+            HealthStatus(serviceName, Status.ERROR, "Feil mot Kafka")
+        }
+    }
 }

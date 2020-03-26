@@ -2,12 +2,19 @@ package no.nav.personbruker.dittnav.eventhandler.config
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
+import no.nav.personbruker.dittnav.eventhandler.common.health.HealthStatus
+import no.nav.personbruker.dittnav.eventhandler.common.health.Status
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import java.sql.SQLException
 
 class PostgresDatabase(env: Environment) : Database {
 
     private val envDataSource: HikariDataSource
+    private val log: Logger = LoggerFactory.getLogger(PostgresDatabase::class.java)
 
     init {
         envDataSource = createCorrectConnectionForEnvironment(env)
@@ -67,4 +74,18 @@ class PostgresDatabase(env: Environment) : Database {
         }
     }
 
+    override fun status(): HealthStatus {
+        val serviceName = "Database"
+        return runBlocking {
+            try {
+                dbQuery { prepareStatement("""SELECT 1""").execute() }
+                HealthStatus(serviceName, Status.OK, "200 OK")
+            } catch (e: SQLException) {
+                log.error("Vi har ikke tilgang til databasen.", e)
+                HealthStatus(serviceName, Status.ERROR, "Feil mot DB")
+            } catch (e: Exception) {
+                log.error("Vi får en uventet feil mot databasen.", e)
+                HealthStatus(serviceName, Status.ERROR, "Feil mot DB")
+            }}
+    }
 }

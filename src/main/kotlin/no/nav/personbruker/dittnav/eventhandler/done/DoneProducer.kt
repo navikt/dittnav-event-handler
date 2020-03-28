@@ -28,6 +28,7 @@ class DoneProducer(private val env: Environment): HealthCheck {
         val doneEvent = createDoneEvent(fodselsnummer, beskjed.grupperingsId)
         kafkaProducer.send(ProducerRecord(doneTopicName, doneKey, doneEvent), Callback { metadata, exception ->
             if(exception != null) {
+
                 when(exception) {
                     TimeoutException::class.java -> log.warn("Fikk timeout ved produsering av Done-event for Beskjed-event med eventId $eventId.", exception)
                     else -> log.error("Klarte ikke produsere Done-event for Beskjed-event med eventId $eventId.", exception)
@@ -36,15 +37,15 @@ class DoneProducer(private val env: Environment): HealthCheck {
         })
     }
 
-    fun close() {
+    fun flushAndClose() {
         try {
+            kafkaProducer.flush()
             kafkaProducer.close()
-            log.info("Produsent for Done-eventer er lukket.")
+            log.info("Produsent for Done-eventer er flushet og lukket.")
         } catch(e: Exception) {
-            log.warn("Klarte ikke å lukke produsent for Done-eventer. Det kan være eventer som ikke ble produsert.")
+            log.warn("Klarte ikke å flushe og lukke produsent for Done-eventer. Det kan være eventer som ikke ble produsert.")
         }
     }
-
 
     override fun status(): HealthStatus {
         val serviceName = "Done-producer"
@@ -52,7 +53,7 @@ class DoneProducer(private val env: Environment): HealthCheck {
             kafkaProducer.partitionsFor(doneTopicName)
             HealthStatus(serviceName, Status.OK, "200 OK")
         } catch (e: AuthenticationException) {
-            log.error("SelftestStatus klarte ikke å autentisere seg mot Kafka. TopicName: ${doneTopicName}", e)
+            log.error("HealthStatus klarte ikke å autentisere seg mot Kafka. TopicName: ${doneTopicName}", e)
             HealthStatus(serviceName, Status.ERROR, "Feil mot Kafka")
         } catch (e: TimeoutException) {
             log.error("Noe gikk galt, vi fikk timeout mot Kafka. TopicName: ${doneTopicName}", e)

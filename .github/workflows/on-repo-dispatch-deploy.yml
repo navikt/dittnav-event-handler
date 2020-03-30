@@ -19,7 +19,7 @@ jobs:
       - name: 'Sjekk ut koden for dette repo-et'
         uses: 'actions/checkout@v2'
         with:
-          FETCH-DEPTH: 0
+          FETCH-DEPTH: '0'
 
       - name: 'Sjekker ut gitt commit, for å få tak i riktig versjon av nais-mainifetene'
         if: env.COMMIT_SHA != ''

@@ -3,35 +3,35 @@ package no.nav.personbruker.dittnav.eventhandler.innboks
 import java.sql.Connection
 import java.sql.Types
 
-fun Connection.createInnboks(innboks: List<Innboks>) =
+fun Connection.createInnboks(innbokser: List<Innboks>) =
         prepareStatement("""INSERT INTO innboks(id, produsent, eventTidspunkt, fodselsnummer, eventId, grupperingsId, tekst, link, sikkerhetsnivaa, sistOppdatert, aktiv)
             VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""")
                 .use {
-                    innboks.forEach { i ->
+                    innbokser.forEach { innboks ->
                         run {
-                            it.setInt(1, i.id)
-                            it.setString(2, i.produsent)
-                            it.setObject(3, i.eventTidspunkt.toLocalDateTime(), Types.TIMESTAMP)
-                            it.setString(4, i.fodselsnummer)
-                            it.setString(5, i.eventId)
-                            it.setString(6, i.grupperingsId)
-                            it.setString(7, i.tekst)
-                            it.setString(8, i.link)
-                            it.setInt(9, i.sikkerhetsnivaa)
-                            it.setObject(10, i.sistOppdatert.toLocalDateTime(), Types.TIMESTAMP)
-                            it.setBoolean(11, i.aktiv)
+                            it.setInt(1, innboks.id)
+                            it.setString(2, innboks.produsent)
+                            it.setObject(3, innboks.eventTidspunkt.toLocalDateTime(), Types.TIMESTAMP)
+                            it.setString(4, innboks.fodselsnummer)
+                            it.setString(5, innboks.eventId)
+                            it.setString(6, innboks.grupperingsId)
+                            it.setString(7, innboks.tekst)
+                            it.setString(8, innboks.link)
+                            it.setInt(9, innboks.sikkerhetsnivaa)
+                            it.setObject(10, innboks.sistOppdatert.toLocalDateTime(), Types.TIMESTAMP)
+                            it.setBoolean(11, innboks.aktiv)
                             it.addBatch()
                         }
                     }
                     it.executeBatch()
                 }
 
-fun Connection.deleteInnboks(innboks: List<Innboks>) =
+fun Connection.deleteInnboks(innbokser: List<Innboks>) =
         prepareStatement("""DELETE FROM innboks WHERE eventId = ?""")
                 .use {
-                    innboks.forEach { i ->
+                    innbokser.forEach { innboks ->
                         run {
-                            it.setString(1, i.eventId)
+                            it.setString(1, innboks.eventId)
                             it.addBatch()
                         }
                     }

@@ -1,6 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.done
 
 import Beskjed
+import no.nav.personbruker.dittnav.eventhandler.beskjed.getActiveBeskjedByIds
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.DuplicateEventException

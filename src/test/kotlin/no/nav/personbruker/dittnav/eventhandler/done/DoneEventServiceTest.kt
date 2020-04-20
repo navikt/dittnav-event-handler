@@ -7,6 +7,8 @@ import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
 import no.nav.personbruker.dittnav.eventhandler.beskjed.deleteBeskjed
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
+import no.nav.personbruker.dittnav.eventhandler.common.database.createProdusent
+import no.nav.personbruker.dittnav.eventhandler.common.database.deleteProdusent
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.DuplicateEventException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.NoEventsException
 import org.amshove.kluent.`should be equal to`
@@ -32,19 +34,20 @@ class DoneEventServiceTest {
             synligFremTil = ZonedDateTime.now().plusHours(1), uid = "11", aktiv = true)
 
     @BeforeAll
-    fun `populer tabellen med Beskjed-event`() {
+    fun `populer testdata`() {
         runBlocking {
             database.dbQuery { createBeskjed(listOf(beskjed1)) }
+            database.dbQuery { createProdusent(systembruker = "x-dittnav", produsentnavn = "dittnav") }
         }
     }
 
     @AfterAll
-    fun `slett Beskjed-event fra tabellen`() {
+    fun `slett testdata`() {
         runBlocking {
             database.dbQuery { deleteBeskjed(listOf(beskjed1)) }
+            database.dbQuery { deleteProdusent(systembruker = "x-dittnav") }
         }
     }
-
 
     @Test
     fun `Kaster exception hvis listen er tom`() {

@@ -10,7 +10,7 @@ class InnboksEventService(private val database: Database) {
     }
 
     suspend fun getInctiveCachedEventsForUser(bruker: InnloggetBruker): List<Innboks> {
-        return database.dbQuery { getAktivInnboksForInnloggetBruker(bruker) }
+        return database.dbQuery { getInaktivInnboksForInnloggetBruker(bruker) }
     }
 
     suspend fun getAllCachedEventsForUser(bruker: InnloggetBruker): List<Innboks> {

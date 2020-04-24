@@ -39,28 +39,13 @@ fun Connection.getAllBeskjedForInnloggetBruker(bruker: InnloggetBruker): List<Be
                 }
 
 fun Connection.getActiveBeskjedByIds(fodselsnummer: String, uid: String, eventId: String): List<Beskjed> =
-        prepareStatement("""SELECT
-            |beskjed.id, 
-            |beskjed.uid, 
-            |beskjed.eventTidspunkt,
-            |beskjed.fodselsnummer,
-            |beskjed.eventId, 
-            |beskjed.grupperingsId,
-            |beskjed.tekst,
-            |beskjed.link,
-            |beskjed.sikkerhetsnivaa,
-            |beskjed.sistOppdatert,
-            |beskjed.synligFremTil,
-            |beskjed.aktiv,
-            |systembrukere.produsentnavn
-            |FROM beskjed INNER JOIN systembrukere ON beskjed.produsent = systembrukere.systembruker
-            |WHERE fodselsnummer = ? AND uid = ? AND eventId = ? AND aktiv = true""".trimMargin())
+        prepareStatement("""SELECT * FROM BESKJED WHERE fodselsnummer = ? AND uid = ? AND eventId = ? AND aktiv = true""")
                 .use {
                     it.setString(1, fodselsnummer)
                     it.setString(2, uid)
                     it.setString(3, eventId)
                     it.executeQuery().map {
-                        toBeskjed()
+                        toDoneBeskjed()
                     }
                 }
 
@@ -69,6 +54,24 @@ fun ResultSet.toBeskjed(): Beskjed {
             id = getInt("id"),
             uid = getString("uid"),
             produsent = getString("produsentnavn"),
+            eventTidspunkt = ZonedDateTime.ofInstant(getTimestamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),
+            fodselsnummer = getString("fodselsnummer"),
+            eventId = getString("eventId"),
+            grupperingsId = getString("grupperingsId"),
+            tekst = getString("tekst"),
+            link = getString("link"),
+            sikkerhetsnivaa = getInt("sikkerhetsnivaa"),
+            sistOppdatert = ZonedDateTime.ofInstant(getTimestamp("sistOppdatert").toInstant(), ZoneId.of("Europe/Oslo")),
+            synligFremTil = getNullableZonedDateTime("synligFremTil"),
+            aktiv = getBoolean("aktiv")
+    )
+}
+
+fun ResultSet.toDoneBeskjed(): Beskjed {
+    return Beskjed(
+            id = getInt("id"),
+            uid = getString("uid"),
+            produsent = getString("produsent"),
             eventTidspunkt = ZonedDateTime.ofInstant(getTimestamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),
             fodselsnummer = getString("fodselsnummer"),
             eventId = getString("eventId"),

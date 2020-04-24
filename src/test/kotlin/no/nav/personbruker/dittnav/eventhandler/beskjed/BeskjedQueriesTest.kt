@@ -24,7 +24,7 @@ class BeskjedQueriesTest {
 
     private val beskjed1 = BeskjedObjectMother.createBeskjed(id = 1, eventId = "123", fodselsnummer = "12345",
             synligFremTil = ZonedDateTime.now().plusHours(1), uid = "11", aktiv = true)
-    private val beskjed2 = BeskjedObjectMother.createBeskjed(id = 2, eventId = "124", fodselsnummer = "12345",
+    private val beskjed2 = BeskjedObjectMother.createBeskjed(id = 2, eventId = eventId, fodselsnummer = "12345",
             synligFremTil = ZonedDateTime.now().plusHours(1), uid = "22", aktiv = true)
     private val beskjed3 = BeskjedObjectMother.createBeskjed(id = 3, eventId = "567", fodselsnummer = "12345",
             synligFremTil = ZonedDateTime.now().plusHours(1), uid = "33", aktiv = false)

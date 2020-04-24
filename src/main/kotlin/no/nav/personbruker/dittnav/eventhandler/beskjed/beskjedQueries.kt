@@ -40,7 +40,7 @@ fun Connection.getAllBeskjedForInnloggetBruker(bruker: InnloggetBruker): List<Be
 
 fun Connection.getActiveBeskjedByIds(fodselsnummer: String, uid: String, eventId: String): List<Beskjed> =
         prepareStatement("""SELECT
-           |beskjed.id, 
+            |beskjed.id, 
             |beskjed.uid, 
             |beskjed.eventTidspunkt,
             |beskjed.fodselsnummer,

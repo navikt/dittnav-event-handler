@@ -57,6 +57,11 @@ create table if not exists innboks
   unique (eventid, produsent)
 );
 
+create table if not exists systembrukere (
+    systembruker character varying(50) not null primary key,
+    produsentnavn character varying(100) not null
+);
+
 create view if not exists brukernotifikasjon_view as
   SELECT beskjed.eventid, beskjed.produsent, 'beskjed' :: text AS type, beskjed.fodselsnummer, beskjed.aktiv
   FROM beskjed

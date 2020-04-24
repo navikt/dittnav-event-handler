@@ -8,7 +8,7 @@ data class Beskjed(
         val grupperingsId: String,
         val eventId: String,
         val eventTidspunkt: ZonedDateTime,
-        @JsonIgnore val produsent: String,
+        val produsent: String,
         val sikkerhetsnivaa: Int,
         val sistOppdatert: ZonedDateTime,
         @JsonIgnore val synligFremTil: ZonedDateTime?,

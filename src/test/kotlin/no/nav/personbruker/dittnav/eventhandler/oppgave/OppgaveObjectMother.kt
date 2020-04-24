@@ -11,7 +11,7 @@ object OppgaveObjectMother {
                 grupperingsId = "100$fodselsnummer",
                 eventId = eventId,
                 eventTidspunkt = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
-                produsent = "DittNav",
+                produsent = "x-dittnav",
                 sikkerhetsnivaa = 4,
                 sistOppdatert = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
                 tekst = "Dette er melding til brukeren",

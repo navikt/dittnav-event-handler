@@ -3,6 +3,10 @@ package no.nav.personbruker.dittnav.eventhandler.oppgave
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBrukerObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
+import no.nav.personbruker.dittnav.eventhandler.common.database.createProdusent
+import no.nav.personbruker.dittnav.eventhandler.common.database.deleteProdusent
+import no.nav.personbruker.dittnav.eventhandler.innboks.getAktivInnboksForInnloggetBruker
+import no.nav.personbruker.dittnav.eventhandler.innboks.getInaktivInnboksForInnloggetBruker
 import org.junit.jupiter.api.Test
 import org.amshove.kluent.*
 import org.junit.jupiter.api.AfterAll
@@ -22,9 +26,10 @@ class OppgaveQueriesTest {
     private val oppgave4 = OppgaveObjectMother.createOppgave(id = 4, eventId = "789", fodselsnummer = "54321", aktiv = true)
 
     @BeforeAll
-    fun `populer tabellen med Oppgave-eventer`() {
+    fun `populer test-data`() {
         runBlocking {
             database.dbQuery { createOppgave(listOf(oppgave1, oppgave2, oppgave3, oppgave4)) }
+            database.dbQuery { createProdusent(systembruker = "x-dittnav", produsentnavn = "dittnav") }
         }
     }
 
@@ -32,6 +37,7 @@ class OppgaveQueriesTest {
     fun `slett Oppgave-eventer fra tabellen`() {
         runBlocking {
             database.dbQuery { deleteOppgave(listOf(oppgave1, oppgave2, oppgave3, oppgave4)) }
+            database.dbQuery { deleteProdusent(systembruker = "x-dittnav") }
         }
     }
 
@@ -69,6 +75,30 @@ class OppgaveQueriesTest {
         val fodselsnummerMangler = InnloggetBrukerObjectMother.createInnloggetBruker("")
         runBlocking {
             database.dbQuery { getAktivOppgaveForInnloggetBruker(fodselsnummerMangler) }.isEmpty()
+        }
+    }
+
+    @Test
+    fun `Returnerer lesbart navn for produsent som kan eksponeres for aktive eventer`() {
+        runBlocking {
+            val oppgave = database.dbQuery { getAktivOppgaveForInnloggetBruker(bruker) }.first()
+            oppgave.produsent `should be equal to` "dittnav"
+        }
+    }
+
+    @Test
+    fun `Returnerer lesbart navn for produsent som kan eksponeres for inaktive eventer`() {
+        runBlocking {
+            val oppgave = database.dbQuery { getInaktivOppgaveForInnloggetBruker(bruker) }.first()
+            oppgave.produsent `should be equal to` "dittnav"
+        }
+    }
+
+    @Test
+    fun `Returnerer lesbart navn for produsent som kan eksponeres for alle eventer`() {
+        runBlocking {
+            val oppgave = database.dbQuery { getAllOppgaveForInnloggetBruker(bruker) }.first()
+            oppgave.produsent `should be equal to` "dittnav"
         }
     }
 }

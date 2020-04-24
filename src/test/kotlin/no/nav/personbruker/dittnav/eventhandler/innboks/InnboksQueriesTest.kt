@@ -3,6 +3,8 @@ package no.nav.personbruker.dittnav.eventhandler.innboks
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBrukerObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
+import no.nav.personbruker.dittnav.eventhandler.common.database.createProdusent
+import no.nav.personbruker.dittnav.eventhandler.common.database.deleteProdusent
 import org.amshove.kluent.`should be empty`
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.AfterAll
@@ -24,9 +26,10 @@ class InnboksQueriesTest {
     private val innboks4 = InnboksObjectMother.createInnboks(id = 4, eventId = "789", fodselsnummer = "67890", aktiv = false)
 
     @BeforeAll
-    fun `populer tabellen med Innboks-eventer`() {
+    fun `populer test-data`() {
         runBlocking {
             database.dbQuery { createInnboks(listOf(innboks1, innboks2, innboks3, innboks4)) }
+            database.dbQuery { createProdusent(systembruker = "x-dittnav", produsentnavn = "dittnav") }
         }
     }
 
@@ -34,6 +37,7 @@ class InnboksQueriesTest {
     fun `slett Innboks-eventer fra tabellen`() {
         runBlocking {
             database.dbQuery { deleteInnboks(listOf(innboks1, innboks2, innboks3, innboks4)) }
+            database.dbQuery { deleteProdusent(systembruker = "x-dittnav") }
         }
 
     }
@@ -75,6 +79,30 @@ class InnboksQueriesTest {
         val brukerUtenEventer = InnloggetBrukerObjectMother.createInnloggetBruker("")
         runBlocking {
             database.dbQuery { getAllInnboksForInnloggetBruker(brukerUtenEventer) }.size `should be equal to` 0
+        }
+    }
+
+    @Test
+    fun `Returnerer lesbart navn for produsent som kan eksponeres for aktive eventer`() {
+        runBlocking {
+            val innboks = database.dbQuery { getAktivInnboksForInnloggetBruker(bruker1) }.first()
+            innboks.produsent `should be equal to` "dittnav"
+        }
+    }
+
+    @Test
+    fun `Returnerer lesbart navn for produsent som kan eksponeres for inaktive eventer`() {
+        runBlocking {
+            val innboks = database.dbQuery { getInaktivInnboksForInnloggetBruker(bruker2) }.first()
+            innboks.produsent `should be equal to` "dittnav"
+        }
+    }
+
+    @Test
+    fun `Returnerer lesbart navn for produsent som kan eksponeres for alle eventer`() {
+        runBlocking {
+            val innboks = database.dbQuery { getAllInnboksForInnloggetBruker(bruker1) }.first()
+            innboks.produsent `should be equal to` "dittnav"
         }
     }
 }

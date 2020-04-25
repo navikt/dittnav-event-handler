@@ -9,8 +9,8 @@ import no.nav.personbruker.dittnav.eventhandler.beskjed.deleteBeskjed
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
 import no.nav.personbruker.dittnav.eventhandler.common.database.createProdusent
 import no.nav.personbruker.dittnav.eventhandler.common.database.deleteProdusent
-import no.nav.personbruker.dittnav.eventhandler.common.exceptions.DuplicateEventException
-import no.nav.personbruker.dittnav.eventhandler.common.exceptions.NoEventsException
+import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.DuplicateEventException
+import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.NoEventsException
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should throw`
 import org.amshove.kluent.invoking
@@ -62,7 +62,7 @@ class DoneEventServiceTest {
     @Test
     fun `Kaster exception hvis det er duplikat i listen`() {
         val beskjedListDuplicate = listOf<Beskjed>(BeskjedObjectMother.createBeskjed(1, "dummyEventId1", "dummmyFnr1", null, "dummyUid1", true),
-                                                                BeskjedObjectMother.createBeskjed(1, "dummyEventId1", "dummyFnr1", null, "dummyUid1", true))
+                BeskjedObjectMother.createBeskjed(1, "dummyEventId1", "dummyFnr1", null, "dummyUid1", true))
         invoking {
             runBlocking {
                 doneEventService.isEventBeskjedListValid(beskjedListDuplicate)
@@ -83,4 +83,5 @@ class DoneEventServiceTest {
             doneEventService.getBeskjedFromCacheForUser(fodselsnummer, uid, "dummyEventId").size `should be equal to` 0
         }
     }
+
 }

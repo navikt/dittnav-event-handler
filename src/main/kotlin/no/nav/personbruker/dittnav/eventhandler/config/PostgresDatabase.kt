@@ -54,11 +54,11 @@ class PostgresDatabase(env: Environment) : Database {
             val config = HikariConfig()
             config.driverClassName = "org.postgresql.Driver"
             config.jdbcUrl = env.dbUrl
-            config.minimumIdle = 0
+            config.minimumIdle = 1
             config.maxLifetime = 30001
             config.maximumPoolSize = 3
-            config.connectionTimeout = 1000
-            config.validationTimeout = 250
+            config.connectionTimeout = 4000
+            config.validationTimeout = 1000
             config.idleTimeout = 10001
             config.isAutoCommit = false
             config.isReadOnly = true

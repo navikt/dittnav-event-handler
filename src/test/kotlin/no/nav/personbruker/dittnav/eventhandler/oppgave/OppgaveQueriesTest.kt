@@ -5,12 +5,10 @@ import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBrukerObjectMoth
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
 import no.nav.personbruker.dittnav.eventhandler.common.database.createProdusent
 import no.nav.personbruker.dittnav.eventhandler.common.database.deleteProdusent
-import no.nav.personbruker.dittnav.eventhandler.innboks.getAktivInnboksForInnloggetBruker
-import no.nav.personbruker.dittnav.eventhandler.innboks.getInaktivInnboksForInnloggetBruker
-import org.junit.jupiter.api.Test
-import org.amshove.kluent.*
+import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)

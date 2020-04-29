@@ -10,20 +10,20 @@ internal class resultSetUtilKtTest {
 
     @Test
     fun `should convert invalid dates`() {
-        val invalidTimestamp: Long = 1584658800
-        val rawTimestamp = Timestamp(invalidTimestamp)
+        val dateIn1970AsLong: Long = 1584658800
+        val timestampFor1970 = Timestamp(dateIn1970AsLong)
 
-        val resultat = convertIfUnlikelyDate(rawTimestamp)
+        val resultat = convertIfUnlikelyDate(timestampFor1970)
 
         resultat.year `should be equal to` 2020
     }
 
     @Test
     fun `should not convert valid dates`() {
-        val ldt = LocalDateTime.of(2020, 4, 10, 8, 0).toInstant(ZoneOffset.UTC)
-        val rawTimestamp = Timestamp(ldt.toEpochMilli())
+        val dateIn2020 = LocalDateTime.of(2020, 4, 10, 8, 0).toInstant(ZoneOffset.UTC)
+        val timestampIn2020 = Timestamp(dateIn2020.toEpochMilli())
 
-        val resultat = convertIfUnlikelyDate(rawTimestamp)
+        val resultat = convertIfUnlikelyDate(timestampIn2020)
 
         resultat.year `should be equal to` 2020
     }

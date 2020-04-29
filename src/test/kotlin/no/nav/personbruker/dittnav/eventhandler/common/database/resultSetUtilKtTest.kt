@@ -10,12 +10,12 @@ internal class resultSetUtilKtTest {
 
     @Test
     fun `should convert invalid dates`() {
-        val invalidTimestamp: Long = 1561932
+        val invalidTimestamp: Long = 1584658800
         val rawTimestamp = Timestamp(invalidTimestamp)
 
         val resultat = convertFromEpochSecondsToEpochMillis(rawTimestamp)
 
-        resultat.year `should be equal to` 2019
+        resultat.year `should be equal to` 2020
     }
 
     @Test

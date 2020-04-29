@@ -19,8 +19,8 @@ fun convertFromEpochSecondsToEpochMillis(originalTimestamp: Timestamp): ZonedDat
     var convertedDateTime = ZonedDateTime.ofInstant(originalTimestamp.toInstant(), timeZone)
     if (convertedDateTime.year < YEAR_LOWER_LIMIT) {
         val millis = originalTimestamp.toInstant().toEpochMilli()
-        val rawTimestampAsMillis = millis * 1000 * 1000
-        convertedDateTime = ZonedDateTime.ofInstant(Timestamp(rawTimestampAsMillis).toInstant(), timeZone)
+        val originalTimestampAsMillis = millis * 1000
+        convertedDateTime = ZonedDateTime.ofInstant(Timestamp(originalTimestampAsMillis).toInstant(), timeZone)
     }
     return convertedDateTime
 }

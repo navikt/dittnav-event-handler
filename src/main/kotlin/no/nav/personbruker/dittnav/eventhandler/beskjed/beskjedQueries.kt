@@ -14,6 +14,10 @@ fun Connection.getInaktivBeskjedForInnloggetBruker(bruker: InnloggetBruker): Lis
 fun Connection.getAktivBeskjedForInnloggetBruker(bruker: InnloggetBruker): List<Beskjed> =
         getBeskjedForInnloggetBruker(bruker, true)
 
+fun Connection.getFirstBeskjed(): List<Beskjed> =
+        prepareStatement("""SELECT * FROM BESKJED LIMIT 1""")
+                .use { it.executeQuery().map { toBeskjed() } }
+
 fun Connection.getAllBeskjedForInnloggetBruker(bruker: InnloggetBruker): List<Beskjed> =
         prepareStatement("""SELECT 
             |beskjed.id, 

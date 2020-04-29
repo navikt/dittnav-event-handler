@@ -9,7 +9,14 @@ import io.ktor.routing.Routing
 import io.ktor.routing.get
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
+import kotlinx.coroutines.runBlocking
+import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService
+import no.nav.personbruker.dittnav.eventhandler.beskjed.getFirstBeskjed
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
+import org.slf4j.LoggerFactory
+import java.lang.Exception
+import java.time.Duration
+import java.time.LocalDateTime
 
 fun Routing.healthApi(database: Database, collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry) {
 
@@ -20,7 +27,7 @@ fun Routing.healthApi(database: Database, collectorRegistry: CollectorRegistry =
     }
 
     get("/isReady") {
-        if (isDataSourceRunning(database)) {
+        if (isDataSourceRunning(database) && isDBSchemaUpdated(database)) {
             call.respondText(text = "READY", contentType = ContentType.Text.Plain)
 
         } else {
@@ -38,9 +45,31 @@ fun Routing.healthApi(database: Database, collectorRegistry: CollectorRegistry =
             TextFormat.write004(this, collectorRegistry.filteredMetricFamilySamples(names))
         }
     }
-
 }
 
-fun isDataSourceRunning(database: Database): Boolean {
+val log = LoggerFactory.getLogger(BeskjedEventService::class.java)
+var lastDBSchemaCheck = LocalDateTime.now()
+var dbSchemaReady = false
+
+private fun isDBSchemaUpdated(database: Database): Boolean {
+    return if(Math.abs(Duration.between(lastDBSchemaCheck, LocalDateTime.now()).toSeconds()) > 20) {
+        runBlocking {
+            lastDBSchemaCheck = LocalDateTime.now()
+            try {
+                database.dbQuery { getFirstBeskjed() }
+                log.info("Database-skjema er oppdatert!")
+                dbSchemaReady = true
+                dbSchemaReady
+            } catch (e: Exception) {
+                log.info("Database-skjema er ikke oppdatert, ikke ready")
+                dbSchemaReady;
+            }
+        }
+    } else {
+        dbSchemaReady
+    }
+}
+
+private fun isDataSourceRunning(database: Database): Boolean {
     return database.dataSource.isRunning
 }

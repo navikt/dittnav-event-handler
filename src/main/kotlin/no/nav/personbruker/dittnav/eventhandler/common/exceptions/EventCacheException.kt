@@ -1,6 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.common.exceptions
 
 open class EventCacheException(message: String, cause: Throwable?) : Exception(message, cause) {
+    constructor(message: String) : this(message, null)
 
     val context: MutableMap<String, Any> = mutableMapOf()
 

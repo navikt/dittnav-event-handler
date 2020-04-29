@@ -1,7 +1,9 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
+import no.nav.personbruker.dittnav.eventhandler.common.database.convertIfUnlikelyDate
 import no.nav.personbruker.dittnav.eventhandler.common.database.map
+import no.nav.personbruker.dittnav.eventhandler.common.exceptions.EventCacheException
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId
@@ -36,10 +38,12 @@ fun Connection.getAllOppgaveForInnloggetBruker(bruker: InnloggetBruker): List<Op
                 }
 
 private fun ResultSet.toOppgave(): Oppgave {
+    val rawEventTidspunkt = getTimestamp("eventTidspunkt") ?: throw EventCacheException("Eventtidspunkt ble ikke funnet i databasen")
+    val verifiedEventTidspunkt = convertIfUnlikelyDate(rawEventTidspunkt)
     return Oppgave(
             id = getInt("id"),
             produsent = getString("produsentnavn"),
-            eventTidspunkt = ZonedDateTime.ofInstant(getTimestamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),
+            eventTidspunkt = verifiedEventTidspunkt,
             fodselsnummer = getString("fodselsnummer"),
             eventId = getString("eventId"),
             grupperingsId = getString("grupperingsId"),

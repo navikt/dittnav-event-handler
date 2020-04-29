@@ -1,7 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
-import no.nav.personbruker.dittnav.eventhandler.common.database.convertFromEpochSecondsToEpochMillis
+import no.nav.personbruker.dittnav.eventhandler.common.database.convertIfUnlikelyDate
 import no.nav.personbruker.dittnav.eventhandler.common.database.map
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.EventCacheException
 import java.sql.Connection
@@ -39,7 +39,7 @@ fun Connection.getAllOppgaveForInnloggetBruker(bruker: InnloggetBruker): List<Op
 
 private fun ResultSet.toOppgave(): Oppgave {
     val rawEventTidspunkt = getTimestamp("eventTidspunkt") ?: throw EventCacheException("Eventtidspunkt ble ikke funnet i databasen")
-    val verifiedEventTidspunkt = convertFromEpochSecondsToEpochMillis(rawEventTidspunkt)
+    val verifiedEventTidspunkt = convertIfUnlikelyDate(rawEventTidspunkt)
     return Oppgave(
             id = getInt("id"),
             produsent = getString("produsentnavn"),

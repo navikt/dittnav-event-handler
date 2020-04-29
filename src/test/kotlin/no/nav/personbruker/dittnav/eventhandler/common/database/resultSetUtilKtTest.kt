@@ -13,7 +13,7 @@ internal class resultSetUtilKtTest {
         val invalidTimestamp: Long = 1584658800
         val rawTimestamp = Timestamp(invalidTimestamp)
 
-        val resultat = convertFromEpochSecondsToEpochMillis(rawTimestamp)
+        val resultat = convertIfUnlikelyDate(rawTimestamp)
 
         resultat.year `should be equal to` 2020
     }
@@ -23,7 +23,7 @@ internal class resultSetUtilKtTest {
         val ldt = LocalDateTime.of(2020, 4, 10, 8, 0).toInstant(ZoneOffset.UTC)
         val rawTimestamp = Timestamp(ldt.toEpochMilli())
 
-        val resultat = convertFromEpochSecondsToEpochMillis(rawTimestamp)
+        val resultat = convertIfUnlikelyDate(rawTimestamp)
 
         resultat.year `should be equal to` 2020
     }

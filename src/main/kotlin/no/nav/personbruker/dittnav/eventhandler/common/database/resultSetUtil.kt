@@ -15,12 +15,16 @@ fun <T> ResultSet.map(result: ResultSet.() -> T): List<T> =
 const val YEAR_LOWER_LIMIT = 1975
 val timeZone = ZoneId.of("Europe/Oslo")
 
-fun convertFromEpochSecondsToEpochMillis(originalTimestamp: Timestamp): ZonedDateTime {
+fun convertIfUnlikelyDate(originalTimestamp: Timestamp): ZonedDateTime {
     var convertedDateTime = ZonedDateTime.ofInstant(originalTimestamp.toInstant(), timeZone)
     if (convertedDateTime.year < YEAR_LOWER_LIMIT) {
-        val millis = originalTimestamp.toInstant().toEpochMilli()
-        val originalTimestampAsMillis = millis * 1000
-        convertedDateTime = ZonedDateTime.ofInstant(Timestamp(originalTimestampAsMillis).toInstant(), timeZone)
+        convertedDateTime = covertFromEpochSecondsToEpochMillis(originalTimestamp)
     }
     return convertedDateTime
+}
+
+private fun covertFromEpochSecondsToEpochMillis(originalTimestamp: Timestamp): ZonedDateTime? {
+    val epochSeconds = originalTimestamp.toInstant().toEpochMilli()
+    val epochMillis = epochSeconds * 1000
+    return ZonedDateTime.ofInstant(Timestamp(epochMillis).toInstant(), timeZone)
 }

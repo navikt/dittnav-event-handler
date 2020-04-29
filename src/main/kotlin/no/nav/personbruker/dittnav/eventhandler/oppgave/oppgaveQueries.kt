@@ -25,8 +25,9 @@ fun Connection.getAllOppgaveForInnloggetBruker(bruker: InnloggetBruker): List<Op
             |oppgave.sikkerhetsnivaa,
             |oppgave.sistOppdatert,
             |oppgave.aktiv,
-            |systembrukere.produsentnavn
-            |FROM oppgave INNER JOIN systembrukere ON oppgave.produsent = systembrukere.systembruker
+            |oppgave.systembruker,
+            |systembrukere.produsentnavn AS produsent
+            |FROM oppgave INNER JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker
             |WHERE fodselsnummer = ?""".trimMargin())
                 .use {
                     it.setString(1, bruker.ident)
@@ -38,7 +39,8 @@ fun Connection.getAllOppgaveForInnloggetBruker(bruker: InnloggetBruker): List<Op
 private fun ResultSet.toOppgave(): Oppgave {
     return Oppgave(
             id = getInt("id"),
-            produsent = getString("produsentnavn"),
+            produsent = getString("produsent"),
+            systembruker = getString("systembruker"),
             eventTidspunkt = ZonedDateTime.ofInstant(getTimestamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),
             fodselsnummer = getString("fodselsnummer"),
             eventId = getString("eventId"),
@@ -63,8 +65,9 @@ private fun Connection.getOppgaveForInnloggetBruker(bruker: InnloggetBruker, akt
             |oppgave.sikkerhetsnivaa,
             |oppgave.sistOppdatert,
             |oppgave.aktiv,
-            |systembrukere.produsentnavn
-            |FROM oppgave INNER JOIN systembrukere ON oppgave.produsent = systembrukere.systembruker
+            |oppgave.systembruker,
+            |systembrukere.produsentnavn AS produsent
+            |FROM oppgave INNER JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker
             |WHERE fodselsnummer = ? AND aktiv = ?""".trimMargin())
                 .use {
                     it.setString(1, bruker.ident)

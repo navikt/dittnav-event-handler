@@ -4,13 +4,13 @@ import java.sql.Connection
 import java.sql.Types
 
 fun Connection.createInnboks(innbokser: List<Innboks>) =
-        prepareStatement("""INSERT INTO innboks(id, produsent, eventTidspunkt, fodselsnummer, eventId, grupperingsId, tekst, link, sikkerhetsnivaa, sistOppdatert, aktiv)
+        prepareStatement("""INSERT INTO innboks(id, systembruker, eventTidspunkt, fodselsnummer, eventId, grupperingsId, tekst, link, sikkerhetsnivaa, sistOppdatert, aktiv)
             VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""")
                 .use {
                     innbokser.forEach { innboks ->
                         run {
                             it.setInt(1, innboks.id)
-                            it.setString(2, innboks.produsent)
+                            it.setString(2, innboks.systembruker)
                             it.setObject(3, innboks.eventTidspunkt.toLocalDateTime(), Types.TIMESTAMP)
                             it.setString(4, innboks.fodselsnummer)
                             it.setString(5, innboks.eventId)

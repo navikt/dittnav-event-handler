@@ -5,13 +5,13 @@ import java.sql.Connection
 import java.sql.Types
 
 fun Connection.createBeskjed(beskjeder: List<Beskjed>) =
-        prepareStatement("""INSERT INTO beskjed(id, produsent, eventTidspunkt, fodselsnummer, eventId, grupperingsId, tekst, link, sikkerhetsnivaa, sistOppdatert, aktiv, synligFremTil, uid)
+        prepareStatement("""INSERT INTO beskjed(id, systembruker, eventTidspunkt, fodselsnummer, eventId, grupperingsId, tekst, link, sikkerhetsnivaa, sistOppdatert, aktiv, synligFremTil, uid)
             VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""")
                 .use {
                     beskjeder.forEach { beskjed ->
                         run {
                             it.setInt(1, beskjed.id)
-                            it.setString(2, beskjed.produsent)
+                            it.setString(2, beskjed.systembruker)
                             it.setObject(3, beskjed.eventTidspunkt.toLocalDateTime(), Types.TIMESTAMP)
                             it.setString(4, beskjed.fodselsnummer)
                             it.setString(5, beskjed.eventId)

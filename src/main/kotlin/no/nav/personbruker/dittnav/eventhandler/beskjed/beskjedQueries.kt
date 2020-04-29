@@ -28,8 +28,9 @@ fun Connection.getAllBeskjedForInnloggetBruker(bruker: InnloggetBruker): List<Be
             |beskjed.sistOppdatert,
             |beskjed.synligFremTil,
             |beskjed.aktiv,
-            |systembrukere.produsentnavn
-            |FROM beskjed INNER JOIN systembrukere ON beskjed.produsent = systembrukere.systembruker
+            |beskjed.systembruker,
+            |systembrukere.produsentnavn AS produsent
+            |FROM beskjed INNER JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker
             |WHERE beskjed.fodselsnummer = ?""".trimMargin())
                 .use {
                     it.setString(1, bruker.ident)
@@ -39,13 +40,29 @@ fun Connection.getAllBeskjedForInnloggetBruker(bruker: InnloggetBruker): List<Be
                 }
 
 fun Connection.getActiveBeskjedByIds(fodselsnummer: String, uid: String, eventId: String): List<Beskjed> =
-        prepareStatement("""SELECT * FROM BESKJED WHERE fodselsnummer = ? AND uid = ? AND eventId = ? AND aktiv = true""")
+        prepareStatement("""SELECT 
+            |beskjed.id, 
+            |beskjed.uid, 
+            |beskjed.eventTidspunkt,
+            |beskjed.fodselsnummer,
+            |beskjed.eventId, 
+            |beskjed.grupperingsId,
+            |beskjed.tekst,
+            |beskjed.link,
+            |beskjed.sikkerhetsnivaa,
+            |beskjed.sistOppdatert,
+            |beskjed.synligFremTil,
+            |beskjed.aktiv,
+            |beskjed.systembruker,
+            |systembrukere.produsentnavn AS produsent
+            |FROM beskjed INNER JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker
+            |WHERE fodselsnummer = ? AND uid = ? AND eventId = ? AND aktiv = true""".trimMargin())
                 .use {
                     it.setString(1, fodselsnummer)
                     it.setString(2, uid)
                     it.setString(3, eventId)
                     it.executeQuery().map {
-                        toDoneBeskjed()
+                        toBeskjed()
                     }
                 }
 
@@ -53,34 +70,17 @@ fun ResultSet.toBeskjed(): Beskjed {
     return Beskjed(
             id = getInt("id"),
             uid = getString("uid"),
-            produsent = getString("produsentnavn"),
-            eventTidspunkt = ZonedDateTime.ofInstant(getTimestamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),
             fodselsnummer = getString("fodselsnummer"),
-            eventId = getString("eventId"),
             grupperingsId = getString("grupperingsId"),
-            tekst = getString("tekst"),
-            link = getString("link"),
-            sikkerhetsnivaa = getInt("sikkerhetsnivaa"),
-            sistOppdatert = ZonedDateTime.ofInstant(getTimestamp("sistOppdatert").toInstant(), ZoneId.of("Europe/Oslo")),
-            synligFremTil = getNullableZonedDateTime("synligFremTil"),
-            aktiv = getBoolean("aktiv")
-    )
-}
-
-fun ResultSet.toDoneBeskjed(): Beskjed {
-    return Beskjed(
-            id = getInt("id"),
-            uid = getString("uid"),
+            eventId = getString("eventId"),
+            eventTidspunkt = ZonedDateTime.ofInstant(getTimestamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),
             produsent = getString("produsent"),
-            eventTidspunkt = ZonedDateTime.ofInstant(getTimestamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),
-            fodselsnummer = getString("fodselsnummer"),
-            eventId = getString("eventId"),
-            grupperingsId = getString("grupperingsId"),
-            tekst = getString("tekst"),
-            link = getString("link"),
+            systembruker = getString("systembruker"),
             sikkerhetsnivaa = getInt("sikkerhetsnivaa"),
             sistOppdatert = ZonedDateTime.ofInstant(getTimestamp("sistOppdatert").toInstant(), ZoneId.of("Europe/Oslo")),
             synligFremTil = getNullableZonedDateTime("synligFremTil"),
+            tekst = getString("tekst"),
+            link = getString("link"),
             aktiv = getBoolean("aktiv")
     )
 }
@@ -99,8 +99,9 @@ private fun Connection.getBeskjedForInnloggetBruker(bruker: InnloggetBruker, akt
             |beskjed.sistOppdatert,
             |beskjed.synligFremTil,
             |beskjed.aktiv,
-            |systembrukere.produsentnavn
-            |FROM beskjed INNER JOIN systembrukere ON beskjed.produsent = systembrukere.systembruker
+            |beskjed.systembruker,
+            |systembrukere.produsentnavn AS produsent
+            |FROM beskjed INNER JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker
             |WHERE beskjed.fodselsnummer = ? AND beskjed.aktiv = ?""".trimMargin())
                 .use {
                     it.setString(1, bruker.ident)

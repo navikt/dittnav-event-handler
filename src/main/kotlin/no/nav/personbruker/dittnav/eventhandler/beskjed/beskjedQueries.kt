@@ -2,6 +2,8 @@ package no.nav.personbruker.dittnav.eventhandler.beskjed
 
 import Beskjed
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
+import no.nav.personbruker.dittnav.eventhandler.common.database.getNullableUtcTimeStamp
+import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.map
 import java.sql.Connection
 import java.sql.ResultSet
@@ -54,14 +56,14 @@ fun ResultSet.toBeskjed(): Beskjed {
             id = getInt("id"),
             uid = getString("uid"),
             produsent = getString("produsentnavn"),
-            eventTidspunkt = ZonedDateTime.ofInstant(getTimestamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),
+            eventTidspunkt = ZonedDateTime.ofInstant(getUtcTimeStamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),
             fodselsnummer = getString("fodselsnummer"),
             eventId = getString("eventId"),
             grupperingsId = getString("grupperingsId"),
             tekst = getString("tekst"),
             link = getString("link"),
             sikkerhetsnivaa = getInt("sikkerhetsnivaa"),
-            sistOppdatert = ZonedDateTime.ofInstant(getTimestamp("sistOppdatert").toInstant(), ZoneId.of("Europe/Oslo")),
+            sistOppdatert = ZonedDateTime.ofInstant(getUtcTimeStamp("sistOppdatert").toInstant(), ZoneId.of("Europe/Oslo")),
             synligFremTil = getNullableZonedDateTime("synligFremTil"),
             aktiv = getBoolean("aktiv")
     )
@@ -72,14 +74,14 @@ fun ResultSet.toDoneBeskjed(): Beskjed {
             id = getInt("id"),
             uid = getString("uid"),
             produsent = getString("produsent"),
-            eventTidspunkt = ZonedDateTime.ofInstant(getTimestamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),
+            eventTidspunkt = ZonedDateTime.ofInstant(getUtcTimeStamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),
             fodselsnummer = getString("fodselsnummer"),
             eventId = getString("eventId"),
             grupperingsId = getString("grupperingsId"),
             tekst = getString("tekst"),
             link = getString("link"),
             sikkerhetsnivaa = getInt("sikkerhetsnivaa"),
-            sistOppdatert = ZonedDateTime.ofInstant(getTimestamp("sistOppdatert").toInstant(), ZoneId.of("Europe/Oslo")),
+            sistOppdatert = ZonedDateTime.ofInstant(getUtcTimeStamp("sistOppdatert").toInstant(), ZoneId.of("Europe/Oslo")),
             synligFremTil = getNullableZonedDateTime("synligFremTil"),
             aktiv = getBoolean("aktiv")
     )
@@ -111,5 +113,5 @@ private fun Connection.getBeskjedForInnloggetBruker(bruker: InnloggetBruker, akt
                 }
 
 private fun ResultSet.getNullableZonedDateTime(label: String) : ZonedDateTime? {
-    return getTimestamp(label)?.let { timestamp -> ZonedDateTime.ofInstant(timestamp.toInstant(), ZoneId.of("Europe/Oslo")) }
+    return getNullableUtcTimeStamp(label)?.let { timestamp -> ZonedDateTime.ofInstant(timestamp.toInstant(), ZoneId.of("Europe/Oslo")) }
 }

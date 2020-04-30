@@ -8,7 +8,6 @@ val confluentVersion = "5.2.0"
 val logstashVersion = 5.2
 val logbackVersion = "1.2.3"
 val vaultJdbcVersion = "1.3.1"
-val flywayVersion = "5.2.4"
 val hikariCPVersion = "3.2.0"
 val postgresVersion = "42.2.5"
 val h2Version = "1.4.199"
@@ -26,8 +25,6 @@ plugins {
     val kotlinVersion = "1.3.50"
     kotlin("jvm").version(kotlinVersion)
     kotlin("plugin.allopen").version(kotlinVersion)
-
-    id("org.flywaydb.flyway") version("5.2.4")
 
     // Apply the application plugin to add support for building a CLI application.
     application
@@ -51,7 +48,6 @@ dependencies {
     compile("no.nav:vault-jdbc:$vaultJdbcVersion")
     compile("com.zaxxer:HikariCP:$hikariCPVersion")
     compile("org.postgresql:postgresql:$postgresVersion")
-    compile("org.flywaydb:flyway-core:$flywayVersion")
     compile("ch.qos.logback:logback-classic:$logbackVersion")
     compile("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
     compile("io.prometheus:simpleclient:$prometheusVersion")

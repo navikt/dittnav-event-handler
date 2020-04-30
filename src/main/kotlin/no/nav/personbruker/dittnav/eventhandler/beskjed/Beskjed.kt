@@ -2,13 +2,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import java.time.ZonedDateTime
 
 data class Beskjed(
-        @JsonIgnore val id: Int?,
+        @JsonIgnore val id: Int,
         val uid: String,
         val fodselsnummer: String,
         val grupperingsId: String,
         val eventId: String,
         val eventTidspunkt: ZonedDateTime,
-        @JsonIgnore val produsent: String,
+        val produsent: String,
         val sikkerhetsnivaa: Int,
         val sistOppdatert: ZonedDateTime,
         @JsonIgnore val synligFremTil: ZonedDateTime?,

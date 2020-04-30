@@ -1,10 +1,11 @@
 package no.nav.personbruker.dittnav.eventhandler.done
 
 import Beskjed
+import no.nav.personbruker.dittnav.eventhandler.beskjed.getActiveBeskjedByIds
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
-import no.nav.personbruker.dittnav.eventhandler.common.exceptions.DuplicateEventException
-import no.nav.personbruker.dittnav.eventhandler.common.exceptions.NoEventsException
+import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.DuplicateEventException
+import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.NoEventsException
 
 class DoneEventService(private val database: Database, private val doneProducer: DoneProducer) {
 
@@ -15,9 +16,11 @@ class DoneEventService(private val database: Database, private val doneProducer:
     }
 
     suspend fun getBeskjedFromCacheForUser(fodselsnummer: String, uid: String, eventId: String): List<Beskjed> {
-        return database.dbQuery {
-            getActiveBeskjedByIds(fodselsnummer, uid, eventId)
+        var result = emptyList<Beskjed>()
+        database.queryWithExceptionTranslation {
+            result = getActiveBeskjedByIds(fodselsnummer, uid, eventId)
         }
+        return result
     }
 
     fun isEventBeskjedListValid(events: List<Beskjed>) {

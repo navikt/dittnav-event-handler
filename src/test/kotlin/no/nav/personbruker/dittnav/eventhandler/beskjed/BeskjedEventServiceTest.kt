@@ -21,7 +21,7 @@ class BeskjedEventServiceTest {
         val beskjedList = getBeskjedList()
         runBlocking {
             coEvery {
-                database.dbQuery<List<Beskjed>>(any())
+                database.queryWithExceptionTranslation<List<Beskjed>>(any())
             }.returns(beskjedList)
 
             val actualBeskjeds = beskjedEventService.getAllEventsFromCacheForUser(bruker)
@@ -34,7 +34,7 @@ class BeskjedEventServiceTest {
         val beskjedList = getBeskjedList()
         runBlocking {
             coEvery {
-                database.dbQuery<List<Beskjed>>(any())
+                database.queryWithExceptionTranslation<List<Beskjed>>(any())
             }.returns(beskjedList)
 
             val actualBeskjeds = beskjedEventService.getActiveCachedEventsForUser(bruker)
@@ -45,11 +45,11 @@ class BeskjedEventServiceTest {
     @Test
     fun `Should return expired as inactive`() {
         val beskjedList = getBeskjedList()
-        beskjedList.add(createBeskjed(3, "3", bruker.ident, null, "123", false))
-        beskjedList.add(createBeskjed(4, "4", bruker.ident, ZonedDateTime.now().minusDays(1), "123", true))
+        beskjedList.add(BeskjedObjectMother.createBeskjed(3, "3", bruker.ident, null, "123", false))
+        beskjedList.add(BeskjedObjectMother.createBeskjed(4, "4", bruker.ident, ZonedDateTime.now().minusDays(1), "123", true))
         runBlocking {
             coEvery {
-                database.dbQuery<List<Beskjed>>(any())
+                database.queryWithExceptionTranslation<List<Beskjed>>(any())
             }.returns(beskjedList)
 
             val actualBeskjeds = beskjedEventService.getInactiveCachedEventsForUser(bruker)
@@ -59,7 +59,7 @@ class BeskjedEventServiceTest {
 
     fun getBeskjedList(): MutableList<Beskjed> {
         return mutableListOf(
-                createBeskjed(1, "1", bruker.ident, null, "123", true),
-                createBeskjed(2, "2", bruker.ident, ZonedDateTime.now().minusDays(2), "123", true))
+                BeskjedObjectMother.createBeskjed(1, "1", bruker.ident, null, "123", true),
+                BeskjedObjectMother.createBeskjed(2, "2", bruker.ident, ZonedDateTime.now().minusDays(2), "123", true))
     }
 }

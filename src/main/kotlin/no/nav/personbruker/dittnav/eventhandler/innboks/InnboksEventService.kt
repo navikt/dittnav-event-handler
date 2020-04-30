@@ -6,14 +6,14 @@ import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 class InnboksEventService(private val database: Database) {
 
     suspend fun getActiveCachedEventsForUser(bruker: InnloggetBruker): List<Innboks> {
-        return database.dbQuery { getAktivInnboksForInnloggetBruker(bruker) }
+        return database.queryWithExceptionTranslation { getAktivInnboksForInnloggetBruker(bruker) }
     }
 
     suspend fun getInctiveCachedEventsForUser(bruker: InnloggetBruker): List<Innboks> {
-        return database.dbQuery { getAktivInnboksForInnloggetBruker(bruker) }
+        return database.queryWithExceptionTranslation { getInaktivInnboksForInnloggetBruker(bruker) }
     }
 
     suspend fun getAllCachedEventsForUser(bruker: InnloggetBruker): List<Innboks> {
-        return database.dbQuery { getAllInnboksForInnloggetBruker(bruker) }
+        return database.queryWithExceptionTranslation { getAllInnboksForInnloggetBruker(bruker) }
     }
 }

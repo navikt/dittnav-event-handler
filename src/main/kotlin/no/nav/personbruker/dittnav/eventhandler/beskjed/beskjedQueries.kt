@@ -2,6 +2,8 @@ package no.nav.personbruker.dittnav.eventhandler.beskjed
 
 import Beskjed
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
+import no.nav.personbruker.dittnav.eventhandler.common.database.getNullableUtcTimeStamp
+import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.map
 import java.sql.Connection
 import java.sql.ResultSet
@@ -81,7 +83,7 @@ fun ResultSet.toBeskjed(): Beskjed {
             produsent = getString("produsent"),
             systembruker = getString("systembruker"),
             sikkerhetsnivaa = getInt("sikkerhetsnivaa"),
-            sistOppdatert = ZonedDateTime.ofInstant(getTimestamp("sistOppdatert").toInstant(), ZoneId.of("Europe/Oslo")),
+            sistOppdatert = ZonedDateTime.ofInstant(getUtcTimeStamp("sistOppdatert").toInstant(), ZoneId.of("Europe/Oslo")),
             synligFremTil = getNullableZonedDateTime("synligFremTil"),
             tekst = getString("tekst"),
             link = getString("link"),
@@ -116,5 +118,5 @@ private fun Connection.getBeskjedForInnloggetBruker(bruker: InnloggetBruker, akt
                 }
 
 private fun ResultSet.getNullableZonedDateTime(label: String) : ZonedDateTime? {
-    return getTimestamp(label)?.let { timestamp -> ZonedDateTime.ofInstant(timestamp.toInstant(), ZoneId.of("Europe/Oslo")) }
+    return getNullableUtcTimeStamp(label)?.let { timestamp -> ZonedDateTime.ofInstant(timestamp.toInstant(), ZoneId.of("Europe/Oslo")) }
 }

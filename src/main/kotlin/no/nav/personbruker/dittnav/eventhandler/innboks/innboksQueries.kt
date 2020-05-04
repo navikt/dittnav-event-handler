@@ -3,6 +3,7 @@ package no.nav.personbruker.dittnav.eventhandler.innboks
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.map
+import no.nav.personbruker.dittnav.eventhandler.common.exceptions.EventCacheException
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId
@@ -28,7 +29,7 @@ fun Connection.getAllInnboksForInnloggetBruker(bruker: InnloggetBruker): List<In
             |innboks.aktiv,
             |innboks.systembruker,
             |systembrukere.produsentnavn AS produsent
-            |FROM innboks INNER JOIN systembrukere ON innboks.systembruker = systembrukere.systembruker
+            |FROM innboks LEFT JOIN systembrukere ON innboks.systembruker = systembrukere.systembruker
             |WHERE innboks.fodselsnummer = ?""".trimMargin())
                 .use {
                     it.setString(1, bruker.ident)
@@ -40,7 +41,7 @@ fun Connection.getAllInnboksForInnloggetBruker(bruker: InnloggetBruker): List<In
 private fun ResultSet.toInnboks(): Innboks {
     return Innboks(
             id = getInt("id"),
-            produsent = getString("produsent"),
+            produsent = getString("produsent") ?: throw EventCacheException("Produsent var null, kanskje er ikke systembrukeren lagt inn i systembruker-tabellen?"),
             systembruker = getString("systembruker"),
             eventTidspunkt = ZonedDateTime.ofInstant(getTimestamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),
             fodselsnummer = getString("fodselsnummer"),
@@ -68,7 +69,7 @@ private fun Connection.getInnboksForInnloggetBruker(bruker: InnloggetBruker, akt
             |innboks.aktiv,
             |innboks.systembruker,
             |systembrukere.produsentnavn AS produsent
-            |FROM innboks INNER JOIN systembrukere ON innboks.systembruker = systembrukere.systembruker
+            |FROM innboks LEFT JOIN systembrukere ON innboks.systembruker = systembrukere.systembruker
             |WHERE fodselsnummer = ? AND aktiv = ?""".trimMargin())
                 .use {
                     it.setString(1, bruker.ident)

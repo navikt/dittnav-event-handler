@@ -5,7 +5,10 @@ import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBrukerObjectMoth
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
 import no.nav.personbruker.dittnav.eventhandler.common.database.createProdusent
 import no.nav.personbruker.dittnav.eventhandler.common.database.deleteProdusent
+import no.nav.personbruker.dittnav.eventhandler.common.exceptions.EventCacheException
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should throw`
+import org.amshove.kluent.invoking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -25,18 +28,14 @@ class OppgaveQueriesTest {
 
     @BeforeAll
     fun `populer test-data`() {
-        runBlocking {
-            database.dbQuery { createOppgave(listOf(oppgave1, oppgave2, oppgave3, oppgave4)) }
-            database.dbQuery { createProdusent(systembruker = "x-dittnav", produsentnavn = "dittnav") }
-        }
+        createOppgave(listOf(oppgave1, oppgave2, oppgave3, oppgave4))
+        createSystembruker(systembruker = "x-dittnav", produsentnavn = "dittnav")
     }
 
     @AfterAll
     fun `slett Oppgave-eventer fra tabellen`() {
-        runBlocking {
-            database.dbQuery { deleteOppgave(listOf(oppgave1, oppgave2, oppgave3, oppgave4)) }
-            database.dbQuery { deleteProdusent(systembruker = "x-dittnav") }
-        }
+        deleteOppgave(listOf(oppgave1, oppgave2, oppgave3, oppgave4))
+        deleteSystembruker(systembruker = "x-dittnav")
     }
 
     @Test
@@ -97,6 +96,45 @@ class OppgaveQueriesTest {
         runBlocking {
             val oppgave = database.dbQuery { getAllOppgaveForInnloggetBruker(bruker) }.first()
             oppgave.produsent `should be equal to` "dittnav"
+        }
+    }
+
+    @Test
+    fun `Kaster exception hvis eventet er produsert av systembruker vi ikke har i systembruker-tabellen`() {
+        var oppgaveMedAnnenProdusent = OppgaveObjectMother.createOppgave(id = 5, eventId = "111", fodselsnummer = "112233", aktiv = true)
+                .copy(systembruker = "ukjent-systembruker")
+        createOppgave(listOf(oppgaveMedAnnenProdusent))
+        invoking {
+            runBlocking {
+                database.dbQuery {
+                    getAllOppgaveForInnloggetBruker(InnloggetBrukerObjectMother.createInnloggetBruker("112233"))
+                }
+            }
+        } `should throw` EventCacheException::class
+        deleteOppgave(listOf(oppgaveMedAnnenProdusent))
+    }
+
+    private fun createOppgave(oppgaver: List<Oppgave>) {
+        runBlocking {
+            database.dbQuery { createOppgave(oppgaver) }
+        }
+    }
+
+    private fun createSystembruker(systembruker: String, produsentnavn: String) {
+        runBlocking {
+            database.dbQuery { createProdusent(systembruker, produsentnavn) }
+        }
+    }
+
+    private fun deleteOppgave(oppgaver: List<Oppgave>) {
+        runBlocking {
+            database.dbQuery { deleteOppgave(oppgaver) }
+        }
+    }
+
+    private fun deleteSystembruker(systembruker: String) {
+        runBlocking {
+            database.dbQuery { deleteProdusent(systembruker) }
         }
     }
 }

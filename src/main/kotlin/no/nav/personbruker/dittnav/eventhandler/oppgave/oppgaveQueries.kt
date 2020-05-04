@@ -30,7 +30,7 @@ fun Connection.getAllOppgaveForInnloggetBruker(bruker: InnloggetBruker): List<Op
             |oppgave.aktiv,
             |oppgave.systembruker,
             |systembrukere.produsentnavn AS produsent
-            |FROM oppgave INNER JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker
+            |FROM oppgave LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker
             |WHERE fodselsnummer = ?""".trimMargin())
                 .use {
                     it.setString(1, bruker.ident)
@@ -44,7 +44,7 @@ private fun ResultSet.toOppgave(): Oppgave {
     val verifiedEventTidspunkt = convertIfUnlikelyDate(rawEventTidspunkt)
     return Oppgave(
             id = getInt("id"),
-            produsent = getString("produsent"),
+            produsent = getString("produsent") ?: throw EventCacheException("Produsent var null, kanskje er ikke systembrukeren lagt inn i systembruker-tabellen?") ,
             systembruker = getString("systembruker"),
             eventTidspunkt = verifiedEventTidspunkt,
             fodselsnummer = getString("fodselsnummer"),
@@ -72,7 +72,7 @@ private fun Connection.getOppgaveForInnloggetBruker(bruker: InnloggetBruker, akt
             |oppgave.aktiv,
             |oppgave.systembruker,
             |systembrukere.produsentnavn AS produsent
-            |FROM oppgave INNER JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker
+            |FROM oppgave LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker
             |WHERE fodselsnummer = ? AND aktiv = ?""".trimMargin())
                 .use {
                     it.setString(1, bruker.ident)

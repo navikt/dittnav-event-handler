@@ -1,12 +1,16 @@
 package no.nav.personbruker.dittnav.eventhandler.beskjed
 
+import Beskjed
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBrukerObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
 import no.nav.personbruker.dittnav.eventhandler.common.database.createProdusent
 import no.nav.personbruker.dittnav.eventhandler.common.database.deleteProdusent
+import no.nav.personbruker.dittnav.eventhandler.common.exceptions.EventCacheException
 import org.amshove.kluent.`should be empty`
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should throw`
+import org.amshove.kluent.invoking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -33,18 +37,14 @@ class BeskjedQueriesTest {
 
     @BeforeAll
     fun `populer testdata`() {
-        runBlocking {
-            database.dbQuery { createBeskjed(listOf(beskjed1, beskjed2, beskjed3, beskjed4)) }
-            database.dbQuery { createProdusent(systembruker = "x-dittnav", produsentnavn = "dittnav") }
-        }
+        createBeskjed(listOf(beskjed1, beskjed2, beskjed3, beskjed4))
+        createSystembruker(systembruker = "x-dittnav", produsentnavn = "dittnav")
     }
 
     @AfterAll
     fun `slett testdata`() {
-        runBlocking {
-            database.dbQuery { deleteBeskjed(listOf(beskjed1, beskjed2, beskjed3, beskjed4)) }
-            database.dbQuery { deleteProdusent(systembruker = "x-dittnav") }
-        }
+        deleteBeskjed(listOf(beskjed1, beskjed2, beskjed3, beskjed4))
+        deleteSystembruker(systembruker = "x-dittnav")
     }
 
     @Test
@@ -139,6 +139,46 @@ class BeskjedQueriesTest {
         val fodselsnummerMangler = InnloggetBrukerObjectMother.createInnloggetBruker("")
         runBlocking {
             database.dbQuery { getActiveBeskjedByIds(fodselsnummerMangler.ident, uid, eventId) }.`should be empty`()
+        }
+    }
+
+    @Test
+    fun `Kaster exception hvis eventet er produsert av systembruker vi ikke har i systembruker-tabellen`() {
+        var beskjedMedAnnenProdusent = BeskjedObjectMother.createBeskjed(id = 5, eventId = "111", fodselsnummer = "112233",
+                synligFremTil = ZonedDateTime.now().plusHours(1), uid = "11", aktiv = true)
+                .copy(systembruker = "ukjent-systembruker")
+        createBeskjed(listOf(beskjedMedAnnenProdusent))
+        invoking {
+            runBlocking {
+                database.dbQuery {
+                    getAllBeskjedForInnloggetBruker(InnloggetBrukerObjectMother.createInnloggetBruker("112233"))
+                }
+            }
+        } `should throw` EventCacheException::class
+        deleteBeskjed(listOf(beskjedMedAnnenProdusent))
+    }
+
+    private fun createBeskjed(beskjeder: List<Beskjed>) {
+        runBlocking {
+            database.dbQuery { createBeskjed(beskjeder) }
+        }
+    }
+
+    private fun createSystembruker(systembruker: String, produsentnavn: String) {
+        runBlocking {
+            database.dbQuery { createProdusent(systembruker, produsentnavn) }
+        }
+    }
+
+    private fun deleteBeskjed(beskjeder: List<Beskjed>) {
+        runBlocking {
+            database.dbQuery { deleteBeskjed(beskjeder) }
+        }
+    }
+
+    private fun deleteSystembruker(systembruker: String) {
+        runBlocking {
+            database.dbQuery { deleteProdusent(systembruker) }
         }
     }
 }

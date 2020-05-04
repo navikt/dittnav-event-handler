@@ -5,6 +5,7 @@ import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.getNullableUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.map
+import no.nav.personbruker.dittnav.eventhandler.common.exceptions.EventCacheException
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId
@@ -36,7 +37,7 @@ fun Connection.getAllBeskjedForInnloggetBruker(bruker: InnloggetBruker): List<Be
             |beskjed.aktiv,
             |beskjed.systembruker,
             |systembrukere.produsentnavn AS produsent
-            |FROM beskjed INNER JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker
+            |FROM beskjed LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker
             |WHERE beskjed.fodselsnummer = ?""".trimMargin())
                 .use {
                     it.setString(1, bruker.ident)
@@ -61,7 +62,7 @@ fun Connection.getActiveBeskjedByIds(fodselsnummer: String, uid: String, eventId
             |beskjed.aktiv,
             |beskjed.systembruker,
             |systembrukere.produsentnavn AS produsent
-            |FROM beskjed INNER JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker
+            |FROM beskjed LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker
             |WHERE fodselsnummer = ? AND uid = ? AND eventId = ? AND aktiv = true""".trimMargin())
                 .use {
                     it.setString(1, fodselsnummer)
@@ -80,7 +81,7 @@ fun ResultSet.toBeskjed(): Beskjed {
             grupperingsId = getString("grupperingsId"),
             eventId = getString("eventId"),
             eventTidspunkt = ZonedDateTime.ofInstant(getTimestamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),
-            produsent = getString("produsent"),
+            produsent = getString("produsent") ?: throw EventCacheException("Produsent var null, kanskje er ikke systembrukeren lagt inn i systembruker-tabellen?"),
             systembruker = getString("systembruker"),
             sikkerhetsnivaa = getInt("sikkerhetsnivaa"),
             sistOppdatert = ZonedDateTime.ofInstant(getUtcTimeStamp("sistOppdatert").toInstant(), ZoneId.of("Europe/Oslo")),
@@ -107,7 +108,7 @@ private fun Connection.getBeskjedForInnloggetBruker(bruker: InnloggetBruker, akt
             |beskjed.aktiv,
             |beskjed.systembruker,
             |systembrukere.produsentnavn AS produsent
-            |FROM beskjed INNER JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker
+            |FROM beskjed LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker
             |WHERE beskjed.fodselsnummer = ? AND beskjed.aktiv = ?""".trimMargin())
                 .use {
                     it.setString(1, bruker.ident)

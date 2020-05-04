@@ -5,8 +5,11 @@ import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBrukerObjectMoth
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
 import no.nav.personbruker.dittnav.eventhandler.common.database.createProdusent
 import no.nav.personbruker.dittnav.eventhandler.common.database.deleteProdusent
+import no.nav.personbruker.dittnav.eventhandler.common.exceptions.EventCacheException
 import org.amshove.kluent.`should be empty`
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should throw`
+import org.amshove.kluent.invoking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -27,19 +30,14 @@ class InnboksQueriesTest {
 
     @BeforeAll
     fun `populer test-data`() {
-        runBlocking {
-            database.dbQuery { createInnboks(listOf(innboks1, innboks2, innboks3, innboks4)) }
-            database.dbQuery { createProdusent(systembruker = "x-dittnav", produsentnavn = "dittnav") }
-        }
+        createInnboks(listOf(innboks1, innboks2, innboks3, innboks4))
+        createSystembruker(systembruker = "x-dittnav", produsentnavn = "dittnav")
     }
 
     @AfterAll
     fun `slett Innboks-eventer fra tabellen`() {
-        runBlocking {
-            database.dbQuery { deleteInnboks(listOf(innboks1, innboks2, innboks3, innboks4)) }
-            database.dbQuery { deleteProdusent(systembruker = "x-dittnav") }
-        }
-
+        deleteInnboks(listOf(innboks1, innboks2, innboks3, innboks4))
+        deleteSystembruker(systembruker = "x-dittnav")
     }
 
     @Test
@@ -103,6 +101,45 @@ class InnboksQueriesTest {
         runBlocking {
             val innboks = database.dbQuery { getAllInnboksForInnloggetBruker(bruker1) }.first()
             innboks.produsent `should be equal to` "dittnav"
+        }
+    }
+
+    @Test
+    fun `Kaster exception hvis eventet er produsert av systembruker vi ikke har i systembruker-tabellen`() {
+        var innboksMedAnnenProdusent = InnboksObjectMother.createInnboks(id = 5, eventId = "111", fodselsnummer = "112233", aktiv = true)
+                .copy(systembruker = "ukjent-systembruker")
+        createInnboks(listOf(innboksMedAnnenProdusent))
+        invoking {
+            runBlocking {
+                database.dbQuery {
+                    getAllInnboksForInnloggetBruker(InnloggetBrukerObjectMother.createInnloggetBruker("112233"))
+                }
+            }
+        } `should throw` EventCacheException::class
+        deleteInnboks(listOf(innboksMedAnnenProdusent))
+    }
+
+    private fun createInnboks(innboks: List<Innboks>) {
+        runBlocking {
+            database.dbQuery { createInnboks(innboks) }
+        }
+    }
+
+    private fun createSystembruker(systembruker: String, produsentnavn: String) {
+        runBlocking {
+            database.dbQuery { createProdusent(systembruker, produsentnavn) }
+        }
+    }
+
+    private fun deleteInnboks(innboks: List<Innboks>) {
+        runBlocking {
+            database.dbQuery { deleteInnboks(innboks) }
+        }
+    }
+
+    private fun deleteSystembruker(systembruker: String) {
+        runBlocking {
+            database.dbQuery { deleteProdusent(systembruker) }
         }
     }
 }

@@ -5,11 +5,8 @@ import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBrukerObjectMoth
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
 import no.nav.personbruker.dittnav.eventhandler.common.database.createProdusent
 import no.nav.personbruker.dittnav.eventhandler.common.database.deleteProdusent
-import no.nav.personbruker.dittnav.eventhandler.common.exceptions.EventCacheException
 import org.amshove.kluent.`should be empty`
 import org.amshove.kluent.`should be equal to`
-import org.amshove.kluent.`should throw`
-import org.amshove.kluent.invoking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -105,17 +102,16 @@ class InnboksQueriesTest {
     }
 
     @Test
-    fun `Kaster exception hvis eventet er produsert av systembruker vi ikke har i systembruker-tabellen`() {
+    fun `Returnerer tom streng for produsent hvis eventet er produsert av systembruker vi ikke har i systembruker-tabellen`() {
         var innboksMedAnnenProdusent = InnboksObjectMother.createInnboks(id = 5, eventId = "111", fodselsnummer = "112233", aktiv = true)
                 .copy(systembruker = "ukjent-systembruker")
         createInnboks(listOf(innboksMedAnnenProdusent))
-        invoking {
-            runBlocking {
-                database.dbQuery {
-                    getAllInnboksForInnloggetBruker(InnloggetBrukerObjectMother.createInnloggetBruker("112233"))
-                }
-            }
-        } `should throw` EventCacheException::class
+        val innboks = runBlocking {
+            database.dbQuery {
+                getAllInnboksForInnloggetBruker(InnloggetBrukerObjectMother.createInnloggetBruker("112233"))
+            }.first()
+        }
+        innboks.produsent `should be equal to` ""
         deleteInnboks(listOf(innboksMedAnnenProdusent))
     }
 

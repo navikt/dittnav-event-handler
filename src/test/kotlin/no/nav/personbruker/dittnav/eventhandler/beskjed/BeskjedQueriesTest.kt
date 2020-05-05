@@ -6,11 +6,8 @@ import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBrukerObjectMoth
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
 import no.nav.personbruker.dittnav.eventhandler.common.database.createProdusent
 import no.nav.personbruker.dittnav.eventhandler.common.database.deleteProdusent
-import no.nav.personbruker.dittnav.eventhandler.common.exceptions.EventCacheException
 import org.amshove.kluent.`should be empty`
 import org.amshove.kluent.`should be equal to`
-import org.amshove.kluent.`should throw`
-import org.amshove.kluent.invoking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -143,18 +140,17 @@ class BeskjedQueriesTest {
     }
 
     @Test
-    fun `Kaster exception hvis eventet er produsert av systembruker vi ikke har i systembruker-tabellen`() {
+    fun `Returnerer tom streng for produsent hvis eventet er produsert av systembruker vi ikke har i systembruker-tabellen`() {
         var beskjedMedAnnenProdusent = BeskjedObjectMother.createBeskjed(id = 5, eventId = "111", fodselsnummer = "112233",
                 synligFremTil = ZonedDateTime.now().plusHours(1), uid = "11", aktiv = true)
                 .copy(systembruker = "ukjent-systembruker")
         createBeskjed(listOf(beskjedMedAnnenProdusent))
-        invoking {
-            runBlocking {
-                database.dbQuery {
-                    getAllBeskjedForInnloggetBruker(InnloggetBrukerObjectMother.createInnloggetBruker("112233"))
-                }
-            }
-        } `should throw` EventCacheException::class
+        val beskjed = runBlocking {
+             database.dbQuery {
+                getAllBeskjedForInnloggetBruker(InnloggetBrukerObjectMother.createInnloggetBruker("112233"))
+            }.first()
+        }
+        beskjed.produsent `should be equal to` ""
         deleteBeskjed(listOf(beskjedMedAnnenProdusent))
     }
 

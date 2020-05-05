@@ -5,7 +5,6 @@ import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.getNullableUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.map
-import no.nav.personbruker.dittnav.eventhandler.common.exceptions.EventCacheException
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId
@@ -81,7 +80,7 @@ fun ResultSet.toBeskjed(): Beskjed {
             grupperingsId = getString("grupperingsId"),
             eventId = getString("eventId"),
             eventTidspunkt = ZonedDateTime.ofInstant(getTimestamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),
-            produsent = getString("produsent") ?: throw EventCacheException("Produsent var null, kanskje er ikke systembrukeren lagt inn i systembruker-tabellen?"),
+            produsent = getString("produsent") ?: "",
             systembruker = getString("systembruker"),
             sikkerhetsnivaa = getInt("sikkerhetsnivaa"),
             sistOppdatert = ZonedDateTime.ofInstant(getUtcTimeStamp("sistOppdatert").toInstant(), ZoneId.of("Europe/Oslo")),

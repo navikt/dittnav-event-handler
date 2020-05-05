@@ -44,7 +44,7 @@ private fun ResultSet.toOppgave(): Oppgave {
     val verifiedEventTidspunkt = convertIfUnlikelyDate(rawEventTidspunkt)
     return Oppgave(
             id = getInt("id"),
-            produsent = getString("produsent") ?: throw EventCacheException("Produsent var null, kanskje er ikke systembrukeren lagt inn i systembruker-tabellen?") ,
+            produsent = getString("produsent") ?: "",
             systembruker = getString("systembruker"),
             eventTidspunkt = verifiedEventTidspunkt,
             fodselsnummer = getString("fodselsnummer"),

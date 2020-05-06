@@ -4,13 +4,13 @@ import java.sql.Connection
 import java.sql.Types
 
 fun Connection.createOppgave(oppgaver: List<Oppgave>) =
-        prepareStatement("""INSERT INTO oppgave(id, produsent, eventTidspunkt, fodselsnummer, eventId, grupperingsId, tekst, link, sikkerhetsnivaa, sistOppdatert, aktiv)
+        prepareStatement("""INSERT INTO oppgave(id, systembruker, eventTidspunkt, fodselsnummer, eventId, grupperingsId, tekst, link, sikkerhetsnivaa, sistOppdatert, aktiv)
             VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""")
                 .use {
                     oppgaver.forEach { oppgave ->
                         run {
                             it.setInt(1, oppgave.id)
-                            it.setString(2, oppgave.produsent)
+                            it.setString(2, oppgave.systembruker)
                             it.setObject(3, oppgave.eventTidspunkt.toLocalDateTime(), Types.TIMESTAMP)
                             it.setString(4, oppgave.fodselsnummer)
                             it.setString(5, oppgave.eventId)

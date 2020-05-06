@@ -63,7 +63,7 @@ private suspend fun isDBSchemaUpdated(database: Database): Boolean {
                 dbSchemaReady = true
                 dbSchemaReady
             } catch (e: Exception) {
-                log.info("Database-skjema er ikke oppdatert, ikke ready")
+                log.info("Database-skjema er ikke oppdatert, ikke ready", e)
                 dbSchemaReady;
             }
         }

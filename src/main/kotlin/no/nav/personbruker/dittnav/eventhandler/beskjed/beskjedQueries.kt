@@ -75,7 +75,7 @@ fun ResultSet.toBeskjed(): Beskjed {
             fodselsnummer = getString("fodselsnummer"),
             grupperingsId = getString("grupperingsId"),
             eventId = getString("eventId"),
-            eventTidspunkt = ZonedDateTime.ofInstant(getTimestamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),
+            eventTidspunkt = ZonedDateTime.ofInstant(getUtcTimeStamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),
             produsent = getString("produsent") ?: "",
             systembruker = getString("systembruker"),
             sikkerhetsnivaa = getInt("sikkerhetsnivaa"),

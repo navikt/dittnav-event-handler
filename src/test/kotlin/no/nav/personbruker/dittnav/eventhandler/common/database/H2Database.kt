@@ -4,7 +4,6 @@ import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.health.HealthStatus
 import no.nav.personbruker.dittnav.eventhandler.common.health.Status
-import org.flywaydb.core.Flyway
 import java.sql.SQLException
 
 class H2Database : Database {
@@ -13,7 +12,7 @@ class H2Database : Database {
 
     init {
         memDataSource = createDataSource()
-        flyway()
+        createTablesAndViews()
     }
 
     override val dataSource: HikariDataSource
@@ -41,10 +40,10 @@ class H2Database : Database {
         }
     }
 
-    private fun flyway() {
-        Flyway.configure()
-                .dataSource(dataSource)
-                .load()
-                .migrate()
+    private fun createTablesAndViews() {
+        runBlocking {
+            val fileContent = this::class.java.getResource("/db/createTablesAndViews.sql").readText()
+            dbQuery { prepareStatement(fileContent).execute() }
+        }
     }
 }

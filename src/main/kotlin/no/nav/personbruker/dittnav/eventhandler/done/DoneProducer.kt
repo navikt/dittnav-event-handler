@@ -24,7 +24,7 @@ class DoneProducer(private val env: Environment): HealthCheck {
     private val kafkaProducer = KafkaProducer<Nokkel, Done>(Kafka.producerProps(env))
 
     fun produceDoneEventForSuppliedEventId(fodselsnummer: String, eventId: String, beskjed: Beskjed) {
-        val doneKey = createKeyForEvent(eventId, beskjed.produsent)
+        val doneKey = createKeyForEvent(eventId, beskjed.systembruker)
         val doneEvent = createDoneEvent(fodselsnummer, beskjed.grupperingsId)
         kafkaProducer.send(ProducerRecord(doneTopicName, doneKey, doneEvent), Callback { metadata, exception ->
             if(exception != null) {

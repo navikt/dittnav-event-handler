@@ -8,8 +8,8 @@ import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.post
 import io.ktor.util.pipeline.PipelineContext
-import no.nav.personbruker.dittnav.eventhandler.common.exceptions.DuplicateEventException
-import no.nav.personbruker.dittnav.eventhandler.common.exceptions.NoEventsException
+import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.DuplicateEventException
+import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.NoEventsException
 import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
 import org.slf4j.LoggerFactory
 

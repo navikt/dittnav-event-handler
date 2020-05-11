@@ -4,6 +4,7 @@ import java.sql.ResultSet
 import java.sql.Timestamp
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import java.util.*
 
 fun <T> ResultSet.map(result: ResultSet.() -> T): List<T> =
         mutableListOf<T>().apply {
@@ -28,3 +29,8 @@ private fun covertFromEpochSecondsToEpochMillis(originalTimestamp: Timestamp): Z
     val epochMillis = epochSeconds * 1000
     return ZonedDateTime.ofInstant(Timestamp(epochMillis).toInstant(), timeZone)
 }
+
+fun ResultSet.getUtcTimeStamp(label: String): Timestamp = getTimestamp(label, Calendar.getInstance(TimeZone.getTimeZone("UTC")))
+
+fun ResultSet.getNullableUtcTimeStamp(label: String): Timestamp? = getTimestamp(label, Calendar.getInstance())
+

@@ -6,7 +6,7 @@ import no.nav.personbruker.dittnav.eventhandler.common.kafka.KafkaProducerWrappe
 class DoneProducer(private val kafkaProducerWrapper: KafkaProducerWrapper) {
 
     fun produceDoneEventForSuppliedEventId(fodselsnummer: String, eventId: String, beskjed: Beskjed) {
-        val doneKey = createKeyForEvent(eventId, beskjed.produsent)
+        val doneKey = createKeyForEvent(eventId, beskjed.systembruker)
         val doneEvent = createDoneEvent(fodselsnummer, beskjed.grupperingsId)
 
         kafkaProducerWrapper.sendDoneEvent(doneKey, doneEvent)

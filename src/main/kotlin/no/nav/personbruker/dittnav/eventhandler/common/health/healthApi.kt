@@ -1,23 +1,16 @@
-package no.nav.personbruker.dittnav.eventhandler.health
+package no.nav.personbruker.dittnav.eventhandler.common.health
 
 import io.ktor.application.call
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
-import io.ktor.response.respond
 import io.ktor.response.respondText
 import io.ktor.response.respondTextWriter
 import io.ktor.routing.Routing
 import io.ktor.routing.get
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
-import no.nav.personbruker.dittnav.eventhandler.common.health.HealthStatus
-import no.nav.personbruker.dittnav.eventhandler.common.health.Status
-import no.nav.personbruker.dittnav.eventhandler.config.ApplicationContext
-import org.slf4j.LoggerFactory
 
-fun Routing.healthApi(appContext: ApplicationContext, collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry) {
-
-    val log = LoggerFactory.getLogger(HealthStatus::class.java)
+fun Routing.healthApi(healthService: HealthService, collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry) {
 
     val pingJsonResponse = """{"ping": "pong"}"""
 
@@ -26,13 +19,10 @@ fun Routing.healthApi(appContext: ApplicationContext, collectorRegistry: Collect
     }
 
     get("/internal/isReady") {
-        val healthChecks: List<HealthStatus> = listOf(appContext.database.status(), appContext.doneProducer.status())
-        val hasFailedChecks = healthChecks.any { healthStatus -> Status.ERROR == healthStatus.status }
-        if(hasFailedChecks) {
+        if (isReady(healthService)) {
             call.respondText(text = "READY", contentType = ContentType.Text.Plain)
         } else {
-            log.warn("En eller flere helsesjekker feilet, returnerer feilkode på /isReady.")
-            call.response.status(HttpStatusCode.ServiceUnavailable)
+            call.respondText(text = "NOTREADY", contentType = ContentType.Text.Plain, status = HttpStatusCode.FailedDependency)
         }
     }
 
@@ -41,7 +31,7 @@ fun Routing.healthApi(appContext: ApplicationContext, collectorRegistry: Collect
     }
 
     get("/internal/selftest") {
-        call.pingDependencies(appContext)
+        call.buildSelftestPage(healthService)
     }
 
     get("/metrics") {
@@ -50,4 +40,11 @@ fun Routing.healthApi(appContext: ApplicationContext, collectorRegistry: Collect
             TextFormat.write004(this, collectorRegistry.filteredMetricFamilySamples(names))
         }
     }
+}
+
+private suspend fun isReady(healthService: HealthService): Boolean {
+    val healthChecks = healthService.getHealthChecks()
+    return healthChecks
+            .filter { healthStatus -> healthStatus.includeInReadiness }
+            .all { healthStatus -> Status.OK == healthStatus.status }
 }

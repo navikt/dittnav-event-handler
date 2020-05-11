@@ -2,7 +2,8 @@ package no.nav.personbruker.dittnav.eventhandler.config
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.health.HealthStatus
 import no.nav.personbruker.dittnav.eventhandler.common.health.Status
@@ -74,18 +75,20 @@ class PostgresDatabase(env: Environment) : Database {
         }
     }
 
-    override fun status(): HealthStatus {
+    override suspend fun status(): HealthStatus {
         val serviceName = "Database"
-        return runBlocking {
+        return withContext(Dispatchers.IO) {
             try {
                 dbQuery { prepareStatement("""SELECT 1""").execute() }
-                HealthStatus(serviceName, Status.OK, "200 OK")
+                HealthStatus(serviceName, Status.OK, "200 OK", includeInReadiness = true)
             } catch (e: SQLException) {
                 log.error("Vi har ikke tilgang til databasen.", e)
-                HealthStatus(serviceName, Status.ERROR, "Feil mot DB")
+                HealthStatus(serviceName, Status.ERROR, "Feil mot DB", includeInReadiness = true)
             } catch (e: Exception) {
                 log.error("Vi får en uventet feil mot databasen.", e)
-                HealthStatus(serviceName, Status.ERROR, "Feil mot DB")
-            }}
+                HealthStatus(serviceName, Status.ERROR, "Feil mot DB", includeInReadiness = true)
+            }
+        }
     }
+
 }

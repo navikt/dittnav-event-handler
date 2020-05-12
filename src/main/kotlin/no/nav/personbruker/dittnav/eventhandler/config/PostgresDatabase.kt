@@ -80,13 +80,13 @@ class PostgresDatabase(env: Environment) : Database {
         return withContext(Dispatchers.IO) {
             try {
                 dbQuery { prepareStatement("""SELECT 1""").execute() }
-                HealthStatus(serviceName, Status.OK, "200 OK", includeInReadiness = true)
+                HealthStatus(serviceName, Status.OK, "200 OK")
             } catch (e: SQLException) {
                 log.error("Vi har ikke tilgang til databasen.", e)
-                HealthStatus(serviceName, Status.ERROR, "Feil mot DB", includeInReadiness = true)
+                HealthStatus(serviceName, Status.ERROR, "Feil mot DB")
             } catch (e: Exception) {
                 log.error("Vi får en uventet feil mot databasen.", e)
-                HealthStatus(serviceName, Status.ERROR, "Feil mot DB", includeInReadiness = true)
+                HealthStatus(serviceName, Status.ERROR, "Feil mot DB")
             }
         }
     }

@@ -25,11 +25,11 @@ class H2Database : Database {
         return withContext(Dispatchers.IO) {
             try {
                 dbQuery { prepareStatement("""SELECT 1""").execute() }
-                HealthStatus(serviceName, Status.OK, "200 OK", includeInReadiness = true)
+                HealthStatus(serviceName, Status.OK, "200 OK")
             } catch (e: SQLException) {
-                HealthStatus(serviceName, Status.ERROR, "Feil mot DB", includeInReadiness = true)
+                HealthStatus(serviceName, Status.ERROR, "Feil mot DB")
             } catch (e: Exception) {
-                HealthStatus(serviceName, Status.ERROR, "Feil mot DB", includeInReadiness = true)
+                HealthStatus(serviceName, Status.ERROR, "Feil mot DB")
             }}
     }
 

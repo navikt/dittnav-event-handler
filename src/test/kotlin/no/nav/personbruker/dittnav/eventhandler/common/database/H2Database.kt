@@ -6,10 +6,13 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import no.nav.personbruker.dittnav.eventhandler.common.health.HealthStatus
 import no.nav.personbruker.dittnav.eventhandler.common.health.Status
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.sql.SQLException
 
 class H2Database : Database {
 
+    private val log: Logger = LoggerFactory.getLogger(H2Database::class.java)
     private val memDataSource: HikariDataSource
 
     init {
@@ -27,8 +30,10 @@ class H2Database : Database {
                 dbQuery { prepareStatement("""SELECT 1""").execute() }
                 HealthStatus(serviceName, Status.OK, "200 OK")
             } catch (e: SQLException) {
+                log.error("Vi har ikke tilgang til databasen.", e)
                 HealthStatus(serviceName, Status.ERROR, "Feil mot DB")
             } catch (e: Exception) {
+                log.error("Vi får en uventet feil mot databasen.", e)
                 HealthStatus(serviceName, Status.ERROR, "Feil mot DB")
             }}
     }

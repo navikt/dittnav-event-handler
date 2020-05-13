@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventhandler.common
+package no.nav.personbruker.dittnav.eventhandler.common.health
 
 import io.ktor.application.call
 import io.ktor.http.ContentType
@@ -9,27 +9,29 @@ import io.ktor.routing.Routing
 import io.ktor.routing.get
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
-import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 
-fun Routing.healthApi(database: Database, collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry) {
+fun Routing.healthApi(healthService: HealthService, collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry) {
 
     val pingJsonResponse = """{"ping": "pong"}"""
 
-    get("/isAlive") {
+    get("/internal/isAlive") {
         call.respondText(text = "ALIVE", contentType = ContentType.Text.Plain)
     }
 
-    get("/isReady") {
-        if (isDataSourceRunning(database)) {
+    get("/internal/isReady") {
+        if (isReady(healthService)) {
             call.respondText(text = "READY", contentType = ContentType.Text.Plain)
-
         } else {
             call.respondText(text = "NOTREADY", contentType = ContentType.Text.Plain, status = HttpStatusCode.FailedDependency)
         }
     }
 
-    get("/ping") {
+    get("/internal/ping") {
         call.respondText(pingJsonResponse, ContentType.Application.Json)
+    }
+
+    get("/internal/selftest") {
+        call.buildSelftestPage(healthService)
     }
 
     get("/metrics") {
@@ -40,6 +42,9 @@ fun Routing.healthApi(database: Database, collectorRegistry: CollectorRegistry =
     }
 }
 
-private fun isDataSourceRunning(database: Database): Boolean {
-    return database.dataSource.isRunning
+private suspend fun isReady(healthService: HealthService): Boolean {
+    val healthChecks = healthService.getHealthChecks()
+    return healthChecks
+            .filter { healthStatus -> healthStatus.includeInReadiness }
+            .all { healthStatus -> Status.OK == healthStatus.status }
 }

@@ -63,6 +63,7 @@ dependencies {
     compile("org.apache.kafka:kafka-clients:$kafkaVersion")
     compile("io.confluent:kafka-avro-serializer:$confluentVersion")
     compile("no.nav:brukernotifikasjon-schemas:$brukernotifikasjonSchemaVersion")
+    compile("io.ktor:ktor-html-builder:$ktorVersion")
     testCompile("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testCompile(kotlin("test-junit5"))
     testImplementation("no.nav:kafka-embedded-env:$kafkaEmbeddedEnv")

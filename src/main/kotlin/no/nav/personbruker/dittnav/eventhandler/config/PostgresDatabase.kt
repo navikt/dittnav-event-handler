@@ -2,20 +2,12 @@ package no.nav.personbruker.dittnav.eventhandler.config
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
-import no.nav.personbruker.dittnav.eventhandler.common.health.HealthStatus
-import no.nav.personbruker.dittnav.eventhandler.common.health.Status
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-import java.sql.SQLException
 
 class PostgresDatabase(env: Environment) : Database {
 
     private val envDataSource: HikariDataSource
-    private val log: Logger = LoggerFactory.getLogger(PostgresDatabase::class.java)
 
     init {
         envDataSource = createCorrectConnectionForEnvironment(env)
@@ -23,7 +15,6 @@ class PostgresDatabase(env: Environment) : Database {
 
     override val dataSource: HikariDataSource
         get() = envDataSource
-
 
     private fun createCorrectConnectionForEnvironment(env: Environment): HikariDataSource {
         return when (ConfigUtil.isCurrentlyRunningOnNais()) {
@@ -72,19 +63,6 @@ class PostgresDatabase(env: Environment) : Database {
             config.isReadOnly = true
             config.transactionIsolation = "TRANSACTION_REPEATABLE_READ"
             return config
-        }
-    }
-
-    override suspend fun status(): HealthStatus {
-        val serviceName = "Database"
-        return withContext(Dispatchers.IO) {
-            try {
-                dbQuery { prepareStatement("""SELECT 1""").execute() }
-                HealthStatus(serviceName, Status.OK, "200 OK")
-            } catch (e: Exception) {
-                log.error("Vi får en uventet feil mot databasen.", e)
-                HealthStatus(serviceName, Status.ERROR, "Feil mot DB")
-            }
         }
     }
 

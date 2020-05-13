@@ -5,15 +5,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.database.RetriableDatabaseException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.database.UnretriableDatabaseException
-import org.postgresql.util.PSQLException
-import no.nav.personbruker.dittnav.eventhandler.common.exceptions.EventCacheException
 import no.nav.personbruker.dittnav.eventhandler.common.health.HealthCheck
+import no.nav.personbruker.dittnav.eventhandler.common.health.HealthStatus
+import no.nav.personbruker.dittnav.eventhandler.common.health.Status
+import org.postgresql.util.PSQLException
+import org.slf4j.LoggerFactory
 import java.sql.Connection
 import java.sql.SQLException
 import java.sql.SQLRecoverableException
 import java.sql.SQLTransientException
 
-interface Database: HealthCheck {
+private val log = LoggerFactory.getLogger(Database::class.java)
+
+interface Database : HealthCheck {
 
     val dataSource: HikariDataSource
 
@@ -43,6 +47,18 @@ interface Database: HealthCheck {
         }
     }
 
+    override suspend fun status(): HealthStatus {
+        val serviceName = "Database"
+        return withContext(Dispatchers.IO) {
+            try {
+                dbQuery { prepareStatement("""SELECT 1""").execute() }
+                HealthStatus(serviceName, Status.OK, "200 OK")
+            } catch (e: Exception) {
+                log.error("Selftest mot databasen feilet.", e)
+                HealthStatus(serviceName, Status.ERROR, "Feil mot DB")
+            }
+        }
+    }
 }
 
 inline fun <T> translateExternalExceptionsToInternalOnes(databaseActions: () -> T): T {

@@ -43,8 +43,8 @@ class BrukernotifikasjonQueriesTest {
     fun `Skal telle riktig for brukere uten eventer`() {
         runBlocking {
             database.dbQuery { getNumberOfBrukernotifikasjoner(brukerUtenEventer) } `should be equal to` 0
-            database.dbQuery { getNumberOfBrukernotifikasjonerByStatus(brukerUtenEventer, true) } `should be equal to` 0
-            database.dbQuery { getNumberOfBrukernotifikasjonerByStatus(brukerUtenEventer, false) } `should be equal to` 0
+            database.dbQuery { getNumberOfBrukernotifikasjonerByActiveStatus(brukerUtenEventer, true) } `should be equal to` 0
+            database.dbQuery { getNumberOfBrukernotifikasjonerByActiveStatus(brukerUtenEventer, false) } `should be equal to` 0
         }
     }
 
@@ -58,14 +58,14 @@ class BrukernotifikasjonQueriesTest {
     @Test
     fun `Skal telle riktig antall aktive eventer`() {
         runBlocking {
-            database.dbQuery { getNumberOfBrukernotifikasjonerByStatus(brukerMedEventer, true) } `should be equal to` 2
+            database.dbQuery { getNumberOfBrukernotifikasjonerByActiveStatus(brukerMedEventer, true) } `should be equal to` 2
         }
     }
 
     @Test
     fun `Skal telle riktig antall inaktive eventer`() {
         runBlocking {
-            database.dbQuery { getNumberOfBrukernotifikasjonerByStatus(brukerMedEventer, false) } `should be equal to` 1
+            database.dbQuery { getNumberOfBrukernotifikasjonerByActiveStatus(brukerMedEventer, false) } `should be equal to` 1
         }
     }
 

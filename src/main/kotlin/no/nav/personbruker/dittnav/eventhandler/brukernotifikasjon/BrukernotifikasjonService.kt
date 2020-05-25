@@ -9,14 +9,14 @@ class BrukernotifikasjonService(
 
     suspend fun numberOfInactiveEvents(bruker: InnloggetBruker): Int {
         val numberOfInactive = database.queryWithExceptionTranslation {
-            getNumberOfBrukernotifikasjonerByStatus(bruker, false)
+            getNumberOfBrukernotifikasjonerByActiveStatus(bruker, false)
         }
         return numberOfInactive
     }
 
     suspend fun numberOfActiveEvents(bruker: InnloggetBruker): Int {
         val numberOfActive = database.queryWithExceptionTranslation {
-            getNumberOfBrukernotifikasjonerByStatus(bruker, true)
+            getNumberOfBrukernotifikasjonerByActiveStatus(bruker, true)
         }
         return numberOfActive
     }

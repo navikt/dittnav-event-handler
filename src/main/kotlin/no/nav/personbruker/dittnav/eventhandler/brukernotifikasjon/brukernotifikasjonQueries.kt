@@ -6,7 +6,7 @@ import java.sql.ResultSet
 
 private val countBrukernotifikasjonerQuery = """SELECT count(*) from brukernotifikasjon_view WHERE fodselsnummer = ?"""
 
-fun Connection.getNumberOfBrukernotifikasjonerByStatus(bruker: InnloggetBruker, aktiv: Boolean): Int {
+fun Connection.getNumberOfBrukernotifikasjonerByActiveStatus(bruker: InnloggetBruker, aktiv: Boolean): Int {
     val numberOfEvents = prepareStatement(
             """$countBrukernotifikasjonerQuery AND aktiv = ?""".trimMargin(),
             ResultSet.TYPE_SCROLL_INSENSITIVE,

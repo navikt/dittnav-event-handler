@@ -52,10 +52,10 @@ interface Database : HealthCheck {
         return withContext(Dispatchers.IO) {
             try {
                 dbQuery { prepareStatement("""SELECT 1""").execute() }
-                HealthStatus(serviceName, Status.OK, "200 OK")
+                HealthStatus(serviceName, Status.OK, "200 OK", includeInReadiness = false)
             } catch (e: Exception) {
                 log.error("Selftest mot databasen feilet.", e)
-                HealthStatus(serviceName, Status.ERROR, "Feil mot DB")
+                HealthStatus(serviceName, Status.ERROR, "Feil mot DB", includeInReadiness = false)
             }
         }
     }

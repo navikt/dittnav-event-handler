@@ -4,7 +4,9 @@ import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import java.sql.Connection
 import java.sql.ResultSet
 
-private val countBrukernotifikasjonerQuery = """SELECT count(*) from brukernotifikasjon_view WHERE fodselsnummer = ?"""
+private const val countBrukernotifikasjonerQuery = """SELECT count(*) from brukernotifikasjon_view WHERE fodselsnummer = ?"""
+
+private const val countResultColumnIndex = 1
 
 fun Connection.getNumberOfBrukernotifikasjonerByActiveStatus(bruker: InnloggetBruker, aktiv: Boolean): Int {
     val numberOfEvents = prepareStatement(
@@ -16,8 +18,7 @@ fun Connection.getNumberOfBrukernotifikasjonerByActiveStatus(bruker: InnloggetBr
                 statement.setBoolean(2, aktiv)
                 val rs = statement.executeQuery()
                 rs.last()
-                val indexOfRow = rs.row
-                rs.getInt(indexOfRow)
+                rs.getInt(countResultColumnIndex)
             }
     return numberOfEvents
 }
@@ -30,8 +31,7 @@ fun Connection.getNumberOfBrukernotifikasjoner(bruker: InnloggetBruker): Int {
                 statement.setString(1, bruker.ident)
                 val rs = statement.executeQuery()
                 rs.last()
-                val indexOfRow = rs.row
-                rs.getInt(indexOfRow)
+                rs.getInt(countResultColumnIndex)
             }
     return numberOfEvents
 }

@@ -4,13 +4,13 @@ import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import java.sql.Connection
 import java.sql.ResultSet
 
-private const val countBrukernotifikasjonerQuery = """SELECT count(*) from brukernotifikasjon_view WHERE fodselsnummer = ?"""
+private const val countBrukernotifikasjonerQuery = "SELECT count(*) from brukernotifikasjon_view WHERE fodselsnummer = ?"
 
 private const val countResultColumnIndex = 1
 
 fun Connection.getNumberOfBrukernotifikasjonerByActiveStatus(bruker: InnloggetBruker, aktiv: Boolean): Int {
     val numberOfEvents = prepareStatement(
-            """$countBrukernotifikasjonerQuery AND aktiv = ?""".trimMargin(),
+            "$countBrukernotifikasjonerQuery AND aktiv = ?",
             ResultSet.TYPE_SCROLL_INSENSITIVE,
             ResultSet.CONCUR_READ_ONLY)
             .use { statement ->

@@ -27,7 +27,7 @@ class BrukernotifikasjonQueriesTest {
     private val aktivBeskjed1 = BeskjedObjectMother.createBeskjed(id = 2, eventId = "34", fodselsnummer = brukerMedEventer.ident,
             synligFremTil = ZonedDateTime.now().plusHours(1), uid = "22", aktiv = true)
     private val aktivBeskjed2 = BeskjedObjectMother.createBeskjed(id = 3, eventId = "56", fodselsnummer = brukerMedEventer.ident,
-            synligFremTil = ZonedDateTime.now().plusHours(1), uid = "22", aktiv = true)
+            synligFremTil = ZonedDateTime.now().plusHours(1), uid = "33", aktiv = true)
 
     @BeforeAll
     fun `populer testdata`() {

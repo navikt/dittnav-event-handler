@@ -16,9 +16,9 @@ fun Connection.getNumberOfBrukernotifikasjonerByActiveStatus(bruker: InnloggetBr
             .use { statement ->
                 statement.setString(1, bruker.ident)
                 statement.setBoolean(2, aktiv)
-                val rs = statement.executeQuery()
-                rs.last()
-                rs.getInt(countResultColumnIndex)
+                val resultSet = statement.executeQuery()
+                resultSet.last()
+                resultSet.getInt(countResultColumnIndex)
             }
     return numberOfEvents
 }
@@ -29,9 +29,9 @@ fun Connection.getNumberOfBrukernotifikasjoner(bruker: InnloggetBruker): Int {
             ResultSet.CONCUR_READ_ONLY)
             .use { statement ->
                 statement.setString(1, bruker.ident)
-                val rs = statement.executeQuery()
-                rs.last()
-                rs.getInt(countResultColumnIndex)
+                val resultSet = statement.executeQuery()
+                resultSet.last()
+                resultSet.getInt(countResultColumnIndex)
             }
     return numberOfEvents
 }

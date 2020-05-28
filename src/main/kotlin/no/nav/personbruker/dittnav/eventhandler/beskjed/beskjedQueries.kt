@@ -68,6 +68,24 @@ fun Connection.getActiveBeskjedByIds(fodselsnummer: String, uid: String, eventId
                     }
                 }
 
+fun Connection.getAllBeskjed(): List<Beskjed> =
+        prepareStatement("""SELECT * FROM beskjed""")
+                .use {
+                    it.executeQuery().map {
+                        toBeskjed()
+                    }
+                }
+
+fun Connection.getAllInactiveBeskjed(): List<Beskjed> =
+        prepareStatement("""SELECT * 
+            |FROM beskjed
+            |WHERE aktiv = false""".trimMargin())
+                .use {
+                    it.executeQuery().map {
+                        toBeskjed()
+                    }
+                }
+
 fun ResultSet.toBeskjed(): Beskjed {
     return Beskjed(
             id = getInt("id"),
@@ -113,6 +131,6 @@ private fun Connection.getBeskjedForInnloggetBruker(bruker: InnloggetBruker, akt
                     }
                 }
 
-private fun ResultSet.getNullableZonedDateTime(label: String) : ZonedDateTime? {
+private fun ResultSet.getNullableZonedDateTime(label: String): ZonedDateTime? {
     return getNullableUtcTimeStamp(label)?.let { timestamp -> ZonedDateTime.ofInstant(timestamp.toInstant(), ZoneId.of("Europe/Oslo")) }
 }

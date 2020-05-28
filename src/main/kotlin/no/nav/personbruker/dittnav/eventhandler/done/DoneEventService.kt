@@ -2,6 +2,7 @@ package no.nav.personbruker.dittnav.eventhandler.done
 
 import Beskjed
 import no.nav.personbruker.dittnav.eventhandler.beskjed.getActiveBeskjedByIds
+import no.nav.personbruker.dittnav.eventhandler.beskjed.getAllInactiveBeskjed
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.DuplicateEventException
@@ -29,6 +30,19 @@ class DoneEventService(private val database: Database, private val doneProducer:
         } else if (events.size > 1) {
             throw DuplicateEventException("Producer: ${events.first().produsent}, ListSize: ${events.size}")
         }
+    }
+
+    suspend fun markAllInactiveBeskjedEventsAsDone() {
+        val allDoneEventsFromBeskjedEvents = getAllInactiveBeskjedFromCache()
+        doneProducer.produceDoneEventsFromList(allDoneEventsFromBeskjedEvents)
+    }
+
+    suspend fun getAllInactiveBeskjedFromCache(): List<Beskjed> {
+        var result = emptyList<Beskjed>()
+        database.queryWithExceptionTranslation {
+            result = getAllInactiveBeskjed()
+        }
+        return result
     }
 
 }

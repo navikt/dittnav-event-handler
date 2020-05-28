@@ -15,6 +15,9 @@ import java.util.*
 object Kafka {
 
     val doneTopicName = "aapen-brukernotifikasjon-done-v1"
+    val doneTopicNameBackup = "aapen-brukernotifikasjon-done-v1-backup"
+    val beskjedTopicNameBackup = "aapen-brukernotifikasjon-beskjed-v1-backup"
+    val oppgaveTopicNameBackup = "aapen-brukernotifikasjon-oppgave-v1-backup"
 
     private fun credentialProps(env: Environment): Properties {
         return Properties().apply {

@@ -42,9 +42,7 @@ fun Routing.healthApi(healthService: HealthService, collectorRegistry: Collector
     }
 }
 
-private suspend fun isReady(healthService: HealthService): Boolean {
-    val healthChecks = healthService.getHealthChecks()
-    return healthChecks
-            .filter { healthStatus -> healthStatus.includeInReadiness }
-            .all { healthStatus -> Status.OK == healthStatus.status }
+private fun isReady(healthService: HealthService): Boolean {
+    // utvid eventuelt med logikk for å inkludere helsesjekker som skal påvirke om appen er ready eller ikke.
+    return true;
 }

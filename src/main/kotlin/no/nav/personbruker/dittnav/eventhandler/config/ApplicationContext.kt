@@ -5,6 +5,7 @@ import no.nav.brukernotifikasjon.schemas.Done
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.brukernotifikasjon.schemas.Oppgave
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService
+import no.nav.personbruker.dittnav.eventhandler.brukernotifikasjon.BrukernotifikasjonService
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.health.HealthService
 import no.nav.personbruker.dittnav.eventhandler.common.kafka.KafkaProducerWrapper
@@ -33,4 +34,5 @@ class ApplicationContext {
     val doneEventService = DoneEventService(database, doneProducer)
 
     val healthService = HealthService(this)
+    val brukernotifikasjonService = BrukernotifikasjonService(database)
 }

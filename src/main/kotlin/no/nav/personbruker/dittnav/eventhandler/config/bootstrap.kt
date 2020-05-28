@@ -14,10 +14,11 @@ import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.pipeline.PipelineContext
 import io.prometheus.client.hotspot.DefaultExports
 import no.nav.personbruker.dittnav.eventhandler.beskjed.beskjedApi
+import no.nav.personbruker.dittnav.eventhandler.brukernotifikasjon.brukernotifikasjoner
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBrukerFactory
-import no.nav.personbruker.dittnav.eventhandler.done.doneApi
 import no.nav.personbruker.dittnav.eventhandler.common.health.healthApi
+import no.nav.personbruker.dittnav.eventhandler.done.doneApi
 import no.nav.personbruker.dittnav.eventhandler.innboks.innboksApi
 import no.nav.personbruker.dittnav.eventhandler.oppgave.oppgaveApi
 import no.nav.security.token.support.ktor.tokenValidationSupport
@@ -44,10 +45,11 @@ fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()
     routing {
         healthApi(appContext.healthService)
         authenticate {
-            oppgaveApi(appContext.oppgaveEventService)
+            doneApi(appContext.doneEventService)
             beskjedApi(appContext.beskjedEventService)
             innboksApi(appContext.innboksEventService)
-            doneApi(appContext.doneEventService)
+            oppgaveApi(appContext.oppgaveEventService)
+            brukernotifikasjoner(appContext.brukernotifikasjonService)
         }
     }
 

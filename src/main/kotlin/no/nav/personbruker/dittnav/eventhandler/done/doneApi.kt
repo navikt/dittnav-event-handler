@@ -42,14 +42,6 @@ fun Route.doneApi(doneEventService: DoneEventService) {
         }
     }
 
-    get("/produce/done/all/inactive/beskjed") {
-        try {
-            val doneEvents = doneEventService.produceDoneEventsFromBeskjedEvents()
-            call.respond(HttpStatusCode.OK, doneEvents)
-        } catch (exception: Exception) {
-            respondWithError(call, log, exception)
-        }
-    }
 }
 
 suspend inline fun <reified T : Any> PipelineContext<Unit, ApplicationCall>.respondForParameterType(handler: (T) -> DoneResponse) {

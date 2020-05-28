@@ -7,7 +7,8 @@ import org.slf4j.LoggerFactory
 import java.sql.Connection
 
 class OppgaveEventService(
-        private val database: Database
+        private val database: Database,
+        private val oppgaveProducer: OppgaveProducer
 ) {
 
     private val log = LoggerFactory.getLogger(OppgaveEventService::class.java)
@@ -22,6 +23,22 @@ class OppgaveEventService(
 
     suspend fun getAllCachedEventsForUser(bruker: InnloggetBruker): List<Oppgave> {
         return getEvents { getAllOppgaveForInnloggetBruker(bruker) }
+    }
+
+    suspend fun produceOppgaveEventsForAllOppgaveEventsInCach(): List<Oppgave> {
+        val allOppgaveEvents = getEvents { getAllOppgaveEvents() }
+        if (allOppgaveEvents.isNotEmpty()) {
+            oppgaveProducer.produceAllOppgaveEventsFromList(allOppgaveEvents)
+        }
+        return allOppgaveEvents
+    }
+
+    suspend fun produceDoneEventsFromOppgaveEvents(): List<Oppgave> {
+        var allInactiveOppgaveEvents = getEvents { getAllInactiveOppgaveEvents() }
+        if (allInactiveOppgaveEvents.isNotEmpty()) {
+            oppgaveProducer.produceAllOppgaveEventsFromList(allInactiveOppgaveEvents)
+        }
+        return allInactiveOppgaveEvents
     }
 
     private suspend fun getEvents(operationToExecute: Connection.() -> List<Oppgave>): List<Oppgave> {

@@ -43,7 +43,7 @@ fun Route.beskjedApi(beskjedEventService: BeskjedEventService) {
 
     get("/produce/beskjed/all") {
         try {
-            val beskjedEvents = beskjedEventService.getAllEventsFromCache()
+            val beskjedEvents = beskjedEventService.produceBeskjedEventsForAllBeskjedEventsInCache()
             call.respond(HttpStatusCode.OK, beskjedEvents)
         } catch(exception: Exception) {
             respondWithError(call, log, exception)

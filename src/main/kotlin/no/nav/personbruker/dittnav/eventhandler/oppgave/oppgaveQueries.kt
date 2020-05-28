@@ -39,6 +39,49 @@ fun Connection.getAllOppgaveForInnloggetBruker(bruker: InnloggetBruker): List<Op
                     }
                 }
 
+fun Connection.getAllOppgaveEvents(): List<Oppgave> =
+        prepareStatement("""SELECT 
+            |oppgave.id,
+            |oppgave.eventTidspunkt,
+            |oppgave.fodselsnummer,
+            |oppgave.eventId,
+            |oppgave.grupperingsId,
+            |oppgave.tekst,
+            |oppgave.link,
+            |oppgave.sikkerhetsnivaa,
+            |oppgave.sistOppdatert,
+            |oppgave.aktiv,
+            |oppgave.systembruker,
+            |systembrukere.produsentnavn AS produsent
+            |FROM oppgave LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker""".trimMargin())
+                .use {
+                    it.executeQuery().map {
+                        toOppgave()
+                    }
+                }
+
+fun Connection.getAllInactiveOppgaveEvents(): List<Oppgave> =
+        prepareStatement("""SELECT 
+            |oppgave.id,
+            |oppgave.eventTidspunkt,
+            |oppgave.fodselsnummer,
+            |oppgave.eventId,
+            |oppgave.grupperingsId,
+            |oppgave.tekst,
+            |oppgave.link,
+            |oppgave.sikkerhetsnivaa,
+            |oppgave.sistOppdatert,
+            |oppgave.aktiv,
+            |oppgave.systembruker,
+            |systembrukere.produsentnavn AS produsent
+            |FROM oppgave LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker
+            |WHERE aktiv = false""".trimMargin())
+                .use {
+                    it.executeQuery().map {
+                        toOppgave()
+                    }
+                }
+
 private fun ResultSet.toOppgave(): Oppgave {
     val rawEventTidspunkt = getUtcTimeStamp("eventTidspunkt") ?: throw EventCacheException("Eventtidspunkt ble ikke funnet i databasen")
     val verifiedEventTidspunkt = convertIfUnlikelyDate(rawEventTidspunkt)

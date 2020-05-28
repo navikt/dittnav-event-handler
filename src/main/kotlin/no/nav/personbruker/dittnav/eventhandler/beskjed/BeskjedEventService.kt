@@ -31,12 +31,20 @@ class BeskjedEventService(
         return getEvents { getAllBeskjedForInnloggetBruker(bruker) }
     }
 
-    suspend fun getAllEventsFromCache(): List<Beskjed> {
+    suspend fun produceBeskjedEventsForAllBeskjedEventsInCache(): List<Beskjed> {
         val allBeskjedEvents = getEvents { getAllBeskjedEvents() }
         if (allBeskjedEvents.isNotEmpty()) {
-            beskjedProducer.produceAllBeskjedEvents(allBeskjedEvents)
+            beskjedProducer.produceAllBeskjedEventsFromList(allBeskjedEvents)
         }
         return allBeskjedEvents
+    }
+
+    suspend fun produceDoneEventsFromAllInactiveBeskjedEvents(): List<Beskjed> {
+        var allInactiveBeskjedEvents = getEvents { getAllInactiveBeskjed() }
+        if (allInactiveBeskjedEvents.isNotEmpty()) {
+            beskjedProducer.produceAllBeskjedEventsFromList(allInactiveBeskjedEvents)
+        }
+        return allInactiveBeskjedEvents
     }
 
     private fun Beskjed.isExpired() : Boolean = synligFremTil?.isBefore(Instant.now().atZone(ZoneId.of("Europe/Oslo")))?: false

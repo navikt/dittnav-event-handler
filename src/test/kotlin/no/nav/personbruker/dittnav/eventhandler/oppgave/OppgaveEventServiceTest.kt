@@ -20,7 +20,8 @@ import org.slf4j.LoggerFactory
 class OppgaveEventServiceTest {
 
     private val database = mockk<Database>()
-    private val oppgaveEventService = OppgaveEventService(database)
+    private val oppgaveProducer = mockk<OppgaveProducer>()
+    private val oppgaveEventService = OppgaveEventService(database, oppgaveProducer)
     private val bruker = InnloggetBrukerObjectMother.createInnloggetBruker("123")
 
     private val appender: ListAppender<ILoggingEvent> = ListAppender()

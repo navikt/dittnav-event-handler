@@ -40,4 +40,13 @@ fun Route.oppgaveApi(oppgaveEventService: OppgaveEventService) {
             respondWithError(call, log, exception)
         }
     }
+
+    get("/produce/oppgave/all") {
+        try {
+            val oppgaveEvents = oppgaveEventService.produceOppgaveEventsForAllOppgaveEventsInCach()
+            call.respond(HttpStatusCode.OK, oppgaveEvents)
+        } catch(exception: Exception) {
+            respondWithError(call, log, exception)
+        }
+    }
 }

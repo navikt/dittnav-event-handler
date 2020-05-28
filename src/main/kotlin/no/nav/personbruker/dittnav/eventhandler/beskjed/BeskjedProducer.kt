@@ -7,7 +7,7 @@ import no.nav.personbruker.dittnav.eventhandler.done.createKeyForEvent
 
 class BeskjedProducer(private val kafkaProducer: KafkaProducerWrapper<no.nav.brukernotifikasjon.schemas.Beskjed>) {
 
-    fun produceAllBeskjedEvents(events: List<Beskjed>) {
+    fun produceAllBeskjedEventsFromList(events: List<Beskjed>) {
         events.forEach { event ->
             val key = createKeyForEvent(event.eventId, event.systembruker)
             val beskjedEvent = createBeskjedEvent(event)

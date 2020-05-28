@@ -6,10 +6,12 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.Route
+import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.util.pipeline.PipelineContext
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.DuplicateEventException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.NoEventsException
+import no.nav.personbruker.dittnav.eventhandler.common.exceptions.respondWithError
 import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
 import org.slf4j.LoggerFactory
 
@@ -37,6 +39,15 @@ fun Route.doneApi(doneEventService: DoneEventService) {
                 log.error(msg, e)
                 DoneResponse(msg, HttpStatusCode.BadRequest)
             }
+        }
+    }
+
+    get("/produce/done/all/inactive/beskjed") {
+        try {
+            val doneEvents = doneEventService.produceDoneEventsFromBeskjedEvents()
+            call.respond(HttpStatusCode.OK, doneEvents)
+        } catch (exception: Exception) {
+            respondWithError(call, log, exception)
         }
     }
 }

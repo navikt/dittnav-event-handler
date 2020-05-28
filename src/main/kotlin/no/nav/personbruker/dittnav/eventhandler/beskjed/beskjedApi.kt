@@ -40,4 +40,13 @@ fun Route.beskjedApi(beskjedEventService: BeskjedEventService) {
             respondWithError(call, log, exception)
         }
     }
+
+    get("/produce/beskjed/all") {
+        try {
+            val beskjedEvents = beskjedEventService.getAllEventsFromCache()
+            call.respond(HttpStatusCode.OK, beskjedEvents)
+        } catch(exception: Exception) {
+            respondWithError(call, log, exception)
+        }
+    }
 }

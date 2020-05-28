@@ -10,7 +10,7 @@ class DoneProducer(private val kafkaProducerWrapper: KafkaProducerWrapper<Done>)
         val doneKey = createKeyForEvent(eventId, beskjed.systembruker)
         val doneEvent = createDoneEvent(fodselsnummer, beskjed.grupperingsId)
 
-        kafkaProducerWrapper.sendDoneEvent(doneKey, doneEvent)
+        kafkaProducerWrapper.sendEvent(doneKey, doneEvent)
     }
 
     fun produceDoneEventsFromList(events: List<Beskjed>) {
@@ -18,7 +18,7 @@ class DoneProducer(private val kafkaProducerWrapper: KafkaProducerWrapper<Done>)
             val doneKey = createKeyForEvent(event.eventId, event.systembruker)
             val doneEvent = createDoneEvent(event.fodselsnummer, event.grupperingsId)
 
-            kafkaProducerWrapper.sendDoneEvent(doneKey, doneEvent)
+            kafkaProducerWrapper.sendEvent(doneKey, doneEvent)
         }
 
 

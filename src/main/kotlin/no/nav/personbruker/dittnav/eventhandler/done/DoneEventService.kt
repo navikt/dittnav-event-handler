@@ -32,12 +32,15 @@ class DoneEventService(private val database: Database, private val doneProducer:
         }
     }
 
-    suspend fun markAllInactiveBeskjedEventsAsDone() {
-        val allDoneEventsFromBeskjedEvents = getAllInactiveBeskjedFromCache()
-        doneProducer.produceDoneEventsFromList(allDoneEventsFromBeskjedEvents)
+    suspend fun produceDoneEventsFromBeskjedEvents(): List<Beskjed> {
+        val allDoneEventsFromBeskjedEvents = getAllInactiveBeskjedEventsFromCache()
+        if (allDoneEventsFromBeskjedEvents.isNotEmpty()) {
+            doneProducer.produceDoneEventsFromList(allDoneEventsFromBeskjedEvents)
+        }
+        return allDoneEventsFromBeskjedEvents
     }
 
-    suspend fun getAllInactiveBeskjedFromCache(): List<Beskjed> {
+    suspend fun getAllInactiveBeskjedEventsFromCache(): List<Beskjed> {
         var result = emptyList<Beskjed>()
         database.queryWithExceptionTranslation {
             result = getAllInactiveBeskjed()

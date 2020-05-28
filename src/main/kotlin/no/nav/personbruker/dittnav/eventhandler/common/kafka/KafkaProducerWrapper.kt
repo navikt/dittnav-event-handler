@@ -1,6 +1,5 @@
 package no.nav.personbruker.dittnav.eventhandler.common.kafka
 
-import no.nav.brukernotifikasjon.schemas.Done
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import org.apache.kafka.clients.producer.Callback
 import org.apache.kafka.clients.producer.KafkaProducer
@@ -13,7 +12,7 @@ class KafkaProducerWrapper<T>(
 
     private val log = LoggerFactory.getLogger(KafkaProducerWrapper::class.java)
 
-    fun sendDoneEvent(key: Nokkel, event: T) {
+    fun sendEvent(key: Nokkel, event: T) {
         val producerRecord = ProducerRecord(topicName, key, event)
         kafkaProducer.send(producerRecord, Callback { metadata, exception ->
             if (exception != null) {

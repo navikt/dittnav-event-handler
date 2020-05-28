@@ -68,8 +68,23 @@ fun Connection.getActiveBeskjedByIds(fodselsnummer: String, uid: String, eventId
                     }
                 }
 
-fun Connection.getAllBeskjed(): List<Beskjed> =
-        prepareStatement("""SELECT * FROM beskjed""")
+fun Connection.getAllBeskjedEvents(): List<Beskjed> =
+        prepareStatement("""SELECT 
+            |beskjed.id, 
+            |beskjed.uid, 
+            |beskjed.eventTidspunkt,
+            |beskjed.fodselsnummer,
+            |beskjed.eventId, 
+            |beskjed.grupperingsId,
+            |beskjed.tekst,
+            |beskjed.link,
+            |beskjed.sikkerhetsnivaa,
+            |beskjed.sistOppdatert,
+            |beskjed.synligFremTil,
+            |beskjed.aktiv,
+            |beskjed.systembruker,
+            |systembrukere.produsentnavn AS produsent
+            |FROM beskjed LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker""".trimMargin())
                 .use {
                     it.executeQuery().map {
                         toBeskjed()
@@ -77,8 +92,22 @@ fun Connection.getAllBeskjed(): List<Beskjed> =
                 }
 
 fun Connection.getAllInactiveBeskjed(): List<Beskjed> =
-        prepareStatement("""SELECT * 
-            |FROM beskjed
+        prepareStatement("""SELECT 
+            |beskjed.id, 
+            |beskjed.uid, 
+            |beskjed.eventTidspunkt,
+            |beskjed.fodselsnummer,
+            |beskjed.eventId, 
+            |beskjed.grupperingsId,
+            |beskjed.tekst,
+            |beskjed.link,
+            |beskjed.sikkerhetsnivaa,
+            |beskjed.sistOppdatert,
+            |beskjed.synligFremTil,
+            |beskjed.aktiv,
+            |beskjed.systembruker,
+            |systembrukere.produsentnavn AS produsent
+            |FROM beskjed LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker
             |WHERE aktiv = false""".trimMargin())
                 .use {
                     it.executeQuery().map {

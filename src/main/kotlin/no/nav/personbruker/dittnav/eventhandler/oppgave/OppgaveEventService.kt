@@ -2,7 +2,6 @@ package no.nav.personbruker.dittnav.eventhandler.oppgave
 
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
-import no.nav.personbruker.dittnav.eventhandler.innboks.Innboks
 import org.slf4j.LoggerFactory
 import java.sql.Connection
 
@@ -33,10 +32,10 @@ class OppgaveEventService(
         return allOppgaveEvents
     }
 
-    suspend fun produceDoneEventsFromOppgaveEvents(): List<Oppgave> {
+    suspend fun produceDoneEventsFromAllInactiveOppgaveEvents(): List<Oppgave> {
         var allInactiveOppgaveEvents = getEvents { getAllInactiveOppgaveEvents() }
         if (allInactiveOppgaveEvents.isNotEmpty()) {
-            oppgaveProducer.produceAllOppgaveEventsFromList(allInactiveOppgaveEvents)
+            oppgaveProducer.produceDoneEventFromInactiveOppgaveEvents(allInactiveOppgaveEvents)
         }
         return allInactiveOppgaveEvents
     }
@@ -45,7 +44,7 @@ class OppgaveEventService(
         val events = database.queryWithExceptionTranslation {
             operationToExecute()
         }
-        if(produsentIsEmpty(events)) {
+        if (produsentIsEmpty(events)) {
             log.warn("Returnerer oppgave-eventer med tom produsent til frontend. Kanskje er ikke systembrukeren lagt inn i systembruker-tabellen?")
         }
         return events

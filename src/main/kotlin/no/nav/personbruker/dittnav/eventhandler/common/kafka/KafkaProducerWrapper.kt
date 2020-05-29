@@ -25,9 +25,9 @@ class KafkaProducerWrapper<T>(
         try {
             kafkaProducer.flush()
             kafkaProducer.close()
-            log.info("Produsent for Done-eventer er flushet og lukket.")
+            log.info("Produsent for kafka-eventer er flushet og lukket.")
         } catch (e: Exception) {
-            log.warn("Klarte ikke å flushe og lukke produsent for Done-eventer. Det kan være eventer som ikke ble produsert.")
+            log.warn("Klarte ikke å flushe og lukke produsent. Det kan være eventer som ikke ble produsert.")
         }
     }
 }

@@ -12,7 +12,6 @@ import no.nav.personbruker.dittnav.eventhandler.common.health.HealthService
 import no.nav.personbruker.dittnav.eventhandler.common.kafka.KafkaProducerWrapper
 import no.nav.personbruker.dittnav.eventhandler.done.DoneEventService
 import no.nav.personbruker.dittnav.eventhandler.done.DoneProducer
-import no.nav.personbruker.dittnav.eventhandler.done.DoneProducerBackup
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksEventService
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveEventService
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveProducer
@@ -30,15 +29,13 @@ class ApplicationContext {
     val database: Database = PostgresDatabase(environment)
 
     val doneProducer = DoneProducer(kafkaProducerDone)
-    val doneProducerBackup = DoneProducerBackup(kafkaProducerDoneBackup)
-    val beskjedProducer = BeskjedProducer(kafkaProducerBeskjedBackup)
-    val oppgaveProducer = OppgaveProducer(kafkaProducerOppgaveBackup)
+    val beskjedProducer = BeskjedProducer(kafkaProducerBeskjedBackup, kafkaProducerDoneBackup)
+    val oppgaveProducer = OppgaveProducer(kafkaProducerOppgaveBackup, kafkaProducerDoneBackup)
 
     val beskjedEventService = BeskjedEventService(database, beskjedProducer)
     val oppgaveEventService = OppgaveEventService(database, oppgaveProducer)
     val innboksEventService = InnboksEventService(database)
     val doneEventService = DoneEventService(database, doneProducer)
-    //val doneEventServiceBackup = DoneEventService(database, doneProducerBackup)
 
     val healthService = HealthService(this)
     val brukernotifikasjonService = BrukernotifikasjonService(database)

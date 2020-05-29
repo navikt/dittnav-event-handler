@@ -31,7 +31,7 @@ class BeskjedEventService(
         return getEvents { getAllBeskjedForInnloggetBruker(bruker) }
     }
 
-    suspend fun produceBeskjedEventsForAllBeskjedEventsInCache(): List<Beskjed> {
+    suspend fun produceBeskjedEventsForAllBeskjedEventsInCach(): List<Beskjed> {
         val allBeskjedEvents = getEvents { getAllBeskjedEvents() }
         if (allBeskjedEvents.isNotEmpty()) {
             beskjedProducer.produceAllBeskjedEventsFromList(allBeskjedEvents)
@@ -42,7 +42,7 @@ class BeskjedEventService(
     suspend fun produceDoneEventsFromAllInactiveBeskjedEvents(): List<Beskjed> {
         var allInactiveBeskjedEvents = getEvents { getAllInactiveBeskjed() }
         if (allInactiveBeskjedEvents.isNotEmpty()) {
-            beskjedProducer.produceAllBeskjedEventsFromList(allInactiveBeskjedEvents)
+            beskjedProducer.produceDoneEventFromInactiveBeskjedEvents(allInactiveBeskjedEvents)
         }
         return allInactiveBeskjedEvents
     }

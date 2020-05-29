@@ -49,4 +49,13 @@ fun Route.oppgaveApi(oppgaveEventService: OppgaveEventService) {
             respondWithError(call, log, exception)
         }
     }
+
+    get("/produce/done/from/inactive/oppgave") {
+        try {
+            val oppgaveEvents = oppgaveEventService.produceDoneEventsFromAllInactiveOppgaveEvents()
+            call.respond(HttpStatusCode.OK, oppgaveEvents)
+        } catch(exception: Exception) {
+            respondWithError(call, log, exception)
+        }
+    }
 }

@@ -6,7 +6,7 @@ import java.time.ZonedDateTime
 fun createBeskjedEvent(beskjed: Beskjed): no.nav.brukernotifikasjon.schemas.Beskjed {
     val build = no.nav.brukernotifikasjon.schemas.Beskjed.newBuilder()
             .setTidspunkt(beskjed.eventTidspunkt.toEpochSecond())
-            .setSynligFremTil(UTCDateOrNullToTimestamp(beskjed.synligFremTil))
+            .setSynligFremTil(UTCDateToTimestampOrNull(beskjed.synligFremTil))
             .setFodselsnummer(beskjed.fodselsnummer)
             .setGrupperingsId(beskjed.grupperingsId)
             .setTekst(beskjed.tekst)
@@ -15,6 +15,6 @@ fun createBeskjedEvent(beskjed: Beskjed): no.nav.brukernotifikasjon.schemas.Besk
     return build.build()
 }
 
-fun UTCDateOrNullToTimestamp(date: ZonedDateTime?): Long? {
+fun UTCDateToTimestampOrNull(date: ZonedDateTime?): Long? {
     return date?.let { datetime -> date.toEpochSecond() }
 }

@@ -54,14 +54,14 @@ class OppgaveEventServiceTest {
     }
 
     @Test
-    fun `Should not do anything and return empty list if the list from the cache is empty`() {
+    fun `Should not do anything and return zero processed events if list of events from cache is empty`() {
         runBlocking {
             coEvery {
                 database.queryWithExceptionTranslation<List<Oppgave>>(any())
             }.returns(emptyList())
 
-            val actualOppgaveList = oppgaveEventService.produceOppgaveEventsForAllOppgaveEventsInCach()
-            actualOppgaveList.size `should be equal to` 0
+            val processedEvents = oppgaveEventService.produceOppgaveEventsForAllOppgaveEventsInCache()
+            processedEvents `should be equal to` 0
         }
     }
 }

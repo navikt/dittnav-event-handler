@@ -31,20 +31,30 @@ class BeskjedEventService(
         return getEvents { getAllBeskjedForInnloggetBruker(bruker) }
     }
 
-    suspend fun produceBeskjedEventsForAllBeskjedEventsInCach(): List<Beskjed> {
+    suspend fun produceBeskjedEventsForAllBeskjedEventsInCache(): Int {
         val allBeskjedEvents = getEvents { getAllBeskjedEvents() }
+        var numberOfProcessedEvents = 0
+        var batchNumber = 0
         if (allBeskjedEvents.isNotEmpty()) {
-            beskjedProducer.produceAllBeskjedEventsFromList(allBeskjedEvents)
+            allBeskjedEvents.chunked(10000) { allBeskjedChunk->
+                numberOfProcessedEvents += beskjedProducer.produceAllBeskjedEventsFromList(++batchNumber, allBeskjedChunk)
+                log.info("Prosesserte beskjed-backup, batch nr $batchNumber")
+            }
         }
-        return allBeskjedEvents
+        return numberOfProcessedEvents
     }
 
-    suspend fun produceDoneEventsFromAllInactiveBeskjedEvents(): List<Beskjed> {
-        var allInactiveBeskjedEvents = getEvents { getAllInactiveBeskjed() }
+    suspend fun produceDoneEventsFromAllInactiveBeskjedEvents(): Int {
+        val allInactiveBeskjedEvents = getEvents { getAllInactiveBeskjed() }
+        var numberOfProcessedEvents = 0
+        var batchNumber = 0;
         if (allInactiveBeskjedEvents.isNotEmpty()) {
-            beskjedProducer.produceDoneEventFromInactiveBeskjedEvents(allInactiveBeskjedEvents)
+            allInactiveBeskjedEvents.chunked(10000) { allInactiveBeskjedChunk ->
+                    numberOfProcessedEvents += beskjedProducer.produceDoneEventFromInactiveBeskjedEvents(++batchNumber, allInactiveBeskjedChunk)
+                    log.info("Prosesserte beskjed-done-backup, batch nr $batchNumber")
+            }
         }
-        return allInactiveBeskjedEvents
+        return numberOfProcessedEvents
     }
 
     private fun Beskjed.isExpired() : Boolean = synligFremTil?.isBefore(Instant.now().atZone(ZoneId.of("Europe/Oslo")))?: false

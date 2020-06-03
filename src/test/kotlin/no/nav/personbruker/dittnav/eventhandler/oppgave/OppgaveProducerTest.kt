@@ -27,7 +27,7 @@ internal class OppgaveProducerTest {
                     kafkaProducerOppgaveBackup.sendEvent(any(), any())
                 }.throws(KafkaException())
 
-                OppgaveProducer.produceAllOppgaveEventsFromList(oppgaveList)
+                OppgaveProducer.produceAllOppgaveEventsFromList(1, oppgaveList)
             }
         } `should throw` BackupEventException::class
 

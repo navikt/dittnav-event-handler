@@ -97,14 +97,14 @@ class BeskjedEventServiceTest {
     }
 
     @Test
-    fun `Should not do anything and return empty list if the list from the cache is empty`() {
+    fun `Should not do anything and return zero processed events if list of events from cache is empty`() {
         runBlocking {
             coEvery {
                 database.queryWithExceptionTranslation<List<Beskjed>>(any())
             }.returns(emptyList())
 
-            val actualBeskjedList = beskjedEventService.produceBeskjedEventsForAllBeskjedEventsInCach()
-            actualBeskjedList.size `should be equal to` 0
+            val processedEvents = beskjedEventService.produceBeskjedEventsForAllBeskjedEventsInCache()
+            processedEvents `should be equal to` 0
         }
     }
 

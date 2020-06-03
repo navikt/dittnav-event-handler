@@ -43,8 +43,8 @@ fun Route.oppgaveApi(oppgaveEventService: OppgaveEventService) {
 
     get("/produce/oppgave/all") {
         try {
-            val oppgaveEvents = oppgaveEventService.produceOppgaveEventsForAllOppgaveEventsInCach()
-            call.respond(HttpStatusCode.OK, oppgaveEvents)
+            val numberOfProcessedEvents = oppgaveEventService.produceOppgaveEventsForAllOppgaveEventsInCache()
+            call.respond(HttpStatusCode.OK, numberOfProcessedEvents)
         } catch(exception: Exception) {
             respondWithError(call, log, exception)
         }
@@ -52,8 +52,8 @@ fun Route.oppgaveApi(oppgaveEventService: OppgaveEventService) {
 
     get("/produce/done/from/inactive/oppgave") {
         try {
-            val oppgaveEvents = oppgaveEventService.produceDoneEventsFromAllInactiveOppgaveEvents()
-            call.respond(HttpStatusCode.OK, oppgaveEvents)
+            val numberOfProcessedEvents = oppgaveEventService.produceDoneEventsFromAllInactiveOppgaveEvents()
+            call.respond(HttpStatusCode.OK, numberOfProcessedEvents)
         } catch(exception: Exception) {
             respondWithError(call, log, exception)
         }

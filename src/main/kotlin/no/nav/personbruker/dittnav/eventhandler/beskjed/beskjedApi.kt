@@ -43,8 +43,8 @@ fun Route.beskjedApi(beskjedEventService: BeskjedEventService) {
 
     get("/produce/beskjed/all") {
         try {
-            val beskjedEvents = beskjedEventService.produceBeskjedEventsForAllBeskjedEventsInCach()
-            call.respond(HttpStatusCode.OK, beskjedEvents)
+            val numberOfProcessedEvents = beskjedEventService.produceBeskjedEventsForAllBeskjedEventsInCache()
+            call.respond(HttpStatusCode.OK, numberOfProcessedEvents)
         } catch(exception: Exception) {
             respondWithError(call, log, exception)
         }
@@ -52,8 +52,8 @@ fun Route.beskjedApi(beskjedEventService: BeskjedEventService) {
 
     get("/produce/done/from/inactive/beskjed/") {
         try {
-            val beskjedEvents = beskjedEventService.produceDoneEventsFromAllInactiveBeskjedEvents()
-            call.respond(HttpStatusCode.OK, beskjedEvents)
+            val nuberOfProcessedEvents = beskjedEventService.produceDoneEventsFromAllInactiveBeskjedEvents()
+            call.respond(HttpStatusCode.OK, nuberOfProcessedEvents)
         } catch(exception: Exception) {
             respondWithError(call, log, exception)
         }

@@ -86,6 +86,7 @@ fun Connection.getAllBeskjedEvents(): List<Beskjed> =
             |systembrukere.produsentnavn AS produsent
             |FROM beskjed LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker""".trimMargin())
                 .use {
+                    it.fetchSize = 10000
                     it.executeQuery().map {
                         toBeskjed()
                     }
@@ -110,6 +111,7 @@ fun Connection.getAllInactiveBeskjed(): List<Beskjed> =
             |FROM beskjed LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker
             |WHERE aktiv = false""".trimMargin())
                 .use {
+                    it.fetchSize = 10000
                     it.executeQuery().map {
                         toBeskjed()
                     }

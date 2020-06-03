@@ -1,5 +1,8 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import org.slf4j.LoggerFactory
@@ -24,20 +27,30 @@ class OppgaveEventService(
         return getEvents { getAllOppgaveForInnloggetBruker(bruker) }
     }
 
-    suspend fun produceOppgaveEventsForAllOppgaveEventsInCach(): List<Oppgave> {
+    suspend fun produceOppgaveEventsForAllOppgaveEventsInCache(): Int {
         val allOppgaveEvents = getEvents { getAllOppgaveEvents() }
+        var numberOfProcessedEvents = 0
+        var batchNumber = 0
         if (allOppgaveEvents.isNotEmpty()) {
-            oppgaveProducer.produceAllOppgaveEventsFromList(allOppgaveEvents)
+            allOppgaveEvents.chunked(10000) { allOppgaveChunk ->
+                    numberOfProcessedEvents += oppgaveProducer.produceAllOppgaveEventsFromList(++batchNumber, allOppgaveChunk)
+                    log.info("Prosesserte oppgave-backup, batch nr $batchNumber")
+            }
         }
-        return allOppgaveEvents
+        return numberOfProcessedEvents
     }
 
-    suspend fun produceDoneEventsFromAllInactiveOppgaveEvents(): List<Oppgave> {
+    suspend fun produceDoneEventsFromAllInactiveOppgaveEvents(): Int {
         var allInactiveOppgaveEvents = getEvents { getAllInactiveOppgaveEvents() }
+        var numberOfProcessedEvents = 0
+        var batchNumber = 0
         if (allInactiveOppgaveEvents.isNotEmpty()) {
-            oppgaveProducer.produceDoneEventFromInactiveOppgaveEvents(allInactiveOppgaveEvents)
+            allInactiveOppgaveEvents.chunked(10000) { allInactiveOppgaveChunk ->
+                    numberOfProcessedEvents = oppgaveProducer.produceDoneEventFromInactiveOppgaveEvents(++batchNumber, allInactiveOppgaveEvents)
+                    log.info("Prosesserte oppgave-done-backup, batch nr $batchNumber")
+            }
         }
-        return allInactiveOppgaveEvents
+        return numberOfProcessedEvents
     }
 
     private suspend fun getEvents(operationToExecute: Connection.() -> List<Oppgave>): List<Oppgave> {

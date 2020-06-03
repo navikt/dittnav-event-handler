@@ -28,7 +28,7 @@ class BeskjedProducerTest {
                     kafkaProducerBeskjedBackup.sendEvent(any(), any())
                 }.throws(KafkaException())
 
-                beskjedProducer.produceAllBeskjedEventsFromList(beskjedList)
+                beskjedProducer.produceAllBeskjedEventsFromList(1, beskjedList)
             }
         } `should throw` BackupEventException::class
 

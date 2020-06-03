@@ -55,6 +55,7 @@ fun Connection.getAllOppgaveEvents(): List<Oppgave> =
             |systembrukere.produsentnavn AS produsent
             |FROM oppgave LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker""".trimMargin())
                 .use {
+                    it.fetchSize = 10000
                     it.executeQuery().map {
                         toOppgave()
                     }
@@ -77,6 +78,7 @@ fun Connection.getAllInactiveOppgaveEvents(): List<Oppgave> =
             |FROM oppgave LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker
             |WHERE aktiv = false""".trimMargin())
                 .use {
+                    it.fetchSize = 10000
                     it.executeQuery().map {
                         toOppgave()
                     }

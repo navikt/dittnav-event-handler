@@ -4,6 +4,7 @@ import no.nav.brukernotifikasjon.schemas.Beskjed
 import no.nav.brukernotifikasjon.schemas.Done
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.brukernotifikasjon.schemas.Oppgave
+import no.nav.personbruker.dittnav.eventhandler.beskjed.BackupBeskjedService
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedProducer
 import no.nav.personbruker.dittnav.eventhandler.brukernotifikasjon.BrukernotifikasjonService
@@ -13,6 +14,7 @@ import no.nav.personbruker.dittnav.eventhandler.common.kafka.KafkaProducerWrappe
 import no.nav.personbruker.dittnav.eventhandler.done.DoneEventService
 import no.nav.personbruker.dittnav.eventhandler.done.DoneProducer
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksEventService
+import no.nav.personbruker.dittnav.eventhandler.oppgave.BackupOppgaveService
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveEventService
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveProducer
 import org.apache.kafka.clients.producer.KafkaProducer
@@ -36,6 +38,9 @@ class ApplicationContext {
     val oppgaveEventService = OppgaveEventService(database, oppgaveProducer)
     val innboksEventService = InnboksEventService(database)
     val doneEventService = DoneEventService(database, doneProducer)
+
+    val backupBeskjedEventService = BackupBeskjedService(beskjedEventService, beskjedProducer)
+    val backupOppgaveService = BackupOppgaveService(oppgaveEventService, oppgaveProducer)
 
     val healthService = HealthService(this)
     val brukernotifikasjonService = BrukernotifikasjonService(database)

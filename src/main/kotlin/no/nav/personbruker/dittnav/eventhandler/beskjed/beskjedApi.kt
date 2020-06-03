@@ -10,7 +10,7 @@ import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
 import org.slf4j.LoggerFactory
 import java.lang.Exception
 
-fun Route.beskjedApi(beskjedEventService: BeskjedEventService) {
+fun Route.beskjedApi(beskjedEventService: BeskjedEventService, backupBeskjedService: BackupBeskjedService) {
 
     val log = LoggerFactory.getLogger(BeskjedEventService::class.java)
 
@@ -43,8 +43,8 @@ fun Route.beskjedApi(beskjedEventService: BeskjedEventService) {
 
     get("/produce/beskjed/all") {
         try {
-            val beskjedEvents = beskjedEventService.produceBeskjedEventsForAllBeskjedEventsInCach()
-            call.respond(HttpStatusCode.OK, beskjedEvents)
+            backupBeskjedService.produceBeskjedEventsForAllBeskjedEventsInCach()
+            call.respond(HttpStatusCode.OK, "Alle beskjed events er sendt til Kafka.")
         } catch(exception: Exception) {
             respondWithError(call, log, exception)
         }
@@ -52,8 +52,8 @@ fun Route.beskjedApi(beskjedEventService: BeskjedEventService) {
 
     get("/produce/done/from/inactive/beskjed/") {
         try {
-            val beskjedEvents = beskjedEventService.produceDoneEventsFromAllInactiveBeskjedEvents()
-            call.respond(HttpStatusCode.OK, beskjedEvents)
+            backupBeskjedService.produceDoneEventsFromAllInactiveBeskjedEvents()
+            call.respond(HttpStatusCode.OK, "Alle inaktive beskjed events er sendt til Kafka.")
         } catch(exception: Exception) {
             respondWithError(call, log, exception)
         }

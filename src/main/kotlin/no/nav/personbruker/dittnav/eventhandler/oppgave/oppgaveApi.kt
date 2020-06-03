@@ -10,7 +10,7 @@ import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
 import org.slf4j.LoggerFactory
 import java.lang.Exception
 
-fun Route.oppgaveApi(oppgaveEventService: OppgaveEventService) {
+fun Route.oppgaveApi(oppgaveEventService: OppgaveEventService, backupOppgaveService: BackupOppgaveService) {
 
     val log = LoggerFactory.getLogger(OppgaveEventService::class.java)
 
@@ -43,8 +43,8 @@ fun Route.oppgaveApi(oppgaveEventService: OppgaveEventService) {
 
     get("/produce/oppgave/all") {
         try {
-            val oppgaveEvents = oppgaveEventService.produceOppgaveEventsForAllOppgaveEventsInCach()
-            call.respond(HttpStatusCode.OK, oppgaveEvents)
+            backupOppgaveService.produceOppgaveEventsForAllOppgaveEventsInCach()
+            call.respond(HttpStatusCode.OK, "Alle oppgave events er sendt til Kafka.")
         } catch(exception: Exception) {
             respondWithError(call, log, exception)
         }
@@ -52,8 +52,8 @@ fun Route.oppgaveApi(oppgaveEventService: OppgaveEventService) {
 
     get("/produce/done/from/inactive/oppgave") {
         try {
-            val oppgaveEvents = oppgaveEventService.produceDoneEventsFromAllInactiveOppgaveEvents()
-            call.respond(HttpStatusCode.OK, oppgaveEvents)
+            backupOppgaveService.produceDoneEventsFromAllInactiveOppgaveEvents()
+            call.respond(HttpStatusCode.OK, "Alle inaktive oppgave events er sendt til Kafka.")
         } catch(exception: Exception) {
             respondWithError(call, log, exception)
         }

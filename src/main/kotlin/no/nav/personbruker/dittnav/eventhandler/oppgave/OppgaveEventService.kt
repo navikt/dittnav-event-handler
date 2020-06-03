@@ -5,10 +5,7 @@ import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import org.slf4j.LoggerFactory
 import java.sql.Connection
 
-class OppgaveEventService(
-        private val database: Database,
-        private val oppgaveProducer: OppgaveProducer
-) {
+class OppgaveEventService(private val database: Database) {
 
     private val log = LoggerFactory.getLogger(OppgaveEventService::class.java)
 
@@ -24,20 +21,12 @@ class OppgaveEventService(
         return getEvents { getAllOppgaveForInnloggetBruker(bruker) }
     }
 
-    suspend fun produceOppgaveEventsForAllOppgaveEventsInCach(): List<Oppgave> {
-        val allOppgaveEvents = getEvents { getAllOppgaveEvents() }
-        if (allOppgaveEvents.isNotEmpty()) {
-            oppgaveProducer.produceAllOppgaveEventsFromList(allOppgaveEvents)
-        }
-        return allOppgaveEvents
+    suspend fun getAllOppgaveEventsInCach(): List<Oppgave> {
+        return getEvents { getAllOppgaveEvents() }
     }
 
-    suspend fun produceDoneEventsFromAllInactiveOppgaveEvents(): List<Oppgave> {
-        var allInactiveOppgaveEvents = getEvents { getAllInactiveOppgaveEvents() }
-        if (allInactiveOppgaveEvents.isNotEmpty()) {
-            oppgaveProducer.produceDoneEventFromInactiveOppgaveEvents(allInactiveOppgaveEvents)
-        }
-        return allInactiveOppgaveEvents
+    suspend fun getAllInactiveOppgaveEventsInCach(): List<Oppgave> {
+        return getEvents { getAllInactiveOppgaveEvents() }
     }
 
     private suspend fun getEvents(operationToExecute: Connection.() -> List<Oppgave>): List<Oppgave> {

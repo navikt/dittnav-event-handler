@@ -46,9 +46,9 @@ fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()
         healthApi(appContext.healthService)
         authenticate {
             doneApi(appContext.doneEventService)
-            beskjedApi(appContext.beskjedEventService)
+            beskjedApi(appContext.beskjedEventService, appContext.backupBeskjedEventService)
             innboksApi(appContext.innboksEventService)
-            oppgaveApi(appContext.oppgaveEventService)
+            oppgaveApi(appContext.oppgaveEventService, appContext.backupOppgaveService)
             brukernotifikasjoner(appContext.brukernotifikasjonService)
         }
     }

@@ -8,10 +8,7 @@ import java.sql.Connection
 import java.time.Instant
 import java.time.ZoneId
 
-class BeskjedEventService(
-        private val database: Database,
-        private val beskjedProducer: BeskjedProducer
-) {
+class BeskjedEventService(private val database: Database) {
 
     private val log = LoggerFactory.getLogger(BeskjedEventService::class.java)
 
@@ -31,20 +28,12 @@ class BeskjedEventService(
         return getEvents { getAllBeskjedForInnloggetBruker(bruker) }
     }
 
-    suspend fun produceBeskjedEventsForAllBeskjedEventsInCach(): List<Beskjed> {
-        val allBeskjedEvents = getEvents { getAllBeskjedEvents() }
-        if (allBeskjedEvents.isNotEmpty()) {
-            beskjedProducer.produceAllBeskjedEventsFromList(allBeskjedEvents)
-        }
-        return allBeskjedEvents
+    suspend fun getAllBeskjedEventsInCach(): List<Beskjed> {
+        return getEvents { getAllBeskjedEvents() }
     }
 
-    suspend fun produceDoneEventsFromAllInactiveBeskjedEvents(): List<Beskjed> {
-        var allInactiveBeskjedEvents = getEvents { getAllInactiveBeskjed() }
-        if (allInactiveBeskjedEvents.isNotEmpty()) {
-            beskjedProducer.produceDoneEventFromInactiveBeskjedEvents(allInactiveBeskjedEvents)
-        }
-        return allInactiveBeskjedEvents
+    suspend fun getAllInactiveBeskjedEventsInCach(): List<Beskjed> {
+        return getEvents { getAllInactiveBeskjed() }
     }
 
     private fun Beskjed.isExpired() : Boolean = synligFremTil?.isBefore(Instant.now().atZone(ZoneId.of("Europe/Oslo")))?: false

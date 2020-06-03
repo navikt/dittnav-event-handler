@@ -54,7 +54,8 @@ class BeskjedQueriesTest {
     @Test
     fun `Finn kun aktive cachede Beskjed-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { val aktivBeskjedByUser = getAktivBeskjedForInnloggetBruker(bruker)
+            database.dbQuery {
+                val aktivBeskjedByUser = getAktivBeskjedForInnloggetBruker(bruker)
                 aktivBeskjedByUser
             }.size `should be equal to` 2
         }
@@ -63,7 +64,8 @@ class BeskjedQueriesTest {
     @Test
     fun `Finn kun inaktive cachede Beskjed-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { val inaktivBeskjedByUser = getInaktivBeskjedForInnloggetBruker(bruker)
+            database.dbQuery {
+                val inaktivBeskjedByUser = getInaktivBeskjedForInnloggetBruker(bruker)
                 inaktivBeskjedByUser
             }.size `should be equal to` 1
         }
@@ -146,12 +148,26 @@ class BeskjedQueriesTest {
                 .copy(systembruker = "ukjent-systembruker")
         createBeskjed(listOf(beskjedMedAnnenProdusent))
         val beskjed = runBlocking {
-             database.dbQuery {
+            database.dbQuery {
                 getAllBeskjedForInnloggetBruker(InnloggetBrukerObjectMother.createInnloggetBruker("112233"))
             }.first()
         }
         beskjed.produsent `should be equal to` ""
         deleteBeskjed(listOf(beskjedMedAnnenProdusent))
+    }
+
+    @Test
+    fun `Returnerer liste av alle Beskjed-eventer`() {
+        runBlocking {
+            database.dbQuery { getAllBeskjedEvents() }.size `should be equal to` 4
+        }
+    }
+
+    @Test
+    fun `Returnerer liste av alle inaktive Beskjed-eventer`() {
+        runBlocking {
+            database.dbQuery { getAllInactiveBeskjed() }.size `should be equal to` 1
+        }
     }
 
     private fun createBeskjed(beskjeder: List<Beskjed>) {

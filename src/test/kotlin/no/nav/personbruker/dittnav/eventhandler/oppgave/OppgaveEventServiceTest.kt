@@ -52,4 +52,16 @@ class OppgaveEventServiceTest {
         logevent.level.levelStr `should be equal to` "WARN"
         logevent.formattedMessage `should contain` "produsent"
     }
+
+    @Test
+    fun `Should not do anything and return empty list if the list from the cache is empty`() {
+        runBlocking {
+            coEvery {
+                database.queryWithExceptionTranslation<List<Oppgave>>(any())
+            }.returns(emptyList())
+
+            val actualOppgaveList = oppgaveEventService.produceOppgaveEventsForAllOppgaveEventsInCach()
+            actualOppgaveList.size `should be equal to` 0
+        }
+    }
 }

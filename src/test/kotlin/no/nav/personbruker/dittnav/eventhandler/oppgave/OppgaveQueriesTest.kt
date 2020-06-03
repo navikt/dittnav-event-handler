@@ -110,6 +110,20 @@ class OppgaveQueriesTest {
         deleteOppgave(listOf(oppgaveMedAnnenProdusent))
     }
 
+    @Test
+    fun `Returnerer liste av alle Oppgave-eventer`() {
+        runBlocking {
+            database.dbQuery { getAllOppgaveEvents() }.size `should be equal to` 4
+        }
+    }
+
+    @Test
+    fun `Returnerer liste av alle inaktive Oppgave-eventer`() {
+        runBlocking {
+            database.dbQuery { getAllInactiveOppgaveEvents() }.size `should be equal to` 1
+        }
+    }
+
     private fun createOppgave(oppgaver: List<Oppgave>) {
         runBlocking {
             database.dbQuery { createOppgave(oppgaver) }

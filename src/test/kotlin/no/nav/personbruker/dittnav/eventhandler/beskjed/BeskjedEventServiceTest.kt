@@ -96,6 +96,18 @@ class BeskjedEventServiceTest {
         logevent.formattedMessage `should contain` "produsent"
     }
 
+    @Test
+    fun `Should not do anything and return empty list if the list from the cache is empty`() {
+        runBlocking {
+            coEvery {
+                database.queryWithExceptionTranslation<List<Beskjed>>(any())
+            }.returns(emptyList())
+
+            val actualBeskjedList = beskjedEventService.produceBeskjedEventsForAllBeskjedEventsInCach()
+            actualBeskjedList.size `should be equal to` 0
+        }
+    }
+
     fun getBeskjedList(): MutableList<Beskjed> {
         return mutableListOf(
                 BeskjedObjectMother.createBeskjed(1, "1", bruker.ident, null, "123", true),

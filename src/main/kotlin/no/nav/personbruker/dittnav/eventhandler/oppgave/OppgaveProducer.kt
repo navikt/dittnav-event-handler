@@ -18,6 +18,7 @@ class OppgaveProducer(
         var count = 0
         events.forEach { event ->
             try {
+                count++
                 val key = createKeyForEvent(event.eventId, event.systembruker)
                 val oppgaveEvent = createOppgaveEvent(event)
                 oppgaveKafkaProducer.sendEvent(key, oppgaveEvent)
@@ -54,6 +55,7 @@ class OppgaveProducer(
         var count = 0
         events.forEach { event ->
             try {
+                count++
                 val key = createKeyForEvent(event.eventId, event.systembruker)
                 val doneEvent = createDoneEvent(event.fodselsnummer, event.grupperingsId)
                 doneKafkaProducer.sendEvent(key, doneEvent)
@@ -85,4 +87,5 @@ class OppgaveProducer(
             }
         }
     }
+
 }

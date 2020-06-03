@@ -20,10 +20,10 @@ class BeskjedProducer(
         var count = 0
         events.forEach { event ->
             try {
+                count++
                 val key = createKeyForEvent(event.eventId, event.systembruker)
                 val beskjedEvent = createBeskjedEvent(event)
                 beskjedKafkaProducer.sendEvent(key, beskjedEvent)
-                count++
             } catch (e: AvroMissingFieldException) {
                 val msg = "Et eller flere felt er tomme. Vi får feil når vi prøver å konvertere en intern beskjed til schemas.Beskjed. " +
                         "EventId: ${event.eventId}, produsent: ${event.produsent}, eventTidspunkt: ${event.eventTidspunkt}. " +
@@ -57,6 +57,7 @@ class BeskjedProducer(
         var count = 0
         events.forEach { event ->
             try {
+                count++
                 val key = createKeyForEvent(event.eventId, event.systembruker)
                 val doneEvent = createDoneEvent(event.fodselsnummer, event.grupperingsId)
                 doneKafkaProducer.sendEvent(key, doneEvent)
@@ -88,4 +89,5 @@ class BeskjedProducer(
             }
         }
     }
+
 }

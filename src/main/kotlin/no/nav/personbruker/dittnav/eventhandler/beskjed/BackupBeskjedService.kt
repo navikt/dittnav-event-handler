@@ -8,14 +8,16 @@ class BackupBeskjedService(
     suspend fun produceBeskjedEventsForAllBeskjedEventsInCach() {
         val allBeskjedEvents = beskjedEventService.getAllBeskjedEventsInCach()
         if (allBeskjedEvents.isNotEmpty()) {
-            beskjedProducer.produceAllBeskjedEventsFromList(allBeskjedEvents)
+            val beskjedEvents = beskjedProducer.toSchemasBeskjed(allBeskjedEvents)
+            beskjedProducer.produceAllBeskjedEvents(beskjedEvents)
         }
     }
 
     suspend fun produceDoneEventsFromAllInactiveBeskjedEvents() {
         var allInactiveBeskjedEvents = beskjedEventService.getAllInactiveBeskjedEventsInCach()
         if (allInactiveBeskjedEvents.isNotEmpty()) {
-            beskjedProducer.produceDoneEventFromInactiveBeskjedEvents(allInactiveBeskjedEvents)
+            val doneEvents = beskjedProducer.toSchemasDone(allInactiveBeskjedEvents)
+            beskjedProducer.produceDoneEvents(doneEvents)
         }
     }
 }

@@ -26,9 +26,10 @@ class BeskjedProducerTest {
 
                 coEvery {
                     kafkaProducerBeskjedBackup.sendEvent(any(), any())
-                }.throws(KafkaException())
+                }.throws(KafkaException("Simulert feil i en test"))
 
-                beskjedProducer.produceAllBeskjedEventsFromList(beskjedList)
+                val beskjedEvents = beskjedProducer.toSchemasBeskjed(beskjedList)
+                beskjedProducer.produceAllBeskjedEvents(beskjedEvents)
             }
         } `should throw` BackupEventException::class
 

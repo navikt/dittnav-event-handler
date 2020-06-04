@@ -15,7 +15,7 @@ internal class OppgaveProducerTest {
 
     val kafkaProducerDoneBackup = mockk<KafkaProducerWrapper<Done>>()
     val kafkaProducerOppgaveBackup = mockk<KafkaProducerWrapper<no.nav.brukernotifikasjon.schemas.Oppgave>>()
-    val OppgaveProducer = OppgaveProducer(kafkaProducerOppgaveBackup, kafkaProducerDoneBackup)
+    val oppgaveProducer = OppgaveProducer(kafkaProducerOppgaveBackup, kafkaProducerDoneBackup)
 
     @Test
     fun `Kaster exception hvis kafka feiler`() {
@@ -25,9 +25,10 @@ internal class OppgaveProducerTest {
 
                 coEvery {
                     kafkaProducerOppgaveBackup.sendEvent(any(), any())
-                }.throws(KafkaException())
+                }.throws(KafkaException("Simulert feil i en test"))
 
-                OppgaveProducer.produceAllOppgaveEventsFromList(oppgaveList)
+                val oppgaveEvents = oppgaveProducer.toSchemasOppgave(oppgaveList)
+                oppgaveProducer.produceAllOppgaveEvents(oppgaveEvents)
             }
         } `should throw` BackupEventException::class
 

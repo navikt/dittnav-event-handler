@@ -22,8 +22,7 @@ import java.time.ZonedDateTime
 class BeskjedEventServiceTest {
 
     private val database = mockk<Database>()
-    private val beskjedProducer = mockk<BeskjedProducer>()
-    private val beskjedEventService = BeskjedEventService(database, beskjedProducer)
+    private val beskjedEventService = BeskjedEventService(database)
     private val bruker = InnloggetBrukerObjectMother.createInnloggetBruker("123")
 
     private val appender: ListAppender<ILoggingEvent> = ListAppender()

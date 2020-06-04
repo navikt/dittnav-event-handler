@@ -34,8 +34,8 @@ class ApplicationContext {
     val beskjedProducer = BeskjedProducer(kafkaProducerBeskjedBackup, kafkaProducerDoneBackup)
     val oppgaveProducer = OppgaveProducer(kafkaProducerOppgaveBackup, kafkaProducerDoneBackup)
 
-    val beskjedEventService = BeskjedEventService(database, beskjedProducer)
-    val oppgaveEventService = OppgaveEventService(database, oppgaveProducer)
+    val beskjedEventService = BeskjedEventService(database)
+    val oppgaveEventService = OppgaveEventService(database)
     val innboksEventService = InnboksEventService(database)
     val doneEventService = DoneEventService(database, doneProducer)
 

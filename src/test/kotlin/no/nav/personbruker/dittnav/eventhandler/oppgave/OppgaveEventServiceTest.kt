@@ -20,8 +20,7 @@ import org.slf4j.LoggerFactory
 class OppgaveEventServiceTest {
 
     private val database = mockk<Database>()
-    private val oppgaveProducer = mockk<OppgaveProducer>()
-    private val oppgaveEventService = OppgaveEventService(database, oppgaveProducer)
+    private val oppgaveEventService = OppgaveEventService(database)
     private val bruker = InnloggetBrukerObjectMother.createInnloggetBruker("123")
 
     private val appender: ListAppender<ILoggingEvent> = ListAppender()
@@ -53,15 +52,4 @@ class OppgaveEventServiceTest {
         logevent.formattedMessage `should contain` "produsent"
     }
 
-    @Test
-    fun `Should not do anything and return empty list if the list from the cache is empty`() {
-        runBlocking {
-            coEvery {
-                database.queryWithExceptionTranslation<List<Oppgave>>(any())
-            }.returns(emptyList())
-
-            val actualOppgaveList = oppgaveEventService.produceOppgaveEventsForAllOppgaveEventsInCach()
-            actualOppgaveList.size `should be equal to` 0
-        }
-    }
 }

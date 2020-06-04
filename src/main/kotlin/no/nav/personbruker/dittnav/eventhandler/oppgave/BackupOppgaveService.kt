@@ -8,14 +8,16 @@ class BackupOppgaveService(
     suspend fun produceOppgaveEventsForAllOppgaveEventsInCach() {
         val allOppgaveEvents = oppgaveEventService.getAllOppgaveEventsInCach()
         if (allOppgaveEvents.isNotEmpty()) {
-            oppgaveProducer.produceAllOppgaveEventsFromList(allOppgaveEvents)
+            val oppgaveEvents = oppgaveProducer.toSchemasOppgave(allOppgaveEvents)
+            oppgaveProducer.produceAllOppgaveEvents(oppgaveEvents)
         }
     }
 
     suspend fun produceDoneEventsFromAllInactiveOppgaveEvents() {
         var allInactiveOppgaveEvents = oppgaveEventService.getAllInactiveOppgaveEventsInCach()
         if (allInactiveOppgaveEvents.isNotEmpty()) {
-            oppgaveProducer.produceDoneEventFromInactiveOppgaveEvents(allInactiveOppgaveEvents)
+            val doneEvents = oppgaveProducer.toSchemasDone(allInactiveOppgaveEvents)
+            oppgaveProducer.produceDoneEvents(doneEvents)
         }
     }
 }

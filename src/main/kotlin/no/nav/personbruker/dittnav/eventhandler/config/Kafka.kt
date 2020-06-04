@@ -19,6 +19,8 @@ object Kafka {
     val beskjedTopicNameBackup = "aapen-brukernotifikasjon-nyBeskjed-v1-backup"
     val oppgaveTopicNameBackup = "aapen-brukernotifikasjon-nyOppgave-v1-backup"
 
+    const val BACKUP_EVENT_CHUNCK_SIZE = 10000
+
     private fun credentialProps(env: Environment): Properties {
         return Properties().apply {
             put(SaslConfigs.SASL_MECHANISM, "PLAIN")

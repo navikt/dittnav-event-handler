@@ -51,5 +51,4 @@ class OppgaveEventServiceTest {
         logevent.level.levelStr `should be equal to` "WARN"
         logevent.formattedMessage `should contain` "produsent"
     }
-
 }

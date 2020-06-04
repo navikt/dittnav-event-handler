@@ -3,6 +3,7 @@ package no.nav.personbruker.dittnav.eventhandler.beskjed
 import Beskjed
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
+import no.nav.personbruker.dittnav.eventhandler.config.Kafka.BACKUP_EVENT_CHUNCK_SIZE
 import org.slf4j.LoggerFactory
 import java.sql.Connection
 import java.time.Instant
@@ -36,7 +37,7 @@ class BeskjedEventService(
         var numberOfProcessedEvents = 0
         var batchNumber = 0
         if (allBeskjedEvents.isNotEmpty()) {
-            allBeskjedEvents.chunked(10000) { allBeskjedChunk->
+            allBeskjedEvents.chunked(BACKUP_EVENT_CHUNCK_SIZE) { allBeskjedChunk->
                 numberOfProcessedEvents += beskjedProducer.produceAllBeskjedEventsFromList(++batchNumber, allBeskjedChunk)
                 log.info("Prosesserte beskjed-backup, batch nr $batchNumber")
             }
@@ -49,7 +50,7 @@ class BeskjedEventService(
         var numberOfProcessedEvents = 0
         var batchNumber = 0;
         if (allInactiveBeskjedEvents.isNotEmpty()) {
-            allInactiveBeskjedEvents.chunked(10000) { allInactiveBeskjedChunk ->
+            allInactiveBeskjedEvents.chunked(BACKUP_EVENT_CHUNCK_SIZE) { allInactiveBeskjedChunk ->
                     numberOfProcessedEvents += beskjedProducer.produceDoneEventFromInactiveBeskjedEvents(++batchNumber, allInactiveBeskjedChunk)
                     log.info("Prosesserte beskjed-done-backup, batch nr $batchNumber")
             }

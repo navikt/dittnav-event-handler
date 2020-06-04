@@ -1,10 +1,8 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
+import no.nav.personbruker.dittnav.eventhandler.config.Kafka.BACKUP_EVENT_CHUNCK_SIZE
 import org.slf4j.LoggerFactory
 import java.sql.Connection
 
@@ -32,7 +30,7 @@ class OppgaveEventService(
         var numberOfProcessedEvents = 0
         var batchNumber = 0
         if (allOppgaveEvents.isNotEmpty()) {
-            allOppgaveEvents.chunked(10000) { allOppgaveChunk ->
+            allOppgaveEvents.chunked(BACKUP_EVENT_CHUNCK_SIZE) { allOppgaveChunk ->
                     numberOfProcessedEvents += oppgaveProducer.produceAllOppgaveEventsFromList(++batchNumber, allOppgaveChunk)
                     log.info("Prosesserte oppgave-backup, batch nr $batchNumber")
             }
@@ -45,7 +43,7 @@ class OppgaveEventService(
         var numberOfProcessedEvents = 0
         var batchNumber = 0
         if (allInactiveOppgaveEvents.isNotEmpty()) {
-            allInactiveOppgaveEvents.chunked(10000) { allInactiveOppgaveChunk ->
+            allInactiveOppgaveEvents.chunked(BACKUP_EVENT_CHUNCK_SIZE) { allInactiveOppgaveChunk ->
                     numberOfProcessedEvents = oppgaveProducer.produceDoneEventFromInactiveOppgaveEvents(++batchNumber, allInactiveOppgaveEvents)
                     log.info("Prosesserte oppgave-done-backup, batch nr $batchNumber")
             }

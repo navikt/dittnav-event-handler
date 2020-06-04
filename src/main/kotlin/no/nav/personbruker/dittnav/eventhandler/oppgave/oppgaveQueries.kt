@@ -5,6 +5,7 @@ import no.nav.personbruker.dittnav.eventhandler.common.database.convertIfUnlikel
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.map
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.EventCacheException
+import no.nav.personbruker.dittnav.eventhandler.config.Kafka.BACKUP_EVENT_CHUNCK_SIZE
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId
@@ -55,7 +56,7 @@ fun Connection.getAllOppgaveEvents(): List<Oppgave> =
             |systembrukere.produsentnavn AS produsent
             |FROM oppgave LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker""".trimMargin())
                 .use {
-                    it.fetchSize = 10000
+                    it.fetchSize = BACKUP_EVENT_CHUNCK_SIZE
                     it.executeQuery().map {
                         toOppgave()
                     }
@@ -78,7 +79,7 @@ fun Connection.getAllInactiveOppgaveEvents(): List<Oppgave> =
             |FROM oppgave LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker
             |WHERE aktiv = false""".trimMargin())
                 .use {
-                    it.fetchSize = 10000
+                    it.fetchSize = BACKUP_EVENT_CHUNCK_SIZE
                     it.executeQuery().map {
                         toOppgave()
                     }

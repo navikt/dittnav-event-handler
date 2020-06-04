@@ -100,8 +100,8 @@ class beskjedCreator {
     }
 
     @Test
-    fun `should convert date to long`() {
-        val expectedDate = zonedDateTime.toEpochSecond()
+    fun `should convert date to EpocMilli`() {
+        val expectedDate = zonedDateTime.toInstant().toEpochMilli()
         val beskjed = BeskjedObjectMother.createBeskjed(1, eventId, fodselsnummer, systembruker, tekst, grupperingsId, link, sikkerhetsnivaa, zonedDateTime)
         runBlocking {
             val beskjedEvent = createBeskjedEvent(beskjed)

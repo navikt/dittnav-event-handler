@@ -1,20 +1,17 @@
 package no.nav.personbruker.dittnav.eventhandler.beskjed
 
 import Beskjed
-import java.time.ZonedDateTime
+import no.nav.personbruker.dittnav.eventhandler.common.validation.*
 
 fun createBeskjedEvent(beskjed: Beskjed): no.nav.brukernotifikasjon.schemas.Beskjed {
     val build = no.nav.brukernotifikasjon.schemas.Beskjed.newBuilder()
-            .setTidspunkt(beskjed.eventTidspunkt.toEpochSecond())
+            .setTidspunkt(zonedDateTimeToEpochSecond(beskjed.eventTidspunkt)) //beskjed.eventTidspunkt.toEpochSecond()
             .setSynligFremTil(UTCDateToTimestampOrNull(beskjed.synligFremTil))
-            .setFodselsnummer(beskjed.fodselsnummer)
-            .setGrupperingsId(beskjed.grupperingsId)
-            .setTekst(beskjed.tekst)
-            .setLink(beskjed.link)
-            .setSikkerhetsnivaa(beskjed.sikkerhetsnivaa)
+            .setFodselsnummer(validateNonNullFieldMaxLength(beskjed.fodselsnummer, "fodselsnummer", 11))
+            .setGrupperingsId(validateNonNullFieldMaxLength(beskjed.grupperingsId, "grupperingsId", 100))
+            .setTekst(validateNonNullFieldMaxLength(beskjed.tekst, "tekst", 500))
+            .setLink(validateMaxLength(beskjed.link, "link", 200))
+            .setSikkerhetsnivaa(validateSikkerhetsnivaa(beskjed.sikkerhetsnivaa))
     return build.build()
 }
 
-fun UTCDateToTimestampOrNull(date: ZonedDateTime?): Long? {
-    return date?.let { datetime -> date.toEpochSecond() }
-}

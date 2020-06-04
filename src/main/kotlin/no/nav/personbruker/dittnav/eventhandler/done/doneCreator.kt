@@ -1,6 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.done
 
 import no.nav.brukernotifikasjon.schemas.Nokkel
+import no.nav.personbruker.dittnav.eventhandler.common.validation.validateNonNullFieldMaxLength
 import java.time.Instant
 
 fun createDoneEvent(fodselsnummer: String, grupperingsId: String): no.nav.brukernotifikasjon.schemas.Done {
@@ -12,9 +13,9 @@ fun createDoneEvent(fodselsnummer: String, grupperingsId: String): no.nav.bruker
     return build.build()
 }
 
-fun createKeyForEvent(eventId: String, producer: String): Nokkel {
+fun createKeyForEvent(eventId: String, systembruker: String): Nokkel {
     return Nokkel.newBuilder()
-            .setEventId(eventId)
-            .setSystembruker(producer)
+            .setEventId(validateNonNullFieldMaxLength(eventId, "eventId", 50))
+            .setSystembruker(validateNonNullFieldMaxLength(systembruker, "systembruker", 100))
             .build()
 }

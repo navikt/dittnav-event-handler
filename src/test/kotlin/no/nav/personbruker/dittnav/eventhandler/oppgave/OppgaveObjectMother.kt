@@ -19,5 +19,21 @@ object OppgaveObjectMother {
                 link = "https://nav.no/systemX/$fodselsnummer",
                 aktiv = aktiv)
     }
+
+    fun createOppgave(id: Int, eventId: String, fodselsnummer: String, systembruker: String, tekst: String, grupperingsId: String, link: String, sikkerhetsnivaa: Int): Oppgave {
+        return Oppgave(
+                id = id,
+                produsent = "dittnav",
+                systembruker = systembruker,
+                eventTidspunkt = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
+                fodselsnummer = fodselsnummer,
+                eventId = eventId,
+                grupperingsId = grupperingsId,
+                tekst = tekst,
+                link = link,
+                sistOppdatert = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
+                sikkerhetsnivaa = sikkerhetsnivaa,
+                aktiv = true)
+    }
 }
 

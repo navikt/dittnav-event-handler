@@ -5,7 +5,7 @@ import no.nav.personbruker.dittnav.eventhandler.common.validation.*
 
 fun createBeskjedEvent(beskjed: Beskjed): no.nav.brukernotifikasjon.schemas.Beskjed {
     val build = no.nav.brukernotifikasjon.schemas.Beskjed.newBuilder()
-            .setTidspunkt(zonedDateTimeToEpochSecond(beskjed.eventTidspunkt)) //beskjed.eventTidspunkt.toEpochSecond()
+            .setTidspunkt(zonedDateTimeToEpochMilli(beskjed.eventTidspunkt, "eventTidspunkt"))
             .setSynligFremTil(UTCDateToTimestampOrNull(beskjed.synligFremTil))
             .setFodselsnummer(validateNonNullFieldMaxLength(beskjed.fodselsnummer, "fodselsnummer", 11))
             .setGrupperingsId(validateNonNullFieldMaxLength(beskjed.grupperingsId, "grupperingsId", 100))

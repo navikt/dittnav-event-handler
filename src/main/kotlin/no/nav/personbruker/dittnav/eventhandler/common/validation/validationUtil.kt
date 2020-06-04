@@ -38,12 +38,15 @@ fun validateNonNullField(field: String?, fieldName: String): String {
     return field
 }
 
-fun zonedDateTimeToEpochSecond(date: ZonedDateTime): Long { //TODO kan denne være null?
-    return date.toEpochSecond()
+fun zonedDateTimeToEpochMilli(date: ZonedDateTime, fieldName: String): Long {
+    if (date == null) {
+        throw BackupEventException("$fieldName var null eller tomt.")
+    }
+    return date.toInstant().toEpochMilli()
 }
 
 fun UTCDateToTimestampOrNull(date: ZonedDateTime?): Long? {
-    return date?.let { datetime -> datetime.toEpochSecond() }
+    return date?.let { datetime -> datetime.toInstant().toEpochMilli() }
 }
 
 fun validateSikkerhetsnivaa(sikkerhetsnivaa: Int): Int {

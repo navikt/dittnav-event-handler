@@ -9,6 +9,6 @@ fun createOppgaveEvent(oppgave: Oppgave): no.nav.brukernotifikasjon.schemas.Oppg
             .setLink(validateMaxLength(oppgave.link, "link", 200))
             .setSikkerhetsnivaa(validateSikkerhetsnivaa(oppgave.sikkerhetsnivaa))
             .setTekst(validateNonNullFieldMaxLength(oppgave.tekst, "tekst", 500))
-            .setTidspunkt(zonedDateTimeToEpochSecond(oppgave.eventTidspunkt))
+            .setTidspunkt(zonedDateTimeToEpochMilli(oppgave.eventTidspunkt, "eventTidspunkt"))
     return build.build()
 }

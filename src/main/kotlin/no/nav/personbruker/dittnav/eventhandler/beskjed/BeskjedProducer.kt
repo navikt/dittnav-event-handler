@@ -37,11 +37,11 @@ class BeskjedProducer(
                         "Vi stoppet på nr $count (i batch $batchNumber) av totalt ${events.size} eventer som var i beskjed-listen."
                 throw BackupEventException(msg, e)
             } catch (e: BackupEventException) {
-                    val msg = "Vi får en valideringsfeil når vi konverterer Beskjed til schemas.Beskjed. " +
-                            "EventId: ${event.eventId}, produsent: ${event.produsent}, eventTidspunkt: ${event.eventTidspunkt}. " +
-                            "Vi stoppet på nr $count (i batch $batchNumber) av totalt ${events.size} eventer som var i beskjed-listen."
-                    throw BackupEventException(msg, e)
-                }
+                val msg = "Vi får en valideringsfeil når vi konverterer Beskjed til schemas.Beskjed. " +
+                        "EventId: ${event.eventId}, produsent: ${event.produsent}, eventTidspunkt: ${event.eventTidspunkt}. " +
+                        "Vi stoppet på nr $count (i batch $batchNumber) av totalt ${events.size} eventer som var i beskjed-listen."
+                throw BackupEventException(msg, e)
+            }
         }
         return convertedEvents
     }

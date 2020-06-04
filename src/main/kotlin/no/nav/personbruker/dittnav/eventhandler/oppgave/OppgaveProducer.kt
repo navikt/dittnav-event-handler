@@ -35,6 +35,11 @@ class OppgaveProducer(
                         "EventId: ${event.eventId}, produsent: ${event.produsent}, eventTidspunkt: ${event.eventTidspunkt}. " +
                         "Vi stoppet på nr $count (i batch nr. $batchNumber) av totalt ${events.size} eventer som var i oppgave-listen."
                 throw BackupEventException(msg, e)
+            } catch (e: BackupEventException) {
+                val msg = "Vi får en valideringsfeil når vi konverterer Oppgave til schemas.Oppgave. " +
+                        "EventId: ${event.eventId}, produsent: ${event.produsent}, eventTidspunkt: ${event.eventTidspunkt}. " +
+                        "Vi stoppet på nr $count (i batch nr. $batchNumber) av totalt ${events.size} eventer som var i oppgave-listen."
+                throw BackupEventException(msg, e)
             }
         }
         return convertedEvents

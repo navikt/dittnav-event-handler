@@ -27,8 +27,9 @@ internal class OppgaveProducerTest {
                     kafkaProducerOppgaveBackup.sendEvent(any(), any())
                 }.throws(KafkaException("Simulert feil i en test"))
 
-                val oppgaveEvents = oppgaveProducer.toSchemasOppgave(oppgaveList)
-                oppgaveProducer.produceAllOppgaveEvents(oppgaveEvents)
+                val oppgaveEvents = oppgaveProducer.toSchemasOppgave(1, oppgaveList)
+                oppgaveProducer.produceAllOppgaveEvents(1, oppgaveEvents)
+
             }
         } `should throw` BackupEventException::class
 

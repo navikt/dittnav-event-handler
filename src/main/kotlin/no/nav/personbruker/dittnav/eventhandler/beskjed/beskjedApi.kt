@@ -8,7 +8,6 @@ import io.ktor.routing.get
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.respondWithError
 import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
 import org.slf4j.LoggerFactory
-import java.lang.Exception
 
 fun Route.beskjedApi(beskjedEventService: BeskjedEventService, backupBeskjedService: BackupBeskjedService) {
 
@@ -43,8 +42,8 @@ fun Route.beskjedApi(beskjedEventService: BeskjedEventService, backupBeskjedServ
 
     get("/produce/beskjed/all") {
         try {
-            backupBeskjedService.produceBeskjedEventsForAllBeskjedEventsInCach()
-            call.respond(HttpStatusCode.OK, "Alle beskjed events er sendt til Kafka.")
+            val numberOfProcessedEvents = backupBeskjedService.produceBeskjedEventsForAllBeskjedEventsInCache()
+            call.respond(HttpStatusCode.OK, "Antall prosesserte beskjed-eventer (sendt til Kafka): $numberOfProcessedEvents")
         } catch(exception: Exception) {
             respondWithError(call, log, exception)
         }
@@ -52,8 +51,8 @@ fun Route.beskjedApi(beskjedEventService: BeskjedEventService, backupBeskjedServ
 
     get("/produce/done/from/inactive/beskjed/") {
         try {
-            backupBeskjedService.produceDoneEventsFromAllInactiveBeskjedEvents()
-            call.respond(HttpStatusCode.OK, "Alle inaktive beskjed events er sendt til Kafka.")
+            val numberOfProcessedEvents = backupBeskjedService.produceDoneEventsFromAllInactiveBeskjedEvents()
+            call.respond(HttpStatusCode.OK, "Antall inaktive beskjed-eventer (sendt til Kafka): $numberOfProcessedEvents")
         } catch(exception: Exception) {
             respondWithError(call, log, exception)
         }

@@ -15,10 +15,10 @@ fun createDoneEvent(fodselsnummer: String, grupperingsId: String): no.nav.bruker
 }
 
 fun createBackupDoneEvent(fodselsnummer: String, grupperingsId: String, sistOppdatert: ZonedDateTime): no.nav.brukernotifikasjon.schemas.Done {
-    val nowInMs = sistOppdatert.toInstant().toEpochMilli()
+    val sistOppdatert = sistOppdatert.toInstant().toEpochMilli()
     val build = no.nav.brukernotifikasjon.schemas.Done.newBuilder()
             .setFodselsnummer(validateNonNullFieldMaxLength(fodselsnummer, "fodselsnummer", 11))
-            .setTidspunkt(nowInMs)
+            .setTidspunkt(sistOppdatert)
             .setGrupperingsId(grupperingsId)
     return build.build()
 }

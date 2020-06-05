@@ -2,6 +2,7 @@ package no.nav.personbruker.dittnav.eventhandler.done
 
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.personbruker.dittnav.eventhandler.common.validation.validateNonNullFieldMaxLength
+import no.nav.personbruker.dittnav.eventhandler.common.validation.zonedDateTimeToEpochMilli
 import java.time.Instant
 import java.time.ZonedDateTime
 
@@ -15,7 +16,7 @@ fun createDoneEvent(fodselsnummer: String, grupperingsId: String): no.nav.bruker
 }
 
 fun createBackupDoneEvent(fodselsnummer: String, grupperingsId: String, sistOppdatert: ZonedDateTime): no.nav.brukernotifikasjon.schemas.Done {
-    val sistOppdatert = sistOppdatert.toInstant().toEpochMilli()
+    val sistOppdatert = zonedDateTimeToEpochMilli(sistOppdatert, "sistOppdatert")
     val build = no.nav.brukernotifikasjon.schemas.Done.newBuilder()
             .setFodselsnummer(validateNonNullFieldMaxLength(fodselsnummer, "fodselsnummer", 11))
             .setTidspunkt(sistOppdatert)

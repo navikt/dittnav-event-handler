@@ -5,7 +5,7 @@ import no.nav.brukernotifikasjon.schemas.Done
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.BackupEventException
 import no.nav.personbruker.dittnav.eventhandler.common.kafka.KafkaProducerWrapper
-import no.nav.personbruker.dittnav.eventhandler.done.createDoneEvent
+import no.nav.personbruker.dittnav.eventhandler.done.createBackupDoneEvent
 import no.nav.personbruker.dittnav.eventhandler.done.createKeyForEvent
 import org.apache.avro.AvroMissingFieldException
 import org.apache.avro.AvroRuntimeException
@@ -38,6 +38,11 @@ class BeskjedProducer(
                 throw BackupEventException(msg, e)
             } catch (e: BackupEventException) {
                 val msg = "Vi får en valideringsfeil når vi konverterer Beskjed til schemas.Beskjed. " +
+                        "EventId: ${event.eventId}, produsent: ${event.produsent}, eventTidspunkt: ${event.eventTidspunkt}. " +
+                        "Vi stoppet på nr $count (i batch $batchNumber) av totalt ${events.size} eventer som var i beskjed-listen."
+                throw BackupEventException(msg, e)
+            } catch (e: Exception) {
+                val msg = "Vi får en ukjent feil når vi konverterer Beskjed til schemas.Beskjed. " +
                         "EventId: ${event.eventId}, produsent: ${event.produsent}, eventTidspunkt: ${event.eventTidspunkt}. " +
                         "Vi stoppet på nr $count (i batch $batchNumber) av totalt ${events.size} eventer som var i beskjed-listen."
                 throw BackupEventException(msg, e)
@@ -79,7 +84,7 @@ class BeskjedProducer(
             try {
                 count++
                 val key = createKeyForEvent(event.eventId, event.systembruker)
-                val doneEvent = createDoneEvent(event.fodselsnummer, event.grupperingsId)
+                val doneEvent = createBackupDoneEvent(event.fodselsnummer, event.grupperingsId, event.sistOppdatert)
                 convertedEvents.put(key, doneEvent)
             } catch (e: AvroMissingFieldException) {
                 val msg = "Et eller flere felt er tomme. Vi får feil når vi prøver å konvertere en interne inaktive-beskjed til schemas.Done. " +
@@ -91,6 +96,12 @@ class BeskjedProducer(
                         "EventId: ${event.eventId}, produsent: ${event.produsent}, eventTidspunkt: ${event.eventTidspunkt}. " +
                         "Vi stoppet på nr $count (i batch $batchNumber) av totalt ${events.size} eventer som var i beskjed-listen."
                 throw BackupEventException(msg, e)
+            } catch (e: Exception) {
+                val msg = "Vi får en ukjent feil når vi prøver å konvertere interne inaktive-beskjeder til schemas.Done. " +
+                        "EventId: ${event.eventId}, produsent: ${event.produsent}, eventTidspunkt: ${event.eventTidspunkt}. " +
+                        "Vi stoppet på nr $count (i batch $batchNumber) av totalt ${events.size} eventer som var i beskjed-listen."
+                throw BackupEventException(msg, e)
+
             }
         }
         return convertedEvents

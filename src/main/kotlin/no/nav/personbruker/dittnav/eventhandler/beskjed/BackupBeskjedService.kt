@@ -7,31 +7,42 @@ class BackupBeskjedService(
         private val beskjedProducer: BeskjedProducer
 ) {
 
-    suspend fun produceBeskjedEventsForAllBeskjedEventsInCache(): Int {
+    suspend fun produceBeskjedEventsForAllBeskjedEventsInCache(dryrun: Boolean): Int {
         val allBeskjedEvents = beskjedEventService.getAllBeskjedEventsInCach()
         var batchNumber = 0
         var numberOfProcessedEvents = 0
         if (allBeskjedEvents.isNotEmpty()) {
-            allBeskjedEvents.chunked(BACKUP_EVENT_CHUNCK_SIZE) { allEvents ->
+            allBeskjedEvents.chunked(BACKUP_EVENT_CHUNCK_SIZE) { listChunkBeskjed ->
                 batchNumber++
-                val beskjedEvents = beskjedProducer.toSchemasBeskjed(batchNumber, allEvents)
-                numberOfProcessedEvents += beskjedProducer.produceAllBeskjedEvents(batchNumber, beskjedEvents)
+                val beskjedEvents = beskjedProducer.toSchemasBeskjed(batchNumber, listChunkBeskjed)
+                numberOfProcessedEvents += if (!dryrun) {
+                    beskjedProducer.produceAllBeskjedEvents(batchNumber, beskjedEvents)
+                } else {
+                    beskjedEvents.size
+                }
             }
         }
         return numberOfProcessedEvents
+
     }
 
-    suspend fun produceDoneEventsFromAllInactiveBeskjedEvents(): Int {
+    suspend fun produceDoneEventsFromAllInactiveBeskjedEvents(dryrun: Boolean): Int {
         var allInactiveBeskjedEvents = beskjedEventService.getAllInactiveBeskjedEventsInCach()
         var batchNumber = 0
         var numberOfProcessedEvents = 0
         if (allInactiveBeskjedEvents.isNotEmpty()) {
-            allInactiveBeskjedEvents.chunked(BACKUP_EVENT_CHUNCK_SIZE) { allInactiveEvents ->
+            allInactiveBeskjedEvents.chunked(BACKUP_EVENT_CHUNCK_SIZE) { listChunkInactiveBeskjed ->
                 batchNumber++
-                val doneEvents = beskjedProducer.toSchemasDone(batchNumber, allInactiveEvents)
-                numberOfProcessedEvents += beskjedProducer.produceDoneEvents(batchNumber, doneEvents)
+                val doneEvents = beskjedProducer.toSchemasDone(batchNumber, listChunkInactiveBeskjed)
+                numberOfProcessedEvents += if (!dryrun) {
+                    beskjedProducer.produceDoneEvents(batchNumber, doneEvents)
+                } else {
+                    doneEvents.size
+                }
             }
         }
+
         return numberOfProcessedEvents
+
     }
 }

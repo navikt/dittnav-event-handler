@@ -10,12 +10,12 @@ import java.time.ZonedDateTime
 
 
 fun Connection.getAllDoneEvents(): List<BackupDone> =
-        prepareStatement("""SELECT
-            |eventTidspunkt,
-            |fodselsnummer,
-            |eventId, 
-            |grupperingsId,
-            |systembruker,
+        prepareStatement("""SELECT 
+            |done.fodselsnummer,
+            |done.grupperingsId,
+            |done.eventId, 
+            |done.eventTidspunkt,
+            |done.systembruker 
             |FROM done""".trimMargin())
                 .use {
                     it.fetchSize = Kafka.BACKUP_EVENT_CHUNCK_SIZE

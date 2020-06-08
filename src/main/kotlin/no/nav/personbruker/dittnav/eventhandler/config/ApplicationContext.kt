@@ -11,6 +11,8 @@ import no.nav.personbruker.dittnav.eventhandler.brukernotifikasjon.Brukernotifik
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.health.HealthService
 import no.nav.personbruker.dittnav.eventhandler.common.kafka.KafkaProducerWrapper
+import no.nav.personbruker.dittnav.eventhandler.done.BackupDoneProducer
+import no.nav.personbruker.dittnav.eventhandler.done.BackupDoneService
 import no.nav.personbruker.dittnav.eventhandler.done.DoneEventService
 import no.nav.personbruker.dittnav.eventhandler.done.DoneProducer
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksEventService
@@ -25,6 +27,7 @@ class ApplicationContext {
 
     val kafkaProducerDone = KafkaProducerWrapper(Kafka.doneTopicName ,KafkaProducer<Nokkel, Done>(Kafka.producerProps(environment)))
     val kafkaProducerDoneBackup = KafkaProducerWrapper(Kafka.doneTopicNameBackup ,KafkaProducer<Nokkel, Done>(Kafka.producerProps(environment)))
+    val kafkaProducerTableDoneBackup = KafkaProducerWrapper(Kafka.tableDoneTopicNameBackup ,KafkaProducer<Nokkel, Done>(Kafka.producerProps(environment)))
     val kafkaProducerBeskjedBackup = KafkaProducerWrapper(Kafka.beskjedTopicNameBackup ,KafkaProducer<Nokkel, Beskjed>(Kafka.producerProps(environment)))
     val kafkaProducerOppgaveBackup = KafkaProducerWrapper(Kafka.oppgaveTopicNameBackup ,KafkaProducer<Nokkel, Oppgave>(Kafka.producerProps(environment)))
 
@@ -33,11 +36,13 @@ class ApplicationContext {
     val doneProducer = DoneProducer(kafkaProducerDone)
     val beskjedProducer = BeskjedProducer(kafkaProducerBeskjedBackup, kafkaProducerDoneBackup)
     val oppgaveProducer = OppgaveProducer(kafkaProducerOppgaveBackup, kafkaProducerDoneBackup)
+    val backupDoneProducer = BackupDoneProducer(kafkaProducerTableDoneBackup)
 
     val beskjedEventService = BeskjedEventService(database)
     val oppgaveEventService = OppgaveEventService(database)
     val innboksEventService = InnboksEventService(database)
     val doneEventService = DoneEventService(database, doneProducer)
+    val backupDoneService = BackupDoneService(backupDoneProducer, database)
 
     val backupBeskjedEventService = BackupBeskjedService(beskjedEventService, beskjedProducer)
     val backupOppgaveService = BackupOppgaveService(oppgaveEventService, oppgaveProducer)

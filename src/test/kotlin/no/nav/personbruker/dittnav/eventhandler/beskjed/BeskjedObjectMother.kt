@@ -24,4 +24,22 @@ object BeskjedObjectMother {
                 aktiv = aktiv)
     }
 
+    fun createBeskjed(id: Int, eventId: String, fodselsnummer: String, systembruker: String, tekst: String, grupperingsId: String, link: String, sikkerhetsnivaa: Int, eventTidspunkt: ZonedDateTime): Beskjed {
+        return Beskjed(
+                uid = "abc",
+                id = id,
+                produsent = "dittnav",
+                systembruker = systembruker,
+                eventTidspunkt = eventTidspunkt,
+                fodselsnummer = fodselsnummer,
+                eventId = eventId,
+                grupperingsId = grupperingsId,
+                tekst = tekst,
+                link = link,
+                sistOppdatert = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
+                synligFremTil = null,
+                sikkerhetsnivaa = sikkerhetsnivaa,
+                aktiv = true)
+    }
+
 }

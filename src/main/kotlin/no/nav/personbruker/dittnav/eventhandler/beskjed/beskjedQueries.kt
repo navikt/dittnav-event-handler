@@ -5,6 +5,7 @@ import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.getNullableUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.map
+import no.nav.personbruker.dittnav.eventhandler.config.Kafka.BACKUP_EVENT_CHUNCK_SIZE
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId
@@ -68,6 +69,55 @@ fun Connection.getActiveBeskjedByIds(fodselsnummer: String, uid: String, eventId
                     }
                 }
 
+fun Connection.getAllBeskjedEvents(): List<Beskjed> =
+        prepareStatement("""SELECT 
+            |beskjed.id, 
+            |beskjed.uid, 
+            |beskjed.eventTidspunkt,
+            |beskjed.fodselsnummer,
+            |beskjed.eventId, 
+            |beskjed.grupperingsId,
+            |beskjed.tekst,
+            |beskjed.link,
+            |beskjed.sikkerhetsnivaa,
+            |beskjed.sistOppdatert,
+            |beskjed.synligFremTil,
+            |beskjed.aktiv,
+            |beskjed.systembruker,
+            |systembrukere.produsentnavn AS produsent
+            |FROM beskjed LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker""".trimMargin())
+                .use {
+                    it.fetchSize = BACKUP_EVENT_CHUNCK_SIZE
+                    it.executeQuery().map {
+                        toBeskjed()
+                    }
+                }
+
+fun Connection.getAllInactiveBeskjed(): List<Beskjed> =
+        prepareStatement("""SELECT 
+            |beskjed.id, 
+            |beskjed.uid, 
+            |beskjed.eventTidspunkt,
+            |beskjed.fodselsnummer,
+            |beskjed.eventId, 
+            |beskjed.grupperingsId,
+            |beskjed.tekst,
+            |beskjed.link,
+            |beskjed.sikkerhetsnivaa,
+            |beskjed.sistOppdatert,
+            |beskjed.synligFremTil,
+            |beskjed.aktiv,
+            |beskjed.systembruker,
+            |systembrukere.produsentnavn AS produsent
+            |FROM beskjed LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker
+            |WHERE aktiv = false""".trimMargin())
+                .use {
+                    it.fetchSize = BACKUP_EVENT_CHUNCK_SIZE
+                    it.executeQuery().map {
+                        toBeskjed()
+                    }
+                }
+
 fun ResultSet.toBeskjed(): Beskjed {
     return Beskjed(
             id = getInt("id"),
@@ -113,6 +163,6 @@ private fun Connection.getBeskjedForInnloggetBruker(bruker: InnloggetBruker, akt
                     }
                 }
 
-private fun ResultSet.getNullableZonedDateTime(label: String) : ZonedDateTime? {
+private fun ResultSet.getNullableZonedDateTime(label: String): ZonedDateTime? {
     return getNullableUtcTimeStamp(label)?.let { timestamp -> ZonedDateTime.ofInstant(timestamp.toInstant(), ZoneId.of("Europe/Oslo")) }
 }

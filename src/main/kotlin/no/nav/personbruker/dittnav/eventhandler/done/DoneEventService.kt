@@ -30,5 +30,4 @@ class DoneEventService(private val database: Database, private val doneProducer:
             throw DuplicateEventException("Producer: ${events.first().produsent}, ListSize: ${events.size}")
         }
     }
-
 }

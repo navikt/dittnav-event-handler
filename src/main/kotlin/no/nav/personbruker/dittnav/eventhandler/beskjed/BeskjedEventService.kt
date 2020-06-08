@@ -8,9 +8,7 @@ import java.sql.Connection
 import java.time.Instant
 import java.time.ZoneId
 
-class BeskjedEventService(
-        private val database: Database
-) {
+class BeskjedEventService(private val database: Database) {
 
     private val log = LoggerFactory.getLogger(BeskjedEventService::class.java)
 
@@ -28,6 +26,14 @@ class BeskjedEventService(
 
     suspend fun getAllEventsFromCacheForUser(bruker: InnloggetBruker): List<Beskjed> {
         return getEvents { getAllBeskjedForInnloggetBruker(bruker) }
+    }
+
+    suspend fun getAllBeskjedEventsInCach(): List<Beskjed> {
+        return getEvents { getAllBeskjedEvents() }
+    }
+
+    suspend fun getAllInactiveBeskjedEventsInCach(): List<Beskjed> {
+        return getEvents { getAllInactiveBeskjed() }
     }
 
     private fun Beskjed.isExpired() : Boolean = synligFremTil?.isBefore(Instant.now().atZone(ZoneId.of("Europe/Oslo")))?: false

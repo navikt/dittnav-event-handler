@@ -15,6 +15,11 @@ import java.util.*
 object Kafka {
 
     val doneTopicName = "aapen-brukernotifikasjon-done-v1"
+    val doneTopicNameBackup = "dittnav-brukernotifikasjon-done-v1-backup"
+    val beskjedTopicNameBackup = "dittnav-brukernotifikasjon-nyBeskjed-v1-backup"
+    val oppgaveTopicNameBackup = "dittnav-brukernotifikasjon-nyOppgave-v1-backup"
+
+    const val BACKUP_EVENT_CHUNCK_SIZE = 10000
 
     private fun credentialProps(env: Environment): Properties {
         return Properties().apply {

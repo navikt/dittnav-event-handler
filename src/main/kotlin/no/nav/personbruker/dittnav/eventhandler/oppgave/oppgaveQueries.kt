@@ -5,6 +5,7 @@ import no.nav.personbruker.dittnav.eventhandler.common.database.convertIfUnlikel
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.map
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.EventCacheException
+import no.nav.personbruker.dittnav.eventhandler.config.Kafka.BACKUP_EVENT_CHUNCK_SIZE
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId
@@ -34,6 +35,51 @@ fun Connection.getAllOppgaveForInnloggetBruker(bruker: InnloggetBruker): List<Op
             |WHERE fodselsnummer = ?""".trimMargin())
                 .use {
                     it.setString(1, bruker.ident)
+                    it.executeQuery().map {
+                        toOppgave()
+                    }
+                }
+
+fun Connection.getAllOppgaveEvents(): List<Oppgave> =
+        prepareStatement("""SELECT 
+            |oppgave.id,
+            |oppgave.eventTidspunkt,
+            |oppgave.fodselsnummer,
+            |oppgave.eventId,
+            |oppgave.grupperingsId,
+            |oppgave.tekst,
+            |oppgave.link,
+            |oppgave.sikkerhetsnivaa,
+            |oppgave.sistOppdatert,
+            |oppgave.aktiv,
+            |oppgave.systembruker,
+            |systembrukere.produsentnavn AS produsent
+            |FROM oppgave LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker""".trimMargin())
+                .use {
+                    it.fetchSize = BACKUP_EVENT_CHUNCK_SIZE
+                    it.executeQuery().map {
+                        toOppgave()
+                    }
+                }
+
+fun Connection.getAllInactiveOppgaveEvents(): List<Oppgave> =
+        prepareStatement("""SELECT 
+            |oppgave.id,
+            |oppgave.eventTidspunkt,
+            |oppgave.fodselsnummer,
+            |oppgave.eventId,
+            |oppgave.grupperingsId,
+            |oppgave.tekst,
+            |oppgave.link,
+            |oppgave.sikkerhetsnivaa,
+            |oppgave.sistOppdatert,
+            |oppgave.aktiv,
+            |oppgave.systembruker,
+            |systembrukere.produsentnavn AS produsent
+            |FROM oppgave LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker
+            |WHERE aktiv = false""".trimMargin())
+                .use {
+                    it.fetchSize = BACKUP_EVENT_CHUNCK_SIZE
                     it.executeQuery().map {
                         toOppgave()
                     }

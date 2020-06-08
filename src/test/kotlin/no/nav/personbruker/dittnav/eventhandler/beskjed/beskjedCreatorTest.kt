@@ -7,6 +7,7 @@ import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should throw`
 import org.amshove.kluent.invoking
 import org.junit.jupiter.api.Test
+import org.slf4j.LoggerFactory
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
@@ -20,22 +21,28 @@ class beskjedCreator {
     private val tekst = "tekst"
     private val zonedDateTime = ZonedDateTime.now(ZoneId.of("Europe/Oslo"))
 
+    private val log = LoggerFactory.getLogger(BeskjedProducer::class.java)
+
     @Test
     fun `should create beskjed-event`() {
-        val beskjed = BeskjedObjectMother.createBeskjed(1, eventId, fodselsnummer, null, "123", true)
+        val beskjed = BeskjedObjectMother.createBeskjed(1, eventId, fodselsnummer, systembruker, tekst, grupperingsId, link, sikkerhetsnivaa, zonedDateTime)
         runBlocking {
             val beskjedEvent = createBeskjedEvent(beskjed)
             beskjedEvent.getFodselsnummer() `should be equal to` fodselsnummer
+            beskjedEvent.getGrupperingsId() `should be equal to` grupperingsId
+            beskjedEvent.getLink() `should be equal to` link
+            beskjedEvent.getSikkerhetsnivaa() `should be equal to` sikkerhetsnivaa
+            beskjedEvent.getTekst() `should be equal to` tekst
         }
     }
 
     @Test
     fun `should create beskjed-key`() {
-        val beskjed = BeskjedObjectMother.createBeskjed(1, eventId, fodselsnummer, null, "123", true)
+        val beskjed = BeskjedObjectMother.createBeskjed(1, eventId, fodselsnummer, systembruker, tekst, grupperingsId, link, sikkerhetsnivaa, zonedDateTime)
         runBlocking {
             val keyEvent = createKeyForEvent(beskjed.eventId, beskjed.systembruker)
-            keyEvent.getEventId() `should be equal to` beskjed.eventId
-            keyEvent.getSystembruker() `should be equal to` beskjed.systembruker
+            keyEvent.getEventId() `should be equal to` eventId
+            keyEvent.getSystembruker() `should be equal to` systembruker
         }
     }
 

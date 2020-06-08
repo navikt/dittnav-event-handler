@@ -19,20 +19,24 @@ class oppgaveCreator {
 
     @Test
     fun `should create oppgave-event`() {
-        val oppgave = OppgaveObjectMother.createOppgave(1, eventId, fodselsnummer, true)
+        val oppgave = OppgaveObjectMother.createOppgave(1, eventId, fodselsnummer, systembruker, tekst, grupperingsId, link, sikkerhetsnivaa)
         runBlocking {
             val oppgaveEvent = createOppgaveEvent(oppgave)
             oppgaveEvent.getFodselsnummer() `should be equal to` fodselsnummer
+            oppgaveEvent.getGrupperingsId() `should be equal to` grupperingsId
+            oppgaveEvent.getLink() `should be equal to` link
+            oppgaveEvent.getSikkerhetsnivaa() `should be equal to` sikkerhetsnivaa
+            oppgaveEvent.getTekst() `should be equal to` tekst
         }
     }
 
     @Test
     fun `should create oppgave-key`() {
-        val oppgave = OppgaveObjectMother.createOppgave(1, eventId, fodselsnummer, true)
+        val oppgave =OppgaveObjectMother.createOppgave(1, eventId, fodselsnummer, systembruker, tekst, grupperingsId, link, sikkerhetsnivaa)
         runBlocking {
             val keyEvent = createKeyForEvent(oppgave.eventId, oppgave.systembruker)
-            keyEvent.getEventId() `should be equal to` oppgave.eventId
-            keyEvent.getSystembruker() `should be equal to` oppgave.systembruker
+            keyEvent.getEventId() `should be equal to` eventId
+            keyEvent.getSystembruker() `should be equal to` systembruker
         }
     }
 

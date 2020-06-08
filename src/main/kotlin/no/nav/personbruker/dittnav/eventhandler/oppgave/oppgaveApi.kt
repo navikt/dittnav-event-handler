@@ -60,7 +60,7 @@ fun Route.oppgaveApi(oppgaveEventService: OppgaveEventService, backupOppgaveServ
                 val numberOfProcessedEvents = backupOppgaveService.produceOppgaveEventsForAllOppgaveEventsInCache(true)
                 call.respond(HttpStatusCode.OK, "Dryrun = true. Antall prosesserte oppgave-eventer (IKKE sendt til Kafka): $numberOfProcessedEvents")
             } else {
-                val numberOfProcessedEvents = backupOppgaveService.produceOppgaveEventsForAllOppgaveEventsInCache(true)
+                val numberOfProcessedEvents = backupOppgaveService.produceOppgaveEventsForAllOppgaveEventsInCache(false)
                 call.respond(HttpStatusCode.OK, "Dryrun = false. Antall prosesserte oppgave-eventer (sendt til Kafka): $numberOfProcessedEvents")
             }
         } catch (exception: Exception) {
@@ -84,7 +84,7 @@ fun Route.oppgaveApi(oppgaveEventService: OppgaveEventService, backupOppgaveServ
                 var numberOfProcessedEvents = backupOppgaveService.produceDoneEventsFromAllInactiveOppgaveEvents(true)
                 call.respond(HttpStatusCode.OK, "Dryrun = true. Antall inaktive oppgave-eventer (IKKE sendt til Kafka): $numberOfProcessedEvents")
             } else {
-                var numberOfProcessedEvents = backupOppgaveService.produceDoneEventsFromAllInactiveOppgaveEvents(true)
+                var numberOfProcessedEvents = backupOppgaveService.produceDoneEventsFromAllInactiveOppgaveEvents(false)
                 call.respond(HttpStatusCode.OK, "Dryrun = false. Antall inaktive oppgave-eventer (sendt til Kafka): $numberOfProcessedEvents")
             }
         } catch (exception: Exception) {

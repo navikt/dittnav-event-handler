@@ -4,16 +4,12 @@ import no.nav.brukernotifikasjon.schemas.Done
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.BackupEventException
 import no.nav.personbruker.dittnav.eventhandler.common.kafka.KafkaProducerWrapper
-import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveEventService
 import org.apache.avro.AvroMissingFieldException
 import org.apache.avro.AvroRuntimeException
 import org.apache.kafka.common.KafkaException
 import org.apache.kafka.common.errors.AuthenticationException
-import org.slf4j.LoggerFactory
 
 class BackupDoneProducer(private val doneKafkaProducer: KafkaProducerWrapper<Done>) {
-
-    private val log = LoggerFactory.getLogger(BackupDoneProducer::class.java)
 
     fun toSchemasDone(batchNumber: Int, events: List<BackupDone>): MutableMap<Nokkel, Done> {
         var count = 0
@@ -24,7 +20,6 @@ class BackupDoneProducer(private val doneKafkaProducer: KafkaProducerWrapper<Don
                 val key = createKeyForEvent(event.eventId, event.systembruker)
                 val doneEvent = createBackupDoneEvent(event.fodselsnummer, event.grupperingsId, event.eventTidspunkt)
                 convertedEvents.put(key, doneEvent)
-                log.info("EventId: ${key.getEventId()}, grupperingsId: ${doneEvent.getGrupperingsId()}, eventTidspunkt: ${doneEvent.getTidspunkt()}")
             } catch (e: AvroMissingFieldException) {
                 val msg = "Et eller flere felt er tomme. Vi får feil når vi prøver å konvertere en interne done til schemas.Done. " +
                         "EventId: ${event.eventId}, eventTidspunkt: ${event.eventTidspunkt}. " +

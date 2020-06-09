@@ -7,31 +7,31 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import java.sql.Connection
-import java.sql.Types
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class BackupDoneQueriesKtTest {
 
+
     private val database = H2Database()
     private val fodselsnummer = "123"
     private val systembruker = "x-dittnav"
-    private val grupperingsId = "012"
-    private val zonedDateTime = ZonedDateTime.now(ZoneId.of("Europe/Oslo"))
+    private val grupperingsId = "xxx"
+    private val utcDateTime = ZonedDateTime.now(ZoneId.of("UTC"))
+    private val osloDateTime = ZonedDateTime.ofInstant(utcDateTime.toInstant(), ZoneId.of("Europe/Oslo"))
 
-    val done1 = createDoneBackup(systembruker, zonedDateTime, fodselsnummer, "1", grupperingsId)
-    val done2 = createDoneBackup(systembruker, zonedDateTime, fodselsnummer, "2", grupperingsId)
+    val done1 = BackupDoneObjectMother.createDoneBackup(systembruker, utcDateTime, fodselsnummer, "1", grupperingsId)
+    val done2 = BackupDoneObjectMother.createDoneBackup(systembruker, utcDateTime, fodselsnummer, "2", grupperingsId)
 
     @BeforeAll
     fun `populer testdata`() {
-        createDone(listOf(done1, done2))
+        BackupDoneObjectMother.createDone(listOf(done1, done2))
     }
 
     @AfterAll
     fun `slett testdata`() {
-        deleteDone(listOf(done1, done2))
+        BackupDoneObjectMother.deleteDone(listOf(done1, done2))
     }
 
     @Test
@@ -49,57 +49,8 @@ internal class BackupDoneQueriesKtTest {
             doneEvents.first().systembruker `should be equal to` systembruker
             doneEvents.first().grupperingsId `should be equal to` grupperingsId
             doneEvents.first().fodselsnummer `should be equal to` fodselsnummer
+            doneEvents.first().eventTidspunkt.toString() `should be equal to` osloDateTime.toString()
         }
     }
 
-
-    fun createDoneBackup(systembruker: String, eventTidspunkt: ZonedDateTime, fodselsnummer: String, eventId: String, grupperingsId: String): BackupDone {
-        return BackupDone(
-                systembruker = systembruker,
-                eventTidspunkt = eventTidspunkt,
-                fodselsnummer = fodselsnummer,
-                eventId = eventId,
-                grupperingsId = grupperingsId)
-    }
-
-    private fun createDone(doneList: List<BackupDone>) {
-        runBlocking {
-            database.dbQuery { createDoneInCache(doneList) }
-        }
-    }
-
-    private fun deleteDone(doneList: List<BackupDone>) {
-        runBlocking {
-            database.dbQuery { deleteBackupDoneInCache(doneList) }
-        }
-    }
-
-    fun Connection.createDoneInCache(done: List<BackupDone>) =
-            prepareStatement("""INSERT INTO done(systembruker, eventTidspunkt, fodselsnummer, eventId, grupperingsId)
-            VALUES(?, ?, ?, ?, ?)""")
-                    .use {
-                        done.forEach { done ->
-                            run {
-                                it.setString(1, done.systembruker)
-                                it.setObject(2, done.eventTidspunkt.toLocalDateTime(), Types.TIMESTAMP)
-                                it.setString(3, done.fodselsnummer)
-                                it.setString(4, done.eventId)
-                                it.setString(5, done.grupperingsId)
-                                it.addBatch()
-                            }
-                        }
-                        it.executeBatch()
-                    }
-
-    fun Connection.deleteBackupDoneInCache(done: List<BackupDone>) =
-            prepareStatement("""DELETE FROM done WHERE eventId = ?""")
-                    .use {
-                        done.forEach { done ->
-                            run {
-                                it.setString(1, done.eventId)
-                                it.addBatch()
-                            }
-                        }
-                        it.executeBatch()
-                    }
 }

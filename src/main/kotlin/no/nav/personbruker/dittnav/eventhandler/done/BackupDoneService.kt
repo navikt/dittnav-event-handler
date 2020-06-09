@@ -1,7 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.done
 
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
-import no.nav.personbruker.dittnav.eventhandler.config.Kafka
 import java.sql.Connection
 
 class BackupDoneService(
@@ -10,19 +9,17 @@ class BackupDoneService(
 ) {
     suspend fun produceDoneEventsForAllDoneEventsInCache(dryrun: Boolean): Int {
         val allDoneEvents = getAllDoneEventsFromCache()
-        var batchNumber = 0
+        var batchNumber = 1
         var numberOfProcessedEvents = 0
         if (allDoneEvents.isNotEmpty()) {
-            allDoneEvents.chunked(Kafka.BACKUP_EVENT_CHUNCK_SIZE) { listChunkDone ->
-                batchNumber++
-                val doneEvents = backupDoneProducer.toSchemasDone(batchNumber, listChunkDone)
-                numberOfProcessedEvents += if (!dryrun) {
-                    backupDoneProducer.produceDoneEvents(batchNumber, doneEvents)
-                } else {
-                    doneEvents.size
-                }
+            val doneEvents = backupDoneProducer.toSchemasDone(batchNumber, allDoneEvents)
+            numberOfProcessedEvents += if (!dryrun) {
+                backupDoneProducer.produceDoneEvents(batchNumber, doneEvents)
+            } else {
+                doneEvents.size
             }
         }
+
         return numberOfProcessedEvents
     }
 

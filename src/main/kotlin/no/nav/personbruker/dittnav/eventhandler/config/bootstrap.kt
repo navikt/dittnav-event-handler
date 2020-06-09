@@ -63,6 +63,7 @@ private fun Application.configureShutdownHook(appContext: ApplicationContext) {
         appContext.kafkaProducerDoneBackup.flushAndClose()
         appContext.kafkaProducerBeskjedBackup.flushAndClose()
         appContext.kafkaProducerOppgaveBackup.flushAndClose()
+        appContext.kafkaProducerTableDoneBackup.flushAndClose()
     }
 }
 

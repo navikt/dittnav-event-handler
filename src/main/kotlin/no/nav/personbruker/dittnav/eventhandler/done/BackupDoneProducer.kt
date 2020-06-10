@@ -10,15 +10,15 @@ import org.apache.kafka.common.errors.AuthenticationException
 
 class BackupDoneProducer(private val doneKafkaProducer: KafkaProducerWrapper<Done>) {
 
-    fun toSchemasDone(batchNumber: Int, events: List<BackupDone>): MutableList<BackupConvertedEvents> {
+    fun toSchemasDone(batchNumber: Int, events: List<BackupDone>): MutableList<BackupConvertedEvent> {
         var count = 0
-        var convertedEventsList = mutableListOf<BackupConvertedEvents>()
+        var convertedEventsList = mutableListOf<BackupConvertedEvent>()
         events.forEach { event ->
             try {
                 count++
                 val key = createKeyForEvent(event.eventId, event.systembruker)
                 val doneEvent = createBackupDoneEvent(event.fodselsnummer, event.grupperingsId, event.eventTidspunkt)
-                convertedEventsList.add(BackupConvertedEvents(key, doneEvent))
+                convertedEventsList.add(BackupConvertedEvent(key, doneEvent))
             } catch (e: AvroMissingFieldException) {
                 val msg = "Et eller flere felt er tomme. Vi får feil når vi prøver å konvertere en interne done til schemas.Done. " +
                         "EventId: ${event.eventId}, eventTidspunkt: ${event.eventTidspunkt}. " +
@@ -40,7 +40,7 @@ class BackupDoneProducer(private val doneKafkaProducer: KafkaProducerWrapper<Don
         return convertedEventsList
     }
 
-    fun produceDoneEvents(batchNumber: Int, events: MutableList<BackupConvertedEvents>): Int {
+    fun produceDoneEvents(batchNumber: Int, events: MutableList<BackupConvertedEvent>): Int {
         var count = 0
         events.forEach { event ->
             try {

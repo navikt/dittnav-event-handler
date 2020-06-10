@@ -62,6 +62,14 @@ create table if not exists systembrukere (
     produsentnavn character varying(100) not null
 );
 
+create table if not exists done (
+    systembruker    varchar(100),
+    eventTidspunkt  timestamp,
+    fodselsnummer   varchar(50),
+    eventId         varchar(50),
+    grupperingsId   varchar(100),
+);
+
 create view if not exists brukernotifikasjon_view as
   SELECT beskjed.eventid, beskjed.systembruker, 'beskjed' :: text AS type, beskjed.fodselsnummer, beskjed.aktiv
   FROM beskjed

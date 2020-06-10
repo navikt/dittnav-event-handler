@@ -15,6 +15,7 @@ import java.util.*
 object Kafka {
 
     val doneTopicName = "aapen-brukernotifikasjon-done-v1"
+    val cachedDoneTopicNameBackup = "dittnav-brukernotifikasjon-cached-done-v1-backup"
     val doneTopicNameBackup = "dittnav-brukernotifikasjon-done-v1-backup"
     val beskjedTopicNameBackup = "dittnav-brukernotifikasjon-nyBeskjed-v1-backup"
     val oppgaveTopicNameBackup = "dittnav-brukernotifikasjon-nyOppgave-v1-backup"

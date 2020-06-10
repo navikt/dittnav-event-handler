@@ -45,20 +45,6 @@ fun Route.doneApi(doneEventService: DoneEventService, backupDoneService: BackupD
         }
     }
 
-    post("/produce/done/all") {
-        try {
-            val externalResponse = call.receive<ExternalResponse>()
-            if (isDryrun(externalResponse.dryRun)) {
-                val numberOfProcessedEvents =   backupDoneService.produceDoneEventsForAllDoneEventsInCache(true)
-                call.respond(HttpStatusCode.OK, "Dryrun = true. Antall prosesserte done-eventer (IKKE sendt til Kafka): $numberOfProcessedEvents")
-            } else {
-                val numberOfProcessedEvents = backupDoneService.produceDoneEventsForAllDoneEventsInCache(false)
-                call.respond(HttpStatusCode.OK, "Dryrun = false. Antall prosesserte done-eventer (sendt til Kafka): $numberOfProcessedEvents")
-            }
-        } catch (exception: Exception) {
-            respondWithError(call, log, exception)
-        }
-    }
 }
 
 suspend inline fun <reified T : Any> PipelineContext<Unit, ApplicationCall>.respondForParameterType(handler: (T) -> DoneResponse) {

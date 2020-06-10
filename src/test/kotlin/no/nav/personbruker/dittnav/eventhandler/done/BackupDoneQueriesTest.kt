@@ -11,7 +11,7 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-internal class BackupDoneQueriesKtTest {
+internal class BackupDoneQueriesTest {
 
 
     private val database = H2Database()
@@ -21,17 +21,17 @@ internal class BackupDoneQueriesKtTest {
     private val utcDateTime = ZonedDateTime.now(ZoneId.of("UTC"))
     private val osloDateTime = ZonedDateTime.ofInstant(utcDateTime.toInstant(), ZoneId.of("Europe/Oslo"))
 
-    val done1 = BackupDoneObjectMother.createDoneBackup(systembruker, utcDateTime, fodselsnummer, "1", grupperingsId)
-    val done2 = BackupDoneObjectMother.createDoneBackup(systembruker, utcDateTime, fodselsnummer, "2", grupperingsId)
+    val done1 = BackupDoneObjectMother.createBackupDone(systembruker, utcDateTime, fodselsnummer, "1", grupperingsId)
+    val done2 = BackupDoneObjectMother.createBackupDone(systembruker, utcDateTime, fodselsnummer, "2", grupperingsId)
 
     @BeforeAll
     fun `populer testdata`() {
-        BackupDoneObjectMother.createDone(listOf(done1, done2))
+        createBackupDone(listOf(done1, done2))
     }
 
     @AfterAll
     fun `slett testdata`() {
-        BackupDoneObjectMother.deleteDone(listOf(done1, done2))
+        deleteBackupDone(listOf(done1, done2))
     }
 
     @Test
@@ -53,4 +53,15 @@ internal class BackupDoneQueriesKtTest {
         }
     }
 
+    private fun createBackupDone(backupDone: List<BackupDone>) {
+        runBlocking {
+            database.dbQuery { createDoneInCache(backupDone) }
+        }
+    }
+
+    private fun deleteBackupDone(backupDone: List<BackupDone>) {
+        runBlocking {
+            database.dbQuery { deleteBackupDoneInCache(backupDone) }
+        }
+    }
 }

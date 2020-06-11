@@ -8,11 +8,8 @@ import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.post
 import io.ktor.util.pipeline.PipelineContext
-import no.nav.personbruker.dittnav.eventhandler.common.ExternalResponse
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.DuplicateEventException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.NoEventsException
-import no.nav.personbruker.dittnav.eventhandler.common.exceptions.respondWithError
-import no.nav.personbruker.dittnav.eventhandler.common.isDryrun
 import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
 import org.slf4j.LoggerFactory
 
@@ -45,20 +42,6 @@ fun Route.doneApi(doneEventService: DoneEventService, backupDoneService: BackupD
         }
     }
 
-    post("/produce/done/all") {
-        try {
-            val externalResponse = call.receive<ExternalResponse>()
-            if (isDryrun(externalResponse.dryRun)) {
-                val numberOfProcessedEvents =   backupDoneService.produceDoneEventsForAllDoneEventsInCache(true)
-                call.respond(HttpStatusCode.OK, "Dryrun = true. Antall prosesserte done-eventer (IKKE sendt til Kafka): $numberOfProcessedEvents")
-            } else {
-                val numberOfProcessedEvents = backupDoneService.produceDoneEventsForAllDoneEventsInCache(false)
-                call.respond(HttpStatusCode.OK, "Dryrun = false. Antall prosesserte done-eventer (sendt til Kafka): $numberOfProcessedEvents")
-            }
-        } catch (exception: Exception) {
-            respondWithError(call, log, exception)
-        }
-    }
 }
 
 suspend inline fun <reified T : Any> PipelineContext<Unit, ApplicationCall>.respondForParameterType(handler: (T) -> DoneResponse) {

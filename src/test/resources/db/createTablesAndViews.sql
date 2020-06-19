@@ -68,6 +68,8 @@ create table if not exists done (
     fodselsnummer   varchar(50),
     eventId         varchar(50),
     grupperingsId   varchar(100),
+    constraint doneeventidprodusent
+    unique (eventid, systembruker)
 );
 
 create view if not exists brukernotifikasjon_view as

@@ -28,8 +28,8 @@ fun Connection.getAllInnboksForInnloggetBruker(bruker: InnloggetBruker): List<In
             |innboks.aktiv,
             |innboks.systembruker,
             |systembrukere.produsentnavn AS produsent
-            |FROM innboks LEFT JOIN systembrukere ON innboks.systembruker = systembrukere.systembruker
-            |WHERE innboks.fodselsnummer = ?""".trimMargin())
+            |FROM (SELECT * FROM innboks WHERE fodselsnummer = ?) AS innboks
+            |LEFT JOIN systembrukere ON innboks.systembruker = systembrukere.systembruker""".trimMargin())
                 .use {
                     it.setString(1, bruker.ident)
                     it.executeQuery().map {
@@ -68,8 +68,8 @@ private fun Connection.getInnboksForInnloggetBruker(bruker: InnloggetBruker, akt
             |innboks.aktiv,
             |innboks.systembruker,
             |systembrukere.produsentnavn AS produsent
-            |FROM innboks LEFT JOIN systembrukere ON innboks.systembruker = systembrukere.systembruker
-            |WHERE fodselsnummer = ? AND aktiv = ?""".trimMargin())
+            |FROM (SELECT * FROM innboks WHERE fodselsnummer = ? AND aktiv = ?) AS innboks
+            |LEFT JOIN systembrukere ON innboks.systembruker = systembrukere.systembruker""".trimMargin())
                 .use {
                     it.setString(1, bruker.ident)
                     it.setBoolean(2, aktiv)

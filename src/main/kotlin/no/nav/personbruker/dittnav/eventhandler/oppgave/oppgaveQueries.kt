@@ -31,8 +31,8 @@ fun Connection.getAllOppgaveForInnloggetBruker(bruker: InnloggetBruker): List<Op
             |oppgave.aktiv,
             |oppgave.systembruker,
             |systembrukere.produsentnavn AS produsent
-            |FROM oppgave LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker
-            |WHERE fodselsnummer = ?""".trimMargin())
+            |FROM (SELECT * FROM oppgave WHERE fodselsnummer = ?) AS oppgave
+            |LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker""".trimMargin())
                 .use {
                     it.setString(1, bruker.ident)
                     it.executeQuery().map {
@@ -76,8 +76,8 @@ fun Connection.getAllInactiveOppgaveEvents(): List<Oppgave> =
             |oppgave.aktiv,
             |oppgave.systembruker,
             |systembrukere.produsentnavn AS produsent
-            |FROM oppgave LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker
-            |WHERE aktiv = false""".trimMargin())
+            |FROM (SELECT * FROM oppgave WHERE aktiv = false) AS oppgave
+            |LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker""".trimMargin())
                 .use {
                     it.fetchSize = BACKUP_EVENT_CHUNCK_SIZE
                     it.executeQuery().map {
@@ -118,8 +118,8 @@ private fun Connection.getOppgaveForInnloggetBruker(bruker: InnloggetBruker, akt
             |oppgave.aktiv,
             |oppgave.systembruker,
             |systembrukere.produsentnavn AS produsent
-            |FROM oppgave LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker
-            |WHERE fodselsnummer = ? AND aktiv = ?""".trimMargin())
+            |FROM (SELECT * FROM oppgave WHERE fodselsnummer = ? AND aktiv = ?) AS oppgave
+            |LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker""".trimMargin())
                 .use {
                     it.setString(1, bruker.ident)
                     it.setBoolean(2, aktiv)

@@ -33,8 +33,8 @@ fun Connection.getAllBeskjedForInnloggetBruker(bruker: InnloggetBruker): List<Be
             |beskjed.aktiv,
             |beskjed.systembruker,
             |systembrukere.produsentnavn AS produsent
-            |FROM beskjed LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker
-            |WHERE beskjed.fodselsnummer = ?""".trimMargin())
+            |FROM (SELECT * FROM beskjed WHERE fodselsnummer = ?) AS beskjed
+            |LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker""".trimMargin())
                 .use {
                     it.setString(1, bruker.ident)
                     it.executeQuery().map {
@@ -58,8 +58,8 @@ fun Connection.getActiveBeskjedByIds(fodselsnummer: String, uid: String, eventId
             |beskjed.aktiv,
             |beskjed.systembruker,
             |systembrukere.produsentnavn AS produsent
-            |FROM beskjed LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker
-            |WHERE fodselsnummer = ? AND uid = ? AND eventId = ? AND aktiv = true""".trimMargin())
+            |FROM (SELECT * FROM beskjed WHERE fodselsnummer = ? AND uid = ? AND eventId = ? AND aktiv = true) AS beskjed
+            |LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker""".trimMargin())
                 .use {
                     it.setString(1, fodselsnummer)
                     it.setString(2, uid)
@@ -109,8 +109,8 @@ fun Connection.getAllInactiveBeskjed(): List<Beskjed> =
             |beskjed.aktiv,
             |beskjed.systembruker,
             |systembrukere.produsentnavn AS produsent
-            |FROM beskjed LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker
-            |WHERE aktiv = false""".trimMargin())
+            |FROM (SELECT * FROM beskjed WHERE aktiv = false) AS beskjed
+            |LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker""".trimMargin())
                 .use {
                     it.fetchSize = BACKUP_EVENT_CHUNCK_SIZE
                     it.executeQuery().map {
@@ -153,8 +153,8 @@ private fun Connection.getBeskjedForInnloggetBruker(bruker: InnloggetBruker, akt
             |beskjed.aktiv,
             |beskjed.systembruker,
             |systembrukere.produsentnavn AS produsent
-            |FROM beskjed LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker
-            |WHERE beskjed.fodselsnummer = ? AND beskjed.aktiv = ?""".trimMargin())
+            |FROM (SELECT * FROM BESKJED WHERE beskjed.fodselsnummer = ? AND beskjed.aktiv = ?) AS beskjed
+            |LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker""".trimMargin())
                 .use {
                     it.setString(1, bruker.ident)
                     it.setBoolean(2, aktiv)

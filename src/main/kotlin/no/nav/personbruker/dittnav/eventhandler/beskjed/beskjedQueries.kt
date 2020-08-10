@@ -42,7 +42,7 @@ fun Connection.getAllBeskjedForInnloggetBruker(bruker: InnloggetBruker): List<Be
                     }
                 }
 
-fun Connection.getActiveBeskjedByIds(fodselsnummer: String, uid: String, eventId: String): List<Beskjed> =
+fun Connection.getBeskjedByIds(fodselsnummer: String, uid: String, eventId: String): List<Beskjed> =
         prepareStatement("""SELECT 
             |beskjed.id, 
             |beskjed.uid, 
@@ -58,7 +58,7 @@ fun Connection.getActiveBeskjedByIds(fodselsnummer: String, uid: String, eventId
             |beskjed.aktiv,
             |beskjed.systembruker,
             |systembrukere.produsentnavn AS produsent
-            |FROM (SELECT * FROM beskjed WHERE fodselsnummer = ? AND uid = ? AND eventId = ? AND aktiv = true) AS beskjed
+            |FROM (SELECT * FROM beskjed WHERE fodselsnummer = ? AND uid = ? AND eventId = ?) AS beskjed
             |LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker""".trimMargin())
                 .use {
                     it.setString(1, fodselsnummer)

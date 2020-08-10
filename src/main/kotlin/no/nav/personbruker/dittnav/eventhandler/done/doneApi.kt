@@ -9,6 +9,7 @@ import io.ktor.routing.Route
 import io.ktor.routing.post
 import io.ktor.util.pipeline.PipelineContext
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.DuplicateEventException
+import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.EventMarkedInactiveException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.NoEventsException
 import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
 import org.slf4j.LoggerFactory
@@ -24,7 +25,12 @@ fun Route.doneApi(doneEventService: DoneEventService, backupDoneService: BackupD
                 val msg = "Done-event er produsert. EventID: ${doneDto.eventId}. Uid: ${doneDto.uid}."
                 DoneResponse(msg, HttpStatusCode.OK)
 
-            } catch (e: NoEventsException) {
+            } catch (e: EventMarkedInactiveException) {
+                val msg = "Det ble ikke produsert et done-event fordi eventet allerede er markert inaktivt. EventId: ${doneDto.eventId}, Uid: ${doneDto.uid}."
+                log.info(msg, e)
+                DoneResponse(msg, HttpStatusCode.OK)
+
+            }  catch (e: NoEventsException) {
                 val msg = "Det ble ikke produsert et done-event fordi vi fant ikke eventet i cachen. EventId: ${doneDto.eventId}, Uid: ${doneDto.uid}."
                 log.warn(msg, e)
                 DoneResponse(msg, HttpStatusCode.NotFound)
@@ -32,12 +38,12 @@ fun Route.doneApi(doneEventService: DoneEventService, backupDoneService: BackupD
             } catch (e: DuplicateEventException) {
                 val msg = "Det ble ikke produsert done-event fordi det finnes duplikat av event. EventId: ${doneDto.eventId}, Uid: ${doneDto.uid}."
                 log.error(msg, e)
-                DoneResponse(msg, HttpStatusCode.NotModified)
+                DoneResponse(msg, HttpStatusCode.InternalServerError)
 
             } catch (e: Exception) {
                 val msg = "Done-event ble ikke produsert. EventID: ${doneDto.eventId}. Uid: ${doneDto.uid}."
                 log.error(msg, e)
-                DoneResponse(msg, HttpStatusCode.BadRequest)
+                DoneResponse(msg, HttpStatusCode.InternalServerError)
             }
         }
     }

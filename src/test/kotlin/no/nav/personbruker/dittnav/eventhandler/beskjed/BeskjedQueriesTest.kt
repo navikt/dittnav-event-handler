@@ -114,14 +114,14 @@ class BeskjedQueriesTest {
     @Test
     fun `Finn alle cachede events som matcher fodselsnummer, uid og eventId`() {
         runBlocking {
-            database.dbQuery { getActiveBeskjedByIds(bruker.ident, uid, eventId) }.size `should be equal to` 1
+            database.dbQuery { getBeskjedByIds(bruker.ident, uid, eventId) }.size `should be equal to` 1
         }
     }
 
     @Test
     fun `Returnerer tom liste hvis Beskjed-eventer ikke stemmer med eventId`() {
         runBlocking {
-            database.dbQuery { getActiveBeskjedByIds(bruker.ident, uid, "dummyEventId") }.`should be empty`()
+            database.dbQuery { getBeskjedByIds(bruker.ident, uid, "dummyEventId") }.`should be empty`()
         }
     }
 
@@ -129,7 +129,7 @@ class BeskjedQueriesTest {
     fun `Returnerer tom liste hvis Beskjed-eventer ikke stemmer med fodselsnummer`() {
         val brukerSomIkkeFinnes = InnloggetBrukerObjectMother.createInnloggetBruker("000")
         runBlocking {
-            database.dbQuery { getActiveBeskjedByIds(brukerSomIkkeFinnes.ident, uid, eventId) }.`should be empty`()
+            database.dbQuery { getBeskjedByIds(brukerSomIkkeFinnes.ident, uid, eventId) }.`should be empty`()
         }
     }
 
@@ -137,7 +137,7 @@ class BeskjedQueriesTest {
     fun `Returnerer tom liste av Beskjed-eventer hvis fodselsnummer er tomt`() {
         val fodselsnummerMangler = InnloggetBrukerObjectMother.createInnloggetBruker("")
         runBlocking {
-            database.dbQuery { getActiveBeskjedByIds(fodselsnummerMangler.ident, uid, eventId) }.`should be empty`()
+            database.dbQuery { getBeskjedByIds(fodselsnummerMangler.ident, uid, eventId) }.`should be empty`()
         }
     }
 

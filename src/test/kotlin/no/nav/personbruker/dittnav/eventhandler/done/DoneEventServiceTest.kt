@@ -10,6 +10,7 @@ import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
 import no.nav.personbruker.dittnav.eventhandler.common.database.createProdusent
 import no.nav.personbruker.dittnav.eventhandler.common.database.deleteProdusent
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.DuplicateEventException
+import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.EventMarkedInactiveException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.NoEventsException
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should throw`
@@ -54,34 +55,36 @@ class DoneEventServiceTest {
         val emptyListOfBeskjed = emptyList<Beskjed>()
         invoking {
             runBlocking {
-                doneEventService.isEventBeskjedListValid(emptyListOfBeskjed)
+                doneEventService.validBeskjed(emptyListOfBeskjed)
             }
         } `should throw` NoEventsException::class
     }
 
     @Test
     fun `Kaster exception hvis det er duplikat i listen`() {
-        val beskjedListDuplicate = listOf<Beskjed>(BeskjedObjectMother.createBeskjed(1, "dummyEventId1", "dummmyFnr1", null, "dummyUid1", true),
+        val beskjedListDuplicate = listOf(BeskjedObjectMother.createBeskjed(1, "dummyEventId1", "dummmyFnr1", null, "dummyUid1", true),
                 BeskjedObjectMother.createBeskjed(1, "dummyEventId1", "dummyFnr1", null, "dummyUid1", true))
         invoking {
             runBlocking {
-                doneEventService.isEventBeskjedListValid(beskjedListDuplicate)
+                doneEventService.validBeskjed(beskjedListDuplicate)
             }
         } `should throw` DuplicateEventException::class
     }
 
     @Test
-    fun `should find event that matches input parameter`() {
-        runBlocking {
-            doneEventService.getBeskjedFromCacheForUser(fodselsnummer, uid, eventId).size `should be equal to` 1
-        }
+    fun `Kaster exception hvis gjeldende event allerede er markert done`() {
+        val beskjedListDuplicate = listOf(BeskjedObjectMother.createBeskjed(1, "dummyEventId1", "dummmyFnr1", null, "dummyUid1", false))
+        invoking {
+            runBlocking {
+                doneEventService.validBeskjed(beskjedListDuplicate)
+            }
+        } `should throw` EventMarkedInactiveException::class
     }
 
     @Test
-    fun `should return empty list if no events exists`() {
+    fun `should find event that matches input parameter`() {
         runBlocking {
-            doneEventService.getBeskjedFromCacheForUser(fodselsnummer, uid, "dummyEventId").size `should be equal to` 0
+            doneEventService.getBeskjedFromCacheForUser(fodselsnummer, uid, eventId).eventId `should be equal to` eventId
         }
     }
-
 }

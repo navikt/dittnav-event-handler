@@ -38,12 +38,12 @@ fun Route.doneApi(doneEventService: DoneEventService, backupDoneService: BackupD
             } catch (e: DuplicateEventException) {
                 val msg = "Det ble ikke produsert done-event fordi det finnes duplikat av event. EventId: ${doneDto.eventId}, Uid: ${doneDto.uid}."
                 log.error(msg, e)
-                DoneResponse(msg, HttpStatusCode.NotModified)
+                DoneResponse(msg, HttpStatusCode.InternalServerError)
 
             } catch (e: Exception) {
                 val msg = "Done-event ble ikke produsert. EventID: ${doneDto.eventId}. Uid: ${doneDto.uid}."
                 log.error(msg, e)
-                DoneResponse(msg, HttpStatusCode.BadRequest)
+                DoneResponse(msg, HttpStatusCode.InternalServerError)
             }
         }
     }

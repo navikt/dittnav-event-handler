@@ -18,7 +18,7 @@ val jjwtVersion = "0.11.0"
 val bcproVersion = "1.64"
 val kafkaEmbeddedEnv = "2.1.1"
 val navTokenValidator = "1.1.0"
-val brukernotifikasjonSchemaVersion = "1.2020.02.07-13.16-fa9d319688b1"
+val brukernotifikasjonSchemaVersion = "1.2020.08.13-13.50-3b6ca1881161"
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin on the JVM.
@@ -40,6 +40,7 @@ repositories {
     jcenter()
     maven("http://packages.confluent.io/maven")
     mavenLocal()
+    maven("https://jitpack.io")
 }
 
 dependencies {
@@ -62,7 +63,7 @@ dependencies {
     compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
     compile("org.apache.kafka:kafka-clients:$kafkaVersion")
     compile("io.confluent:kafka-avro-serializer:$confluentVersion")
-    compile("no.nav:brukernotifikasjon-schemas:$brukernotifikasjonSchemaVersion")
+    compile("com.github.navikt:brukernotifikasjon-schemas:$brukernotifikasjonSchemaVersion")
     compile("io.ktor:ktor-html-builder:$ktorVersion")
     testCompile("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testCompile(kotlin("test-junit5"))

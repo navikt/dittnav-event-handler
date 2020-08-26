@@ -22,7 +22,6 @@ repositories {
 }
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8"))
     implementation(NAV.tokenValidatorKtor)
     implementation(NAV.vaultJdbc)
     implementation(Hikari.cp)
@@ -46,7 +45,6 @@ dependencies {
     implementation(Brukernotifikasjon.schemas)
 
     testImplementation(Junit.api)
-    testImplementation(kotlin("test-junit5"))
     testImplementation(NAV.kafkaEmbedded)
     testImplementation(Kafka.Apache.kafka_2_12)
     testImplementation(Kafka.Apache.streams)

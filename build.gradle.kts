@@ -17,7 +17,7 @@ repositories {
     // Use jcenter for resolving your dependencies.
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
-    maven("http://packages.confluent.io/maven")
+    maven("https://packages.confluent.io/maven")
     mavenLocal()
 }
 
@@ -65,10 +65,19 @@ application {
 
 tasks {
     withType<Jar> {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE // Tillater ikke duplikater i jar-fila, slik som kreves for å være kompatible med Gradle 7.
         manifest {
             attributes["Main-Class"] = application.mainClassName
         }
-        from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+        from(sourceSets.main.get().output)
+        dependsOn(configurations.runtimeClasspath)
+        from({
+            configurations.runtimeClasspath.get().filter { file ->
+                file.name.endsWith("jar")
+            }.map { fileToAddToZip ->
+                zipTree(fileToAddToZip)
+            }
+        })
     }
 
     withType<Test> {

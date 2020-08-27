@@ -1,30 +1,9 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val prometheusVersion = "0.8.1"
-val ktorVersion = "1.3.1"
-val junitVersion = "5.4.1"
-val kafkaVersion = "2.2.0"
-val confluentVersion = "5.2.0"
-val logstashVersion = 5.2
-val logbackVersion = "1.2.3"
-val vaultJdbcVersion = "1.3.1"
-val hikariCPVersion = "3.2.0"
-val postgresVersion = "42.2.5"
-val h2Version = "1.4.199"
-val jacksonVersion = "2.9.9"
-val kluentVersion = "1.52"
-val mockkVersion = "1.9.3"
-val jjwtVersion = "0.11.0"
-val bcproVersion = "1.64"
-val kafkaEmbeddedEnv = "2.1.1"
-val navTokenValidator = "1.1.0"
-val brukernotifikasjonSchemaVersion = "1.2020.02.07-13.16-fa9d319688b1"
-
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin on the JVM.
-    val kotlinVersion = "1.3.50"
-    kotlin("jvm").version(kotlinVersion)
-    kotlin("plugin.allopen").version(kotlinVersion)
+    kotlin("jvm").version(Kotlin.version)
+    kotlin("plugin.allopen").version(Kotlin.version)
 
     // Apply the application plugin to add support for building a CLI application.
     application
@@ -38,46 +17,46 @@ repositories {
     // Use jcenter for resolving your dependencies.
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
-    maven("http://packages.confluent.io/maven")
+    maven("https://packages.confluent.io/maven")
     mavenLocal()
 }
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8"))
-    compile("no.nav.security:token-validation-ktor:$navTokenValidator")
-    compile("no.nav:vault-jdbc:$vaultJdbcVersion")
-    compile("com.zaxxer:HikariCP:$hikariCPVersion")
-    compile("org.postgresql:postgresql:$postgresVersion")
-    compile("ch.qos.logback:logback-classic:$logbackVersion")
-    compile("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
-    compile("io.prometheus:simpleclient:$prometheusVersion")
-    compile("io.prometheus:simpleclient_hotspot:$prometheusVersion")
-    compile("io.prometheus:simpleclient_common:$prometheusVersion")
-    compile("io.prometheus:simpleclient_logback:$prometheusVersion")
-    compile("io.prometheus:simpleclient_httpserver:$prometheusVersion")
-    compile("io.ktor:ktor-auth:$ktorVersion")
-    compile("io.ktor:ktor-auth-jwt:$ktorVersion")
-    compile("io.ktor:ktor-jackson:$ktorVersion")
-    compile("io.ktor:ktor-server-netty:$ktorVersion")
-    compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
-    compile("org.apache.kafka:kafka-clients:$kafkaVersion")
-    compile("io.confluent:kafka-avro-serializer:$confluentVersion")
-    compile("no.nav:brukernotifikasjon-schemas:$brukernotifikasjonSchemaVersion")
-    compile("io.ktor:ktor-html-builder:$ktorVersion")
-    testCompile("org.junit.jupiter:junit-jupiter-api:$junitVersion")
-    testCompile(kotlin("test-junit5"))
-    testImplementation("no.nav:kafka-embedded-env:$kafkaEmbeddedEnv")
-    testImplementation("org.apache.kafka:kafka_2.12:$kafkaVersion")
-    testImplementation("org.apache.kafka:kafka-streams:$kafkaVersion")
-    testImplementation("io.confluent:kafka-schema-registry:$confluentVersion")
-    testImplementation("com.h2database:h2:$h2Version")
-    testImplementation("org.amshove.kluent:kluent:$kluentVersion")
-    testImplementation("io.mockk:mockk:$mockkVersion")
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
-    testCompile("io.jsonwebtoken:jjwt-api:$jjwtVersion")
-    testRuntime("io.jsonwebtoken:jjwt-impl:$jjwtVersion")
-    testRuntime("io.jsonwebtoken:jjwt-jackson:$jjwtVersion")
-    testRuntime("org.bouncycastle:bcprov-jdk15on:$bcproVersion")
+    implementation(Brukernotifikasjon.schemas)
+    implementation(Hikari.cp)
+    implementation(Jackson.dataTypeJsr310)
+    implementation(Logback.classic)
+    implementation(Logstash.logbackEncoder)
+    implementation(Kafka.Apache.clients)
+    implementation(Kafka.Confluent.avroSerializer)
+    implementation(Ktor.auth)
+    implementation(Ktor.authJwt)
+    implementation(Ktor.htmlBuilder)
+    implementation(Ktor.jackson)
+    implementation(Ktor.serverNetty)
+    implementation(NAV.tokenValidatorKtor)
+    implementation(NAV.vaultJdbc)
+    implementation(Postgresql.postgresql)
+    implementation(Prometheus.common)
+    implementation(Prometheus.hotspot)
+    implementation(Prometheus.logback)
+    implementation(Prometheus.simpleClient)
+    implementation(Prometheus.simpleClientHttpServer)
+
+    testImplementation(H2Database.h2)
+    testImplementation(Jjwt.api)
+    testImplementation(Junit.api)
+    testImplementation(Kafka.Apache.kafka_2_12)
+    testImplementation(Kafka.Apache.streams)
+    testImplementation(Kafka.Confluent.schemaRegistry)
+    testImplementation(Kluent.kluent)
+    testImplementation(Mockk.mockk)
+    testImplementation(NAV.kafkaEmbedded)
+
+    testRuntimeOnly(Bouncycastle.bcprovJdk15on)
+    testRuntimeOnly(Jjwt.impl)
+    testRuntimeOnly(Jjwt.jackson)
+    testRuntimeOnly(Junit.engine)
 }
 
 application {
@@ -86,10 +65,19 @@ application {
 
 tasks {
     withType<Jar> {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE // Tillater ikke duplikater i jar-fila, slik som kreves for å være kompatible med Gradle 7.
         manifest {
             attributes["Main-Class"] = application.mainClassName
         }
-        from(configurations.runtime.get().map { if (it.isDirectory) it else zipTree(it) })
+        from(sourceSets.main.get().output)
+        dependsOn(configurations.runtimeClasspath)
+        from({
+            configurations.runtimeClasspath.get().filter { file ->
+                file.name.endsWith("jar")
+            }.map { fileToAddToZip ->
+                zipTree(fileToAddToZip)
+            }
+        })
     }
 
     withType<Test> {

@@ -33,6 +33,29 @@ fun Connection.getAllStatusOppdateringForInnloggetBruker(bruker: InnloggetBruker
                     }
                 }
 
+fun Connection.getAllStatusOppdateringEvents(): List<StatusOppdatering> =
+        prepareStatement("""SELECT 
+            |statusOppdatering.id,
+            |statusOppdatering.eventTidspunkt,
+            |statusOppdatering.fodselsnummer,
+            |statusOppdatering.eventId, 
+            |statusOppdatering.grupperingsId,
+            |statusOppdatering.link,
+            |statusOppdatering.sikkerhetsnivaa,
+            |statusOppdatering.sistOppdatert,
+            |statusOppdatering.statusGlobal,
+            |statusOppdatering.statusIntern,
+            |statusOppdatering.sakstema,
+            |statusOppdatering.systembruker,
+            |systembrukere.produsentnavn AS produsent
+            |FROM (SELECT * FROM statusOppdatering) AS statusOppdatering
+            |LEFT JOIN systembrukere ON statusOppdatering.systembruker = systembrukere.systembruker""".trimMargin())
+                .use {
+                    it.executeQuery().map {
+                        toStatusOppdatering()
+                    }
+                }
+
 fun ResultSet.toStatusOppdatering(): StatusOppdatering {
     return StatusOppdatering(
             id = getInt("id"),

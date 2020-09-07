@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import java.time.ZonedDateTime
 
 class StatusOppdatering(
-        @JsonIgnore val id: Int?,
+        @JsonIgnore val id: Int,
         val produsent: String,
         @JsonIgnore val systembruker: String,
         val eventId: String,
@@ -29,8 +29,8 @@ class StatusOppdatering(
                 "link=***, " +
                 "sikkerhetsnivaa=$sikkerhetsnivaa, " +
                 "sistOppdatert=$sistOppdatert, " +
-                "statusGlobal=$statusGlobal, " +
-                "statusIntern=$statusIntern, " +
-                "sakstema=$sakstema, "
+                "statusGlobal=***, " +
+                "statusIntern=***, " +
+                "sakstema=***, "
     }
 }

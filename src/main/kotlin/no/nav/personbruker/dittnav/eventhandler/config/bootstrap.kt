@@ -21,7 +21,7 @@ import no.nav.personbruker.dittnav.eventhandler.common.health.healthApi
 import no.nav.personbruker.dittnav.eventhandler.done.doneApi
 import no.nav.personbruker.dittnav.eventhandler.innboks.innboksApi
 import no.nav.personbruker.dittnav.eventhandler.oppgave.oppgaveApi
-import no.nav.personbruker.dittnav.eventhandler.statusOppdatering.statusOppdateringApi
+import no.nav.personbruker.dittnav.eventhandler.statusoppdatering.statusoppdateringApi
 import no.nav.security.token.support.ktor.tokenValidationSupport
 
 @KtorExperimentalAPI
@@ -51,7 +51,7 @@ fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()
             innboksApi(appContext.innboksEventService)
             oppgaveApi(appContext.oppgaveEventService, appContext.backupOppgaveService)
             brukernotifikasjoner(appContext.brukernotifikasjonService)
-            statusOppdateringApi(appContext.statusOppdateringEventService)
+            statusoppdateringApi(appContext.statusoppdateringEventService)
         }
     }
 

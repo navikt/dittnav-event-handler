@@ -1,9 +1,9 @@
-package no.nav.personbruker.dittnav.eventhandler.statusOppdatering
+package no.nav.personbruker.dittnav.eventhandler.statusoppdatering
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import java.time.ZonedDateTime
 
-class StatusOppdatering(
+class Statusoppdatering(
         @JsonIgnore val id: Int,
         val produsent: String,
         @JsonIgnore val systembruker: String,
@@ -19,7 +19,7 @@ class StatusOppdatering(
         val sakstema: String
 ) {
     override fun toString(): String {
-        return "StatusOppdatering(" +
+        return "Statusoppdatering(" +
                 "id=$id, " +
                 "systembruker=***, " +
                 "eventId=$eventId, " +

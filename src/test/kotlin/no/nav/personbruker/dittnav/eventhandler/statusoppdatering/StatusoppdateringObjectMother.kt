@@ -1,17 +1,17 @@
-package no.nav.personbruker.dittnav.eventhandler.statusOppdatering
+package no.nav.personbruker.dittnav.eventhandler.statusoppdatering
 
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-object StatusOppdateringObjectMother {
+object StatusoppdateringObjectMother {
 
-    fun createStatusOppdatering(id: Int,
+    fun createStatusoppdatering(id: Int,
                                 eventId: String,
                                 fodselsnummer: String,
                                 statusGlobal: String,
                                 statusIntern: String,
-                                sakstema: String): StatusOppdatering {
-        return StatusOppdatering(
+                                sakstema: String): Statusoppdatering {
+        return Statusoppdatering(
                 id = id,
                 systembruker = "x-dittnav",
                 eventId = eventId,
@@ -27,8 +27,8 @@ object StatusOppdateringObjectMother {
                 produsent = "dittnav")
     }
 
-    fun createStatusOppdateringWithSystembruker(id: Int, systembruker: String): StatusOppdatering {
-        return StatusOppdatering(
+    fun createStatusoppdateringWithSystembruker(id: Int, systembruker: String): Statusoppdatering {
+        return Statusoppdatering(
                 id = id,
                 fodselsnummer = "112233",
                 grupperingsId = "100",

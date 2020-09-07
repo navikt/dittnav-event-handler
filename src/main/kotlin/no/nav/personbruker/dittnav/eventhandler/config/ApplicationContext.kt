@@ -19,7 +19,7 @@ import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksEventService
 import no.nav.personbruker.dittnav.eventhandler.oppgave.BackupOppgaveService
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveEventService
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveProducer
-import no.nav.personbruker.dittnav.eventhandler.statusOppdatering.StatusOppdateringEventService
+import no.nav.personbruker.dittnav.eventhandler.statusoppdatering.StatusoppdateringEventService
 import org.apache.kafka.clients.producer.KafkaProducer
 
 class ApplicationContext {
@@ -44,7 +44,7 @@ class ApplicationContext {
     val innboksEventService = InnboksEventService(database)
     val doneEventService = DoneEventService(database, doneProducer)
     val backupDoneService = BackupDoneService(backupDoneProducer, database)
-    val statusOppdateringEventService = StatusOppdateringEventService(database)
+    val statusoppdateringEventService = StatusoppdateringEventService(database)
 
     val backupBeskjedEventService = BackupBeskjedService(beskjedEventService, beskjedProducer)
     val backupOppgaveService = BackupOppgaveService(oppgaveEventService, oppgaveProducer)

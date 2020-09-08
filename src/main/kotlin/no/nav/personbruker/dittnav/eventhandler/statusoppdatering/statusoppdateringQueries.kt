@@ -32,29 +32,6 @@ fun Connection.getAllStatusoppdateringForInnloggetBruker(bruker: InnloggetBruker
                     }
                 }
 
-fun Connection.getAllStatusoppdateringEvents(): List<Statusoppdatering> =
-        prepareStatement("""SELECT 
-            |statusoppdatering.id,
-            |statusoppdatering.eventTidspunkt,
-            |statusoppdatering.fodselsnummer,
-            |statusoppdatering.eventId, 
-            |statusoppdatering.grupperingsId,
-            |statusoppdatering.link,
-            |statusoppdatering.sikkerhetsnivaa,
-            |statusoppdatering.sistOppdatert,
-            |statusoppdatering.statusGlobal,
-            |statusoppdatering.statusIntern,
-            |statusoppdatering.sakstema,
-            |statusoppdatering.systembruker,
-            |systembrukere.produsentnavn AS produsent
-            |FROM (SELECT * FROM statusoppdatering) AS statusoppdatering
-            |LEFT JOIN systembrukere ON statusoppdatering.systembruker = systembrukere.systembruker""".trimMargin())
-                .use {
-                    it.executeQuery().map {
-                        toStatusoppdatering()
-                    }
-                }
-
 fun ResultSet.toStatusoppdatering(): Statusoppdatering {
     return Statusoppdatering(
             id = getInt("id"),

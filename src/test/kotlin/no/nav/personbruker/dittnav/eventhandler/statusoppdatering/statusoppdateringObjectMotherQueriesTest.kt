@@ -1,5 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.statusoppdatering
 
+import no.nav.personbruker.dittnav.eventhandler.common.database.map
 import java.sql.Connection
 import java.sql.Types
 
@@ -38,4 +39,27 @@ fun Connection.deleteStatusoppdatering(statusoppdateringer: List<Statusoppdateri
                         }
                     }
                     it.executeBatch()
+                }
+
+fun Connection.getAllStatusoppdateringEvents(): List<Statusoppdatering> =
+        prepareStatement("""SELECT 
+            |statusoppdatering.id,
+            |statusoppdatering.eventTidspunkt,
+            |statusoppdatering.fodselsnummer,
+            |statusoppdatering.eventId, 
+            |statusoppdatering.grupperingsId,
+            |statusoppdatering.link,
+            |statusoppdatering.sikkerhetsnivaa,
+            |statusoppdatering.sistOppdatert,
+            |statusoppdatering.statusGlobal,
+            |statusoppdatering.statusIntern,
+            |statusoppdatering.sakstema,
+            |statusoppdatering.systembruker,
+            |systembrukere.produsentnavn AS produsent
+            |FROM (SELECT * FROM statusoppdatering) AS statusoppdatering
+            |LEFT JOIN systembrukere ON statusoppdatering.systembruker = systembrukere.systembruker""".trimMargin())
+                .use {
+                    it.executeQuery().map {
+                        toStatusoppdatering()
+                    }
                 }

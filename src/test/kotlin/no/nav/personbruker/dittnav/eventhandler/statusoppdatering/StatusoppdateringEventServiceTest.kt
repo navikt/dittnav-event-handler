@@ -20,12 +20,6 @@ internal class StatusoppdateringEventServiceTest {
     private val database = mockk<Database>()
     private val statusoppdateringEventService = StatusoppdateringEventService(database)
     private val bruker = InnloggetBrukerObjectMother.createInnloggetBruker("123")
-    private val dummyEventId = "1"
-    private val dummyStatusGlobal = "dummyStatusGlobal"
-    private val dummyStatusIntern = "dummyStatusIntern"
-    private val dummySakstema = "dummySakstema"
-
-
     private val appender: ListAppender<ILoggingEvent> = ListAppender()
     private val logger: Logger = LoggerFactory.getLogger(StatusoppdateringEventService::class.java) as Logger
 
@@ -42,7 +36,7 @@ internal class StatusoppdateringEventServiceTest {
 
     @Test
     fun `Should return all Statusoppdaterings events for user`() {
-        val statusoppdateringList = getStatusoppdateringList()
+        val statusoppdateringList = StatusoppdateringObjectMother.getStatusoppdateringList(bruker)
 
         runBlocking {
             coEvery {
@@ -70,11 +64,5 @@ internal class StatusoppdateringEventServiceTest {
         val logevent = appender.list.first()
         logevent.level.levelStr `should be equal to` "WARN"
         logevent.formattedMessage `should contain` "produsent"
-    }
-
-    fun getStatusoppdateringList(): MutableList<Statusoppdatering> {
-        return mutableListOf(
-                StatusoppdateringObjectMother.createStatusoppdatering(1, "$dummyEventId+2", bruker.ident, "$dummyStatusGlobal+1", "$dummyStatusIntern+1", "$dummySakstema+1"),
-                StatusoppdateringObjectMother.createStatusoppdatering(2, "$dummyEventId+3", bruker.ident, "$dummyStatusGlobal+2", "$dummyStatusIntern+2", "$dummySakstema+2"))
     }
 }

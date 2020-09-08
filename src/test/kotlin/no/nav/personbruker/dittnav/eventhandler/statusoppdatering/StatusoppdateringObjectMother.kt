@@ -1,9 +1,15 @@
 package no.nav.personbruker.dittnav.eventhandler.statusoppdatering
 
+import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
 object StatusoppdateringObjectMother {
+
+    private val dummyEventId = "1"
+    private val dummyStatusGlobal = "dummyStatusGlobal"
+    private val dummyStatusIntern = "dummyStatusIntern"
+    private val dummySakstema = "dummySakstema"
 
     fun createStatusoppdatering(id: Int,
                                 eventId: String,
@@ -42,5 +48,11 @@ object StatusoppdateringObjectMother {
                 statusGlobal = "dummyStatusGlobal",
                 statusIntern = "dummyStatusIntern",
                 sakstema = "dummySakstema")
+    }
+
+    fun getStatusoppdateringList(bruker: InnloggetBruker): MutableList<Statusoppdatering> {
+        return mutableListOf(
+                createStatusoppdatering(1, "$dummyEventId+2", bruker.ident, "$dummyStatusGlobal+1", "$dummyStatusIntern+1", "$dummySakstema+1"),
+                createStatusoppdatering(2, "$dummyEventId+3", bruker.ident, "$dummyStatusGlobal+2", "$dummyStatusIntern+2", "$dummySakstema+2"))
     }
 }

@@ -21,7 +21,7 @@ class Statusoppdatering(
     override fun toString(): String {
         return "Statusoppdatering(" +
                 "id=$id, " +
-                "systembruker=***, " +
+                "systembruker=$systembruker, " +
                 "eventId=$eventId, " +
                 "eventTidspunkt=$eventTidspunkt, " +
                 "fodselsnummer=***, " +

@@ -11,6 +11,5 @@ internal class StatusoppdateringTest {
         val statusoppdateringAsString = statusoppdatering.toString()
         statusoppdateringAsString `should contain` "fodselsnummer=***"
         statusoppdateringAsString `should contain` "link=***"
-        statusoppdateringAsString `should contain` "systembruker=***"
     }
 }

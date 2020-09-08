@@ -29,8 +29,8 @@ class Statusoppdatering(
                 "link=***, " +
                 "sikkerhetsnivaa=$sikkerhetsnivaa, " +
                 "sistOppdatert=$sistOppdatert, " +
-                "statusGlobal=***, " +
-                "statusIntern=***, " +
-                "sakstema=***, "
+                "statusGlobal=$statusGlobal, " +
+                "statusIntern=$statusIntern, " +
+                "sakstema=$sakstema, "
     }
 }

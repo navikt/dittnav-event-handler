@@ -12,8 +12,5 @@ internal class StatusoppdateringTest {
         statusoppdateringAsString `should contain` "fodselsnummer=***"
         statusoppdateringAsString `should contain` "link=***"
         statusoppdateringAsString `should contain` "systembruker=***"
-        statusoppdateringAsString `should contain` "statusGlobal=***"
-        statusoppdateringAsString `should contain` "statusIntern=***"
-        statusoppdateringAsString `should contain` "sakstema=***"
     }
 }

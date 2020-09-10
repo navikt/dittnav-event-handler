@@ -50,9 +50,28 @@ object StatusoppdateringObjectMother {
                 sakstema = "dummySakstema")
     }
 
-    fun getStatusoppdateringList(bruker: InnloggetBruker): MutableList<Statusoppdatering> {
+    fun createStatusoppdateringWithFodselsnummer(id: Int, fodselsnummer: String): Statusoppdatering {
+        return Statusoppdatering(
+                id = id,
+                fodselsnummer = fodselsnummer,
+                grupperingsId = "100",
+                eventId = "123",
+                eventTidspunkt = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
+                produsent = "dittnav",
+                systembruker = "x-dittnav",
+                sikkerhetsnivaa = 4,
+                sistOppdatert = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
+                link = "https://nav.no/systemX",
+                statusGlobal = "dummyStatusGlobal",
+                statusIntern = "dummyStatusIntern",
+                sakstema = "dummySakstema")
+    }
+
+    fun getStatusoppdateringEvents(bruker: InnloggetBruker): MutableList<Statusoppdatering> {
         return mutableListOf(
-                createStatusoppdatering(1, "$dummyEventId+2", bruker.ident, "$dummyStatusGlobal+1", "$dummyStatusIntern+1", "$dummySakstema+1"),
-                createStatusoppdatering(2, "$dummyEventId+3", bruker.ident, "$dummyStatusGlobal+2", "$dummyStatusIntern+2", "$dummySakstema+2"))
+                createStatusoppdatering(1, "$dummyEventId+1", bruker.ident, "$dummyStatusGlobal+1", "$dummyStatusIntern+1", "$dummySakstema+1"),
+                createStatusoppdatering(2, "$dummyEventId+2", bruker.ident, "$dummyStatusGlobal+2", "$dummyStatusIntern+2", "$dummySakstema+2"),
+                createStatusoppdatering(3, "$dummyEventId+3", bruker.ident, "$dummyStatusGlobal+3", "$dummyStatusIntern+3", "$dummySakstema+3"),
+                createStatusoppdatering(4, "$dummyEventId+4", bruker.ident, "$dummyStatusGlobal+4", "$dummyStatusIntern+4", "$dummySakstema+4"))
     }
 }

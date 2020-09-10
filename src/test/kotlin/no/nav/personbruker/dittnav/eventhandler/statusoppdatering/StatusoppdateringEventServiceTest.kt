@@ -36,15 +36,15 @@ internal class StatusoppdateringEventServiceTest {
 
     @Test
     fun `Should return all Statusoppdaterings events for user`() {
-        val statusoppdateringList = StatusoppdateringObjectMother.getStatusoppdateringList(bruker)
+        val statusoppdateringEvents = StatusoppdateringObjectMother.getStatusoppdateringEvents(bruker)
 
         runBlocking {
             coEvery {
                 database.queryWithExceptionTranslation<List<Statusoppdatering>>(any())
-            }.returns(statusoppdateringList)
+            }.returns(statusoppdateringEvents)
 
             val actualStatusoppdaterings = statusoppdateringEventService.getAllEventsFromCacheForUser(bruker)
-            actualStatusoppdaterings.size `should be equal to` 2
+            actualStatusoppdaterings.size `should be equal to` 4
         }
     }
 

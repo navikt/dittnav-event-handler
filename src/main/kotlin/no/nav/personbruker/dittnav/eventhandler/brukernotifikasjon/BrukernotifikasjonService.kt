@@ -7,13 +7,6 @@ class BrukernotifikasjonService(
         private val database: Database
 ) {
 
-    suspend fun numberOfInactiveEvents(bruker: InnloggetBruker): Int {
-        val numberOfInactive = database.queryWithExceptionTranslation {
-            getNumberOfBrukernotifikasjonerByActiveStatus(bruker, false)
-        }
-        return numberOfInactive
-    }
-
     suspend fun numberOfActiveEvents(bruker: InnloggetBruker): Int {
         val numberOfActive = database.queryWithExceptionTranslation {
             getNumberOfBrukernotifikasjonerByActiveStatus(bruker, true)

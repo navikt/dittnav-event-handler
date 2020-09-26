@@ -33,14 +33,4 @@ fun Route.brukernotifikasjoner(brukernotifikasjonService: BrukernotifikasjonServ
         }
     }
 
-    get("/count/brukernotifikasjoner/inactive") {
-        try {
-            val numberOfEvents = brukernotifikasjonService.numberOfInactiveEvents(innloggetBruker)
-            call.respond(HttpStatusCode.OK, numberOfEvents)
-
-        } catch (exception: Exception) {
-            respondWithError(call, log, exception)
-        }
-    }
-
 }

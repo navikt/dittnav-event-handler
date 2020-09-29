@@ -12,6 +12,5 @@ class InnboksTest {
         innboksAsString `should contain` "fodselsnummer=***"
         innboksAsString `should contain` "tekst=***"
         innboksAsString `should contain` "link=***"
-        innboksAsString `should contain` "systembruker=***"
     }
 }

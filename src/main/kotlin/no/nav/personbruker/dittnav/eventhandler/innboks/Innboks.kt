@@ -3,7 +3,7 @@ package no.nav.personbruker.dittnav.eventhandler.innboks
 import com.fasterxml.jackson.annotation.JsonIgnore
 import java.time.ZonedDateTime
 
-data class Innboks (
+data class Innboks(
         @JsonIgnore val id: Int,
         val produsent: String,
         @JsonIgnore val systembruker: String,
@@ -21,7 +21,7 @@ data class Innboks (
         return "Innboks(" +
                 "id=$id, " +
                 "produsent=$produsent, " +
-                "systembruker=***, " +
+                "systembruker=$systembruker, " +
                 "eventTidspunkt=$eventTidspunkt, " +
                 "fodselsnummer=***, " +
                 "eventId=$eventId, " +

@@ -10,7 +10,7 @@ class InnboksEventService(private val database: Database) {
     private val log = LoggerFactory.getLogger(InnboksEventService::class.java)
 
     suspend fun getActiveCachedEventsForUser(bruker: InnloggetBruker): List<Innboks> {
-        return getEvents {  getAktivInnboksForInnloggetBruker(bruker) }
+        return getEvents { getAktivInnboksForInnloggetBruker(bruker) }
     }
 
     suspend fun getInctiveCachedEventsForUser(bruker: InnloggetBruker): List<Innboks> {
@@ -25,13 +25,17 @@ class InnboksEventService(private val database: Database) {
         val events = database.queryWithExceptionTranslation {
             operationToExecute()
         }
-        if(produsentIsEmpty(events)) {
-            log.warn("Returnerer innboks-eventer med tom produsent til frontend. Kanskje er ikke systembrukeren lagt inn i systembruker-tabellen?")
+        val eventsWithEmptyProdusent = events.filter { innboks -> innboks.produsent.isNullOrBlank() }
+
+        if (eventsWithEmptyProdusent.isNotEmpty()) {
+            logEventsWithEmptyProdusent(eventsWithEmptyProdusent)
         }
         return events
     }
 
-    private fun produsentIsEmpty(events: List<Innboks>): Boolean {
-        return events.any { innboks -> innboks.produsent.isNullOrEmpty() }
+    fun logEventsWithEmptyProdusent(events: List<Innboks>) {
+        events.forEach { innboks ->
+            log.warn("Returnerer innboks-eventer med tom produsent til frontend. Kanskje er ikke systembrukeren lagt inn i systembruker-tabellen? ${innboks.toString()}")
+        }
     }
 }

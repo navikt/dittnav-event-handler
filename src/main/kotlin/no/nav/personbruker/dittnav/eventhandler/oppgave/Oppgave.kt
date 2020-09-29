@@ -25,7 +25,7 @@ data class Oppgave(
                 "eventId=$eventId, " +
                 "eventTidspunkt=$eventTidspunkt, " +
                 "produsent=$produsent, " +
-                "systembruker=***, " +
+                "systembruker=$systembruker, " +
                 "sikkerhetsnivaa=$sikkerhetsnivaa, " +
                 "sistOppdatert=$sistOppdatert, " +
                 "tekst=***, " +

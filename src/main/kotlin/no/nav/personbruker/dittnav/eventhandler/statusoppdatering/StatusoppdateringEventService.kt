@@ -17,13 +17,17 @@ class StatusoppdateringEventService(private val database: Database) {
         val events = database.queryWithExceptionTranslation {
             operationToExecute()
         }
-        if (produsentIsEmpty(events)) {
-            log.warn("Returnerer statusoppdatering-eventer med tom produsent til frontend. Kanskje er ikke systembrukeren lagt inn i systembruker-tabellen?")
+        val eventsWithEmptyProdusent = events.filter { statusoppdatering -> statusoppdatering.produsent.isNullOrBlank() }
+
+        if (eventsWithEmptyProdusent.isNotEmpty()) {
+            logEventsWithEmptyProdusent(eventsWithEmptyProdusent)
         }
         return events
     }
 
-    private fun produsentIsEmpty(events: List<Statusoppdatering>): Boolean {
-        return events.any { statusoppdatering -> statusoppdatering.produsent.isNullOrEmpty() }
+    fun logEventsWithEmptyProdusent(events: List<Statusoppdatering>) {
+        events.forEach { statusoppdatering ->
+            log.warn("Returnerer statusoppdatering-eventer med tom produsent til frontend. Kanskje er ikke systembrukeren lagt inn i systembruker-tabellen? ${statusoppdatering.toString()}")
+        }
     }
 }

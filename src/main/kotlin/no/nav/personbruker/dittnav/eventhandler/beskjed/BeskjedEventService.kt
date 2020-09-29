@@ -36,8 +36,7 @@ class BeskjedEventService(private val database: Database) {
         return getEvents { getAllInactiveBeskjed() }
     }
 
-    private fun Beskjed.isExpired(): Boolean = synligFremTil?.isBefore(Instant.now().atZone(ZoneId.of("Europe/Oslo")))
-            ?: false
+    private fun Beskjed.isExpired(): Boolean = synligFremTil?.isBefore(Instant.now().atZone(ZoneId.of("Europe/Oslo")))?: false
 
     private suspend fun getEvents(operationToExecute: Connection.() -> List<Beskjed>): List<Beskjed> {
         val events = database.queryWithExceptionTranslation {

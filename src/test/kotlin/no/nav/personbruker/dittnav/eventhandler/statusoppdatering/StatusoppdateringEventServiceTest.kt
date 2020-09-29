@@ -64,5 +64,6 @@ internal class StatusoppdateringEventServiceTest {
         val logevent = appender.list.first()
         logevent.level.levelStr `should be equal to` "WARN"
         logevent.formattedMessage `should contain` "produsent"
+        logevent.formattedMessage `should contain` "fodselsnummer=***"
     }
 }

@@ -17,7 +17,7 @@ class StatusoppdateringEventService(private val database: Database) {
         val events = database.queryWithExceptionTranslation {
             operationToExecute()
         }
-        val eventsWithEmptyProdusent = events.filter { statusoppdatering -> statusoppdatering.produsent.isNullOrBlank() }
+        val eventsWithEmptyProdusent = events.filter { statusoppdatering -> statusoppdatering.produsent.isNullOrEmpty() }
 
         if (eventsWithEmptyProdusent.isNotEmpty()) {
             logEventsWithEmptyProdusent(eventsWithEmptyProdusent)

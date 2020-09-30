@@ -42,7 +42,7 @@ class BeskjedEventService(private val database: Database) {
         val events = database.queryWithExceptionTranslation {
             operationToExecute()
         }
-        val eventsWithEmptyProdusent = events.filter { beskjed -> beskjed.produsent.isNullOrBlank() }
+        val eventsWithEmptyProdusent = events.filter { beskjed -> beskjed.produsent.isNullOrEmpty() }
 
         if (eventsWithEmptyProdusent.isNotEmpty()) {
             logEventsWithEmptyProdusent(eventsWithEmptyProdusent)

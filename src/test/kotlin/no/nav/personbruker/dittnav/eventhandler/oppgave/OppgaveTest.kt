@@ -12,5 +12,6 @@ class OppgaveTest {
         oppgaveAsString `should contain` "fodselsnummer=***"
         oppgaveAsString `should contain` "tekst=***"
         oppgaveAsString `should contain` "link=***"
+        oppgaveAsString `should contain` "systembruker=x-dittnav"
     }
 }

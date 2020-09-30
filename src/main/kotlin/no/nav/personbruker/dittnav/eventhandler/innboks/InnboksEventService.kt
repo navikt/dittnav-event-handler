@@ -25,7 +25,7 @@ class InnboksEventService(private val database: Database) {
         val events = database.queryWithExceptionTranslation {
             operationToExecute()
         }
-        val eventsWithEmptyProdusent = events.filter { innboks -> innboks.produsent.isNullOrBlank() }
+        val eventsWithEmptyProdusent = events.filter { innboks -> innboks.produsent.isNullOrEmpty() }
 
         if (eventsWithEmptyProdusent.isNotEmpty()) {
             logEventsWithEmptyProdusent(eventsWithEmptyProdusent)

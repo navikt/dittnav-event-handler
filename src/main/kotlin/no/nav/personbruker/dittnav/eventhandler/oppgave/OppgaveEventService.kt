@@ -33,7 +33,7 @@ class OppgaveEventService(private val database: Database) {
         val events = database.queryWithExceptionTranslation {
             operationToExecute()
         }
-        val eventsWithEmptyProdusent = events.filter { oppgave -> oppgave.produsent.isNullOrBlank() }
+        val eventsWithEmptyProdusent = events.filter { oppgave -> oppgave.produsent.isNullOrEmpty() }
 
         if (eventsWithEmptyProdusent.isNotEmpty()) {
             logEventsWithEmptyProdusent(eventsWithEmptyProdusent)

@@ -33,13 +33,17 @@ class OppgaveEventService(private val database: Database) {
         val events = database.queryWithExceptionTranslation {
             operationToExecute()
         }
-        if (produsentIsEmpty(events)) {
-            log.warn("Returnerer oppgave-eventer med tom produsent til frontend. Kanskje er ikke systembrukeren lagt inn i systembruker-tabellen?")
+        val eventsWithEmptyProdusent = events.filter { oppgave -> oppgave.produsent.isNullOrBlank() }
+
+        if (eventsWithEmptyProdusent.isNotEmpty()) {
+            logEventsWithEmptyProdusent(eventsWithEmptyProdusent)
         }
         return events
     }
 
-    private fun produsentIsEmpty(events: List<Oppgave>): Boolean {
-        return events.any { oppgave -> oppgave.produsent.isNullOrEmpty() }
+    fun logEventsWithEmptyProdusent(events: List<Oppgave>) {
+        events.forEach { oppgave ->
+            log.warn("Returnerer oppgave-eventer med tom produsent til frontend. Kanskje er ikke systembrukeren lagt inn i systembruker-tabellen? ${oppgave.toString()}")
+        }
     }
 }

@@ -36,19 +36,23 @@ class BeskjedEventService(private val database: Database) {
         return getEvents { getAllInactiveBeskjed() }
     }
 
-    private fun Beskjed.isExpired() : Boolean = synligFremTil?.isBefore(Instant.now().atZone(ZoneId.of("Europe/Oslo")))?: false
+    private fun Beskjed.isExpired(): Boolean = synligFremTil?.isBefore(Instant.now().atZone(ZoneId.of("Europe/Oslo")))?: false
 
     private suspend fun getEvents(operationToExecute: Connection.() -> List<Beskjed>): List<Beskjed> {
         val events = database.queryWithExceptionTranslation {
             operationToExecute()
         }
-        if(produsentIsEmpty(events)) {
-            log.warn("Returnerer beskjed-eventer med tom produsent til frontend. Kanskje er ikke systembrukeren lagt inn i systembruker-tabellen?")
+        val eventsWithEmptyProdusent = events.filter { beskjed -> beskjed.produsent.isNullOrBlank() }
+
+        if (eventsWithEmptyProdusent.isNotEmpty()) {
+            logEventsWithEmptyProdusent(eventsWithEmptyProdusent)
         }
         return events
     }
 
-    private fun produsentIsEmpty(events: List<Beskjed>): Boolean {
-        return events.any { beskjed -> beskjed.produsent.isNullOrEmpty() }
+    fun logEventsWithEmptyProdusent(events: List<Beskjed>) {
+        events.forEach { beskjed ->
+            log.warn("Returnerer beskjed-eventer med tom produsent til frontend. Kanskje er ikke systembrukeren lagt inn i systembruker-tabellen? ${beskjed.toString()}")
+        }
     }
 }

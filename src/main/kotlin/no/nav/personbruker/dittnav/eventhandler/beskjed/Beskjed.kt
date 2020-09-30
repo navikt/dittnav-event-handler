@@ -26,7 +26,7 @@ data class Beskjed(
                 "eventId=$eventId, " +
                 "eventTidspunkt=$eventTidspunkt, " +
                 "produsent=$produsent, " +
-                "systembruker=***, " +
+                "systembruker=$systembruker, " +
                 "sikkerhetsnivaa=$sikkerhetsnivaa, " +
                 "sistOppdatert=$sistOppdatert, " +
                 "synligFremTil=$synligFremTil, " +

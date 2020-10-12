@@ -24,6 +24,7 @@ class BeskjedEventServiceTest {
     private val database = mockk<Database>()
     private val beskjedEventService = BeskjedEventService(database)
     private val bruker = InnloggetBrukerObjectMother.createInnloggetBruker("123")
+    private val produsent = "dittnav"
 
     private val appender: ListAppender<ILoggingEvent> = ListAppender()
     private val logger: Logger = LoggerFactory.getLogger(BeskjedEventService::class.java) as Logger
@@ -94,6 +95,23 @@ class BeskjedEventServiceTest {
         logevent.level.levelStr `should be equal to` "WARN"
         logevent.formattedMessage `should contain` "produsent"
         logevent.formattedMessage `should contain` "fodselsnummer=***"
+    }
+
+    @Test
+    fun `Should return all events that are grouped together by ids`() {
+        val innloggetbruker = InnloggetBrukerObjectMother.createInnloggetBruker("100")
+        val grupperingsid = "100${innloggetbruker.ident}"
+        val beskjedEvents = listOf(
+                BeskjedObjectMother.createBeskjed(id = 1, eventId = "1", fodselsnummer = innloggetbruker.ident, synligFremTil = null, uid = "1234", aktiv = false),
+                BeskjedObjectMother.createBeskjed(id = 2, eventId = "2", fodselsnummer = innloggetbruker.ident, synligFremTil = null, uid = "1235", aktiv = false))
+        runBlocking {
+            coEvery {
+                database.queryWithExceptionTranslation<List<Beskjed>>(any())
+            }.returns(beskjedEvents)
+
+            val actualBeskjedEvents = beskjedEventService.getAllGroupedEventsFromCacheForUser(innloggetbruker, grupperingsid, produsent)
+            actualBeskjedEvents.size `should be equal to` 2
+        }
     }
 
     fun getBeskjedList(): MutableList<Beskjed> {

@@ -6,9 +6,9 @@ import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.respondWithError
+import no.nav.personbruker.dittnav.eventhandler.common.validation.validateNonNullFieldMaxLength
 import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
 import org.slf4j.LoggerFactory
-import java.lang.Exception
 
 fun Route.innboksApi(innboksEventService: InnboksEventService) {
 
@@ -18,7 +18,7 @@ fun Route.innboksApi(innboksEventService: InnboksEventService) {
         try {
             val aktiveInnboksEvents = innboksEventService.getActiveCachedEventsForUser(innloggetBruker)
             call.respond(HttpStatusCode.OK, aktiveInnboksEvents)
-        } catch(exception: Exception) {
+        } catch (exception: Exception) {
             respondWithError(call, log, exception)
         }
     }
@@ -27,7 +27,7 @@ fun Route.innboksApi(innboksEventService: InnboksEventService) {
         try {
             val inaktiveInnboksEvents = innboksEventService.getInctiveCachedEventsForUser(innloggetBruker)
             call.respond(HttpStatusCode.OK, inaktiveInnboksEvents)
-        } catch(exception: Exception) {
+        } catch (exception: Exception) {
             respondWithError(call, log, exception)
         }
     }
@@ -36,7 +36,18 @@ fun Route.innboksApi(innboksEventService: InnboksEventService) {
         try {
             val innboksEvents = innboksEventService.getAllCachedEventsForUser(innloggetBruker)
             call.respond(HttpStatusCode.OK, innboksEvents)
-        } catch(exception: Exception) {
+        } catch (exception: Exception) {
+            respondWithError(call, log, exception)
+        }
+    }
+
+    get("/fetch/grouped/innboks") {
+        try {
+            val grupperingsId = validateNonNullFieldMaxLength(call.request.queryParameters["grupperingsid"], "grupperingsid", 100)
+            val produsent = validateNonNullFieldMaxLength(call.request.queryParameters["produsent"], "produsent", 100)
+            val innboksEvents = innboksEventService.getAllGroupedEventsFromCacheForUser(innloggetBruker, grupperingsId, produsent)
+            call.respond(HttpStatusCode.OK, innboksEvents)
+        } catch (exception: Exception) {
             respondWithError(call, log, exception)
         }
     }

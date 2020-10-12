@@ -28,6 +28,10 @@ class BeskjedEventService(private val database: Database) {
         return getEvents { getAllBeskjedForInnloggetBruker(bruker) }
     }
 
+    suspend fun getAllGroupedEventsFromCacheForUser(bruker: InnloggetBruker, grupperingsid: String, produsent: String): List<Beskjed> {
+        return getEvents { getAllGroupedBeskjedEventsByIds(bruker, grupperingsid, produsent) }
+    }
+
     suspend fun getAllBeskjedEventsInCach(): List<Beskjed> {
         return getEvents { getAllBeskjedEvents() }
     }

@@ -22,6 +22,7 @@ class InnboksEventServiceTest {
     private val database = mockk<Database>()
     private val innboksEventService = InnboksEventService(database)
     private val bruker = InnloggetBrukerObjectMother.createInnloggetBruker("123")
+    private val produsent = "dittnav"
 
     private val appender: ListAppender<ILoggingEvent> = ListAppender()
     private val logger: Logger = LoggerFactory.getLogger(InnboksEventService::class.java) as Logger
@@ -51,5 +52,22 @@ class InnboksEventServiceTest {
         logevent.level.levelStr `should be equal to` "WARN"
         logevent.formattedMessage `should contain` "produsent"
         logevent.formattedMessage `should contain` "fodselsnummer=***"
+    }
+
+    @Test
+    fun `Should return all events that are grouped together by ids`() {
+        val innloggetbruker = InnloggetBrukerObjectMother.createInnloggetBruker("100")
+        val grupperingsid = "100${innloggetbruker.ident}"
+        val innboksEvents = listOf(
+                InnboksObjectMother.createInnboks(id = 1, eventId = "1", fodselsnummer = innloggetbruker.ident, aktiv = false),
+                InnboksObjectMother.createInnboks(id = 2, eventId = "2", fodselsnummer = innloggetbruker.ident, aktiv = false))
+        runBlocking {
+            coEvery {
+                database.queryWithExceptionTranslation<List<Innboks>>(any())
+            }.returns(innboksEvents)
+
+            val actualInnboksEvents = innboksEventService.getAllGroupedEventsFromCacheForUser(innloggetbruker, grupperingsid, produsent)
+            actualInnboksEvents.size `should be equal to` 2
+        }
     }
 }

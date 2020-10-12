@@ -118,6 +118,33 @@ fun Connection.getAllInactiveBeskjed(): List<Beskjed> =
                     }
                 }
 
+fun Connection.getAllGroupedBeskjedEventsByIds(bruker: InnloggetBruker, grupperingsid: String, produsent: String): List<Beskjed> =
+        prepareStatement("""SELECT 
+            |beskjed.id, 
+            |beskjed.uid, 
+            |beskjed.eventTidspunkt,
+            |beskjed.fodselsnummer,
+            |beskjed.eventId, 
+            |beskjed.grupperingsId,
+            |beskjed.tekst,
+            |beskjed.link,
+            |beskjed.sikkerhetsnivaa,
+            |beskjed.sistOppdatert,
+            |beskjed.synligFremTil,
+            |beskjed.aktiv,
+            |beskjed.systembruker,
+            |systembrukere.produsentnavn AS produsent
+            |FROM (SELECT * FROM beskjed WHERE fodselsnummer = ? AND grupperingsid = ?) AS beskjed
+            |LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker AND systembrukere.produsentnavn = ?""".trimMargin())
+                .use {
+                    it.setString(1, bruker.ident)
+                    it.setString(2, grupperingsid)
+                    it.setString(3, produsent)
+                    it.executeQuery().map {
+                        toBeskjed()
+                    }
+                }
+
 fun ResultSet.toBeskjed(): Beskjed {
     return Beskjed(
             id = getInt("id"),

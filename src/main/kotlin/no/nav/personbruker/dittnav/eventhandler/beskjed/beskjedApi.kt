@@ -6,6 +6,7 @@ import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.respondWithError
+import no.nav.personbruker.dittnav.eventhandler.common.validation.validateNonNullFieldMaxLength
 import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
 import org.slf4j.LoggerFactory
 
@@ -40,5 +41,16 @@ fun Route.beskjedApi(beskjedEventService: BeskjedEventService, backupBeskjedServ
         }
     }
 
+    get("/fetch/grouped/beskjed") {
+        try {
+            val grupperingsId = validateNonNullFieldMaxLength(call.request.queryParameters["grupperingsid"], "grupperingsid", 100)
+            val produsent = validateNonNullFieldMaxLength(call.request.queryParameters["produsent"], "produsent", 100)
+            val beskjedEvents = beskjedEventService.getAllGroupedEventsFromCacheForUser(innloggetBruker, grupperingsId, produsent)
+            call.respond(HttpStatusCode.OK, beskjedEvents)
+        } catch (exception: Exception) {
+            respondWithError(call, log, exception)
+        }
+    }
 }
+
 

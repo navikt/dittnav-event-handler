@@ -17,9 +17,8 @@ fun validateFodselsnummer(field: String): String {
 
 private fun isNotValidFodselsnummer(field: String) = !fodselsnummerRegEx.matches(field)
 
-fun validateNonNullFieldMaxLength(field: String, fieldName: String, maxLength: Int): String {
-    validateNonNullField(field, fieldName)
-    return validateMaxLength(field, fieldName, maxLength)
+fun validateNonNullFieldMaxLength(field: String?, fieldName: String, maxLength: Int): String {
+    return validateMaxLength(validateNonNullField(field, fieldName), fieldName, maxLength)
 }
 
 fun validateMaxLength(field: String, fieldName: String, maxLength: Int): String {

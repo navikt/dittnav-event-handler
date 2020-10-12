@@ -22,12 +22,14 @@ class BeskjedQueriesTest {
     private val bruker = InnloggetBrukerObjectMother.createInnloggetBruker("12345")
     private val uid = "22"
     private val eventId = "124"
+    private val grupperingsid = "100${bruker.ident}"
+    private val produsent = "dittnav"
 
-    private val beskjed1 = BeskjedObjectMother.createBeskjed(id = 1, eventId = "123", fodselsnummer = "12345",
+    private val beskjed1 = BeskjedObjectMother.createBeskjed(id = 1, eventId = "123", fodselsnummer = bruker.ident,
             synligFremTil = ZonedDateTime.now().plusHours(1), uid = "11", aktiv = true)
-    private val beskjed2 = BeskjedObjectMother.createBeskjed(id = 2, eventId = eventId, fodselsnummer = "12345",
+    private val beskjed2 = BeskjedObjectMother.createBeskjed(id = 2, eventId = eventId, fodselsnummer = bruker.ident,
             synligFremTil = ZonedDateTime.now().plusHours(1), uid = "22", aktiv = true)
-    private val beskjed3 = BeskjedObjectMother.createBeskjed(id = 3, eventId = "567", fodselsnummer = "12345",
+    private val beskjed3 = BeskjedObjectMother.createBeskjed(id = 3, eventId = "567", fodselsnummer = bruker.ident,
             synligFremTil = ZonedDateTime.now().plusHours(1), uid = "33", aktiv = false)
     private val beskjed4 = BeskjedObjectMother.createBeskjed(id = 4, eventId = "789", fodselsnummer = "54321",
             synligFremTil = ZonedDateTime.now().plusHours(1), uid = "44", aktiv = true)
@@ -167,6 +169,15 @@ class BeskjedQueriesTest {
     fun `Returnerer liste av alle inaktive Beskjed-eventer`() {
         runBlocking {
             database.dbQuery { getAllInactiveBeskjed() }.size `should be equal to` 1
+        }
+    }
+
+    @Test
+    fun `Returnerer en liste av alle grupperte Beskjed-eventer`() {
+        runBlocking {
+            database.dbQuery {
+                getAllGroupedBeskjedEventsByIds(bruker, grupperingsid, produsent)
+            }.size `should be equal to` 3
         }
     }
 

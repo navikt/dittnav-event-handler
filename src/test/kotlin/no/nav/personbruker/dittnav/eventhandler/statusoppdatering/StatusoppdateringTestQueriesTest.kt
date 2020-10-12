@@ -16,6 +16,8 @@ class StatusoppdateringTestQueriesTest {
     private val database = H2Database()
     private val bruker = InnloggetBrukerObjectMother.createInnloggetBruker("12345")
     private val statusoppdateringEvents = StatusoppdateringObjectMother.getStatusoppdateringEvents(bruker)
+    private val grupperingsid = "100${bruker.ident}"
+    private val produsent = "dittnav"
 
     @BeforeEach
     fun `populer testdata`() {
@@ -36,7 +38,9 @@ class StatusoppdateringTestQueriesTest {
     @Test
     fun `Finn alle cachede Statusoppdatering-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getAllStatusoppdateringForInnloggetBruker(bruker) }.size `should be equal to` 4
+            database.dbQuery {
+                getAllGroupedStatusoppdateringEventsByIds(bruker, grupperingsid, produsent)
+            }.size `should be equal to` 4
         }
     }
 
@@ -55,7 +59,9 @@ class StatusoppdateringTestQueriesTest {
         val brukerSomIkkeFinnes = InnloggetBrukerObjectMother.createInnloggetBruker("0")
 
         runBlocking {
-            database.dbQuery { getAllStatusoppdateringForInnloggetBruker(brukerSomIkkeFinnes) }.`should be empty`()
+            database.dbQuery {
+                getAllGroupedStatusoppdateringEventsByIds(brukerSomIkkeFinnes, "100${brukerSomIkkeFinnes.ident}", produsent)
+            }.`should be empty`()
         }
     }
 
@@ -64,14 +70,17 @@ class StatusoppdateringTestQueriesTest {
         val fodselsnummerMangler = InnloggetBrukerObjectMother.createInnloggetBruker("")
 
         runBlocking {
-            database.dbQuery { getAllStatusoppdateringForInnloggetBruker(fodselsnummerMangler) }.`should be empty`()
+            database.dbQuery {
+                getAllGroupedStatusoppdateringEventsByIds(fodselsnummerMangler, "100${fodselsnummerMangler.ident}", produsent)
+            }.`should be empty`()
         }
     }
 
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for alle eventer`() {
         runBlocking {
-            val statusoppdatering = database.dbQuery { getAllStatusoppdateringForInnloggetBruker(bruker) }.first()
+            val statusoppdatering = database.dbQuery {
+                getAllGroupedStatusoppdateringEventsByIds(bruker, grupperingsid, produsent) }.first()
             statusoppdatering.produsent `should be equal to` "dittnav"
         }
     }
@@ -83,9 +92,11 @@ class StatusoppdateringTestQueriesTest {
 
         val statusoppdatering = runBlocking {
             database.dbQuery { createStatusoppdatering(listOf(statusoppdateringMedAnnenProdusent)) }
-            database.dbQuery { getAllStatusoppdateringForInnloggetBruker(InnloggetBrukerObjectMother.createInnloggetBruker("112233")) }.first()
+            database.dbQuery { getAllGroupedStatusoppdateringEventsByIds(InnloggetBrukerObjectMother.createInnloggetBruker("112233"), grupperingsid = "100", produsent = "") }.first()
         }
         statusoppdatering.produsent `should be equal to` ""
+        statusoppdatering.systembruker `should be equal to` "ukjent-systembruker"
+        statusoppdatering.grupperingsId `should be equal to` "100"
 
         runBlocking {
             database.dbQuery { deleteStatusoppdatering(listOf(statusoppdateringMedAnnenProdusent)) }

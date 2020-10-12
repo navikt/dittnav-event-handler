@@ -21,6 +21,10 @@ class InnboksEventService(private val database: Database) {
         return getEvents { getAllInnboksForInnloggetBruker(bruker) }
     }
 
+    suspend fun getAllGroupedEventsFromCacheForUser(bruker: InnloggetBruker, grupperingsid: String, produsent: String): List<Innboks> {
+        return getEvents { getAllGroupedInnboksEventsByIds(bruker, grupperingsid, produsent) }
+    }
+
     private suspend fun getEvents(operationToExecute: Connection.() -> List<Innboks>): List<Innboks> {
         val events = database.queryWithExceptionTranslation {
             operationToExecute()

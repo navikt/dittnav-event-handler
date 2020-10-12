@@ -9,8 +9,8 @@ class StatusoppdateringEventService(private val database: Database) {
 
     private val log = LoggerFactory.getLogger(StatusoppdateringEventService::class.java)
 
-    suspend fun getAllEventsFromCacheForUser(bruker: InnloggetBruker): List<Statusoppdatering> {
-        return getEvents { getAllStatusoppdateringForInnloggetBruker(bruker) }
+    suspend fun getAllGroupedEventsFromCacheForUser(bruker: InnloggetBruker, grupperingsid: String, produsent: String): List<Statusoppdatering> {
+        return getEvents { getAllGroupedStatusoppdateringEventsByIds(bruker, grupperingsid, produsent) }
     }
 
     private suspend fun getEvents(operationToExecute: Connection.() -> List<Statusoppdatering>): List<Statusoppdatering> {

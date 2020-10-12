@@ -85,6 +85,31 @@ fun Connection.getAllInactiveOppgaveEvents(): List<Oppgave> =
                     }
                 }
 
+fun Connection.getAllGroupedOppgaveEventsByIds(bruker: InnloggetBruker, grupperingsid: String, produsent: String): List<Oppgave> =
+        prepareStatement("""SELECT
+            |oppgave.id,
+            |oppgave.eventTidspunkt,
+            |oppgave.fodselsnummer,
+            |oppgave.eventId,
+            |oppgave.grupperingsId,
+            |oppgave.tekst,
+            |oppgave.link,
+            |oppgave.sikkerhetsnivaa,
+            |oppgave.sistOppdatert,
+            |oppgave.aktiv,
+            |oppgave.systembruker,
+            |systembrukere.produsentnavn AS produsent
+            |FROM (SELECT * FROM oppgave WHERE fodselsnummer = ? AND grupperingsid = ?) AS oppgave
+            |LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker AND systembrukere.produsentnavn = ?""".trimMargin())
+                .use {
+                    it.setString(1, bruker.ident)
+                    it.setString(2, grupperingsid)
+                    it.setString(3, produsent)
+                    it.executeQuery().map {
+                        toOppgave()
+                    }
+                }
+
 private fun ResultSet.toOppgave(): Oppgave {
     val rawEventTidspunkt = getUtcTimeStamp("eventTidspunkt") ?: throw EventCacheException("Eventtidspunkt ble ikke funnet i databasen")
     val verifiedEventTidspunkt = convertIfUnlikelyDate(rawEventTidspunkt)

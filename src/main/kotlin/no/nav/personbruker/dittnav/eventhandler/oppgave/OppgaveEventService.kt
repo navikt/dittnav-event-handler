@@ -29,6 +29,10 @@ class OppgaveEventService(private val database: Database) {
         return getEvents { getAllInactiveOppgaveEvents() }
     }
 
+    suspend fun getAllGroupedEventsFromCacheForUser(bruker: InnloggetBruker, grupperingsid: String, produsent: String): List<Oppgave> {
+        return getEvents { getAllGroupedOppgaveEventsByIds(bruker, grupperingsid, produsent) }
+    }
+
     private suspend fun getEvents(operationToExecute: Connection.() -> List<Oppgave>): List<Oppgave> {
         val events = database.queryWithExceptionTranslation {
             operationToExecute()

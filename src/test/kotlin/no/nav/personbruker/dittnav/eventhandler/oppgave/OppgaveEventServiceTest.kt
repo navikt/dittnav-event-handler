@@ -22,6 +22,7 @@ class OppgaveEventServiceTest {
     private val database = mockk<Database>()
     private val oppgaveEventService = OppgaveEventService(database)
     private val bruker = InnloggetBrukerObjectMother.createInnloggetBruker("123")
+    private val produsent = "dittnav"
 
     private val appender: ListAppender<ILoggingEvent> = ListAppender()
     private val logger: Logger = LoggerFactory.getLogger(OppgaveEventService::class.java) as Logger
@@ -51,5 +52,22 @@ class OppgaveEventServiceTest {
         logevent.level.levelStr `should be equal to` "WARN"
         logevent.formattedMessage `should contain` "produsent"
         logevent.formattedMessage `should contain` "fodselsnummer=***"
+    }
+
+    @Test
+    fun `Should return all events that are grouped together by ids`() {
+        val innloggetbruker = InnloggetBrukerObjectMother.createInnloggetBruker("100")
+        val grupperingsid = "100${innloggetbruker.ident}"
+        val oppgaveEvents = listOf(
+                OppgaveObjectMother.createOppgave(id = 1, eventId = "1", fodselsnummer = innloggetbruker.ident, aktiv = false),
+                OppgaveObjectMother.createOppgave(id = 2, eventId = "2", fodselsnummer = innloggetbruker.ident, aktiv = false))
+        runBlocking {
+            coEvery {
+                database.queryWithExceptionTranslation<List<Oppgave>>(any())
+            }.returns(oppgaveEvents)
+
+            val actualOppgaveEvents = oppgaveEventService.getAllGroupedEventsFromCacheForUser(innloggetbruker, grupperingsid, produsent)
+            actualOppgaveEvents.size `should be equal to` 2
+        }
     }
 }

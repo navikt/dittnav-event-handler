@@ -20,6 +20,8 @@ internal class StatusoppdateringEventServiceTest {
     private val database = mockk<Database>()
     private val statusoppdateringEventService = StatusoppdateringEventService(database)
     private val bruker = InnloggetBrukerObjectMother.createInnloggetBruker("123")
+    private val produsent = "dittnav"
+    private val grupperingsid = "100${bruker.ident}"
     private val appender: ListAppender<ILoggingEvent> = ListAppender()
     private val logger: Logger = LoggerFactory.getLogger(StatusoppdateringEventService::class.java) as Logger
 
@@ -35,7 +37,7 @@ internal class StatusoppdateringEventServiceTest {
     }
 
     @Test
-    fun `Should return all Statusoppdaterings events for user`() {
+    fun `Should return all events that are grouped together by ids`() {
         val statusoppdateringEvents = StatusoppdateringObjectMother.getStatusoppdateringEvents(bruker)
 
         runBlocking {
@@ -43,22 +45,22 @@ internal class StatusoppdateringEventServiceTest {
                 database.queryWithExceptionTranslation<List<Statusoppdatering>>(any())
             }.returns(statusoppdateringEvents)
 
-            val actualStatusoppdaterings = statusoppdateringEventService.getAllEventsFromCacheForUser(bruker)
-            actualStatusoppdaterings.size `should be equal to` 4
+            val actualStatusoppdateringEvents = statusoppdateringEventService.getAllGroupedEventsFromCacheForUser(bruker, grupperingsid, produsent)
+            actualStatusoppdateringEvents.size `should be equal to` 4
         }
     }
 
     @Test
     fun `Should log warning if producer is empty`() {
-        val statusoppdateringListWithEmptyProducer = listOf(
+        val statusoppdateringEventsWithEmptyProducer = listOf(
                 StatusoppdateringObjectMother.createStatusoppdateringWithSystembruker(1, "x-dittnav"))
 
         runBlocking {
             coEvery {
                 database.queryWithExceptionTranslation<List<Statusoppdatering>>(any())
-            }.returns(statusoppdateringListWithEmptyProducer)
+            }.returns(statusoppdateringEventsWithEmptyProducer)
 
-            statusoppdateringEventService.getAllEventsFromCacheForUser(bruker)
+            statusoppdateringEventService.getAllGroupedEventsFromCacheForUser(bruker, grupperingsid, produsent)
         }
 
         val logevent = appender.list.first()

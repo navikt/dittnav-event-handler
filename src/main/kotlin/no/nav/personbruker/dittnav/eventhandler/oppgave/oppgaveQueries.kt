@@ -100,7 +100,7 @@ fun Connection.getAllGroupedOppgaveEventsByIds(bruker: InnloggetBruker, grupperi
             |oppgave.systembruker,
             |systembrukere.produsentnavn AS produsent
             |FROM (SELECT * FROM oppgave WHERE fodselsnummer = ? AND grupperingsid = ?) AS oppgave
-            |LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker AND systembrukere.produsentnavn = ?""".trimMargin())
+            |LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker WHERE systembrukere.produsentnavn = ?""".trimMargin())
                 .use {
                     it.setString(1, bruker.ident)
                     it.setString(2, grupperingsid)

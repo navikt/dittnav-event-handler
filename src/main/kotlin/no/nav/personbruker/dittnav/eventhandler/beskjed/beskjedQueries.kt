@@ -135,7 +135,7 @@ fun Connection.getAllGroupedBeskjedEventsByIds(bruker: InnloggetBruker, grupperi
             |beskjed.systembruker,
             |systembrukere.produsentnavn AS produsent
             |FROM (SELECT * FROM beskjed WHERE fodselsnummer = ? AND grupperingsid = ?) AS beskjed
-            |LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker AND systembrukere.produsentnavn = ?""".trimMargin())
+            |LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker WHERE systembrukere.produsentnavn = ?""".trimMargin())
                 .use {
                     it.setString(1, bruker.ident)
                     it.setString(2, grupperingsid)

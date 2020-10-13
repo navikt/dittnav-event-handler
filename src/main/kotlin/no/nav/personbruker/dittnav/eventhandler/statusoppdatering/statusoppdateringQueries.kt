@@ -24,7 +24,7 @@ fun Connection.getAllGroupedStatusoppdateringEventsByIds(bruker: InnloggetBruker
             |statusoppdatering.systembruker,
             |systembrukere.produsentnavn AS produsent
             |FROM (SELECT * FROM statusoppdatering WHERE fodselsnummer = ? AND grupperingsid = ?) AS statusoppdatering
-            |LEFT JOIN systembrukere ON statusoppdatering.systembruker = systembrukere.systembruker AND systembrukere.produsentnavn = ?""".trimMargin())
+            |LEFT JOIN systembrukere ON statusoppdatering.systembruker = systembrukere.systembruker WHERE systembrukere.produsentnavn = ?""".trimMargin())
                 .use {
                     it.setString(1, bruker.ident)
                     it.setString(2, grupperingsid)

@@ -5,6 +5,7 @@ import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBrukerObjectMoth
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
 import no.nav.personbruker.dittnav.eventhandler.common.database.createProdusent
 import no.nav.personbruker.dittnav.eventhandler.common.database.deleteProdusent
+import org.amshove.kluent.`should be empty`
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -17,6 +18,7 @@ class OppgaveQueriesTest {
     private val database = H2Database()
     private val bruker = InnloggetBrukerObjectMother.createInnloggetBruker("12345")
     private val produsent = "dittnav"
+    private val grupperingsid = "100${bruker.ident}"
 
     private val oppgave1 = OppgaveObjectMother.createOppgave(id = 1, eventId = "123", fodselsnummer = bruker.ident, aktiv = true)
     private val oppgave2 = OppgaveObjectMother.createOppgave(id = 2, eventId = "345", fodselsnummer = bruker.ident, aktiv = true)
@@ -127,11 +129,30 @@ class OppgaveQueriesTest {
 
     @Test
     fun `Returnerer en liste av alle grupperte Oppgave-eventer`() {
-        val grupperingsid = "100${bruker.ident}"
         runBlocking {
             database.dbQuery {
                 getAllGroupedOppgaveEventsByIds(bruker, grupperingsid, produsent)
             }.size `should be equal to` 3
+        }
+    }
+
+    @Test
+    fun `Returnerer en tom liste hvis produsent ikke matcher oppgave-eventet`() {
+        val noMatchProdusent = "dummyProdusent"
+        runBlocking {
+            database.dbQuery {
+                getAllGroupedOppgaveEventsByIds(bruker, grupperingsid, noMatchProdusent)
+            }.`should be empty`()
+        }
+    }
+
+    @Test
+    fun `Returnerer en tom liste hvis grupperingsid ikke matcher oppgave-eventet`() {
+        val noMatchGrupperingsid = "dummyGrupperingsid"
+        runBlocking {
+            database.dbQuery {
+                getAllGroupedOppgaveEventsByIds(bruker, noMatchGrupperingsid, produsent)
+            }.`should be empty`()
         }
     }
 

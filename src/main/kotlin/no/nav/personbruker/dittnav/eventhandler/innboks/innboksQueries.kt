@@ -52,7 +52,7 @@ fun Connection.getAllGroupedInnboksEventsByIds(bruker: InnloggetBruker, grupperi
             |innboks.systembruker,
             |systembrukere.produsentnavn AS produsent
             |FROM (SELECT * FROM innboks WHERE fodselsnummer = ? AND grupperingsid = ?) AS innboks
-            |LEFT JOIN systembrukere ON innboks.systembruker = systembrukere.systembruker AND systembrukere.produsentnavn = ?""".trimMargin())
+            |LEFT JOIN systembrukere ON innboks.systembruker = systembrukere.systembruker WHERE systembrukere.produsentnavn = ?""".trimMargin())
                 .use {
                     it.setString(1, bruker.ident)
                     it.setString(2, grupperingsid)

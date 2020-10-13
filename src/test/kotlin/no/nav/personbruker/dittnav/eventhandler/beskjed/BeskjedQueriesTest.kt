@@ -181,6 +181,26 @@ class BeskjedQueriesTest {
         }
     }
 
+    @Test
+    fun `Returnerer en tom liste hvis produsent ikke matcher beskjed-eventet`() {
+        val noMatchProdusent = "dummyProdusent"
+        runBlocking {
+            database.dbQuery {
+                getAllGroupedBeskjedEventsByIds(bruker, grupperingsid, noMatchProdusent)
+            }.`should be empty`()
+        }
+    }
+
+    @Test
+    fun `Returnerer en tom liste hvis grupperingsid ikke matcher beskjed-eventet`() {
+        val noMatchGrupperingsid = "dummyGrupperingsid"
+        runBlocking {
+            database.dbQuery {
+                getAllGroupedBeskjedEventsByIds(bruker, noMatchGrupperingsid, produsent)
+            }.`should be empty`()
+        }
+    }
+
     private fun createBeskjed(beskjeder: List<Beskjed>) {
         runBlocking {
             database.dbQuery { createBeskjed(beskjeder) }

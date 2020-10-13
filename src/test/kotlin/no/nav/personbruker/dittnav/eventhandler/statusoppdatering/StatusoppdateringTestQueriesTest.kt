@@ -57,10 +57,11 @@ class StatusoppdateringTestQueriesTest {
     @Test
     fun `Returnerer tom liste hvis Statusoppdatering-eventer for fodselsnummer ikke finnes`() {
         val brukerSomIkkeFinnes = InnloggetBrukerObjectMother.createInnloggetBruker("0")
+        val grupperingsid = "100${brukerSomIkkeFinnes.ident}"
 
         runBlocking {
             database.dbQuery {
-                getAllGroupedStatusoppdateringEventsByIds(brukerSomIkkeFinnes, "100${brukerSomIkkeFinnes.ident}", produsent)
+                getAllGroupedStatusoppdateringEventsByIds(brukerSomIkkeFinnes, grupperingsid, produsent)
             }.`should be empty`()
         }
     }
@@ -68,10 +69,11 @@ class StatusoppdateringTestQueriesTest {
     @Test
     fun `Returnerer tom liste hvis fodselsnummer er tomt`() {
         val fodselsnummerMangler = InnloggetBrukerObjectMother.createInnloggetBruker("")
+        val grupperingsid = "100${fodselsnummerMangler.ident}"
 
         runBlocking {
             database.dbQuery {
-                getAllGroupedStatusoppdateringEventsByIds(fodselsnummerMangler, "100${fodselsnummerMangler.ident}", produsent)
+                getAllGroupedStatusoppdateringEventsByIds(fodselsnummerMangler, grupperingsid, produsent)
             }.`should be empty`()
         }
     }
@@ -86,20 +88,22 @@ class StatusoppdateringTestQueriesTest {
     }
 
     @Test
-    fun `Returnerer tom streng for produsent hvis eventet er produsert av systembruker vi ikke har i systembruker-tabellen`() {
-        var statusoppdateringMedAnnenProdusent =
-                StatusoppdateringObjectMother.createStatusoppdateringWithSystembruker(id = 6, systembruker = "ukjent-systembruker")
-
-        val statusoppdatering = runBlocking {
-            database.dbQuery { createStatusoppdatering(listOf(statusoppdateringMedAnnenProdusent)) }
-            database.dbQuery { getAllGroupedStatusoppdateringEventsByIds(InnloggetBrukerObjectMother.createInnloggetBruker("112233"), grupperingsid = "100", produsent = "") }.first()
-        }
-        statusoppdatering.produsent `should be equal to` ""
-        statusoppdatering.systembruker `should be equal to` "ukjent-systembruker"
-        statusoppdatering.grupperingsId `should be equal to` "100"
-
+    fun `Returnerer en tom liste hvis produsent ikke matcher statusoppdatering-eventet`() {
+        val noMatchProdusent = "dummyProdusent"
         runBlocking {
-            database.dbQuery { deleteStatusoppdatering(listOf(statusoppdateringMedAnnenProdusent)) }
+            database.dbQuery {
+                getAllGroupedStatusoppdateringEventsByIds(bruker, grupperingsid, noMatchProdusent)
+            }.`should be empty`()
+        }
+    }
+
+    @Test
+    fun `Returnerer en tom liste hvis grupperingsid ikke matcher oppgave-eventet`() {
+        val noMatchGrupperingsid = "dummyGrupperingsid"
+        runBlocking {
+            database.dbQuery {
+                getAllGroupedStatusoppdateringEventsByIds(bruker, noMatchGrupperingsid, produsent)
+            }.`should be empty`()
         }
     }
 

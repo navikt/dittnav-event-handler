@@ -14,7 +14,7 @@ fun Route.statusoppdateringApi(statusoppdateringEventService: StatusoppdateringE
 
     val log = LoggerFactory.getLogger(StatusoppdateringEventService::class.java)
 
-    get("/fetch/grouped/statusoppdatering") {
+    get("/fetch/statusoppdatering/grouped") {
         try {
             val grupperingsId = validateNonNullFieldMaxLength(call.request.queryParameters["grupperingsid"], "grupperingsid", 100)
             val produsent = validateNonNullFieldMaxLength(call.request.queryParameters["produsent"], "produsent", 100)

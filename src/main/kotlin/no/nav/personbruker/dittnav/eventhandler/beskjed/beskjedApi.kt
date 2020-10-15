@@ -41,7 +41,7 @@ fun Route.beskjedApi(beskjedEventService: BeskjedEventService, backupBeskjedServ
         }
     }
 
-    get("/fetch/grouped/beskjed") {
+    get("/fetch/beskjed/grouped") {
         try {
             val grupperingsId = validateNonNullFieldMaxLength(call.request.queryParameters["grupperingsid"], "grupperingsid", 100)
             val produsent = validateNonNullFieldMaxLength(call.request.queryParameters["produsent"], "produsent", 100)

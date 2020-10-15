@@ -41,7 +41,7 @@ fun Route.oppgaveApi(oppgaveEventService: OppgaveEventService, backupOppgaveServ
         }
     }
 
-    get("/fetch/grouped/oppgave") {
+    get("/fetch/oppgave/grouped") {
         try {
             val grupperingsId = validateNonNullFieldMaxLength(call.request.queryParameters["grupperingsid"], "grupperingsid", 100)
             val produsent = validateNonNullFieldMaxLength(call.request.queryParameters["produsent"], "produsent", 100)

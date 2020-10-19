@@ -6,7 +6,6 @@ import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.respondWithError
-import no.nav.personbruker.dittnav.eventhandler.common.validation.validateNonNullFieldMaxLength
 import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
 import org.slf4j.LoggerFactory
 
@@ -43,9 +42,10 @@ fun Route.innboksApi(innboksEventService: InnboksEventService) {
 
     get("/fetch/innboks/grouped") {
         try {
-            val grupperingsId = validateNonNullFieldMaxLength(call.request.queryParameters["grupperingsid"], "grupperingsid", 100)
-            val produsent = validateNonNullFieldMaxLength(call.request.queryParameters["produsent"], "produsent", 100)
-            val innboksEvents = innboksEventService.getAllGroupedEventsFromCacheForUser(innloggetBruker, grupperingsId, produsent)
+            val innboksEvents =
+                    innboksEventService.getAllGroupedEventsFromCacheForUser(innloggetBruker,
+                            call.request.queryParameters["grupperingsid"],
+                            call.request.queryParameters["produsent"])
             call.respond(HttpStatusCode.OK, innboksEvents)
         } catch (exception: Exception) {
             respondWithError(call, log, exception)

@@ -2,6 +2,7 @@ package no.nav.personbruker.dittnav.eventhandler.oppgave
 
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.BackupEventException
+import no.nav.personbruker.dittnav.eventhandler.common.exceptions.FieldValidationException
 import no.nav.personbruker.dittnav.eventhandler.done.createKeyForEvent
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should throw`
@@ -48,7 +49,7 @@ class oppgaveCreator {
             runBlocking {
                 val key = createKeyForEvent(oppgave.eventId, oppgave.systembruker)
             }
-        } `should throw` BackupEventException::class
+        } `should throw` FieldValidationException::class
     }
 
 
@@ -61,7 +62,7 @@ class oppgaveCreator {
             runBlocking {
                 val key = createKeyForEvent(oppgave.eventId, oppgave.systembruker)
             }
-        } `should throw` BackupEventException::class
+        } `should throw` FieldValidationException::class
     }
 
     @Test
@@ -73,7 +74,7 @@ class oppgaveCreator {
             runBlocking {
                 val oppgaveEvent = createOppgaveEvent(oppgave)
             }
-        } `should throw` BackupEventException::class
+        } `should throw` FieldValidationException::class
     }
 
     @Test
@@ -85,7 +86,7 @@ class oppgaveCreator {
                 val oppgaveEvent = createOppgaveEvent(oppgave)
                 oppgaveEvent.getFodselsnummer() `should be equal to` fodselsnummer
             }
-        } `should throw` BackupEventException::class
+        } `should throw` FieldValidationException::class
     }
 
     @Test

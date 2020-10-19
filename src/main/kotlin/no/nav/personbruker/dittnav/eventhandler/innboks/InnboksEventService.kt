@@ -2,6 +2,7 @@ package no.nav.personbruker.dittnav.eventhandler.innboks
 
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
+import no.nav.personbruker.dittnav.eventhandler.common.validation.validateNonNullFieldMaxLength
 import org.slf4j.LoggerFactory
 import java.sql.Connection
 
@@ -21,8 +22,10 @@ class InnboksEventService(private val database: Database) {
         return getEvents { getAllInnboksForInnloggetBruker(bruker) }
     }
 
-    suspend fun getAllGroupedEventsFromCacheForUser(bruker: InnloggetBruker, grupperingsid: String, produsent: String): List<Innboks> {
-        return getEvents { getAllGroupedInnboksEventsByIds(bruker, grupperingsid, produsent) }
+    suspend fun getAllGroupedEventsFromCacheForUser(bruker: InnloggetBruker, grupperingsid: String?, producer: String?): List<Innboks> {
+        val grupperingsId = validateNonNullFieldMaxLength(grupperingsid, "grupperingsid", 100)
+        val produsent = validateNonNullFieldMaxLength(producer, "produsent", 100)
+        return getEvents { getAllGroupedInnboksEventsByIds(bruker, grupperingsId, produsent) }
     }
 
     private suspend fun getEvents(operationToExecute: Connection.() -> List<Innboks>): List<Innboks> {

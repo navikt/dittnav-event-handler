@@ -3,6 +3,7 @@ package no.nav.personbruker.dittnav.eventhandler.beskjed
 import Beskjed
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
+import no.nav.personbruker.dittnav.eventhandler.common.validation.validateNonNullFieldMaxLength
 import org.slf4j.LoggerFactory
 import java.sql.Connection
 import java.time.Instant
@@ -28,8 +29,10 @@ class BeskjedEventService(private val database: Database) {
         return getEvents { getAllBeskjedForInnloggetBruker(bruker) }
     }
 
-    suspend fun getAllGroupedEventsFromCacheForUser(bruker: InnloggetBruker, grupperingsid: String, produsent: String): List<Beskjed> {
-        return getEvents { getAllGroupedBeskjedEventsByIds(bruker, grupperingsid, produsent) }
+    suspend fun getAllGroupedEventsFromCacheForUser(bruker: InnloggetBruker, grupperingsid: String?, producer: String?): List<Beskjed> {
+        val grupperingsId = validateNonNullFieldMaxLength(grupperingsid, "grupperingsid", 100)
+        val produsent = validateNonNullFieldMaxLength(producer, "produsent", 100)
+        return getEvents { getAllGroupedBeskjedEventsByIds(bruker, grupperingsId, produsent) }
     }
 
     suspend fun getAllBeskjedEventsInCach(): List<Beskjed> {
@@ -40,7 +43,8 @@ class BeskjedEventService(private val database: Database) {
         return getEvents { getAllInactiveBeskjed() }
     }
 
-    private fun Beskjed.isExpired(): Boolean = synligFremTil?.isBefore(Instant.now().atZone(ZoneId.of("Europe/Oslo")))?: false
+    private fun Beskjed.isExpired(): Boolean = synligFremTil?.isBefore(Instant.now().atZone(ZoneId.of("Europe/Oslo")))
+            ?: false
 
     private suspend fun getEvents(operationToExecute: Connection.() -> List<Beskjed>): List<Beskjed> {
         val events = database.queryWithExceptionTranslation {

@@ -2,6 +2,7 @@ package no.nav.personbruker.dittnav.eventhandler.beskjed
 
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.BackupEventException
+import no.nav.personbruker.dittnav.eventhandler.common.exceptions.FieldValidationException
 import no.nav.personbruker.dittnav.eventhandler.done.createKeyForEvent
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should throw`
@@ -54,7 +55,7 @@ class beskjedCreator {
             runBlocking {
                 val key = createKeyForEvent(beskjed.eventId, beskjed.systembruker)
             }
-        } `should throw` BackupEventException::class
+        } `should throw` FieldValidationException::class
     }
 
 
@@ -67,7 +68,7 @@ class beskjedCreator {
             runBlocking {
                 val key = createKeyForEvent(beskjed.eventId, beskjed.systembruker)
             }
-        } `should throw` BackupEventException::class
+        } `should throw` FieldValidationException::class
     }
 
     @Test
@@ -79,7 +80,7 @@ class beskjedCreator {
             runBlocking {
                 val beskjedEvent = createBeskjedEvent(beskjed)
             }
-        } `should throw` BackupEventException::class
+        } `should throw` FieldValidationException::class
     }
 
     @Test
@@ -91,7 +92,7 @@ class beskjedCreator {
                 val beskjedEvent = createBeskjedEvent(beskjed)
                 beskjedEvent.getFodselsnummer() `should be equal to` fodselsnummer
             }
-        } `should throw` BackupEventException::class
+        } `should throw` FieldValidationException::class
     }
 
     @Test

@@ -2,6 +2,7 @@ package no.nav.personbruker.dittnav.eventhandler.statusoppdatering
 
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
+import no.nav.personbruker.dittnav.eventhandler.common.validation.validateNonNullFieldMaxLength
 import org.slf4j.LoggerFactory
 import java.sql.Connection
 
@@ -9,8 +10,10 @@ class StatusoppdateringEventService(private val database: Database) {
 
     private val log = LoggerFactory.getLogger(StatusoppdateringEventService::class.java)
 
-    suspend fun getAllGroupedEventsFromCacheForUser(bruker: InnloggetBruker, grupperingsid: String, produsent: String): List<Statusoppdatering> {
-        return getEvents { getAllGroupedStatusoppdateringEventsByIds(bruker, grupperingsid, produsent) }
+    suspend fun getAllGroupedEventsFromCacheForUser(bruker: InnloggetBruker, grupperingsid: String?, producer: String?): List<Statusoppdatering> {
+        val grupperingsId = validateNonNullFieldMaxLength(grupperingsid, "grupperingsid", 100)
+        val produsent = validateNonNullFieldMaxLength(producer, "produsent", 100)
+        return getEvents { getAllGroupedStatusoppdateringEventsByIds(bruker, grupperingsId, produsent) }
     }
 
     private suspend fun getEvents(operationToExecute: Connection.() -> List<Statusoppdatering>): List<Statusoppdatering> {

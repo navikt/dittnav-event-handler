@@ -1,6 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.common.validation
 
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.BackupEventException
+import no.nav.personbruker.dittnav.eventhandler.common.exceptions.FieldValidationException
 import java.time.ZonedDateTime
 
 private val fodselsnummerRegEx = """[\d]{1,11}""".toRegex()
@@ -23,7 +24,7 @@ fun validateNonNullFieldMaxLength(field: String?, fieldName: String, maxLength: 
 
 fun validateMaxLength(field: String, fieldName: String, maxLength: Int): String {
     if (field.length > maxLength) {
-        val fve = BackupEventException("Feltet $fieldName kan ikke inneholde mer enn $maxLength tegn.")
+        val fve = FieldValidationException("Feltet $fieldName kan ikke inneholde mer enn $maxLength tegn.")
         fve.addContext("rejectedFieldValue", field)
         throw fve
     }
@@ -32,14 +33,14 @@ fun validateMaxLength(field: String, fieldName: String, maxLength: Int): String 
 
 fun validateNonNullField(field: String?, fieldName: String): String {
     if (field.isNullOrBlank()) {
-        throw BackupEventException("$fieldName var null eller tomt.")
+        throw FieldValidationException("$fieldName var null eller tomt.")
     }
     return field
 }
 
 fun zonedDateTimeToEpochMilli(date: ZonedDateTime, fieldName: String): Long {
     if (date == null) {
-        throw BackupEventException("$fieldName var null eller tomt.")
+        throw FieldValidationException("$fieldName var null eller tomt.")
     }
     return date.toInstant().toEpochMilli()
 }

@@ -8,8 +8,11 @@ import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBrukerObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
+import no.nav.personbruker.dittnav.eventhandler.common.exceptions.FieldValidationException
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should contain`
+import org.amshove.kluent.`should throw`
+import org.amshove.kluent.invoking
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -67,5 +70,65 @@ internal class StatusoppdateringEventServiceTest {
         logevent.level.levelStr `should be equal to` "WARN"
         logevent.formattedMessage `should contain` "produsent"
         logevent.formattedMessage `should contain` "fodselsnummer=***"
+    }
+
+    @Test
+    fun `Kaster FieldValidationException hvis grupperingsid er null`() {
+        val grupperingsidSomErNull = null
+        invoking {
+            runBlocking {
+                statusoppdateringEventService.getAllGroupedEventsFromCacheForUser(bruker, grupperingsidSomErNull, produsent)
+            }
+        } `should throw` FieldValidationException::class
+    }
+
+    @Test
+    fun `Kaster FieldValidationException hvis grupperingsid er tomt`() {
+        val grupperingsidSomErTom = ""
+        invoking {
+            runBlocking {
+                statusoppdateringEventService.getAllGroupedEventsFromCacheForUser(bruker, grupperingsidSomErTom, produsent)
+            }
+        } `should throw` FieldValidationException::class
+    }
+
+    @Test
+    fun `Kaster FieldValidationException hvis grupperingsid er for lang`() {
+        val grupperingsidForLang = "g".repeat(101)
+        invoking {
+            runBlocking {
+                statusoppdateringEventService.getAllGroupedEventsFromCacheForUser(bruker, grupperingsidForLang, produsent)
+            }
+        } `should throw` FieldValidationException::class
+    }
+
+    @Test
+    fun `Kaster FieldValidationException hvis produsent er null`() {
+        val produsentSomErNull = null
+        invoking {
+            runBlocking {
+                statusoppdateringEventService.getAllGroupedEventsFromCacheForUser(bruker, grupperingsid, produsentSomErNull)
+            }
+        } `should throw` FieldValidationException::class
+    }
+
+    @Test
+    fun `Kaster FieldValidationException hvis produsent er tomt`() {
+        val produsentSomErTom = ""
+        invoking {
+            runBlocking {
+                statusoppdateringEventService.getAllGroupedEventsFromCacheForUser(bruker, grupperingsid, produsentSomErTom)
+            }
+        } `should throw` FieldValidationException::class
+    }
+
+    @Test
+    fun `Kaster FieldValidationException hvis produsent er for lang`() {
+        val produsentForLang = "p".repeat(101)
+        invoking {
+            runBlocking {
+                statusoppdateringEventService.getAllGroupedEventsFromCacheForUser(bruker, grupperingsid, produsentForLang)
+            }
+        } `should throw` FieldValidationException::class
     }
 }

@@ -2,6 +2,7 @@ package no.nav.personbruker.dittnav.eventhandler.oppgave
 
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
+import no.nav.personbruker.dittnav.eventhandler.common.validation.validateNonNullFieldMaxLength
 import org.slf4j.LoggerFactory
 import java.sql.Connection
 
@@ -27,6 +28,12 @@ class OppgaveEventService(private val database: Database) {
 
     suspend fun getAllInactiveOppgaveEventsInCach(): List<Oppgave> {
         return getEvents { getAllInactiveOppgaveEvents() }
+    }
+
+    suspend fun getAllGroupedEventsFromCacheForUser(bruker: InnloggetBruker, grupperingsid: String?, producer: String?): List<Oppgave> {
+        val grupperingsId = validateNonNullFieldMaxLength(grupperingsid, "grupperingsid", 100)
+        val produsent = validateNonNullFieldMaxLength(producer, "produsent", 100)
+        return getEvents { getAllGroupedOppgaveEventsByIds(bruker, grupperingsId, produsent) }
     }
 
     private suspend fun getEvents(operationToExecute: Connection.() -> List<Oppgave>): List<Oppgave> {

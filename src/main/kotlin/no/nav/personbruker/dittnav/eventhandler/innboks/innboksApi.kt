@@ -8,7 +8,6 @@ import io.ktor.routing.get
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.respondWithError
 import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
 import org.slf4j.LoggerFactory
-import java.lang.Exception
 
 fun Route.innboksApi(innboksEventService: InnboksEventService) {
 
@@ -18,7 +17,7 @@ fun Route.innboksApi(innboksEventService: InnboksEventService) {
         try {
             val aktiveInnboksEvents = innboksEventService.getActiveCachedEventsForUser(innloggetBruker)
             call.respond(HttpStatusCode.OK, aktiveInnboksEvents)
-        } catch(exception: Exception) {
+        } catch (exception: Exception) {
             respondWithError(call, log, exception)
         }
     }
@@ -27,7 +26,7 @@ fun Route.innboksApi(innboksEventService: InnboksEventService) {
         try {
             val inaktiveInnboksEvents = innboksEventService.getInctiveCachedEventsForUser(innloggetBruker)
             call.respond(HttpStatusCode.OK, inaktiveInnboksEvents)
-        } catch(exception: Exception) {
+        } catch (exception: Exception) {
             respondWithError(call, log, exception)
         }
     }
@@ -36,7 +35,19 @@ fun Route.innboksApi(innboksEventService: InnboksEventService) {
         try {
             val innboksEvents = innboksEventService.getAllCachedEventsForUser(innloggetBruker)
             call.respond(HttpStatusCode.OK, innboksEvents)
-        } catch(exception: Exception) {
+        } catch (exception: Exception) {
+            respondWithError(call, log, exception)
+        }
+    }
+
+    get("/fetch/innboks/grouped") {
+        try {
+            val innboksEvents =
+                    innboksEventService.getAllGroupedEventsFromCacheForUser(innloggetBruker,
+                            call.request.queryParameters["grupperingsid"],
+                            call.request.queryParameters["produsent"])
+            call.respond(HttpStatusCode.OK, innboksEvents)
+        } catch (exception: Exception) {
             respondWithError(call, log, exception)
         }
     }

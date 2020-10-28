@@ -19,11 +19,13 @@ class InnboksQueriesTest {
 
     private val bruker1 = InnloggetBrukerObjectMother.createInnloggetBruker("12345")
     private val bruker2 = InnloggetBrukerObjectMother.createInnloggetBruker("67890")
+    private val produsent = "dittnav"
+    private val grupperingsid = "100${bruker1.ident}"
 
-    private val innboks1 = InnboksObjectMother.createInnboks(id = 1, eventId = "123", fodselsnummer = "12345", aktiv = true)
-    private val innboks2 = InnboksObjectMother.createInnboks(id = 2, eventId = "345", fodselsnummer = "12345", aktiv = true)
-    private val innboks3 = InnboksObjectMother.createInnboks(id = 3, eventId = "567", fodselsnummer = "67890", aktiv = true)
-    private val innboks4 = InnboksObjectMother.createInnboks(id = 4, eventId = "789", fodselsnummer = "67890", aktiv = false)
+    private val innboks1 = InnboksObjectMother.createInnboks(id = 1, eventId = "123", fodselsnummer = bruker1.ident, aktiv = true)
+    private val innboks2 = InnboksObjectMother.createInnboks(id = 2, eventId = "345", fodselsnummer = bruker1.ident, aktiv = true)
+    private val innboks3 = InnboksObjectMother.createInnboks(id = 3, eventId = "567", fodselsnummer = bruker2.ident, aktiv = true)
+    private val innboks4 = InnboksObjectMother.createInnboks(id = 4, eventId = "789", fodselsnummer = bruker2.ident, aktiv = false)
 
     @BeforeAll
     fun `populer test-data`() {
@@ -113,6 +115,35 @@ class InnboksQueriesTest {
         }
         innboks.produsent `should be equal to` ""
         deleteInnboks(listOf(innboksMedAnnenProdusent))
+    }
+
+    @Test
+    fun `Returnerer en liste av alle grupperte Innboks-eventer`() {
+        runBlocking {
+            database.dbQuery {
+                getAllGroupedInnboksEventsByIds(bruker1, grupperingsid, produsent)
+            }.size `should be equal to` 2
+        }
+    }
+
+    @Test
+    fun `Returnerer en tom liste hvis produsent ikke matcher innboks-eventet`() {
+        val noMatchProdusent = "dummyProdusent"
+        runBlocking {
+            database.dbQuery {
+                getAllGroupedInnboksEventsByIds(bruker1, grupperingsid, noMatchProdusent)
+            }.`should be empty`()
+        }
+    }
+
+    @Test
+    fun `Returnerer en tom liste hvis grupperingsid ikke matcher innboks-eventet`() {
+        val noMatchGrupperingsid = "dummyGrupperingsid"
+        runBlocking {
+            database.dbQuery {
+                getAllGroupedInnboksEventsByIds(bruker1, noMatchGrupperingsid, produsent)
+            }.`should be empty`()
+        }
     }
 
     private fun createInnboks(innboks: List<Innboks>) {

@@ -28,6 +28,11 @@ suspend fun respondWithError(call: ApplicationCall, log: Logger, exception: Exce
             val msg = "Fikk feil når vi prøvde å skrive til backup-topic-en. Returnerer feilkode. {}"
             log.error(msg, exception.toString(), exception)
         }
+        is FieldValidationException -> {
+            call.respond(HttpStatusCode.BadRequest)
+            val msg = "Klarte ikke hente eventer fordi vi fikk en valideringsfeil. Returnerer feilkode. {}"
+            log.error(msg, exception.toString(), exception)
+        }
         else -> {
             call.respond(HttpStatusCode.InternalServerError)
             log.error("Ukjent feil oppstod ved henting av eventer fra cache. Returnerer feilkode til frontend", exception)

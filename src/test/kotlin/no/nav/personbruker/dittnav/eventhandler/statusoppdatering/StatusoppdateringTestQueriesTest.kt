@@ -16,6 +16,8 @@ class StatusoppdateringTestQueriesTest {
     private val database = H2Database()
     private val bruker = InnloggetBrukerObjectMother.createInnloggetBruker("12345")
     private val statusoppdateringEvents = StatusoppdateringObjectMother.getStatusoppdateringEvents(bruker)
+    private val grupperingsid = "100${bruker.ident}"
+    private val produsent = "dittnav"
 
     @BeforeEach
     fun `populer testdata`() {
@@ -36,7 +38,9 @@ class StatusoppdateringTestQueriesTest {
     @Test
     fun `Finn alle cachede Statusoppdatering-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getAllStatusoppdateringForInnloggetBruker(bruker) }.size `should be equal to` 4
+            database.dbQuery {
+                getAllGroupedStatusoppdateringEventsByIds(bruker, grupperingsid, produsent)
+            }.size `should be equal to` 4
         }
     }
 
@@ -53,42 +57,53 @@ class StatusoppdateringTestQueriesTest {
     @Test
     fun `Returnerer tom liste hvis Statusoppdatering-eventer for fodselsnummer ikke finnes`() {
         val brukerSomIkkeFinnes = InnloggetBrukerObjectMother.createInnloggetBruker("0")
+        val grupperingsid = "100${brukerSomIkkeFinnes.ident}"
 
         runBlocking {
-            database.dbQuery { getAllStatusoppdateringForInnloggetBruker(brukerSomIkkeFinnes) }.`should be empty`()
+            database.dbQuery {
+                getAllGroupedStatusoppdateringEventsByIds(brukerSomIkkeFinnes, grupperingsid, produsent)
+            }.`should be empty`()
         }
     }
 
     @Test
     fun `Returnerer tom liste hvis fodselsnummer er tomt`() {
         val fodselsnummerMangler = InnloggetBrukerObjectMother.createInnloggetBruker("")
+        val grupperingsid = "100${fodselsnummerMangler.ident}"
 
         runBlocking {
-            database.dbQuery { getAllStatusoppdateringForInnloggetBruker(fodselsnummerMangler) }.`should be empty`()
+            database.dbQuery {
+                getAllGroupedStatusoppdateringEventsByIds(fodselsnummerMangler, grupperingsid, produsent)
+            }.`should be empty`()
         }
     }
 
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for alle eventer`() {
         runBlocking {
-            val statusoppdatering = database.dbQuery { getAllStatusoppdateringForInnloggetBruker(bruker) }.first()
+            val statusoppdatering = database.dbQuery {
+                getAllGroupedStatusoppdateringEventsByIds(bruker, grupperingsid, produsent) }.first()
             statusoppdatering.produsent `should be equal to` "dittnav"
         }
     }
 
     @Test
-    fun `Returnerer tom streng for produsent hvis eventet er produsert av systembruker vi ikke har i systembruker-tabellen`() {
-        var statusoppdateringMedAnnenProdusent =
-                StatusoppdateringObjectMother.createStatusoppdateringWithSystembruker(id = 6, systembruker = "ukjent-systembruker")
-
-        val statusoppdatering = runBlocking {
-            database.dbQuery { createStatusoppdatering(listOf(statusoppdateringMedAnnenProdusent)) }
-            database.dbQuery { getAllStatusoppdateringForInnloggetBruker(InnloggetBrukerObjectMother.createInnloggetBruker("112233")) }.first()
-        }
-        statusoppdatering.produsent `should be equal to` ""
-
+    fun `Returnerer en tom liste hvis produsent ikke matcher statusoppdatering-eventet`() {
+        val noMatchProdusent = "dummyProdusent"
         runBlocking {
-            database.dbQuery { deleteStatusoppdatering(listOf(statusoppdateringMedAnnenProdusent)) }
+            database.dbQuery {
+                getAllGroupedStatusoppdateringEventsByIds(bruker, grupperingsid, noMatchProdusent)
+            }.`should be empty`()
+        }
+    }
+
+    @Test
+    fun `Returnerer en tom liste hvis grupperingsid ikke matcher oppgave-eventet`() {
+        val noMatchGrupperingsid = "dummyGrupperingsid"
+        runBlocking {
+            database.dbQuery {
+                getAllGroupedStatusoppdateringEventsByIds(bruker, noMatchGrupperingsid, produsent)
+            }.`should be empty`()
         }
     }
 

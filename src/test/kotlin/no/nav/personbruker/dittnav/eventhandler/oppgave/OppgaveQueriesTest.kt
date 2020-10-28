@@ -5,6 +5,7 @@ import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBrukerObjectMoth
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
 import no.nav.personbruker.dittnav.eventhandler.common.database.createProdusent
 import no.nav.personbruker.dittnav.eventhandler.common.database.deleteProdusent
+import org.amshove.kluent.`should be empty`
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -15,12 +16,13 @@ import org.junit.jupiter.api.TestInstance
 class OppgaveQueriesTest {
 
     private val database = H2Database()
-
     private val bruker = InnloggetBrukerObjectMother.createInnloggetBruker("12345")
+    private val produsent = "dittnav"
+    private val grupperingsid = "100${bruker.ident}"
 
-    private val oppgave1 = OppgaveObjectMother.createOppgave(id = 1, eventId = "123", fodselsnummer = "12345", aktiv = true)
-    private val oppgave2 = OppgaveObjectMother.createOppgave(id = 2, eventId = "345", fodselsnummer = "12345", aktiv = true)
-    private val oppgave3 = OppgaveObjectMother.createOppgave(id = 3, eventId = "567", fodselsnummer = "12345", aktiv = false)
+    private val oppgave1 = OppgaveObjectMother.createOppgave(id = 1, eventId = "123", fodselsnummer = bruker.ident, aktiv = true)
+    private val oppgave2 = OppgaveObjectMother.createOppgave(id = 2, eventId = "345", fodselsnummer = bruker.ident, aktiv = true)
+    private val oppgave3 = OppgaveObjectMother.createOppgave(id = 3, eventId = "567", fodselsnummer = bruker.ident, aktiv = false)
     private val oppgave4 = OppgaveObjectMother.createOppgave(id = 4, eventId = "789", fodselsnummer = "54321", aktiv = true)
 
     @BeforeAll
@@ -107,6 +109,7 @@ class OppgaveQueriesTest {
             }.first()
         }
         oppgave.produsent `should be equal to` ""
+        oppgave.systembruker `should be equal to` "ukjent-systembruker"
         deleteOppgave(listOf(oppgaveMedAnnenProdusent))
     }
 
@@ -121,6 +124,35 @@ class OppgaveQueriesTest {
     fun `Returnerer liste av alle inaktive Oppgave-eventer`() {
         runBlocking {
             database.dbQuery { getAllInactiveOppgaveEvents() }.size `should be equal to` 1
+        }
+    }
+
+    @Test
+    fun `Returnerer en liste av alle grupperte Oppgave-eventer`() {
+        runBlocking {
+            database.dbQuery {
+                getAllGroupedOppgaveEventsByIds(bruker, grupperingsid, produsent)
+            }.size `should be equal to` 3
+        }
+    }
+
+    @Test
+    fun `Returnerer en tom liste hvis produsent ikke matcher oppgave-eventet`() {
+        val noMatchProdusent = "dummyProdusent"
+        runBlocking {
+            database.dbQuery {
+                getAllGroupedOppgaveEventsByIds(bruker, grupperingsid, noMatchProdusent)
+            }.`should be empty`()
+        }
+    }
+
+    @Test
+    fun `Returnerer en tom liste hvis grupperingsid ikke matcher oppgave-eventet`() {
+        val noMatchGrupperingsid = "dummyGrupperingsid"
+        runBlocking {
+            database.dbQuery {
+                getAllGroupedOppgaveEventsByIds(bruker, noMatchGrupperingsid, produsent)
+            }.`should be empty`()
         }
     }
 

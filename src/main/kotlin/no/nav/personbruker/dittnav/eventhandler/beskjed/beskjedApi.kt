@@ -40,5 +40,17 @@ fun Route.beskjedApi(beskjedEventService: BeskjedEventService, backupBeskjedServ
         }
     }
 
+    get("/fetch/beskjed/grouped") {
+        try {
+            val beskjedEvents =
+                    beskjedEventService.getAllGroupedEventsFromCacheForUser(innloggetBruker,
+                            call.request.queryParameters["grupperingsid"],
+                            call.request.queryParameters["produsent"])
+            call.respond(HttpStatusCode.OK, beskjedEvents)
+        } catch (exception: Exception) {
+            respondWithError(call, log, exception)
+        }
+    }
 }
+
 

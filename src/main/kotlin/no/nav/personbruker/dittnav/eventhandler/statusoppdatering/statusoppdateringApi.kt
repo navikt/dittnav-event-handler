@@ -13,13 +13,15 @@ fun Route.statusoppdateringApi(statusoppdateringEventService: StatusoppdateringE
 
     val log = LoggerFactory.getLogger(StatusoppdateringEventService::class.java)
 
-    get("/fetch/statusoppdatering/all") {
+    get("/fetch/statusoppdatering/grouped") {
         try {
-            val statusoppdateringEvents = statusoppdateringEventService.getAllEventsFromCacheForUser(innloggetBruker)
+            val statusoppdateringEvents =
+                    statusoppdateringEventService.getAllGroupedEventsFromCacheForUser(innloggetBruker,
+                            call.request.queryParameters["grupperingsid"],
+                            call.request.queryParameters["produsent"])
             call.respond(HttpStatusCode.OK, statusoppdateringEvents)
         } catch (exception: Exception) {
             respondWithError(call, log, exception)
         }
     }
-
 }

@@ -8,7 +8,7 @@ import java.sql.ResultSet
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-fun Connection.getAllStatusoppdateringForInnloggetBruker(bruker: InnloggetBruker): List<Statusoppdatering> =
+fun Connection.getAllGroupedStatusoppdateringEventsByIds(bruker: InnloggetBruker, grupperingsid: String, produsent: String): List<Statusoppdatering> =
         prepareStatement("""SELECT 
             |statusoppdatering.id,
             |statusoppdatering.eventTidspunkt,
@@ -23,10 +23,12 @@ fun Connection.getAllStatusoppdateringForInnloggetBruker(bruker: InnloggetBruker
             |statusoppdatering.sakstema,
             |statusoppdatering.systembruker,
             |systembrukere.produsentnavn AS produsent
-            |FROM (SELECT * FROM statusoppdatering WHERE fodselsnummer = ?) AS statusoppdatering
-            |LEFT JOIN systembrukere ON statusoppdatering.systembruker = systembrukere.systembruker""".trimMargin())
+            |FROM (SELECT * FROM statusoppdatering WHERE fodselsnummer = ? AND grupperingsid = ?) AS statusoppdatering
+            |LEFT JOIN systembrukere ON statusoppdatering.systembruker = systembrukere.systembruker WHERE systembrukere.produsentnavn = ?""".trimMargin())
                 .use {
                     it.setString(1, bruker.ident)
+                    it.setString(2, grupperingsid)
+                    it.setString(3, produsent)
                     it.executeQuery().map {
                         toStatusoppdatering()
                     }

@@ -37,6 +37,31 @@ fun Connection.getAllInnboksForInnloggetBruker(bruker: InnloggetBruker): List<In
                     }
                 }
 
+fun Connection.getAllGroupedInnboksEventsByIds(bruker: InnloggetBruker, grupperingsid: String, produsent: String): List<Innboks> =
+        prepareStatement("""SELECT
+            |innboks.id,
+            |innboks.eventTidspunkt,
+            |innboks.fodselsnummer,
+            |innboks.eventId,
+            |innboks.grupperingsId,
+            |innboks.tekst,
+            |innboks.link,
+            |innboks.sikkerhetsnivaa,
+            |innboks.sistOppdatert,
+            |innboks.aktiv,
+            |innboks.systembruker,
+            |systembrukere.produsentnavn AS produsent
+            |FROM (SELECT * FROM innboks WHERE fodselsnummer = ? AND grupperingsid = ?) AS innboks
+            |LEFT JOIN systembrukere ON innboks.systembruker = systembrukere.systembruker WHERE systembrukere.produsentnavn = ?""".trimMargin())
+                .use {
+                    it.setString(1, bruker.ident)
+                    it.setString(2, grupperingsid)
+                    it.setString(3, produsent)
+                    it.executeQuery().map {
+                        toInnboks()
+                    }
+                }
+
 private fun ResultSet.toInnboks(): Innboks {
     return Innboks(
             id = getInt("id"),

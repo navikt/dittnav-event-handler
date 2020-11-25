@@ -50,7 +50,7 @@ internal class ProducerNameAliasServiceTest {
     }
 
     @Test
-    fun `skal returnere tom String hvis produsentnavn ikke ble funnet i cache`() {
+    fun `skal returnere tom String hvis produsentnavn ikke ble funnet i DB`() {
         runBlocking {
             val unmatchedProducerNameAlias = producerNameAliasService.getProducerNameAlias("x-ukjent")
             unmatchedProducerNameAlias `should be equal to` ""
@@ -58,10 +58,10 @@ internal class ProducerNameAliasServiceTest {
     }
 
     @Test
-    fun `skal trigge oppdatering av cachen hvis produsentnavn ikke ble funnet i cache`() {
+    fun `skal trigge oppdatering av cachen hver gang getProducerNameAlias blir kalt`() {
         runBlocking {
             producerNameAliasService.getProducerNameAlias("x-ukjent")
-            producerNameAliasService.getProducerNameAlias("x-ukjent")
+            producerNameAliasService.getProducerNameAlias("x-dittnav")
             coVerify(exactly = 2) { database.queryWithExceptionTranslation<List<Produsent>>(any()) }
         }
     }

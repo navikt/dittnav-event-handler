@@ -13,7 +13,7 @@ class ProducerNameAliasService(private val database: Database) {
 
     suspend fun getProducerNameAlias(systemUser: String?): String {
         val systembruker = validateNonNullFieldMaxLength(systemUser, "systembruker", 100)
-        updateCache()
+        updateProducerNameAliases()
         var alias = producerNameAliases[systembruker]
 
         if (alias.isNullOrBlank()) {
@@ -23,11 +23,11 @@ class ProducerNameAliasService(private val database: Database) {
         return alias
     }
 
-    private suspend fun updateCache() = withContext(Dispatchers.IO) {
-        producerNameAliases = populateProducerNameCache()
+    private suspend fun updateProducerNameAliases() = withContext(Dispatchers.IO) {
+        producerNameAliases = getProducerNameAliasesFromDB()
     }
 
-    private suspend fun populateProducerNameCache(): Map<String, String> {
+    private suspend fun getProducerNameAliasesFromDB(): Map<String, String> {
         return try {
             val producers = database.queryWithExceptionTranslation { getProdusent() }
             producers.map { it.systembruker to it.produsentnavn }.toMap()

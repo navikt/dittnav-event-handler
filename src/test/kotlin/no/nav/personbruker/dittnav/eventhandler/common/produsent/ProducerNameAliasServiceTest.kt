@@ -36,7 +36,7 @@ internal class ProducerNameAliasServiceTest {
     }
 
     @Test
-    fun `skal returnere cachede produsentnavn hvis henting av nye feiler`() {
+    fun `skal returnere det som allerede finnes i producerNameAliases hvis henting av nye feiler`() {
         runBlocking {
             val originalProducerNameAlias = producerNameAliasService.getProducerNameAlias("x-dittnav")
 
@@ -58,7 +58,7 @@ internal class ProducerNameAliasServiceTest {
     }
 
     @Test
-    fun `skal trigge oppdatering av cachen hver gang getProducerNameAlias blir kalt`() {
+    fun `skal trigge oppdatering av producerNameAliases hver gang getProducerNameAlias blir kalt`() {
         runBlocking {
             producerNameAliasService.getProducerNameAlias("x-ukjent")
             producerNameAliasService.getProducerNameAlias("x-dittnav")

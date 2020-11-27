@@ -17,6 +17,7 @@ import no.nav.personbruker.dittnav.eventhandler.beskjed.beskjedApi
 import no.nav.personbruker.dittnav.eventhandler.brukernotifikasjon.brukernotifikasjoner
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBrukerFactory
+import no.nav.personbruker.dittnav.eventhandler.common.produsent.producerNameAliasApi
 import no.nav.personbruker.dittnav.eventhandler.common.health.healthApi
 import no.nav.personbruker.dittnav.eventhandler.done.doneApi
 import no.nav.personbruker.dittnav.eventhandler.innboks.innboksApi
@@ -45,6 +46,7 @@ fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()
 
     routing {
         healthApi(appContext.healthService)
+        producerNameAliasApi(appContext.producerNameAliasService)
         authenticate {
             doneApi(appContext.doneEventService, appContext.backupDoneService)
             beskjedApi(appContext.beskjedEventService, appContext.backupBeskjedEventService)

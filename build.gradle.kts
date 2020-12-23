@@ -26,6 +26,7 @@ repositories {
 
 dependencies {
     implementation(Brukernotifikasjon.schemas)
+    implementation(DittNAV.Common.utils)
     implementation(Hikari.cp)
     implementation(Jackson.dataTypeJsr310)
     implementation(Logback.classic)

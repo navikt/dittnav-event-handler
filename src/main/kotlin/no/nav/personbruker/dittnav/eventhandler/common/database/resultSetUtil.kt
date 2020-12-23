@@ -6,13 +6,6 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.*
 
-fun <T> ResultSet.map(result: ResultSet.() -> T): List<T> =
-        mutableListOf<T>().apply {
-            while (next()) {
-                add(result())
-            }
-        }
-
 const val YEAR_LOWER_LIMIT = 1975
 val timeZone = ZoneId.of("Europe/Oslo")
 

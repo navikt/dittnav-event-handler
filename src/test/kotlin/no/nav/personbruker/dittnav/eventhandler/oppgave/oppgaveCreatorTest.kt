@@ -47,7 +47,7 @@ class oppgaveCreator {
 
         invoking {
             runBlocking {
-                val key = createKeyForEvent(oppgave.eventId, oppgave.systembruker)
+                createKeyForEvent(oppgave.eventId, oppgave.systembruker)
             }
         } `should throw` FieldValidationException::class
     }
@@ -60,7 +60,7 @@ class oppgaveCreator {
 
         invoking {
             runBlocking {
-                val key = createKeyForEvent(oppgave.eventId, oppgave.systembruker)
+                createKeyForEvent(oppgave.eventId, oppgave.systembruker)
             }
         } `should throw` FieldValidationException::class
     }
@@ -72,7 +72,7 @@ class oppgaveCreator {
 
         invoking {
             runBlocking {
-                val oppgaveEvent = createOppgaveEvent(oppgave)
+                createOppgaveEvent(oppgave)
             }
         } `should throw` FieldValidationException::class
     }

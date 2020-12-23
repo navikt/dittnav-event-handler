@@ -1,6 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.statusoppdatering
 
-import no.nav.personbruker.dittnav.eventhandler.common.database.map
+import no.nav.personbruker.dittnav.common.util.database.fetching.mapList
 import java.sql.Connection
 import java.sql.Types
 
@@ -59,7 +59,7 @@ fun Connection.getAllStatusoppdateringEvents(): List<Statusoppdatering> =
             |FROM (SELECT * FROM statusoppdatering) AS statusoppdatering
             |LEFT JOIN systembrukere ON statusoppdatering.systembruker = systembrukere.systembruker""".trimMargin())
                 .use {
-                    it.executeQuery().map {
+                    it.executeQuery().mapList {
                         toStatusoppdatering()
                     }
                 }

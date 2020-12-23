@@ -16,7 +16,7 @@ class beskjedCreator {
     private val fodselsnummer = "123"
     private val eventId = "11"
     private val systembruker = "x-dittnav"
-    private val link = "testlink"
+    private val link = "https://dummynav.no"
     private val sikkerhetsnivaa = 4
     private val grupperingsId = "012"
     private val tekst = "tekst"
@@ -53,7 +53,7 @@ class beskjedCreator {
 
         invoking {
             runBlocking {
-                val key = createKeyForEvent(beskjed.eventId, beskjed.systembruker)
+                createKeyForEvent(beskjed.eventId, beskjed.systembruker)
             }
         } `should throw` FieldValidationException::class
     }
@@ -66,7 +66,7 @@ class beskjedCreator {
 
         invoking {
             runBlocking {
-                val key = createKeyForEvent(beskjed.eventId, beskjed.systembruker)
+                createKeyForEvent(beskjed.eventId, beskjed.systembruker)
             }
         } `should throw` FieldValidationException::class
     }
@@ -78,7 +78,7 @@ class beskjedCreator {
 
         invoking {
             runBlocking {
-                val beskjedEvent = createBeskjedEvent(beskjed)
+                createBeskjedEvent(beskjed)
             }
         } `should throw` FieldValidationException::class
     }

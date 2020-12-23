@@ -1,8 +1,8 @@
 package no.nav.personbruker.dittnav.eventhandler.statusoppdatering
 
+import no.nav.personbruker.dittnav.common.util.database.fetching.mapList
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
-import no.nav.personbruker.dittnav.eventhandler.common.database.map
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId
@@ -29,7 +29,7 @@ fun Connection.getAllGroupedStatusoppdateringEventsByIds(bruker: InnloggetBruker
                     it.setString(1, bruker.ident)
                     it.setString(2, grupperingsid)
                     it.setString(3, produsent)
-                    it.executeQuery().map {
+                    it.executeQuery().mapList {
                         toStatusoppdatering()
                     }
                 }

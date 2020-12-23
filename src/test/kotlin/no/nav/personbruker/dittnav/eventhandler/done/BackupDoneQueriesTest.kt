@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -18,7 +19,7 @@ internal class BackupDoneQueriesTest {
     private val fodselsnummer = "123"
     private val systembruker = "x-dittnav"
     private val grupperingsId = "xxx"
-    private val utcDateTime = ZonedDateTime.now(ZoneId.of("UTC"))
+    private val utcDateTime = ZonedDateTime.now(ZoneOffset.UTC)
     private val osloDateTime = ZonedDateTime.ofInstant(utcDateTime.toInstant(), ZoneId.of("Europe/Oslo"))
 
     val done1 = BackupDoneObjectMother.createBackupDone(systembruker, utcDateTime, fodselsnummer, "1", grupperingsId)

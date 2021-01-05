@@ -56,6 +56,7 @@ dependencies {
     testImplementation(Kluent.kluent)
     testImplementation(Mockk.mockk)
     testImplementation(NAV.kafkaEmbedded)
+    testImplementation(DittNAV.Common.test)
 
     testRuntimeOnly(Bouncycastle.bcprovJdk15on)
     testRuntimeOnly(Jjwt.impl)

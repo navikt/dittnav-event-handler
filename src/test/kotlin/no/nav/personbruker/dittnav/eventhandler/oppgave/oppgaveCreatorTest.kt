@@ -1,19 +1,20 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.eventhandler.common.exceptions.BackupEventException
-import no.nav.personbruker.dittnav.eventhandler.common.exceptions.FieldValidationException
+import no.nav.brukernotifikasjon.schemas.builders.exception.FieldValidationException
+import no.nav.personbruker.dittnav.common.test.`with message containing`
 import no.nav.personbruker.dittnav.eventhandler.done.createKeyForEvent
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should throw`
+import org.amshove.kluent.`with message`
 import org.amshove.kluent.invoking
 import org.junit.jupiter.api.Test
 
 class oppgaveCreator {
-    private val fodselsnummer = "123"
+    private val fodselsnummer = "12345678901"
     private val eventId = "11"
     private val systembruker = "x-dittnav"
-    private val link = "testlink"
+    private val link = "https://dummy.nav.no"
     private val sikkerhetsnivaa = 4
     private val grupperingsId = "012"
     private val tekst = "tekst"
@@ -49,7 +50,7 @@ class oppgaveCreator {
             runBlocking {
                 createKeyForEvent(oppgave.eventId, oppgave.systembruker)
             }
-        } `should throw` FieldValidationException::class
+        } `should throw` FieldValidationException::class `with message containing` "systembruker"
     }
 
 
@@ -62,7 +63,7 @@ class oppgaveCreator {
             runBlocking {
                 createKeyForEvent(oppgave.eventId, oppgave.systembruker)
             }
-        } `should throw` FieldValidationException::class
+        } `should throw` FieldValidationException::class `with message containing` "systembruker"
     }
 
     @Test
@@ -74,7 +75,7 @@ class oppgaveCreator {
             runBlocking {
                 createOppgaveEvent(oppgave)
             }
-        } `should throw` FieldValidationException::class
+        } `should throw` FieldValidationException::class `with message containing` "tekst"
     }
 
     @Test
@@ -86,7 +87,7 @@ class oppgaveCreator {
                 val oppgaveEvent = createOppgaveEvent(oppgave)
                 oppgaveEvent.getFodselsnummer() `should be equal to` fodselsnummer
             }
-        } `should throw` FieldValidationException::class
+        } `should throw` FieldValidationException::class `with message containing` "fodselsnummer"
     }
 
     @Test
@@ -98,6 +99,6 @@ class oppgaveCreator {
                 val oppgaveEvent = createOppgaveEvent(oppgave)
                 oppgaveEvent.getFodselsnummer() `should be equal to` fodselsnummer
             }
-        } `should throw` BackupEventException::class
+        } `should throw` FieldValidationException::class `with message containing` "Sikkerhetsnivaa"
     }
 }

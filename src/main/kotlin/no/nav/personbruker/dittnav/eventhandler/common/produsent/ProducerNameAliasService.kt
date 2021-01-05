@@ -2,8 +2,8 @@ package no.nav.personbruker.dittnav.eventhandler.common.produsent
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import no.nav.brukernotifikasjon.schemas.builders.util.ValidationUtil.validateNonNullFieldMaxLength
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
-import no.nav.personbruker.dittnav.eventhandler.common.validation.validateNonNullFieldMaxLength
 import org.slf4j.LoggerFactory
 
 class ProducerNameAliasService(private val database: Database) {

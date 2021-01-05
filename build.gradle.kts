@@ -47,6 +47,7 @@ dependencies {
     implementation(Prometheus.simpleClient)
     implementation(Prometheus.httpServer)
 
+    testImplementation(DittNAV.Common.test)
     testImplementation(H2Database.h2)
     testImplementation(Jjwt.api)
     testImplementation(Junit.api)
@@ -56,7 +57,6 @@ dependencies {
     testImplementation(Kluent.kluent)
     testImplementation(Mockk.mockk)
     testImplementation(NAV.kafkaEmbedded)
-    testImplementation(DittNAV.Common.test)
 
     testRuntimeOnly(Bouncycastle.bcprovJdk15on)
     testRuntimeOnly(Jjwt.impl)

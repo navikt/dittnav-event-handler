@@ -26,6 +26,7 @@ repositories {
 
 dependencies {
     implementation(Brukernotifikasjon.schemas)
+    implementation(DittNAV.Common.utils)
     implementation(Hikari.cp)
     implementation(Jackson.dataTypeJsr310)
     implementation(Logback.classic)
@@ -46,6 +47,7 @@ dependencies {
     implementation(Prometheus.simpleClient)
     implementation(Prometheus.httpServer)
 
+    testImplementation(DittNAV.Common.test)
     testImplementation(H2Database.h2)
     testImplementation(Jjwt.api)
     testImplementation(Junit.api)

@@ -1,8 +1,8 @@
 package no.nav.personbruker.dittnav.eventhandler.innboks
 
+import no.nav.personbruker.dittnav.common.util.database.fetching.mapList
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
-import no.nav.personbruker.dittnav.eventhandler.common.database.map
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId
@@ -32,7 +32,7 @@ fun Connection.getAllInnboksForInnloggetBruker(bruker: InnloggetBruker): List<In
             |LEFT JOIN systembrukere ON innboks.systembruker = systembrukere.systembruker""".trimMargin())
                 .use {
                     it.setString(1, bruker.ident)
-                    it.executeQuery().map {
+                    it.executeQuery().mapList {
                         toInnboks()
                     }
                 }
@@ -57,7 +57,7 @@ fun Connection.getAllGroupedInnboksEventsByIds(bruker: InnloggetBruker, grupperi
                     it.setString(1, bruker.ident)
                     it.setString(2, grupperingsid)
                     it.setString(3, produsent)
-                    it.executeQuery().map {
+                    it.executeQuery().mapList {
                         toInnboks()
                     }
                 }
@@ -98,7 +98,7 @@ private fun Connection.getInnboksForInnloggetBruker(bruker: InnloggetBruker, akt
                 .use {
                     it.setString(1, bruker.ident)
                     it.setBoolean(2, aktiv)
-                    it.executeQuery().map {
+                    it.executeQuery().mapList {
                         toInnboks()
                     }
                 }

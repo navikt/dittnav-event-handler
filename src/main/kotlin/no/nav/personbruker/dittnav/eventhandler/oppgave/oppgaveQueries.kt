@@ -1,9 +1,9 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
+import no.nav.personbruker.dittnav.common.util.database.fetching.mapList
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.convertIfUnlikelyDate
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
-import no.nav.personbruker.dittnav.eventhandler.common.database.map
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.EventCacheException
 import no.nav.personbruker.dittnav.eventhandler.config.Kafka.BACKUP_EVENT_CHUNCK_SIZE
 import java.sql.Connection
@@ -35,7 +35,7 @@ fun Connection.getAllOppgaveForInnloggetBruker(bruker: InnloggetBruker): List<Op
             |LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker""".trimMargin())
                 .use {
                     it.setString(1, bruker.ident)
-                    it.executeQuery().map {
+                    it.executeQuery().mapList {
                         toOppgave()
                     }
                 }
@@ -57,7 +57,7 @@ fun Connection.getAllOppgaveEvents(): List<Oppgave> =
             |FROM oppgave LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker""".trimMargin())
                 .use {
                     it.fetchSize = BACKUP_EVENT_CHUNCK_SIZE
-                    it.executeQuery().map {
+                    it.executeQuery().mapList {
                         toOppgave()
                     }
                 }
@@ -80,7 +80,7 @@ fun Connection.getAllInactiveOppgaveEvents(): List<Oppgave> =
             |LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker""".trimMargin())
                 .use {
                     it.fetchSize = BACKUP_EVENT_CHUNCK_SIZE
-                    it.executeQuery().map {
+                    it.executeQuery().mapList {
                         toOppgave()
                     }
                 }
@@ -105,7 +105,7 @@ fun Connection.getAllGroupedOppgaveEventsByIds(bruker: InnloggetBruker, grupperi
                     it.setString(1, bruker.ident)
                     it.setString(2, grupperingsid)
                     it.setString(3, produsent)
-                    it.executeQuery().map {
+                    it.executeQuery().mapList {
                         toOppgave()
                     }
                 }
@@ -148,7 +148,7 @@ private fun Connection.getOppgaveForInnloggetBruker(bruker: InnloggetBruker, akt
                 .use {
                     it.setString(1, bruker.ident)
                     it.setBoolean(2, aktiv)
-                    it.executeQuery().map {
+                    it.executeQuery().mapList {
                         toOppgave()
                     }
                 }

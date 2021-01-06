@@ -1,28 +1,26 @@
 package no.nav.personbruker.dittnav.eventhandler.beskjed
 
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.eventhandler.common.exceptions.BackupEventException
-import no.nav.personbruker.dittnav.eventhandler.common.exceptions.FieldValidationException
+import no.nav.brukernotifikasjon.schemas.builders.exception.FieldValidationException
+import no.nav.personbruker.dittnav.common.test.`with message containing`
 import no.nav.personbruker.dittnav.eventhandler.done.createKeyForEvent
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should throw`
 import org.amshove.kluent.invoking
 import org.junit.jupiter.api.Test
-import org.slf4j.LoggerFactory
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
 class beskjedCreator {
-    private val fodselsnummer = "123"
+    private val fodselsnummer = "12345678901"
     private val eventId = "11"
     private val systembruker = "x-dittnav"
-    private val link = "testlink"
+    private val link = "https://dummy.nav.no"
     private val sikkerhetsnivaa = 4
     private val grupperingsId = "012"
     private val tekst = "tekst"
     private val zonedDateTime = ZonedDateTime.now(ZoneId.of("Europe/Oslo"))
-
-    private val log = LoggerFactory.getLogger(BeskjedProducer::class.java)
 
     @Test
     fun `should create beskjed-event`() {
@@ -53,9 +51,9 @@ class beskjedCreator {
 
         invoking {
             runBlocking {
-                val key = createKeyForEvent(beskjed.eventId, beskjed.systembruker)
+                createKeyForEvent(beskjed.eventId, beskjed.systembruker)
             }
-        } `should throw` FieldValidationException::class
+        } `should throw` FieldValidationException::class `with message containing` "systembruker"
     }
 
 
@@ -66,9 +64,9 @@ class beskjedCreator {
 
         invoking {
             runBlocking {
-                val key = createKeyForEvent(beskjed.eventId, beskjed.systembruker)
+                createKeyForEvent(beskjed.eventId, beskjed.systembruker)
             }
-        } `should throw` FieldValidationException::class
+        } `should throw` FieldValidationException::class `with message containing` "systembruker"
     }
 
     @Test
@@ -78,9 +76,9 @@ class beskjedCreator {
 
         invoking {
             runBlocking {
-                val beskjedEvent = createBeskjedEvent(beskjed)
+                createBeskjedEvent(beskjed)
             }
-        } `should throw` FieldValidationException::class
+        } `should throw` FieldValidationException::class `with message containing` "tekst"
     }
 
     @Test
@@ -92,7 +90,7 @@ class beskjedCreator {
                 val beskjedEvent = createBeskjedEvent(beskjed)
                 beskjedEvent.getFodselsnummer() `should be equal to` fodselsnummer
             }
-        } `should throw` FieldValidationException::class
+        } `should throw` FieldValidationException::class `with message containing` "fodselsnummer"
     }
 
     @Test
@@ -104,12 +102,12 @@ class beskjedCreator {
                 val beskjedEvent = createBeskjedEvent(beskjed)
                 beskjedEvent.getFodselsnummer() `should be equal to` fodselsnummer
             }
-        } `should throw` BackupEventException::class
+        } `should throw` FieldValidationException::class `with message containing` "Sikkerhetsnivaa"
     }
 
     @Test
-    fun `should convert date to EpocMilli`() {
-        val expectedDate = zonedDateTime.toInstant().toEpochMilli()
+    fun `should convert ZonedDateTime to LocalDateTime`() {
+        val expectedDate = zonedDateTime.toLocalDateTime().toInstant(ZoneOffset.UTC).toEpochMilli()
         val beskjed = BeskjedObjectMother.createBeskjed(1, eventId, fodselsnummer, systembruker, tekst, grupperingsId, link, sikkerhetsnivaa, zonedDateTime)
         runBlocking {
             val beskjedEvent = createBeskjedEvent(beskjed)

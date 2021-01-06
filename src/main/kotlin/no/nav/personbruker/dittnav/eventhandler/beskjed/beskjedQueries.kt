@@ -1,10 +1,10 @@
 package no.nav.personbruker.dittnav.eventhandler.beskjed
 
 import Beskjed
+import no.nav.personbruker.dittnav.common.util.database.fetching.mapList
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.getNullableUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
-import no.nav.personbruker.dittnav.eventhandler.common.database.map
 import no.nav.personbruker.dittnav.eventhandler.config.Kafka.BACKUP_EVENT_CHUNCK_SIZE
 import java.sql.Connection
 import java.sql.ResultSet
@@ -37,7 +37,7 @@ fun Connection.getAllBeskjedForInnloggetBruker(bruker: InnloggetBruker): List<Be
             |LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker""".trimMargin())
                 .use {
                     it.setString(1, bruker.ident)
-                    it.executeQuery().map {
+                    it.executeQuery().mapList {
                         toBeskjed()
                     }
                 }
@@ -64,7 +64,7 @@ fun Connection.getBeskjedByIds(fodselsnummer: String, uid: String, eventId: Stri
                     it.setString(1, fodselsnummer)
                     it.setString(2, uid)
                     it.setString(3, eventId)
-                    it.executeQuery().map {
+                    it.executeQuery().mapList {
                         toBeskjed()
                     }
                 }
@@ -88,7 +88,7 @@ fun Connection.getAllBeskjedEvents(): List<Beskjed> =
             |FROM beskjed LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker""".trimMargin())
                 .use {
                     it.fetchSize = BACKUP_EVENT_CHUNCK_SIZE
-                    it.executeQuery().map {
+                    it.executeQuery().mapList {
                         toBeskjed()
                     }
                 }
@@ -113,7 +113,7 @@ fun Connection.getAllInactiveBeskjed(): List<Beskjed> =
             |LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker""".trimMargin())
                 .use {
                     it.fetchSize = BACKUP_EVENT_CHUNCK_SIZE
-                    it.executeQuery().map {
+                    it.executeQuery().mapList {
                         toBeskjed()
                     }
                 }
@@ -140,7 +140,7 @@ fun Connection.getAllGroupedBeskjedEventsByIds(bruker: InnloggetBruker, grupperi
                     it.setString(1, bruker.ident)
                     it.setString(2, grupperingsid)
                     it.setString(3, produsent)
-                    it.executeQuery().map {
+                    it.executeQuery().mapList {
                         toBeskjed()
                     }
                 }
@@ -185,7 +185,7 @@ private fun Connection.getBeskjedForInnloggetBruker(bruker: InnloggetBruker, akt
                 .use {
                     it.setString(1, bruker.ident)
                     it.setBoolean(2, aktiv)
-                    it.executeQuery().map {
+                    it.executeQuery().mapList {
                         toBeskjed()
                     }
                 }

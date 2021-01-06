@@ -1,7 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.done
 
+import no.nav.personbruker.dittnav.common.util.database.fetching.mapList
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
-import no.nav.personbruker.dittnav.eventhandler.common.database.map
 import no.nav.personbruker.dittnav.eventhandler.config.Kafka
 import java.sql.Connection
 import java.sql.ResultSet
@@ -19,7 +19,7 @@ fun Connection.getAllDoneEvents(): List<BackupDone> =
             |FROM done""".trimMargin())
                 .use {
                     it.fetchSize = Kafka.BACKUP_EVENT_CHUNCK_SIZE
-                    it.executeQuery().map {
+                    it.executeQuery().mapList {
                         toDone()
                     }
                 }

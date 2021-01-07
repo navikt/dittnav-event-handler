@@ -11,7 +11,7 @@ class BackupDoneTranformer {
 
      fun toSchemasDone(batchNumber: Int, events: List<Done>): MutableMap<Nokkel, no.nav.brukernotifikasjon.schemas.Done> {
         var count = 0
-        var convertedEvents: MutableMap<Nokkel, no.nav.brukernotifikasjon.schemas.Done> = mutableMapOf()
+        val convertedEvents: MutableMap<Nokkel, no.nav.brukernotifikasjon.schemas.Done> = mutableMapOf()
         events.forEach { event ->
             try {
                 count++

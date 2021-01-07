@@ -40,7 +40,7 @@ class OppgaveEventService(private val database: Database) {
         return events
     }
 
-    fun logEventsWithEmptyProdusent(events: List<Oppgave>) {
+    private fun logEventsWithEmptyProdusent(events: List<Oppgave>) {
         events.forEach { oppgave ->
             log.warn("Returnerer oppgave-eventer med tom produsent til frontend. Kanskje er ikke systembrukeren lagt inn i systembruker-tabellen? ${oppgave.toString()}")
         }

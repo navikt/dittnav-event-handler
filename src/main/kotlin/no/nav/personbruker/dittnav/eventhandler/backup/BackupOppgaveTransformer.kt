@@ -46,13 +46,13 @@ class BackupOppgaveTransformer {
 
     fun toSchemasDone(batchNumber: Int, events: List<Oppgave>): MutableMap<Nokkel, no.nav.brukernotifikasjon.schemas.Done> {
         var count = 0
-        var convertedEvents: MutableMap<Nokkel, no.nav.brukernotifikasjon.schemas.Done> = mutableMapOf()
+        val convertedEvents: MutableMap<Nokkel, no.nav.brukernotifikasjon.schemas.Done> = mutableMapOf()
         events.forEach { event ->
             try {
                 count++
                 val key = createKeyForEvent(event.eventId, event.systembruker)
                 val doneEvent = createDoneEvent(event.fodselsnummer, event.grupperingsId, event.sistOppdatert)
-                convertedEvents.put(key, doneEvent)
+                convertedEvents[key] = doneEvent
             } catch (e: AvroMissingFieldException) {
                 val msg = "Et eller flere felt er tomme. Vi får feil når vi prøver å konvertere en interne inaktive-oppgaver til schemas.Done. " +
                         "EventId: ${event.eventId}, produsent: ${event.produsent}, eventTidspunkt: ${event.eventTidspunkt}. " +

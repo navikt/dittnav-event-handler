@@ -8,18 +8,18 @@ import no.nav.personbruker.dittnav.eventhandler.common.kafka.KafkaProducerWrappe
 
 class BackupBeskjedService(
         database: Database,
-        private val kafkaProducerWrapper: KafkaProducerWrapper<no.nav.brukernotifikasjon.schemas.Beskjed>,
-        private val doneKafkaProducerWrapper: KafkaProducerWrapper<no.nav.brukernotifikasjon.schemas.Done>,
+        private val beskjedProducer: KafkaProducerWrapper<no.nav.brukernotifikasjon.schemas.Beskjed>,
+        private val doneProducer: KafkaProducerWrapper<no.nav.brukernotifikasjon.schemas.Done>,
         private val backupBeskjedTransformer: BackupBeskjedTransformer
 ) : BackupService<Beskjed>(database) {
 
     suspend fun produceBeskjedEventsForAllBeskjedEventsInCache(dryrun: Boolean): Int {
         val allBeskjedEvents = getEventsFromCache { getAllBeskjedEvents() }
-        return produceKafkaEventsForAllEventsInCache(kafkaProducerWrapper, dryrun, backupBeskjedTransformer::toSchemasBeskjed, allBeskjedEvents)
+        return produceKafkaEventsForAllEventsInCache(beskjedProducer, dryrun, backupBeskjedTransformer::toSchemasBeskjed, allBeskjedEvents)
     }
 
     suspend fun produceDoneEventsFromAllInactiveBeskjedEvents(dryrun: Boolean): Int {
         var allInactiveBeskjedEvents = getEventsFromCache { getAllInactiveBeskjedEvents() }
-        return produceKafkaEventsForAllEventsInCache(doneKafkaProducerWrapper, dryrun, backupBeskjedTransformer::toSchemasDone, allInactiveBeskjedEvents)
+        return produceKafkaEventsForAllEventsInCache(doneProducer, dryrun, backupBeskjedTransformer::toSchemasDone, allInactiveBeskjedEvents)
     }
 }

@@ -7,12 +7,12 @@ import no.nav.personbruker.dittnav.eventhandler.done.getAllDoneEvents
 
 class BackupDoneService(
         database: Database,
-        private val kafkaProducerWrapper: KafkaProducerWrapper<no.nav.brukernotifikasjon.schemas.Done>,
+        private val doneProducer: KafkaProducerWrapper<no.nav.brukernotifikasjon.schemas.Done>,
         private val backupDoneTranformer: BackupDoneTranformer,
 ): BackupService<Done>(database){
 
     suspend fun produceDoneEventsForAllDoneEventsInCache(dryrun: Boolean): Int {
         val allDoneEvents = getEventsFromCache { getAllDoneEvents() }
-        return produceKafkaEventsForAllEventsInCache(kafkaProducerWrapper, dryrun, backupDoneTranformer::toSchemasDone, allDoneEvents)
+        return produceKafkaEventsForAllEventsInCache(doneProducer, dryrun, backupDoneTranformer::toSchemasDone, allDoneEvents)
     }
 }

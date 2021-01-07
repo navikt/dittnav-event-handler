@@ -1,33 +1,23 @@
 package no.nav.personbruker.dittnav.eventhandler.backup
 
+import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.config.Kafka.BACKUP_EVENT_CHUNCK_SIZE
-import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveEventService
+import no.nav.personbruker.dittnav.eventhandler.oppgave.Oppgave
+import no.nav.personbruker.dittnav.eventhandler.oppgave.getAllInactiveOppgaveEvents
+import no.nav.personbruker.dittnav.eventhandler.oppgave.getAllOppgaveEvents
 
 class BackupOppgaveService(
-        private val oppgaveEventService: OppgaveEventService,
+        database: Database,
         private val backupOppgaveProducer: BackupOppgaveProducer
-) {
+): BackupService<Oppgave>(database){
 
     suspend fun produceOppgaveEventsForAllOppgaveEventsInCache(dryrun: Boolean): Int {
-        val allOppgaveEvents = oppgaveEventService.getAllOppgaveEventsInCach()
-        var batchNumber = 0
-        var numberOfProcessedEvents = 0
-        if (allOppgaveEvents.isNotEmpty()) {
-            allOppgaveEvents.chunked(BACKUP_EVENT_CHUNCK_SIZE) { listChunkBeskjed ->
-                batchNumber++
-                val oppgaveEvents = backupOppgaveProducer.toSchemasOppgave(batchNumber, listChunkBeskjed)
-                numberOfProcessedEvents += if (!dryrun) {
-                    backupOppgaveProducer.produceAllOppgaveEvents(batchNumber, oppgaveEvents)
-                } else {
-                    oppgaveEvents.size
-                }
-            }
-        }
-        return numberOfProcessedEvents
+        val allOppgaveEvents = getEventsFromCache { getAllOppgaveEvents() }
+        return produceKafkaEventsForAllEventsInCache(dryrun, backupOppgaveProducer::produceAllOppgaveEvents, allOppgaveEvents)
     }
 
     suspend fun produceDoneEventsFromAllInactiveOppgaveEvents(dryrun: Boolean): Int {
-        var allInactiveOppgaveEvents = oppgaveEventService.getAllInactiveOppgaveEventsInCach()
+        var allInactiveOppgaveEvents = getEventsFromCache { getAllInactiveOppgaveEvents() }
         var batchNumber = 0
         var numberOfProcessedEvents = 0
         if (allInactiveOppgaveEvents.isNotEmpty()) {

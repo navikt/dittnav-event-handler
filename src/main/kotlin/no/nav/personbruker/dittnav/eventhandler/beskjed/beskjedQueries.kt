@@ -93,7 +93,7 @@ fun Connection.getAllBeskjedEvents(): List<Beskjed> =
                     }
                 }
 
-fun Connection.getAllInactiveBeskjed(): List<Beskjed> =
+fun Connection.getAllInactiveBeskjedEvents(): List<Beskjed> =
         prepareStatement("""SELECT 
             |beskjed.id, 
             |beskjed.uid, 

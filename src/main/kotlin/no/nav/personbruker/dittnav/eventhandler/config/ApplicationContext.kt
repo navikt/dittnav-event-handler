@@ -47,8 +47,8 @@ class ApplicationContext {
     val backupDoneService = BackupDoneService(backupDoneProducer, database)
     val statusoppdateringEventService = StatusoppdateringEventService(database)
 
-    val backupBeskjedEventService = BackupBeskjedService(beskjedEventService, beskjedProducer)
-    val backupOppgaveService = BackupOppgaveService(oppgaveEventService, oppgaveProducer)
+    val backupBeskjedEventService = BackupBeskjedService(database, beskjedProducer)
+    val backupOppgaveService = BackupOppgaveService(database, oppgaveProducer)
 
     val healthService = HealthService(this)
     val brukernotifikasjonService = BrukernotifikasjonService(database)

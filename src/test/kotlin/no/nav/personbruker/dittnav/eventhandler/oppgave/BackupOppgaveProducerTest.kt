@@ -27,10 +27,7 @@ internal class BackupOppgaveProducerTest {
                 coEvery {
                     kafkaProducerOppgaveBackup.sendEvent(any(), any())
                 }.throws(KafkaException("Simulert feil i en test"))
-
-                val oppgaveEvents = oppgaveProducer.toSchemasOppgave(1, oppgaveList)
-                oppgaveProducer.produceAllOppgaveEvents(1, oppgaveEvents)
-
+                oppgaveProducer.produceAllOppgaveEvents(false, 1, oppgaveList)
             }
         } `should throw` BackupEventException::class
 

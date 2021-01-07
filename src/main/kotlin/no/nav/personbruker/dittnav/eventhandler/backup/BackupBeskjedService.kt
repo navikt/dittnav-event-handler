@@ -1,42 +1,31 @@
 package no.nav.personbruker.dittnav.eventhandler.backup
 
-import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService
+import Beskjed
+import no.nav.personbruker.dittnav.eventhandler.beskjed.getAllBeskjedEvents
+import no.nav.personbruker.dittnav.eventhandler.beskjed.getAllInactiveBeskjedEvents
+import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.config.Kafka.BACKUP_EVENT_CHUNCK_SIZE
 
 class BackupBeskjedService(
-        private val beskjedEventService: BeskjedEventService,
-        private val beskjedProducer: BackupBeskjedProducer
-) {
+        database: Database,
+        private val backupBeskjedProducer: BackupBeskjedProducer
+) : BackupService<Beskjed>(database) {
 
     suspend fun produceBeskjedEventsForAllBeskjedEventsInCache(dryrun: Boolean): Int {
-        val allBeskjedEvents = beskjedEventService.getAllBeskjedEventsInCach()
-        var batchNumber = 0
-        var numberOfProcessedEvents = 0
-        if (allBeskjedEvents.isNotEmpty()) {
-            allBeskjedEvents.chunked(BACKUP_EVENT_CHUNCK_SIZE) { listChunkBeskjed ->
-                batchNumber++
-                val beskjedEvents = beskjedProducer.toSchemasBeskjed(batchNumber, listChunkBeskjed)
-                numberOfProcessedEvents += if (!dryrun) {
-                    beskjedProducer.produceAllBeskjedEvents(batchNumber, beskjedEvents)
-                } else {
-                    beskjedEvents.size
-                }
-            }
-        }
-        return numberOfProcessedEvents
-
+        val allBeskjedEvents = getEventsFromCache { getAllBeskjedEvents() }
+        return produceKafkaEventsForAllEventsInCache(dryrun, backupBeskjedProducer::produceAllBeskjedEvents, allBeskjedEvents)
     }
 
     suspend fun produceDoneEventsFromAllInactiveBeskjedEvents(dryrun: Boolean): Int {
-        var allInactiveBeskjedEvents = beskjedEventService.getAllInactiveBeskjedEventsInCach()
+        var allInactiveBeskjedEvents = getEventsFromCache { getAllInactiveBeskjedEvents() }
         var batchNumber = 0
         var numberOfProcessedEvents = 0
         if (allInactiveBeskjedEvents.isNotEmpty()) {
             allInactiveBeskjedEvents.chunked(BACKUP_EVENT_CHUNCK_SIZE) { listChunkInactiveBeskjed ->
                 batchNumber++
-                val doneEvents = beskjedProducer.toSchemasDone(batchNumber, listChunkInactiveBeskjed)
+                val doneEvents = backupBeskjedProducer.toSchemasDone(batchNumber, listChunkInactiveBeskjed)
                 numberOfProcessedEvents += if (!dryrun) {
-                    beskjedProducer.produceDoneEvents(batchNumber, doneEvents)
+                    backupBeskjedProducer.produceDoneEvents(batchNumber, doneEvents)
                 } else {
                     doneEvents.size
                 }

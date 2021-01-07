@@ -17,15 +17,44 @@ class BackupOppgaveProducer(
         private val doneKafkaProducer: KafkaProducerWrapper<Done>
 ) {
 
-    fun toSchemasOppgave(batchNumber: Int, events: List<Oppgave>): MutableMap<Nokkel, no.nav.brukernotifikasjon.schemas.Oppgave> {
+    fun produceAllOppgaveEvents(dryRun: Boolean, batchNumber: Int, events: List<Oppgave>): Int {
         var count = 0
-        var convertedEvents: MutableMap<Nokkel, no.nav.brukernotifikasjon.schemas.Oppgave> = mutableMapOf()
+        val convertedEvents = toSchemasOppgave(batchNumber, events)
+        convertedEvents.forEach { event ->
+            try {
+                if(!dryRun) {
+                    oppgaveKafkaProducer.sendEvent(event.key, event.value)
+                }
+                count++
+            } catch (e: AuthenticationException) {
+                val msg = "Vi får feil når vi prøver å koble oss til Kafka (oppgave-backup-topic). " +
+                        "EventId: ${event.key.getEventId()}, eventTidspunkt: ${event.value.getTidspunkt()}. " +
+                        "Vi stoppet på nr $count (i batch nr. $batchNumber) av totalt ${events.size} eventer som var i oppgave-listen."
+                throw BackupEventException(msg, e)
+            } catch (e: KafkaException) {
+                val msg = "Producer sin send funksjon feilet i Kafka (oppgave-backup-topic). " +
+                        "EventId: ${event.key.getEventId()}, eventTidspunkt: ${event.value.getTidspunkt()}. " +
+                        "Vi stoppet på nr $count (i batch nr. $batchNumber) av totalt ${events.size} eventer som var i oppgave-listen."
+                throw BackupEventException(msg, e)
+            } catch (e: Exception) {
+                val msg = "Vi fikk en uventet feil når vi skriver til oppgave-backup-topic. " +
+                        "EventId: ${event.key.getEventId()}, eventTidspunkt: ${event.value.getTidspunkt()}. " +
+                        "Vi stoppet på nr $count (i batch nr. $batchNumber) av totalt ${events.size} eventer som var i oppgave-listen."
+                throw BackupEventException(msg, e)
+            }
+        }
+        return count
+    }
+
+    private fun toSchemasOppgave(batchNumber: Int, events: List<Oppgave>): MutableMap<Nokkel, no.nav.brukernotifikasjon.schemas.Oppgave> {
+        var count = 0
+        val convertedEvents: MutableMap<Nokkel, no.nav.brukernotifikasjon.schemas.Oppgave> = mutableMapOf()
         events.forEach { event ->
             try {
                 count++
                 val key = createKeyForEvent(event.eventId, event.systembruker)
                 val oppgaveEvent = createOppgaveEvent(event)
-                convertedEvents.put(key, oppgaveEvent)
+                convertedEvents[key] = oppgaveEvent
             } catch (e: AvroMissingFieldException) {
                 val msg = "Et eller flere felt er tomme. Vi får feil når vi prøver å konvertere en intern Oppgave til schemas.Oppgave. " +
                         "EventId: ${event.eventId}, produsent: ${event.produsent}, eventTidspunkt: ${event.eventTidspunkt}. " +
@@ -50,32 +79,6 @@ class BackupOppgaveProducer(
             }
         }
         return convertedEvents
-    }
-
-    fun produceAllOppgaveEvents(batchNumber: Int, events: MutableMap<Nokkel, no.nav.brukernotifikasjon.schemas.Oppgave>): Int {
-        var count = 0
-        events.forEach { event ->
-            try {
-                count++
-                oppgaveKafkaProducer.sendEvent(event.key, event.value)
-            } catch (e: AuthenticationException) {
-                val msg = "Vi får feil når vi prøver å koble oss til Kafka (oppgave-backup-topic). " +
-                        "EventId: ${event.key.getEventId()}, eventTidspunkt: ${event.value.getTidspunkt()}. " +
-                        "Vi stoppet på nr $count (i batch nr. $batchNumber) av totalt ${events.size} eventer som var i oppgave-listen."
-                throw BackupEventException(msg, e)
-            } catch (e: KafkaException) {
-                val msg = "Producer sin send funksjon feilet i Kafka (oppgave-backup-topic). " +
-                        "EventId: ${event.key.getEventId()}, eventTidspunkt: ${event.value.getTidspunkt()}. " +
-                        "Vi stoppet på nr $count (i batch nr. $batchNumber) av totalt ${events.size} eventer som var i oppgave-listen."
-                throw BackupEventException(msg, e)
-            } catch (e: Exception) {
-                val msg = "Vi fikk en uventet feil når vi skriver til oppgave-backup-topic. " +
-                        "EventId: ${event.key.getEventId()}, eventTidspunkt: ${event.value.getTidspunkt()}. " +
-                        "Vi stoppet på nr $count (i batch nr. $batchNumber) av totalt ${events.size} eventer som var i oppgave-listen."
-                throw BackupEventException(msg, e)
-            }
-        }
-        return count
     }
 
     fun toSchemasDone(batchNumber: Int, events: List<Oppgave>): MutableMap<Nokkel, Done> {

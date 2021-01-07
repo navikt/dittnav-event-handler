@@ -1,10 +1,11 @@
-package no.nav.personbruker.dittnav.eventhandler.beskjed
+package no.nav.personbruker.dittnav.eventhandler.backup
 
+import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService
 import no.nav.personbruker.dittnav.eventhandler.config.Kafka.BACKUP_EVENT_CHUNCK_SIZE
 
 class BackupBeskjedService(
         private val beskjedEventService: BeskjedEventService,
-        private val beskjedProducer: BeskjedProducer
+        private val beskjedProducer: BackupBeskjedProducer
 ) {
 
     suspend fun produceBeskjedEventsForAllBeskjedEventsInCache(dryrun: Boolean): Int {

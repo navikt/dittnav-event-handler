@@ -4,6 +4,7 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.brukernotifikasjon.schemas.Done
+import no.nav.personbruker.dittnav.eventhandler.backup.BackupOppgaveProducer
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.BackupEventException
 import no.nav.personbruker.dittnav.eventhandler.common.kafka.KafkaProducerWrapper
 import org.amshove.kluent.`should throw`
@@ -11,11 +12,11 @@ import org.amshove.kluent.invoking
 import org.apache.kafka.common.KafkaException
 import org.junit.jupiter.api.Test
 
-internal class OppgaveProducerTest {
+internal class BackupOppgaveProducerTest {
 
     val kafkaProducerDoneBackup = mockk<KafkaProducerWrapper<Done>>()
     val kafkaProducerOppgaveBackup = mockk<KafkaProducerWrapper<no.nav.brukernotifikasjon.schemas.Oppgave>>()
-    val oppgaveProducer = OppgaveProducer(kafkaProducerOppgaveBackup, kafkaProducerDoneBackup)
+    val oppgaveProducer = BackupOppgaveProducer(kafkaProducerOppgaveBackup, kafkaProducerDoneBackup)
 
     @Test
     fun `Kaster exception hvis kafka feiler`() {

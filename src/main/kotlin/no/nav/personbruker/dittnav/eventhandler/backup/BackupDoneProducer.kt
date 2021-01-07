@@ -1,8 +1,12 @@
-package no.nav.personbruker.dittnav.eventhandler.done
+package no.nav.personbruker.dittnav.eventhandler.backup
 
 import no.nav.brukernotifikasjon.schemas.Done
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.BackupEventException
 import no.nav.personbruker.dittnav.eventhandler.common.kafka.KafkaProducerWrapper
+import no.nav.personbruker.dittnav.eventhandler.done.BackupConvertedEvent
+import no.nav.personbruker.dittnav.eventhandler.done.BackupDone
+import no.nav.personbruker.dittnav.eventhandler.done.createBackupDoneEvent
+import no.nav.personbruker.dittnav.eventhandler.done.createKeyForEvent
 import org.apache.avro.AvroMissingFieldException
 import org.apache.avro.AvroRuntimeException
 import org.apache.kafka.common.KafkaException

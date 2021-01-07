@@ -1,5 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.done
 
+import no.nav.personbruker.dittnav.eventhandler.backup.BackupDoneProducer
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.config.Kafka
 import java.sql.Connection

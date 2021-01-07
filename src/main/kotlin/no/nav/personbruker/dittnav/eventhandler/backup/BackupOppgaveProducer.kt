@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventhandler.oppgave
+package no.nav.personbruker.dittnav.eventhandler.backup
 
 import no.nav.brukernotifikasjon.schemas.Done
 import no.nav.brukernotifikasjon.schemas.Nokkel
@@ -6,12 +6,13 @@ import no.nav.personbruker.dittnav.eventhandler.common.exceptions.BackupEventExc
 import no.nav.personbruker.dittnav.eventhandler.common.kafka.KafkaProducerWrapper
 import no.nav.personbruker.dittnav.eventhandler.done.createBackupDoneEvent
 import no.nav.personbruker.dittnav.eventhandler.done.createKeyForEvent
+import no.nav.personbruker.dittnav.eventhandler.oppgave.Oppgave
 import org.apache.avro.AvroMissingFieldException
 import org.apache.avro.AvroRuntimeException
 import org.apache.kafka.common.KafkaException
 import org.apache.kafka.common.errors.AuthenticationException
 
-class OppgaveProducer(
+class BackupOppgaveProducer(
         private val oppgaveKafkaProducer: KafkaProducerWrapper<no.nav.brukernotifikasjon.schemas.Oppgave>,
         private val doneKafkaProducer: KafkaProducerWrapper<Done>
 ) {

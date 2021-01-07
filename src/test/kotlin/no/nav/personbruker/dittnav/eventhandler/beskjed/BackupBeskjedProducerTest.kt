@@ -5,6 +5,7 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.brukernotifikasjon.schemas.Done
+import no.nav.personbruker.dittnav.eventhandler.backup.BackupBeskjedProducer
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.BackupEventException
 import no.nav.personbruker.dittnav.eventhandler.common.kafka.KafkaProducerWrapper
 import org.amshove.kluent.`should throw`
@@ -13,10 +14,10 @@ import org.apache.kafka.common.KafkaException
 import org.junit.jupiter.api.Test
 import java.time.ZonedDateTime
 
-class BeskjedProducerTest {
+class BackupBeskjedProducerTest {
     val kafkaProducerDoneBackup = mockk<KafkaProducerWrapper<Done>>()
     val kafkaProducerBeskjedBackup = mockk<KafkaProducerWrapper<no.nav.brukernotifikasjon.schemas.Beskjed>>()
-    val beskjedProducer = BeskjedProducer(kafkaProducerBeskjedBackup, kafkaProducerDoneBackup)
+    val beskjedProducer = BackupBeskjedProducer(kafkaProducerBeskjedBackup, kafkaProducerDoneBackup)
 
     @Test
     fun `Kaster BackupEventException hvis kafka feiler`() {

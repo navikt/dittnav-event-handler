@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventhandler.beskjed
+package no.nav.personbruker.dittnav.eventhandler.backup
 
 import Beskjed
 import no.nav.brukernotifikasjon.schemas.Done
@@ -12,7 +12,7 @@ import org.apache.avro.AvroRuntimeException
 import org.apache.kafka.common.KafkaException
 import org.apache.kafka.common.errors.AuthenticationException
 
-class BeskjedProducer(
+class BackupBeskjedProducer(
         private val beskjedKafkaProducer: KafkaProducerWrapper<no.nav.brukernotifikasjon.schemas.Beskjed>,
         private val doneKafkaProducer: KafkaProducerWrapper<Done>
 ) {

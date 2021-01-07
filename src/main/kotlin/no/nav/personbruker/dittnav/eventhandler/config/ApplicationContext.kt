@@ -4,28 +4,28 @@ import no.nav.brukernotifikasjon.schemas.Beskjed
 import no.nav.brukernotifikasjon.schemas.Done
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.brukernotifikasjon.schemas.Oppgave
-import no.nav.personbruker.dittnav.eventhandler.beskjed.BackupBeskjedService
+import no.nav.personbruker.dittnav.eventhandler.backup.BackupBeskjedService
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService
-import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedProducer
+import no.nav.personbruker.dittnav.eventhandler.backup.BackupBeskjedProducer
 import no.nav.personbruker.dittnav.eventhandler.brukernotifikasjon.BrukernotifikasjonService
 import no.nav.personbruker.dittnav.eventhandler.common.produsent.ProducerNameAliasService
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.health.HealthService
 import no.nav.personbruker.dittnav.eventhandler.common.kafka.KafkaProducerWrapper
-import no.nav.personbruker.dittnav.eventhandler.done.BackupDoneProducer
+import no.nav.personbruker.dittnav.eventhandler.backup.BackupDoneProducer
 import no.nav.personbruker.dittnav.eventhandler.done.BackupDoneService
 import no.nav.personbruker.dittnav.eventhandler.done.DoneEventService
 import no.nav.personbruker.dittnav.eventhandler.done.DoneProducer
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksEventService
-import no.nav.personbruker.dittnav.eventhandler.oppgave.BackupOppgaveService
+import no.nav.personbruker.dittnav.eventhandler.backup.BackupOppgaveService
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveEventService
-import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveProducer
+import no.nav.personbruker.dittnav.eventhandler.backup.BackupOppgaveProducer
 import no.nav.personbruker.dittnav.eventhandler.statusoppdatering.StatusoppdateringEventService
 import org.apache.kafka.clients.producer.KafkaProducer
 
 class ApplicationContext {
 
-    val environment = Environment()
+    private val environment = Environment()
 
     val kafkaProducerDone = KafkaProducerWrapper(Kafka.doneTopicName ,KafkaProducer<Nokkel, Done>(Kafka.producerProps(environment)))
     val kafkaProducerDoneBackup = KafkaProducerWrapper(Kafka.doneTopicNameBackup ,KafkaProducer<Nokkel, Done>(Kafka.producerProps(environment)))
@@ -35,10 +35,10 @@ class ApplicationContext {
 
     val database: Database = PostgresDatabase(environment)
 
-    val doneProducer = DoneProducer(kafkaProducerDone)
-    val beskjedProducer = BeskjedProducer(kafkaProducerBeskjedBackup, kafkaProducerDoneBackup)
-    val oppgaveProducer = OppgaveProducer(kafkaProducerOppgaveBackup, kafkaProducerDoneBackup)
-    val backupDoneProducer = BackupDoneProducer(kafkaProducerTableDoneBackup)
+    private val doneProducer = DoneProducer(kafkaProducerDone)
+    private val beskjedProducer = BackupBeskjedProducer(kafkaProducerBeskjedBackup, kafkaProducerDoneBackup)
+    private val oppgaveProducer = BackupOppgaveProducer(kafkaProducerOppgaveBackup, kafkaProducerDoneBackup)
+    private val backupDoneProducer = BackupDoneProducer(kafkaProducerTableDoneBackup)
 
     val beskjedEventService = BeskjedEventService(database)
     val oppgaveEventService = OppgaveEventService(database)

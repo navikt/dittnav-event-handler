@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventhandler.beskjed
+package no.nav.personbruker.dittnav.eventhandler.backup
 
 import Beskjed
 import no.nav.brukernotifikasjon.schemas.builders.BeskjedBuilder

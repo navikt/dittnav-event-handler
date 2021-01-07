@@ -1,10 +1,11 @@
-package no.nav.personbruker.dittnav.eventhandler.oppgave
+package no.nav.personbruker.dittnav.eventhandler.backup
 
 import no.nav.personbruker.dittnav.eventhandler.config.Kafka.BACKUP_EVENT_CHUNCK_SIZE
+import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveEventService
 
 class BackupOppgaveService(
         private val oppgaveEventService: OppgaveEventService,
-        private val oppgaveProducer: OppgaveProducer
+        private val backupOppgaveProducer: BackupOppgaveProducer
 ) {
 
     suspend fun produceOppgaveEventsForAllOppgaveEventsInCache(dryrun: Boolean): Int {
@@ -14,9 +15,9 @@ class BackupOppgaveService(
         if (allOppgaveEvents.isNotEmpty()) {
             allOppgaveEvents.chunked(BACKUP_EVENT_CHUNCK_SIZE) { listChunkBeskjed ->
                 batchNumber++
-                val oppgaveEvents = oppgaveProducer.toSchemasOppgave(batchNumber, listChunkBeskjed)
+                val oppgaveEvents = backupOppgaveProducer.toSchemasOppgave(batchNumber, listChunkBeskjed)
                 numberOfProcessedEvents += if (!dryrun) {
-                    oppgaveProducer.produceAllOppgaveEvents(batchNumber, oppgaveEvents)
+                    backupOppgaveProducer.produceAllOppgaveEvents(batchNumber, oppgaveEvents)
                 } else {
                     oppgaveEvents.size
                 }
@@ -32,9 +33,9 @@ class BackupOppgaveService(
         if (allInactiveOppgaveEvents.isNotEmpty()) {
             allInactiveOppgaveEvents.chunked(BACKUP_EVENT_CHUNCK_SIZE) { listChunkInactiveBeskjed ->
                 batchNumber++
-                val doneEvents = oppgaveProducer.toSchemasDone(batchNumber, listChunkInactiveBeskjed)
+                val doneEvents = backupOppgaveProducer.toSchemasDone(batchNumber, listChunkInactiveBeskjed)
                 numberOfProcessedEvents += if (!dryrun) {
-                    oppgaveProducer.produceDoneEvents(batchNumber, doneEvents)
+                    backupOppgaveProducer.produceDoneEvents(batchNumber, doneEvents)
                 } else {
                     doneEvents.size
                 }

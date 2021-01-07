@@ -58,9 +58,9 @@ class BeskjedEventService(private val database: Database) {
         return events
     }
 
-    fun logEventsWithEmptyProdusent(events: List<Beskjed>) {
+    private fun logEventsWithEmptyProdusent(events: List<Beskjed>) {
         events.forEach { beskjed ->
-            log.warn("Returnerer beskjed-eventer med tom produsent til frontend. Kanskje er ikke systembrukeren lagt inn i systembruker-tabellen? ${beskjed.toString()}")
+            log.warn("Returnerer beskjed-eventer med tom produsent til frontend. Kanskje er ikke systembrukeren lagt inn i systembruker-tabellen? $beskjed")
         }
     }
 }

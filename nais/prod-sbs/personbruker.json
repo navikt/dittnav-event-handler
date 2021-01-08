@@ -3,9 +3,9 @@
   "cluster": "prod",
   "environment": "prod",
   "ingresses": [
-    "https://dittnav-event-handler.personbruker.nais.oera.no",
-    "https://dittnav-event-handler.personbruker.nais.oera.no",
+    "https://dittnav-event-handler.nais.oera.no",
     "https://dittnav-event-handler.prod-sbs.nais.io",
-    "https://dittnav-event-handler.prod-sbs.nais.io"
+    "https://dittnav-event-handler.personbruker.nais.oera.no",
+    "https://dittnav-event-handler.personbruker.prod-sbs.nais.io"
   ]
 }

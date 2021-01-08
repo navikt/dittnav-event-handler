@@ -1,5 +1,5 @@
 {
-  "namespace": "default",
+  "namespace": "personbruker",
   "cluster": "prod",
   "environment": "prod",
   "ingresses": [

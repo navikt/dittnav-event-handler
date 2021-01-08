@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
-class doneCreatorTest {
+internal class doneCreatorTest {
 
     private val fodselsnummer = "12345678901"
     private val grupperingsId = "789"

@@ -1,50 +1,13 @@
 package no.nav.personbruker.dittnav.eventhandler.backup
 
 import Beskjed
-import no.nav.brukernotifikasjon.schemas.Done
 import no.nav.brukernotifikasjon.schemas.Nokkel
+import no.nav.brukernotifikasjon.schemas.builders.exception.FieldValidationException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.BackupEventException
-import no.nav.personbruker.dittnav.eventhandler.common.kafka.KafkaProducerWrapper
-import no.nav.personbruker.dittnav.eventhandler.done.createBackupDoneEvent
-import no.nav.personbruker.dittnav.eventhandler.done.createKeyForEvent
 import org.apache.avro.AvroMissingFieldException
 import org.apache.avro.AvroRuntimeException
-import org.apache.kafka.common.KafkaException
-import org.apache.kafka.common.errors.AuthenticationException
 
-class BackupBeskjedProducer(
-        private val beskjedKafkaProducer: KafkaProducerWrapper<no.nav.brukernotifikasjon.schemas.Beskjed>,
-        private val doneKafkaProducer: KafkaProducerWrapper<Done>
-) {
-
-    fun produceAllBeskjedEvents(dryRun: Boolean, batchNumber: Int, events: List<Beskjed>): Int {
-        var count = 0
-        val convertedEvents = toSchemasBeskjed(batchNumber, events)
-        convertedEvents.forEach { event ->
-            try {
-                if(!dryRun) {
-                    beskjedKafkaProducer.sendEvent(event.key, event.value)
-                }
-                count++
-            } catch (e: AuthenticationException) {
-                val msg = "Vi får feil når vi prøver å koble oss til Kafka (beskjed-backup-topic). " +
-                        "EventId: ${event.key.getEventId()}, eventTidspunkt: ${event.value.getTidspunkt()}. " +
-                        "Vi stoppet på nr $count (i batch nr. ${batchNumber}) av totalt ${events.size} eventer som var i oppgave-listen."
-                throw BackupEventException(msg, e)
-            } catch (e: KafkaException) {
-                val msg = "Producer sin send funksjon feilet i Kafka (beskjed-backup-topic). " +
-                        "EventId: ${event.key.getEventId()}, eventTidspunkt: ${event.value.getTidspunkt()}. " +
-                        "Vi stoppet på nr $count (i batch nr. ${batchNumber}) av totalt ${events.size} eventer som var i beskjed-listen."
-                throw BackupEventException(msg, e)
-            } catch (e: Exception) {
-                val msg = "Vi fikk en uventet feil når vi skriver til beskjed-backup-topic-en. " +
-                        "EventId: ${event.key.getEventId()}, eventTidspunkt: ${event.value.getTidspunkt()}. " +
-                        "Vi stoppet på nr $count (i batch nr. ${batchNumber}) av totalt ${events.size} eventer som var i beskjed-listen."
-                throw BackupEventException(msg, e)
-            }
-        }
-        return count
-    }
+class BackupBeskjedTransformer {
 
     fun toSchemasBeskjed(batchNumber: Int, events: List<Beskjed>): MutableMap<Nokkel, no.nav.brukernotifikasjon.schemas.Beskjed> {
         var count = 0
@@ -65,7 +28,7 @@ class BackupBeskjedProducer(
                         "EventId: ${event.eventId}, produsent: ${event.produsent}, eventTidspunkt: ${event.eventTidspunkt}. " +
                         "Vi stoppet på nr $count (i batch $batchNumber) av totalt ${events.size} eventer som var i beskjed-listen."
                 throw BackupEventException(msg, e)
-            } catch (e: BackupEventException) {
+            } catch (e: FieldValidationException) {
                 val msg = "Vi får en valideringsfeil når vi konverterer Beskjed til schemas.Beskjed. " +
                         "EventId: ${event.eventId}, produsent: ${event.produsent}, eventTidspunkt: ${event.eventTidspunkt}. " +
                         "Vi stoppet på nr $count (i batch $batchNumber) av totalt ${events.size} eventer som var i beskjed-listen."
@@ -80,16 +43,14 @@ class BackupBeskjedProducer(
         return convertedEvents
     }
 
-
-
-    fun toSchemasDone(batchNumber: Int, events: List<Beskjed>): MutableMap<Nokkel, Done> {
+    fun toSchemasDone(batchNumber: Int, events: List<Beskjed>): MutableMap<Nokkel, no.nav.brukernotifikasjon.schemas.Done> {
         var count = 0
-        var convertedEvents: MutableMap<Nokkel, Done> = mutableMapOf()
+        var convertedEvents: MutableMap<Nokkel, no.nav.brukernotifikasjon.schemas.Done> = mutableMapOf()
         events.forEach { event ->
             try {
                 count++
                 val key = createKeyForEvent(event.eventId, event.systembruker)
-                val doneEvent = createBackupDoneEvent(event.fodselsnummer, event.grupperingsId, event.sistOppdatert)
+                val doneEvent = createDoneEvent(event.fodselsnummer, event.grupperingsId, event.sistOppdatert)
                 convertedEvents.put(key, doneEvent)
             } catch (e: AvroMissingFieldException) {
                 val msg = "Et eller flere felt er tomme. Vi får feil når vi prøver å konvertere en interne inaktive-beskjed til schemas.Done. " +
@@ -106,35 +67,8 @@ class BackupBeskjedProducer(
                         "EventId: ${event.eventId}, produsent: ${event.produsent}, eventTidspunkt: ${event.eventTidspunkt}. " +
                         "Vi stoppet på nr $count (i batch $batchNumber) av totalt ${events.size} eventer som var i beskjed-listen."
                 throw BackupEventException(msg, e)
-
             }
         }
         return convertedEvents
-    }
-
-    fun produceDoneEvents(batchNumber: Int, events: MutableMap<Nokkel, Done>): Int {
-        var count = 0
-        events.forEach { event ->
-            try {
-                count++
-                doneKafkaProducer.sendEvent(event.key, event.value)
-            } catch (e: AuthenticationException) {
-                val msg = "Vi får feil når vi prøver å koble oss til Kafka. Prøver å sende inaktive beskjeder til done-backup-topic-en. " +
-                        "EventId: ${event.key.getEventId()}, eventTidspunkt: ${event.value.getTidspunkt()}. " +
-                        "Vi stoppet på nr $count (i batch $batchNumber) av totalt ${events.size} eventer som var i beskjed-listen."
-                throw BackupEventException(msg, e)
-            } catch (e: KafkaException) {
-                val msg = "Producer sin send funksjon feilet i Kafka. Prøver å sende inaktive beskjeder til done-backup-topic-en. " +
-                        "EventId: ${event.key.getEventId()}, eventTidspunkt: ${event.value.getTidspunkt()}. " +
-                        "Vi stoppet på nr $count (i batch $batchNumber) av totalt ${events.size} eventer som var i beskjed-listen."
-                throw BackupEventException(msg, e)
-            } catch (e: Exception) {
-                val msg = "Vi fikk en uventet feil når vi prøver å sende inaktive beskjeder til done-backup-topic-en. " +
-                        "EventId: ${event.key.getEventId()}, eventTidspunkt: ${event.value.getTidspunkt()}. " +
-                        "Vi stoppet på nr $count (i batch $batchNumber) av totalt ${events.size} eventer som var i beskjed-listen."
-                throw BackupEventException(msg, e)
-            }
-        }
-        return count
     }
 }

@@ -9,7 +9,7 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 
 
-fun Connection.getAllDoneEvents(): List<BackupDone> =
+fun Connection.getAllDoneEvents(): List<Done> =
         prepareStatement("""SELECT 
             |done.fodselsnummer,
             |done.grupperingsId,
@@ -24,8 +24,8 @@ fun Connection.getAllDoneEvents(): List<BackupDone> =
                     }
                 }
 
-fun ResultSet.toDone(): BackupDone {
-    return BackupDone(
+fun ResultSet.toDone(): Done {
+    return Done(
             fodselsnummer = getString("fodselsnummer"),
             grupperingsId = getString("grupperingsId"),
             eventId = getString("eventId"),

@@ -6,20 +6,20 @@ import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.brukernotifikasjon.schemas.Oppgave
 import no.nav.personbruker.dittnav.eventhandler.backup.BackupBeskjedService
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService
-import no.nav.personbruker.dittnav.eventhandler.backup.BackupBeskjedProducer
+import no.nav.personbruker.dittnav.eventhandler.backup.BackupBeskjedTransformer
 import no.nav.personbruker.dittnav.eventhandler.brukernotifikasjon.BrukernotifikasjonService
 import no.nav.personbruker.dittnav.eventhandler.common.produsent.ProducerNameAliasService
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.health.HealthService
 import no.nav.personbruker.dittnav.eventhandler.common.kafka.KafkaProducerWrapper
-import no.nav.personbruker.dittnav.eventhandler.backup.BackupDoneProducer
-import no.nav.personbruker.dittnav.eventhandler.done.BackupDoneService
+import no.nav.personbruker.dittnav.eventhandler.backup.BackupDoneTranformer
+import no.nav.personbruker.dittnav.eventhandler.backup.BackupDoneService
 import no.nav.personbruker.dittnav.eventhandler.done.DoneEventService
 import no.nav.personbruker.dittnav.eventhandler.done.DoneProducer
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksEventService
 import no.nav.personbruker.dittnav.eventhandler.backup.BackupOppgaveService
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveEventService
-import no.nav.personbruker.dittnav.eventhandler.backup.BackupOppgaveProducer
+import no.nav.personbruker.dittnav.eventhandler.backup.BackupOppgaveTransformer
 import no.nav.personbruker.dittnav.eventhandler.statusoppdatering.StatusoppdateringEventService
 import org.apache.kafka.clients.producer.KafkaProducer
 
@@ -36,19 +36,19 @@ class ApplicationContext {
     val database: Database = PostgresDatabase(environment)
 
     private val doneProducer = DoneProducer(kafkaProducerDone)
-    private val beskjedProducer = BackupBeskjedProducer(kafkaProducerBeskjedBackup, kafkaProducerDoneBackup)
-    private val oppgaveProducer = BackupOppgaveProducer(kafkaProducerOppgaveBackup, kafkaProducerDoneBackup)
-    private val backupDoneProducer = BackupDoneProducer(kafkaProducerTableDoneBackup)
+    private val backupBeskjedProducer = BackupBeskjedTransformer()
+    private val backupOppgaveProducer = BackupOppgaveTransformer()
+    private val backupDoneProducer = BackupDoneTranformer()
 
     val beskjedEventService = BeskjedEventService(database)
     val oppgaveEventService = OppgaveEventService(database)
     val innboksEventService = InnboksEventService(database)
     val doneEventService = DoneEventService(database, doneProducer)
-    val backupDoneService = BackupDoneService(backupDoneProducer, database)
     val statusoppdateringEventService = StatusoppdateringEventService(database)
 
-    val backupBeskjedEventService = BackupBeskjedService(database, beskjedProducer)
-    val backupOppgaveService = BackupOppgaveService(database, oppgaveProducer)
+    val backupBeskjedEventService = BackupBeskjedService(database, kafkaProducerBeskjedBackup, kafkaProducerDoneBackup, backupBeskjedProducer)
+    val backupOppgaveService = BackupOppgaveService(database, kafkaProducerOppgaveBackup, kafkaProducerDoneBackup, backupOppgaveProducer)
+    val backupDoneService = BackupDoneService(database, kafkaProducerDoneBackup, backupDoneProducer)
 
     val healthService = HealthService(this)
     val brukernotifikasjonService = BrukernotifikasjonService(database)

@@ -3,10 +3,10 @@ package no.nav.personbruker.dittnav.eventhandler.done
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-object BackupDoneObjectMother {
+object DoneObjectMother {
 
-    fun createBackupDone(eventId: String, fodselsnummer: String): BackupDone {
-        return BackupDone(
+    fun createDone(eventId: String, fodselsnummer: String): Done {
+        return Done(
                 eventId = eventId,
                 systembruker = "x-dittnav",
                 fodselsnummer = fodselsnummer,
@@ -15,8 +15,8 @@ object BackupDoneObjectMother {
         )
     }
 
-    fun createBackupDone(systembruker: String, eventTidspunkt: ZonedDateTime, fodselsnummer: String, eventId: String, grupperingsId: String): BackupDone {
-        return BackupDone(
+    fun createDone(systembruker: String, eventTidspunkt: ZonedDateTime, fodselsnummer: String, eventId: String, grupperingsId: String): Done {
+        return Done(
                 systembruker = systembruker,
                 eventTidspunkt = eventTidspunkt,
                 fodselsnummer = fodselsnummer,

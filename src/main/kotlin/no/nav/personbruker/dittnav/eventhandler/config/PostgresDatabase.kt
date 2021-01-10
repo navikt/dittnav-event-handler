@@ -56,7 +56,7 @@ class PostgresDatabase(env: Environment) : Database {
             config.minimumIdle = 0
             config.maxLifetime = 1800000
             config.maximumPoolSize = 2
-            config.connectionTimeout = 1000
+            config.connectionTimeout = 3000
             config.validationTimeout = 500
             config.idleTimeout = 30000
             config.isAutoCommit = false

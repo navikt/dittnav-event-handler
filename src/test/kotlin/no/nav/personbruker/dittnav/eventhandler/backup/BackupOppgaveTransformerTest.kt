@@ -11,12 +11,10 @@ import org.junit.jupiter.api.Test
 
 internal class BackupOppgaveTransformerTest {
 
-    private val oppgaveTransformer = BackupOppgaveTransformer()
-
     @Test
     fun `Skal transformere fra intern Oppgave til Avro-Oppgave`() {
         val oppgaveList = getOppgaveList()
-        val avroOppgave = oppgaveTransformer.toSchemasOppgave(1, oppgaveList)
+        val avroOppgave = BackupOppgaveTransformer.toSchemasOppgave(1, oppgaveList)
         avroOppgave.size `should be equal to` oppgaveList.size
     }
 
@@ -25,14 +23,14 @@ internal class BackupOppgaveTransformerTest {
         val oppgaveList = getOppgaveList()
         oppgaveList.add(OppgaveObjectMother.createOppgave(id = 1, eventId = "123", fodselsnummer = "", aktiv = true))
         invoking {
-            oppgaveTransformer.toSchemasOppgave(1, oppgaveList)
+            BackupOppgaveTransformer.toSchemasOppgave(1, oppgaveList)
         } `should throw` BackupEventException::class `with message containing` "Vi stoppet på nr 4 (i batch nr. 1) av totalt 4"
     }
 
     @Test
     fun `Skal transformere til Avro-Done`() {
         val oppgaveList = getOppgaveList()
-        val transformed = oppgaveTransformer.toSchemasDone(1, oppgaveList)
+        val transformed = BackupOppgaveTransformer.toSchemasDone(1, oppgaveList)
         transformed.size `should be equal to` oppgaveList.size
     }
 
@@ -41,7 +39,7 @@ internal class BackupOppgaveTransformerTest {
         val oppgaveList = getOppgaveList()
         oppgaveList.add(OppgaveObjectMother.createOppgave(id = 1, eventId = "123", fodselsnummer = "", aktiv = true))
         invoking {
-            oppgaveTransformer.toSchemasDone(1, oppgaveList)
+            BackupOppgaveTransformer.toSchemasDone(1, oppgaveList)
         } `should throw` BackupEventException::class `with message containing` "Vi stoppet på nr 4 (i batch nr. 1) av totalt 4"
     }
 

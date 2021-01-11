@@ -37,3 +37,7 @@ fun Connection.deleteOppgave(oppgaver: List<Oppgave>) =
                     }
                     it.executeBatch()
                 }
+
+fun Connection.deleteAllOppgave() =
+        prepareStatement("""DELETE FROM OPPGAVE""")
+                .use { it.execute() }

@@ -7,7 +7,7 @@ import no.nav.personbruker.dittnav.eventhandler.done.Done
 import org.apache.avro.AvroMissingFieldException
 import org.apache.avro.AvroRuntimeException
 
-class BackupDoneTranformer {
+object BackupDoneTranformer {
 
      fun toSchemasDone(batchNumber: Int, events: List<Done>): MutableMap<Nokkel, no.nav.brukernotifikasjon.schemas.Done> {
         var count = 0

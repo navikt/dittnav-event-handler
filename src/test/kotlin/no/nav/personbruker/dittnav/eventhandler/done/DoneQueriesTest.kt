@@ -26,12 +26,12 @@ internal class DoneQueriesTest {
 
     @BeforeAll
     fun `populer testdata`() {
-        createBackupDone(listOf(done1, done2))
+        createDone(listOf(done1, done2))
     }
 
     @AfterAll
     fun `slett testdata`() {
-        deleteBackupDone(listOf(done1, done2))
+        deleteDone(listOf(done1, done2))
     }
 
     @Test
@@ -53,15 +53,15 @@ internal class DoneQueriesTest {
         }
     }
 
-    private fun createBackupDone(backupDone: List<Done>) {
+    private fun createDone(backupDone: List<Done>) {
         runBlocking {
-            database.dbQuery { createDoneInCache(backupDone) }
+            database.dbQuery { createDone(backupDone) }
         }
     }
 
-    private fun deleteBackupDone(backupDone: List<Done>) {
+    private fun deleteDone(backupDone: List<Done>) {
         runBlocking {
-            database.dbQuery { deleteBackupDoneInCache(backupDone) }
+            database.dbQuery { deleteDone(backupDone) }
         }
     }
 }

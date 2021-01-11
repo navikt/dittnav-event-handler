@@ -7,7 +7,7 @@ import no.nav.personbruker.dittnav.eventhandler.common.exceptions.BackupEventExc
 import org.apache.avro.AvroMissingFieldException
 import org.apache.avro.AvroRuntimeException
 
-class BackupBeskjedTransformer {
+object BackupBeskjedTransformer {
 
     fun toSchemasBeskjed(batchNumber: Int, events: List<Beskjed>): MutableMap<Nokkel, no.nav.brukernotifikasjon.schemas.Beskjed> {
         var count = 0

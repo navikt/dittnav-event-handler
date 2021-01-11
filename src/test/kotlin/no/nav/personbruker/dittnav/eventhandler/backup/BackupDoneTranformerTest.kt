@@ -10,13 +10,10 @@ import org.amshove.kluent.invoking
 import org.junit.jupiter.api.Test
 
 internal class BackupDoneTranformerTest {
-
-    private val doneTransformer = BackupDoneTranformer()
-
     @Test
     fun `Skal transformere fra intern Done til Avro-Done`() {
         val beskjedList = getDoneList()
-        val avroDone = doneTransformer.toSchemasDone(1, beskjedList)
+        val avroDone = BackupDoneTranformer.toSchemasDone(1, beskjedList)
         avroDone.size `should be equal to` beskjedList.size
     }
 
@@ -25,7 +22,7 @@ internal class BackupDoneTranformerTest {
         val doneList = getDoneList()
         doneList.add(DoneObjectMother.createDone(eventId = "123", fodselsnummer = ""))
         invoking {
-            doneTransformer.toSchemasDone(1, doneList)
+            BackupDoneTranformer.toSchemasDone(1, doneList)
         } `should throw` BackupEventException::class `with message containing` "Vi stoppet på nr 4 (i batch 1) av totalt 4"
     }
 

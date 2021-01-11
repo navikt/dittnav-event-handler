@@ -36,9 +36,6 @@ class ApplicationContext {
     val database: Database = PostgresDatabase(environment)
 
     private val doneProducer = DoneProducer(kafkaProducerDone)
-    private val backupBeskjedProducer = BackupBeskjedTransformer()
-    private val backupOppgaveProducer = BackupOppgaveTransformer()
-    private val backupDoneProducer = BackupDoneTranformer()
 
     val beskjedEventService = BeskjedEventService(database)
     val oppgaveEventService = OppgaveEventService(database)
@@ -46,9 +43,9 @@ class ApplicationContext {
     val doneEventService = DoneEventService(database, doneProducer)
     val statusoppdateringEventService = StatusoppdateringEventService(database)
 
-    val backupBeskjedEventService = BackupBeskjedService(database, kafkaProducerBeskjedBackup, kafkaProducerDoneBackup, backupBeskjedProducer)
-    val backupOppgaveService = BackupOppgaveService(database, kafkaProducerOppgaveBackup, kafkaProducerDoneBackup, backupOppgaveProducer)
-    val backupDoneService = BackupDoneService(database, kafkaProducerDoneBackup, backupDoneProducer)
+    val backupBeskjedEventService = BackupBeskjedService(database, kafkaProducerBeskjedBackup, kafkaProducerDoneBackup)
+    val backupOppgaveService = BackupOppgaveService(database, kafkaProducerOppgaveBackup, kafkaProducerDoneBackup)
+    val backupDoneService = BackupDoneService(database, kafkaProducerDoneBackup)
 
     val healthService = HealthService(this)
     val brukernotifikasjonService = BrukernotifikasjonService(database)

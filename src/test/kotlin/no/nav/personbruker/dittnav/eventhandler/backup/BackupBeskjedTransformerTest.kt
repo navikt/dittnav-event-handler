@@ -12,12 +12,10 @@ import java.time.ZonedDateTime
 
 internal class BackupBeskjedTransformerTest {
 
-    private val beskjedTransformer = BackupBeskjedTransformer()
-
     @Test
     fun `Skal transformere fra intern Beskjed til Avro-Beskjed`() {
         val beskjedList = getBeskjedList()
-        val transformed = beskjedTransformer.toSchemasBeskjed(1, beskjedList)
+        val transformed = BackupBeskjedTransformer.toSchemasBeskjed(1, beskjedList)
         transformed.size `should be equal to` beskjedList.size
     }
 
@@ -26,14 +24,14 @@ internal class BackupBeskjedTransformerTest {
         val beskjedList = getBeskjedList()
         beskjedList.add(BeskjedObjectMother.createBeskjed(id = 1, eventId = "123", fodselsnummer = "", synligFremTil = ZonedDateTime.now(),  uid = "123uid", aktiv = true))
         invoking {
-            beskjedTransformer.toSchemasBeskjed(1, beskjedList)
+            BackupBeskjedTransformer.toSchemasBeskjed(1, beskjedList)
         } `should throw` BackupEventException::class `with message containing` "Vi stoppet på nr 4 (i batch 1) av totalt 4"
     }
 
     @Test
     fun `Skal transformere til Avro-Done`() {
         val beskjedList = getBeskjedList()
-        val transformed = beskjedTransformer.toSchemasDone(1, beskjedList)
+        val transformed = BackupBeskjedTransformer.toSchemasDone(1, beskjedList)
         transformed.size `should be equal to` beskjedList.size
     }
 
@@ -42,7 +40,7 @@ internal class BackupBeskjedTransformerTest {
         val beskjedList = getBeskjedList()
         beskjedList.add(BeskjedObjectMother.createBeskjed(id = 1, eventId = "123", fodselsnummer = "", synligFremTil = ZonedDateTime.now(),  uid = "123uid", aktiv = true))
         invoking {
-            beskjedTransformer.toSchemasDone(1, beskjedList)
+            BackupBeskjedTransformer.toSchemasDone(1, beskjedList)
         } `should throw` BackupEventException::class `with message containing` "Vi stoppet på nr 4 (i batch 1) av totalt 4"
     }
 

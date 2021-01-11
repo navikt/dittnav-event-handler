@@ -7,7 +7,7 @@ import no.nav.personbruker.dittnav.eventhandler.oppgave.Oppgave
 import org.apache.avro.AvroMissingFieldException
 import org.apache.avro.AvroRuntimeException
 
-class BackupOppgaveTransformer {
+object BackupOppgaveTransformer {
 
     fun toSchemasOppgave(batchNumber: Int, events: List<Oppgave>): MutableMap<Nokkel, no.nav.brukernotifikasjon.schemas.Oppgave> {
         var count = 0

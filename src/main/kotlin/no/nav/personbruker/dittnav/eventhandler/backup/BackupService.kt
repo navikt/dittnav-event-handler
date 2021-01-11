@@ -17,7 +17,7 @@ abstract class BackupService<T>(private val database: Database) {
         }
     }
 
-    fun <S> produceKafkaEventsForAllEventsInCache(kafkaProducerWrapper: KafkaProducerWrapper<S>, dryrun: Boolean, converter: (batchNumber: Int, events: List<T>) -> MutableMap<Nokkel, S>, events: List<T>): Int {
+    protected fun <S> produceKafkaEventsForAllEventsInCache(kafkaProducerWrapper: KafkaProducerWrapper<S>, dryrun: Boolean, converter: (batchNumber: Int, events: List<T>) -> MutableMap<Nokkel, S>, events: List<T>): Int {
         var batchNumber = 0
         var numberOfProcessedEvents = 0
         if (events.isNotEmpty()) {
@@ -44,19 +44,19 @@ abstract class BackupService<T>(private val database: Database) {
                 }
                 count++
             } catch (e: AuthenticationException) {
-                val msg = "Vi får feil når vi prøver å koble oss til Kafka (beskjed-backup-topic). " +
+                val msg = "Vi får feil når vi prøver å koble oss til Kafka (topic ${kafkaProducer.topicName}). " +
                         "EventId: ${event.key.getEventId()}. " +
-                        "Vi stoppet på nr $count (i batch nr. ${batchNumber}) av totalt ${convertedEvents.size} eventer som var i oppgave-listen."
+                        "Vi stoppet på nr $count (i batch nr. ${batchNumber}) av totalt ${convertedEvents.size} eventer som var i event-listen."
                 throw BackupEventException(msg, e)
             } catch (e: KafkaException) {
-                val msg = "Producer sin send funksjon feilet i Kafka (beskjed-backup-topic). " +
+                val msg = "Producer sin send funksjon feilet i Kafka (topic ${kafkaProducer.topicName}). " +
                         "EventId: ${event.key.getEventId()}. " +
-                        "Vi stoppet på nr $count (i batch nr. ${batchNumber}) av totalt ${convertedEvents.size} eventer som var i beskjed-listen."
+                        "Vi stoppet på nr $count (i batch nr. ${batchNumber}) av totalt ${convertedEvents.size} eventer som var i event-listen."
                 throw BackupEventException(msg, e)
             } catch (e: Exception) {
-                val msg = "Vi fikk en uventet feil når vi skriver til beskjed-backup-topic-en. " +
+                val msg = "Vi fikk en uventet feil når vi skriver til topic ${kafkaProducer.topicName}. " +
                         "EventId: ${event.key.getEventId()}. " +
-                        "Vi stoppet på nr $count (i batch nr. ${batchNumber}) av totalt ${convertedEvents.size} eventer som var i beskjed-listen."
+                        "Vi stoppet på nr $count (i batch nr. ${batchNumber}) av totalt ${convertedEvents.size} eventer som var i event-listen."
                 throw BackupEventException(msg, e)
             }
         }

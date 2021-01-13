@@ -3,7 +3,7 @@ package no.nav.personbruker.dittnav.eventhandler.done
 import java.sql.Connection
 import java.sql.Types
 
-fun Connection.createDoneInCache(done: List<BackupDone>) =
+fun Connection.createDone(done: List<Done>) =
         prepareStatement("""INSERT INTO done(systembruker, eventTidspunkt, fodselsnummer, eventId, grupperingsId)
             VALUES(?, ?, ?, ?, ?)""")
                 .use {
@@ -20,7 +20,7 @@ fun Connection.createDoneInCache(done: List<BackupDone>) =
                     it.executeBatch()
                 }
 
-fun Connection.deleteBackupDoneInCache(done: List<BackupDone>) =
+fun Connection.deleteDone(done: List<Done>) =
         prepareStatement("""DELETE FROM done WHERE eventId = ?""")
                 .use {
                     done.forEach { done ->
@@ -31,3 +31,7 @@ fun Connection.deleteBackupDoneInCache(done: List<BackupDone>) =
                     }
                     it.executeBatch()
                 }
+
+fun Connection.deleteAllDone() =
+        prepareStatement("""DELETE FROM DONE""")
+                .use { it.execute() }

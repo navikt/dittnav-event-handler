@@ -1,7 +1,8 @@
-package no.nav.personbruker.dittnav.eventhandler.oppgave
+package no.nav.personbruker.dittnav.eventhandler.backup
 
 import no.nav.brukernotifikasjon.schemas.builders.OppgaveBuilder
 import no.nav.brukernotifikasjon.schemas.builders.util.ValidationUtil
+import no.nav.personbruker.dittnav.eventhandler.oppgave.Oppgave
 
 fun createOppgaveEvent(oppgave: Oppgave): no.nav.brukernotifikasjon.schemas.Oppgave {
     val build = OppgaveBuilder()

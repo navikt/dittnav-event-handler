@@ -168,7 +168,7 @@ class BeskjedQueriesTest {
     @Test
     fun `Returnerer liste av alle inaktive Beskjed-eventer`() {
         runBlocking {
-            database.dbQuery { getAllInactiveBeskjed() }.size `should be equal to` 1
+            database.dbQuery { getAllInactiveBeskjedEvents() }.size `should be equal to` 1
         }
     }
 

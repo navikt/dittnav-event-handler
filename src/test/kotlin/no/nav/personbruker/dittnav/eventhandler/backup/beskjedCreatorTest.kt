@@ -1,9 +1,9 @@
-package no.nav.personbruker.dittnav.eventhandler.beskjed
+package no.nav.personbruker.dittnav.eventhandler.backup
 
 import kotlinx.coroutines.runBlocking
 import no.nav.brukernotifikasjon.schemas.builders.exception.FieldValidationException
 import no.nav.personbruker.dittnav.common.test.`with message containing`
-import no.nav.personbruker.dittnav.eventhandler.done.createKeyForEvent
+import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should throw`
 import org.amshove.kluent.invoking
@@ -12,7 +12,7 @@ import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
-class beskjedCreator {
+internal class beskjedCreatorTest {
     private val fodselsnummer = "12345678901"
     private val eventId = "11"
     private val systembruker = "x-dittnav"

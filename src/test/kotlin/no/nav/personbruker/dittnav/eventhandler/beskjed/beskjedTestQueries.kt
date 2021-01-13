@@ -40,3 +40,7 @@ fun Connection.deleteBeskjed(beskjeder: List<Beskjed>) =
                     }
                     it.executeBatch()
                 }
+
+fun Connection.deleteAllBeskjed() =
+        prepareStatement("""DELETE FROM BESKJED""")
+                .use { it.execute() }

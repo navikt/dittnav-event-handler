@@ -10,9 +10,9 @@ import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.NoEvents
 
 class DoneEventService(private val database: Database, private val doneProducer: DoneProducer) {
 
-    suspend fun markEventAsDone(innloggetBruker: InnloggetBruker, doneDto: Done) {
-        val beskjedEvent = getBeskjedFromCacheForUser(innloggetBruker.ident, doneDto.uid, doneDto.eventId)
-        doneProducer.produceDoneEventForSuppliedEventId(innloggetBruker.ident, doneDto.eventId, beskjedEvent)
+    suspend fun markEventAsDone(innloggetBruker: InnloggetBruker, doneDTODto: DoneDTO) {
+        val beskjedEvent = getBeskjedFromCacheForUser(innloggetBruker.ident, doneDTODto.uid, doneDTODto.eventId)
+        doneProducer.produceDoneEventForSuppliedEventId(innloggetBruker.ident, doneDTODto.eventId, beskjedEvent)
     }
 
     suspend fun getBeskjedFromCacheForUser(fodselsnummer: String, uid: String, eventId: String): Beskjed {

@@ -22,14 +22,6 @@ class OppgaveEventService(private val database: Database) {
         return getEvents { getAllOppgaveForInnloggetBruker(bruker) }
     }
 
-    suspend fun getAllOppgaveEventsInCach(): List<Oppgave> {
-        return getEvents { getAllOppgaveEvents() }
-    }
-
-    suspend fun getAllInactiveOppgaveEventsInCach(): List<Oppgave> {
-        return getEvents { getAllInactiveOppgaveEvents() }
-    }
-
     suspend fun getAllGroupedEventsFromCacheForUser(bruker: InnloggetBruker, grupperingsid: String?, producer: String?): List<Oppgave> {
         val grupperingsId = validateNonNullFieldMaxLength(grupperingsid, "grupperingsid", 100)
         val produsent = validateNonNullFieldMaxLength(producer, "produsent", 100)
@@ -48,7 +40,7 @@ class OppgaveEventService(private val database: Database) {
         return events
     }
 
-    fun logEventsWithEmptyProdusent(events: List<Oppgave>) {
+    private fun logEventsWithEmptyProdusent(events: List<Oppgave>) {
         events.forEach { oppgave ->
             log.warn("Returnerer oppgave-eventer med tom produsent til frontend. Kanskje er ikke systembrukeren lagt inn i systembruker-tabellen? ${oppgave.toString()}")
         }

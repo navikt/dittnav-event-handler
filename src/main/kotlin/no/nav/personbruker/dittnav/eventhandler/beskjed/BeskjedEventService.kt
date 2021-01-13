@@ -35,14 +35,6 @@ class BeskjedEventService(private val database: Database) {
         return getEvents { getAllGroupedBeskjedEventsByIds(bruker, grupperingsId, produsent) }
     }
 
-    suspend fun getAllBeskjedEventsInCach(): List<Beskjed> {
-        return getEvents { getAllBeskjedEvents() }
-    }
-
-    suspend fun getAllInactiveBeskjedEventsInCach(): List<Beskjed> {
-        return getEvents { getAllInactiveBeskjed() }
-    }
-
     private fun Beskjed.isExpired(): Boolean = synligFremTil?.isBefore(Instant.now().atZone(ZoneId.of("Europe/Oslo")))
             ?: false
 
@@ -58,9 +50,9 @@ class BeskjedEventService(private val database: Database) {
         return events
     }
 
-    fun logEventsWithEmptyProdusent(events: List<Beskjed>) {
+    private fun logEventsWithEmptyProdusent(events: List<Beskjed>) {
         events.forEach { beskjed ->
-            log.warn("Returnerer beskjed-eventer med tom produsent til frontend. Kanskje er ikke systembrukeren lagt inn i systembruker-tabellen? ${beskjed.toString()}")
+            log.warn("Returnerer beskjed-eventer med tom produsent til frontend. Kanskje er ikke systembrukeren lagt inn i systembruker-tabellen? $beskjed")
         }
     }
 }

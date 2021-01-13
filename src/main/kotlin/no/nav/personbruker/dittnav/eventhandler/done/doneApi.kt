@@ -8,6 +8,7 @@ import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.post
 import io.ktor.util.pipeline.PipelineContext
+import no.nav.personbruker.dittnav.eventhandler.backup.BackupDoneService
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.DuplicateEventException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.EventMarkedInactiveException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.NoEventsException
@@ -19,7 +20,7 @@ fun Route.doneApi(doneEventService: DoneEventService, backupDoneService: BackupD
     val log = LoggerFactory.getLogger(DoneEventService::class.java)
 
     post("/produce/done") {
-        respondForParameterType<Done> { doneDto ->
+        respondForParameterType<DoneDTO> { doneDto ->
             try {
                 doneEventService.markEventAsDone(innloggetBruker, doneDto)
                 val msg = "Done-event er produsert. EventID: ${doneDto.eventId}. Uid: ${doneDto.uid}."

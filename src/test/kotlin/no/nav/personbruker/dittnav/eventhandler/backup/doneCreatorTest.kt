@@ -1,13 +1,12 @@
-package no.nav.personbruker.dittnav.eventhandler.done
+package no.nav.personbruker.dittnav.eventhandler.backup
 
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
-import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
-class doneCreatorTest {
+internal class doneCreatorTest {
 
     private val fodselsnummer = "12345678901"
     private val grupperingsId = "789"
@@ -36,7 +35,7 @@ class doneCreatorTest {
     @Test
     fun `should create backupDone-event`() {
         runBlocking {
-            val doneEvent = createBackupDoneEvent(fodselsnummer, grupperingsId, eventTidspunkt)
+            val doneEvent = createDoneEvent(fodselsnummer, grupperingsId, eventTidspunkt)
             doneEvent.getFodselsnummer() `should be equal to` fodselsnummer
             doneEvent.getGrupperingsId() `should be equal to` grupperingsId
             doneEvent.getTidspunkt() `should be equal to` eventTidspunkt.toLocalDateTime().toEpochSecond(ZoneOffset.UTC)

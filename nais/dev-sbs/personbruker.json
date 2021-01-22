@@ -3,6 +3,6 @@
   "cluster": "preprod",
   "environment": "dev",
   "ingresses": [
-    "https://dittnav-event-handler.personbruker.nais.oera-q.local"
+    "https://dittnav-event-handler.dev.nav.no"
   ]
 }

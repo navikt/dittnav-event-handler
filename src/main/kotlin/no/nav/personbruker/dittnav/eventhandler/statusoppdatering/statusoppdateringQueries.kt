@@ -1,8 +1,8 @@
 package no.nav.personbruker.dittnav.eventhandler.statusoppdatering
 
-import no.nav.personbruker.dittnav.common.util.database.fetching.mapList
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
+import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId

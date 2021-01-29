@@ -47,7 +47,6 @@ dependencies {
     implementation(Prometheus.simpleClient)
     implementation(Prometheus.httpServer)
 
-    testImplementation(DittNAV.Common.test)
     testImplementation(H2Database.h2)
     testImplementation(Jjwt.api)
     testImplementation(Junit.api)

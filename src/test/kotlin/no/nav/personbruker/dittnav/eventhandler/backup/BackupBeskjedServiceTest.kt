@@ -7,7 +7,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import kafka.common.KafkaException
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.common.test.`with message containing`
+import no.nav.personbruker.dittnav.eventhandler.common.`with message containing`
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
 import no.nav.personbruker.dittnav.eventhandler.beskjed.deleteAllBeskjed

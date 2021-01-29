@@ -1,9 +1,9 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
-import no.nav.personbruker.dittnav.common.util.database.fetching.mapList
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.convertIfUnlikelyDate
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
+import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.EventCacheException
 import no.nav.personbruker.dittnav.eventhandler.config.Kafka.BACKUP_EVENT_CHUNCK_SIZE
 import java.sql.Connection

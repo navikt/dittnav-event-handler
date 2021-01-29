@@ -4,8 +4,8 @@ import io.ktor.application.ApplicationCall
 import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
 import no.nav.brukernotifikasjon.schemas.builders.exception.FieldValidationException
-import no.nav.personbruker.dittnav.common.util.database.exception.RetriableDatabaseException
-import no.nav.personbruker.dittnav.common.util.database.exception.UnretriableDatabaseException
+import no.nav.personbruker.dittnav.eventhandler.common.exceptions.database.RetriableDatabaseException
+import no.nav.personbruker.dittnav.eventhandler.common.exceptions.database.UnretriableDatabaseException
 import org.slf4j.Logger
 
 suspend fun respondWithError(call: ApplicationCall, log: Logger, exception: Exception) {

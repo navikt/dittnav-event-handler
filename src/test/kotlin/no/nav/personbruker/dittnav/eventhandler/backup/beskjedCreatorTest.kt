@@ -2,7 +2,7 @@ package no.nav.personbruker.dittnav.eventhandler.backup
 
 import kotlinx.coroutines.runBlocking
 import no.nav.brukernotifikasjon.schemas.builders.exception.FieldValidationException
-import no.nav.personbruker.dittnav.common.test.`with message containing`
+import no.nav.personbruker.dittnav.eventhandler.common.`with message containing`
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should throw`

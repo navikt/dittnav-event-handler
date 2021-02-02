@@ -1,6 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.backup
 
-import no.nav.personbruker.dittnav.common.test.`with message containing`
+import no.nav.personbruker.dittnav.eventhandler.common.`with message containing`
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.BackupEventException
 import no.nav.personbruker.dittnav.eventhandler.done.Done
 import no.nav.personbruker.dittnav.eventhandler.done.DoneObjectMother

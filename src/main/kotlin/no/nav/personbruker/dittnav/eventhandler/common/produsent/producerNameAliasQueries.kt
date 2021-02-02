@@ -1,6 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.common.produsent
 
-import no.nav.personbruker.dittnav.common.util.database.fetching.mapList
+import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
 import java.sql.Connection
 import java.sql.ResultSet
 

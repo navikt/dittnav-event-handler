@@ -48,10 +48,10 @@ fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()
         healthApi(appContext.healthService)
         producerNameAliasApi(appContext.producerNameAliasService)
         authenticate {
-            doneApi(appContext.doneEventService, appContext.backupDoneService)
-            beskjedApi(appContext.beskjedEventService, appContext.backupBeskjedEventService)
+            doneApi(appContext.doneEventService)
+            beskjedApi(appContext.beskjedEventService)
             innboksApi(appContext.innboksEventService)
-            oppgaveApi(appContext.oppgaveEventService, appContext.backupOppgaveService)
+            oppgaveApi(appContext.oppgaveEventService)
             brukernotifikasjoner(appContext.brukernotifikasjonService)
             statusoppdateringApi(appContext.statusoppdateringEventService)
         }

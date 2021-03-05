@@ -10,7 +10,7 @@ import no.nav.personbruker.dittnav.eventhandler.common.exceptions.respondWithErr
 import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
 import org.slf4j.LoggerFactory
 
-fun Route.beskjedApi(beskjedEventService: BeskjedEventService, backupBeskjedService: BackupBeskjedService) {
+fun Route.beskjedApi(beskjedEventService: BeskjedEventService) {
 
     val log = LoggerFactory.getLogger(BeskjedEventService::class.java)
 

@@ -15,7 +15,7 @@ import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.NoEvents
 import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
 import org.slf4j.LoggerFactory
 
-fun Route.doneApi(doneEventService: DoneEventService, backupDoneService: BackupDoneService) {
+fun Route.doneApi(doneEventService: DoneEventService) {
 
     val log = LoggerFactory.getLogger(DoneEventService::class.java)
 

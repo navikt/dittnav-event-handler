@@ -111,7 +111,7 @@ fun Connection.getAllGroupedOppgaveEventsByIds(bruker: InnloggetBruker, grupperi
                 }
 
 private fun ResultSet.toOppgave(): Oppgave {
-    val rawEventTidspunkt = getUtcTimeStamp("eventTidspunkt") ?: throw EventCacheException("Eventtidspunkt ble ikke funnet i databasen")
+    val rawEventTidspunkt = getUtcTimeStamp("eventTidspunkt")
     val verifiedEventTidspunkt = convertIfUnlikelyDate(rawEventTidspunkt)
     return Oppgave(
             id = getInt("id"),

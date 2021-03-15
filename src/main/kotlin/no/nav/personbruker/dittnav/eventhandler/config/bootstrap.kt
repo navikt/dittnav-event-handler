@@ -1,24 +1,19 @@
 package no.nav.personbruker.dittnav.eventhandler.config
 
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import io.ktor.application.*
-import io.ktor.auth.Authentication
-import io.ktor.auth.authenticate
-import io.ktor.auth.authentication
-import io.ktor.features.ContentNegotiation
-import io.ktor.features.DefaultHeaders
-import io.ktor.jackson.jackson
-import io.ktor.routing.routing
-import io.ktor.util.KtorExperimentalAPI
-import io.ktor.util.pipeline.PipelineContext
+import io.ktor.auth.*
+import io.ktor.features.*
+import io.ktor.routing.*
+import io.ktor.serialization.*
+import io.ktor.util.*
+import io.ktor.util.pipeline.*
 import io.prometheus.client.hotspot.DefaultExports
 import no.nav.personbruker.dittnav.eventhandler.beskjed.beskjedApi
 import no.nav.personbruker.dittnav.eventhandler.brukernotifikasjon.brukernotifikasjoner
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBrukerFactory
-import no.nav.personbruker.dittnav.eventhandler.common.produsent.producerNameAliasApi
 import no.nav.personbruker.dittnav.eventhandler.common.health.healthApi
+import no.nav.personbruker.dittnav.eventhandler.common.produsent.producerNameAliasApi
 import no.nav.personbruker.dittnav.eventhandler.done.doneApi
 import no.nav.personbruker.dittnav.eventhandler.innboks.innboksApi
 import no.nav.personbruker.dittnav.eventhandler.oppgave.oppgaveApi
@@ -31,11 +26,7 @@ fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()
     install(DefaultHeaders)
 
     install(ContentNegotiation) {
-        jackson {
-            enable(SerializationFeature.INDENT_OUTPUT)
-            registerModule(JavaTimeModule())
-            disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-        }
+        json()
     }
 
     val config = this.environment.config

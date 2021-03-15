@@ -52,7 +52,7 @@ class BeskjedEventServiceTest {
                 database.queryWithExceptionTranslation<List<Beskjed>>(any())
             }.returns(beskjedList)
 
-            val actualBeskjeds = beskjedEventService.getAllEventsFromCacheForUser(bruker)
+            val actualBeskjeds = beskjedEventService.getAllCachedEventsForUser(bruker)
             actualBeskjeds.size `should be equal to` beskjedList.size
         }
     }

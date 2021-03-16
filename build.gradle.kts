@@ -33,11 +33,11 @@ dependencies {
     implementation(Logstash.logbackEncoder)
     implementation(Kafka.Apache.clients)
     implementation(Kafka.Confluent.avroSerializer)
-    implementation("io.ktor:ktor-auth:1.5.2")
-    implementation("io.ktor:ktor-auth-jwt:1.5.2")
-    implementation("io.ktor:ktor-html-builder:1.5.2")
-    implementation("io.ktor:ktor-serialization:1.5.2")
-    implementation("io.ktor:ktor-server-netty:1.5.2")
+    implementation(Ktor.auth)
+    implementation(Ktor.authJwt)
+    implementation(Ktor.htmlBuilder)
+    implementation(Ktor.serialization)
+    implementation(Ktor.serverNetty)
     implementation(NAV.tokenValidatorKtor)
     implementation(NAV.vaultJdbc)
     implementation(Postgresql.postgresql)
@@ -59,7 +59,7 @@ dependencies {
 
     testRuntimeOnly(Bouncycastle.bcprovJdk15on)
     testRuntimeOnly(Jjwt.impl)
-    testRuntimeOnly("io.jsonwebtoken:jjwt-orgjson:0.11.2")
+    testRuntimeOnly(Jjwt.orgjson)
     testRuntimeOnly(Junit.engine)
 }
 

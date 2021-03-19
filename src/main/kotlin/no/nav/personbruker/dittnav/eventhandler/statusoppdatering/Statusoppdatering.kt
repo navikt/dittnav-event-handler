@@ -1,12 +1,11 @@
 package no.nav.personbruker.dittnav.eventhandler.statusoppdatering
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import java.time.ZonedDateTime
 
 class Statusoppdatering(
-        @JsonIgnore val id: Int,
+        val id: Int,
         val produsent: String,
-        @JsonIgnore val systembruker: String,
+        val systembruker: String,
         val eventId: String,
         val eventTidspunkt: ZonedDateTime,
         val fodselsnummer: String,

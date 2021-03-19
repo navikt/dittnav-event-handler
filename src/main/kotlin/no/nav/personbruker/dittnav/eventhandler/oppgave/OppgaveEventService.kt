@@ -10,22 +10,26 @@ class OppgaveEventService(private val database: Database) {
 
     private val log = LoggerFactory.getLogger(OppgaveEventService::class.java)
 
-    suspend fun getActiveCachedEventsForUser(bruker: InnloggetBruker): List<Oppgave> {
+    suspend fun getActiveCachedEventsForUser(bruker: InnloggetBruker): List<OppgaveDTO> {
         return getEvents { getAktivOppgaveForInnloggetBruker(bruker) }
+            .map { oppgave -> oppgave.toDTO() }
     }
 
-    suspend fun getInactiveCachedEventsForUser(bruker: InnloggetBruker): List<Oppgave> {
+    suspend fun getInactiveCachedEventsForUser(bruker: InnloggetBruker): List<OppgaveDTO> {
         return getEvents { getInaktivOppgaveForInnloggetBruker(bruker) }
+            .map { oppgave -> oppgave.toDTO() }
     }
 
-    suspend fun getAllCachedEventsForUser(bruker: InnloggetBruker): List<Oppgave> {
+    suspend fun getAllCachedEventsForUser(bruker: InnloggetBruker): List<OppgaveDTO> {
         return getEvents { getAllOppgaveForInnloggetBruker(bruker) }
+            .map { oppgave -> oppgave.toDTO() }
     }
 
-    suspend fun getAllGroupedEventsFromCacheForUser(bruker: InnloggetBruker, grupperingsid: String?, producer: String?): List<Oppgave> {
+    suspend fun getAllGroupedEventsFromCacheForUser(bruker: InnloggetBruker, grupperingsid: String?, producer: String?): List<OppgaveDTO> {
         val grupperingsId = validateNonNullFieldMaxLength(grupperingsid, "grupperingsid", 100)
         val produsent = validateNonNullFieldMaxLength(producer, "produsent", 100)
         return getEvents { getAllGroupedOppgaveEventsByIds(bruker, grupperingsId, produsent) }
+            .map { oppgave -> oppgave.toDTO() }
     }
 
     private suspend fun getEvents(operationToExecute: Connection.() -> List<Oppgave>): List<Oppgave> {

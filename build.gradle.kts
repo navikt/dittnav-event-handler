@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin on the JVM.
     kotlin("jvm").version(Kotlin.version)
+    kotlin("plugin.serialization").version(Kotlin.version)
     kotlin("plugin.allopen").version(Kotlin.version)
 
     id(Shadow.pluginId) version (Shadow.version)
@@ -28,7 +29,6 @@ dependencies {
     implementation(Brukernotifikasjon.schemas)
     implementation(DittNAV.Common.utils)
     implementation(Hikari.cp)
-    implementation(Jackson.dataTypeJsr310)
     implementation(Logback.classic)
     implementation(Logstash.logbackEncoder)
     implementation(Kafka.Apache.clients)
@@ -36,7 +36,7 @@ dependencies {
     implementation(Ktor.auth)
     implementation(Ktor.authJwt)
     implementation(Ktor.htmlBuilder)
-    implementation(Ktor.jackson)
+    implementation(Ktor.serialization)
     implementation(Ktor.serverNetty)
     implementation(NAV.tokenValidatorKtor)
     implementation(NAV.vaultJdbc)
@@ -59,7 +59,7 @@ dependencies {
 
     testRuntimeOnly(Bouncycastle.bcprovJdk15on)
     testRuntimeOnly(Jjwt.impl)
-    testRuntimeOnly(Jjwt.jackson)
+    testRuntimeOnly(Jjwt.orgjson)
     testRuntimeOnly(Junit.engine)
 }
 

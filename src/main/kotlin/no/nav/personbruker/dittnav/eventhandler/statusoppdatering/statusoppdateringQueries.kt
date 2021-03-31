@@ -3,12 +3,13 @@ package no.nav.personbruker.dittnav.eventhandler.statusoppdatering
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
+import no.nav.personbruker.dittnav.eventhandler.config.Systembruker
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-fun Connection.getAllGroupedStatusoppdateringEventsByIds(bruker: InnloggetBruker, grupperingsid: String, produsent: String): List<Statusoppdatering> =
+fun Connection.getAllGroupedStatusoppdateringEventsByIds(bruker: InnloggetBruker, grupperingsid: String, systembruker: Systembruker): List<Statusoppdatering> =
         prepareStatement("""SELECT 
             |statusoppdatering.id,
             |statusoppdatering.eventTidspunkt,
@@ -24,11 +25,11 @@ fun Connection.getAllGroupedStatusoppdateringEventsByIds(bruker: InnloggetBruker
             |statusoppdatering.systembruker,
             |systembrukere.produsentnavn AS produsent
             |FROM (SELECT * FROM statusoppdatering WHERE fodselsnummer = ? AND grupperingsid = ?) AS statusoppdatering
-            |LEFT JOIN systembrukere ON statusoppdatering.systembruker = systembrukere.systembruker WHERE systembrukere.produsentnavn = ?""".trimMargin())
+            |LEFT JOIN systembrukere ON statusoppdatering.systembruker = systembrukere.systembruker WHERE systembrukere.systembruker = ?""".trimMargin())
                 .use {
                     it.setString(1, bruker.ident)
                     it.setString(2, grupperingsid)
-                    it.setString(3, produsent)
+                    it.setString(3, systembruker)
                     it.executeQuery().mapList {
                         toStatusoppdatering()
                     }

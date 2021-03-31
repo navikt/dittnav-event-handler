@@ -4,6 +4,7 @@ import Beskjed
 import no.nav.brukernotifikasjon.schemas.builders.util.ValidationUtil.validateNonNullFieldMaxLength
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
+import no.nav.personbruker.dittnav.eventhandler.config.Systembruker
 import org.slf4j.LoggerFactory
 import java.sql.Connection
 import java.time.Instant
@@ -31,10 +32,10 @@ class BeskjedEventService(private val database: Database) {
         return all.map { beskjed -> beskjed.toDTO() }
     }
 
-    suspend fun getAllGroupedEventsFromCacheForUser(bruker: InnloggetBruker, grupperingsid: String?, producer: String?): List<BeskjedDTO> {
-        val grupperingsId = validateNonNullFieldMaxLength(grupperingsid, "grupperingsid", 100)
-        val produsent = validateNonNullFieldMaxLength(producer, "produsent", 100)
-        return getEvents { getAllGroupedBeskjedEventsByIds(bruker, grupperingsId, produsent) }
+    suspend fun getAllGroupedEventsFromCacheForUser(bruker: InnloggetBruker, grupperingsid: String?, systembruker: Systembruker?): List<BeskjedDTO> {
+        val validGrupperingsId = validateNonNullFieldMaxLength(grupperingsid, "grupperingsid", 100)
+        val validSystembruker = validateNonNullFieldMaxLength(systembruker, "systembruker", 100)
+        return getEvents { getAllGroupedBeskjedEventsByIds(bruker, validGrupperingsId, validSystembruker) }
                 .map { beskjed -> beskjed.toDTO() }
     }
 

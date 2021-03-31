@@ -23,7 +23,7 @@ class BeskjedQueriesTest {
     private val uid = "22"
     private val eventId = "124"
     private val grupperingsid = "100${bruker.ident}"
-    private val produsent = "dittnav"
+    private val systembruker = "x-dittnav"
 
     private val beskjed1 = BeskjedObjectMother.createBeskjed(id = 1, eventId = "123", fodselsnummer = bruker.ident,
             synligFremTil = ZonedDateTime.now().plusHours(1), uid = "11", aktiv = true)
@@ -176,7 +176,7 @@ class BeskjedQueriesTest {
     fun `Returnerer en liste av alle grupperte Beskjed-eventer`() {
         runBlocking {
             database.dbQuery {
-                getAllGroupedBeskjedEventsByIds(bruker, grupperingsid, produsent)
+                getAllGroupedBeskjedEventsByIds(bruker, grupperingsid, systembruker)
             }.size `should be equal to` 3
         }
     }
@@ -196,7 +196,7 @@ class BeskjedQueriesTest {
         val noMatchGrupperingsid = "dummyGrupperingsid"
         runBlocking {
             database.dbQuery {
-                getAllGroupedBeskjedEventsByIds(bruker, noMatchGrupperingsid, produsent)
+                getAllGroupedBeskjedEventsByIds(bruker, noMatchGrupperingsid, systembruker)
             }.`should be empty`()
         }
     }

@@ -118,7 +118,7 @@ fun Connection.getAllInactiveBeskjedEvents(): List<Beskjed> =
                     }
                 }
 
-fun Connection.getAllGroupedBeskjedEventsByIds(bruker: InnloggetBruker, grupperingsid: String, produsent: String): List<Beskjed> =
+fun Connection.getAllGroupedBeskjedEventsByIds(bruker: InnloggetBruker, grupperingsid: String, systembruker: String): List<Beskjed> =
         prepareStatement("""SELECT 
             |beskjed.id, 
             |beskjed.uid, 
@@ -135,11 +135,11 @@ fun Connection.getAllGroupedBeskjedEventsByIds(bruker: InnloggetBruker, grupperi
             |beskjed.systembruker,
             |systembrukere.produsentnavn AS produsent
             |FROM (SELECT * FROM beskjed WHERE fodselsnummer = ? AND grupperingsid = ?) AS beskjed
-            |LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker WHERE systembrukere.produsentnavn = ?""".trimMargin())
+            |LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker WHERE systembrukere.systembruker = ?""".trimMargin())
                 .use {
                     it.setString(1, bruker.ident)
                     it.setString(2, grupperingsid)
-                    it.setString(3, produsent)
+                    it.setString(3, systembruker)
                     it.executeQuery().mapList {
                         toBeskjed()
                     }

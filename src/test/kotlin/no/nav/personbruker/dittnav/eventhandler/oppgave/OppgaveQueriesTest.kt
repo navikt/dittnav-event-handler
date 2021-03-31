@@ -17,7 +17,7 @@ class OppgaveQueriesTest {
 
     private val database = H2Database()
     private val bruker = InnloggetBrukerObjectMother.createInnloggetBruker("12345")
-    private val produsent = "dittnav"
+    private val systembruker = "x-dittnav"
     private val grupperingsid = "100${bruker.ident}"
 
     private val oppgave1 = OppgaveObjectMother.createOppgave(id = 1, eventId = "123", fodselsnummer = bruker.ident, aktiv = true)
@@ -131,7 +131,7 @@ class OppgaveQueriesTest {
     fun `Returnerer en liste av alle grupperte Oppgave-eventer`() {
         runBlocking {
             database.dbQuery {
-                getAllGroupedOppgaveEventsByIds(bruker, grupperingsid, produsent)
+                getAllGroupedOppgaveEventsByIds(bruker, grupperingsid, systembruker)
             }.size `should be equal to` 3
         }
     }
@@ -151,7 +151,7 @@ class OppgaveQueriesTest {
         val noMatchGrupperingsid = "dummyGrupperingsid"
         runBlocking {
             database.dbQuery {
-                getAllGroupedOppgaveEventsByIds(bruker, noMatchGrupperingsid, produsent)
+                getAllGroupedOppgaveEventsByIds(bruker, noMatchGrupperingsid, systembruker)
             }.`should be empty`()
         }
     }

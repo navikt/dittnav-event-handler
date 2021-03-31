@@ -3,6 +3,7 @@ package no.nav.personbruker.dittnav.eventhandler.innboks
 import no.nav.brukernotifikasjon.schemas.builders.util.ValidationUtil.validateNonNullFieldMaxLength
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
+import no.nav.personbruker.dittnav.eventhandler.config.Systembruker
 import org.slf4j.LoggerFactory
 import java.sql.Connection
 
@@ -25,10 +26,10 @@ class InnboksEventService(private val database: Database) {
             .map { innboks -> innboks.toDTO()}
     }
 
-    suspend fun getAllGroupedEventsFromCacheForUser(bruker: InnloggetBruker, grupperingsid: String?, producer: String?): List<InnboksDTO> {
-        val grupperingsId = validateNonNullFieldMaxLength(grupperingsid, "grupperingsid", 100)
-        val produsent = validateNonNullFieldMaxLength(producer, "produsent", 100)
-        return getEvents { getAllGroupedInnboksEventsByIds(bruker, grupperingsId, produsent) }
+    suspend fun getAllGroupedEventsFromCacheForUser(bruker: InnloggetBruker, grupperingsid: String?, systembruker: Systembruker?): List<InnboksDTO> {
+        val validGrupperingsId = validateNonNullFieldMaxLength(grupperingsid, "grupperingsid", 100)
+        val validSystembruker = validateNonNullFieldMaxLength(systembruker, "systembruker", 100)
+        return getEvents { getAllGroupedInnboksEventsByIds(bruker, validGrupperingsId, validSystembruker) }
             .map { innboks -> innboks.toDTO()}
     }
 

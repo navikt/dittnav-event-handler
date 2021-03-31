@@ -4,8 +4,8 @@ import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.convertIfUnlikelyDate
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
-import no.nav.personbruker.dittnav.eventhandler.common.exceptions.EventCacheException
 import no.nav.personbruker.dittnav.eventhandler.config.Kafka.BACKUP_EVENT_CHUNCK_SIZE
+import no.nav.personbruker.dittnav.eventhandler.config.Systembruker
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId
@@ -85,7 +85,7 @@ fun Connection.getAllInactiveOppgaveEvents(): List<Oppgave> =
                     }
                 }
 
-fun Connection.getAllGroupedOppgaveEventsByIds(bruker: InnloggetBruker, grupperingsid: String, produsent: String): List<Oppgave> =
+fun Connection.getAllGroupedOppgaveEventsByIds(bruker: InnloggetBruker, grupperingsid: String, systembruker: Systembruker): List<Oppgave> =
         prepareStatement("""SELECT
             |oppgave.id,
             |oppgave.eventTidspunkt,
@@ -100,11 +100,11 @@ fun Connection.getAllGroupedOppgaveEventsByIds(bruker: InnloggetBruker, grupperi
             |oppgave.systembruker,
             |systembrukere.produsentnavn AS produsent
             |FROM (SELECT * FROM oppgave WHERE fodselsnummer = ? AND grupperingsid = ?) AS oppgave
-            |LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker WHERE systembrukere.produsentnavn = ?""".trimMargin())
+            |LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker WHERE systembrukere.systembruker = ?""".trimMargin())
                 .use {
                     it.setString(1, bruker.ident)
                     it.setString(2, grupperingsid)
-                    it.setString(3, produsent)
+                    it.setString(3, systembruker)
                     it.executeQuery().mapList {
                         toOppgave()
                     }

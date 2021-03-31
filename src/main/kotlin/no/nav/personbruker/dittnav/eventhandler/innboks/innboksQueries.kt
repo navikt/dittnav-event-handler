@@ -3,6 +3,7 @@ package no.nav.personbruker.dittnav.eventhandler.innboks
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
+import no.nav.personbruker.dittnav.eventhandler.config.Systembruker
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId
@@ -37,7 +38,7 @@ fun Connection.getAllInnboksForInnloggetBruker(bruker: InnloggetBruker): List<In
                     }
                 }
 
-fun Connection.getAllGroupedInnboksEventsByIds(bruker: InnloggetBruker, grupperingsid: String, produsent: String): List<Innboks> =
+fun Connection.getAllGroupedInnboksEventsByIds(bruker: InnloggetBruker, grupperingsid: String, systembruker: Systembruker): List<Innboks> =
         prepareStatement("""SELECT
             |innboks.id,
             |innboks.eventTidspunkt,
@@ -52,11 +53,11 @@ fun Connection.getAllGroupedInnboksEventsByIds(bruker: InnloggetBruker, grupperi
             |innboks.systembruker,
             |systembrukere.produsentnavn AS produsent
             |FROM (SELECT * FROM innboks WHERE fodselsnummer = ? AND grupperingsid = ?) AS innboks
-            |LEFT JOIN systembrukere ON innboks.systembruker = systembrukere.systembruker WHERE systembrukere.produsentnavn = ?""".trimMargin())
+            |LEFT JOIN systembrukere ON innboks.systembruker = systembrukere.systembruker WHERE systembrukere.systembruker = ?""".trimMargin())
                 .use {
                     it.setString(1, bruker.ident)
                     it.setString(2, grupperingsid)
-                    it.setString(3, produsent)
+                    it.setString(3, systembruker)
                     it.executeQuery().mapList {
                         toInnboks()
                     }

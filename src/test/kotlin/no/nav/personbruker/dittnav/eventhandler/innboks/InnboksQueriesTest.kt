@@ -19,7 +19,7 @@ class InnboksQueriesTest {
 
     private val bruker1 = InnloggetBrukerObjectMother.createInnloggetBruker("12345")
     private val bruker2 = InnloggetBrukerObjectMother.createInnloggetBruker("67890")
-    private val produsent = "dittnav"
+    private val systembruker = "x-dittnav"
     private val grupperingsid = "100${bruker1.ident}"
 
     private val innboks1 = InnboksObjectMother.createInnboks(id = 1, eventId = "123", fodselsnummer = bruker1.ident, aktiv = true)
@@ -121,7 +121,7 @@ class InnboksQueriesTest {
     fun `Returnerer en liste av alle grupperte Innboks-eventer`() {
         runBlocking {
             database.dbQuery {
-                getAllGroupedInnboksEventsByIds(bruker1, grupperingsid, produsent)
+                getAllGroupedInnboksEventsByIds(bruker1, grupperingsid, systembruker)
             }.size `should be equal to` 2
         }
     }
@@ -141,7 +141,7 @@ class InnboksQueriesTest {
         val noMatchGrupperingsid = "dummyGrupperingsid"
         runBlocking {
             database.dbQuery {
-                getAllGroupedInnboksEventsByIds(bruker1, noMatchGrupperingsid, produsent)
+                getAllGroupedInnboksEventsByIds(bruker1, noMatchGrupperingsid, systembruker)
             }.`should be empty`()
         }
     }

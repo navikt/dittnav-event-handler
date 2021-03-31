@@ -7,6 +7,7 @@ import io.ktor.routing.Route
 import io.ktor.routing.get
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.respondWithError
 import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
+import no.nav.personbruker.dittnav.eventhandler.config.systembrukerHeader
 import org.slf4j.LoggerFactory
 
 fun Route.innboksApi(innboksEventService: InnboksEventService) {
@@ -45,7 +46,7 @@ fun Route.innboksApi(innboksEventService: InnboksEventService) {
             val innboksEvents =
                     innboksEventService.getAllGroupedEventsFromCacheForUser(innloggetBruker,
                             call.request.queryParameters["grupperingsid"],
-                            call.request.queryParameters["produsent"])
+                            call.request.systembrukerHeader())
             call.respond(HttpStatusCode.OK, innboksEvents)
         } catch (exception: Exception) {
             respondWithError(call, log, exception)

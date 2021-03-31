@@ -11,13 +11,13 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class StatusoppdateringTestQueriesTest {
+class StatusoppdateringQueriesTest {
 
     private val database = H2Database()
     private val bruker = InnloggetBrukerObjectMother.createInnloggetBruker("12345")
     private val statusoppdateringEvents = StatusoppdateringObjectMother.getStatusoppdateringEvents(bruker)
     private val grupperingsid = "100${bruker.ident}"
-    private val produsent = "dittnav"
+    private val systembruker = "x-dittnav"
 
     @BeforeEach
     fun `populer testdata`() {
@@ -39,7 +39,7 @@ class StatusoppdateringTestQueriesTest {
     fun `Finn alle cachede Statusoppdatering-eventer for fodselsnummer`() {
         runBlocking {
             database.dbQuery {
-                getAllGroupedStatusoppdateringEventsByIds(bruker, grupperingsid, produsent)
+                getAllGroupedStatusoppdateringEventsByIds(bruker, grupperingsid, systembruker)
             }.size `should be equal to` 4
         }
     }
@@ -61,7 +61,7 @@ class StatusoppdateringTestQueriesTest {
 
         runBlocking {
             database.dbQuery {
-                getAllGroupedStatusoppdateringEventsByIds(brukerSomIkkeFinnes, grupperingsid, produsent)
+                getAllGroupedStatusoppdateringEventsByIds(brukerSomIkkeFinnes, grupperingsid, systembruker)
             }.`should be empty`()
         }
     }
@@ -73,7 +73,7 @@ class StatusoppdateringTestQueriesTest {
 
         runBlocking {
             database.dbQuery {
-                getAllGroupedStatusoppdateringEventsByIds(fodselsnummerMangler, grupperingsid, produsent)
+                getAllGroupedStatusoppdateringEventsByIds(fodselsnummerMangler, grupperingsid, systembruker)
             }.`should be empty`()
         }
     }
@@ -82,7 +82,7 @@ class StatusoppdateringTestQueriesTest {
     fun `Returnerer lesbart navn for produsent som kan eksponeres for alle eventer`() {
         runBlocking {
             val statusoppdatering = database.dbQuery {
-                getAllGroupedStatusoppdateringEventsByIds(bruker, grupperingsid, produsent) }.first()
+                getAllGroupedStatusoppdateringEventsByIds(bruker, grupperingsid, systembruker) }.first()
             statusoppdatering.produsent `should be equal to` "dittnav"
         }
     }
@@ -102,7 +102,7 @@ class StatusoppdateringTestQueriesTest {
         val noMatchGrupperingsid = "dummyGrupperingsid"
         runBlocking {
             database.dbQuery {
-                getAllGroupedStatusoppdateringEventsByIds(bruker, noMatchGrupperingsid, produsent)
+                getAllGroupedStatusoppdateringEventsByIds(bruker, noMatchGrupperingsid, systembruker)
             }.`should be empty`()
         }
     }

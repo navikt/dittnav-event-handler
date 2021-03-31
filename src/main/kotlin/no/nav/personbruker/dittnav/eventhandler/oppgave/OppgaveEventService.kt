@@ -3,6 +3,7 @@ package no.nav.personbruker.dittnav.eventhandler.oppgave
 import no.nav.brukernotifikasjon.schemas.builders.util.ValidationUtil.validateNonNullFieldMaxLength
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
+import no.nav.personbruker.dittnav.eventhandler.config.Systembruker
 import org.slf4j.LoggerFactory
 import java.sql.Connection
 
@@ -25,10 +26,10 @@ class OppgaveEventService(private val database: Database) {
             .map { oppgave -> oppgave.toDTO() }
     }
 
-    suspend fun getAllGroupedEventsFromCacheForUser(bruker: InnloggetBruker, grupperingsid: String?, producer: String?): List<OppgaveDTO> {
-        val grupperingsId = validateNonNullFieldMaxLength(grupperingsid, "grupperingsid", 100)
-        val produsent = validateNonNullFieldMaxLength(producer, "produsent", 100)
-        return getEvents { getAllGroupedOppgaveEventsByIds(bruker, grupperingsId, produsent) }
+    suspend fun getAllGroupedEventsFromCacheForUser(bruker: InnloggetBruker, grupperingsid: String?, systembruker: Systembruker?): List<OppgaveDTO> {
+        val validGrupperingsId = validateNonNullFieldMaxLength(grupperingsid, "grupperingsid", 100)
+        val validSystembruker = validateNonNullFieldMaxLength(systembruker, "systembruker", 100)
+        return getEvents { getAllGroupedOppgaveEventsByIds(bruker, validGrupperingsId, validSystembruker) }
             .map { oppgave -> oppgave.toDTO() }
     }
 

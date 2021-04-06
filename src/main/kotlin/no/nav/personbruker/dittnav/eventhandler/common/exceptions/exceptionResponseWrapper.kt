@@ -34,6 +34,11 @@ suspend fun respondWithError(call: ApplicationCall, log: Logger, exception: Exce
             val msg = "Klarte ikke hente eventer fordi vi fikk en valideringsfeil. Returnerer feilkode. {}"
             log.error(msg, exception.toString(), exception)
         }
+        is MissingHeaderException -> {
+            call.respond(HttpStatusCode.BadRequest)
+            val msg = "Manglet header. Returnerer feilkode til frontend."
+            log.error(msg, exception.toString(), exception)
+        }
         else -> {
             call.respond(HttpStatusCode.InternalServerError)
             log.error("Ukjent feil oppstod ved henting av eventer fra cache. Returnerer feilkode til frontend", exception)

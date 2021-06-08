@@ -20,7 +20,7 @@ spec:
     enabled: true
     path: /metrics
   replicas:
-    min: 2
+    min: 4
     max: 4
   webproxy: true
   ingresses:

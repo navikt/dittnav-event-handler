@@ -1,0 +1,42 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: dittnav-event-handler
+  namespace: personbruker
+  labels:
+    team: personbruker
+spec:
+  envFrom:
+    - configmap: loginservice-idporten
+    - secret: google-sql-dittnav-event-aggregator-eventhandler
+    - secret: dittnav-event-handler-secrets
+  image: {{version}}
+  port: 8080
+  liveness:
+    path: /internal/isAlive
+    initialDelay: 20
+  readiness:
+    path: /internal/isReady
+    initialDelay: 20
+  prometheus:
+    enabled: true
+    path: /metrics
+  replicas:
+    min: 4
+    max: 4
+  webproxy: true
+  ingresses:
+    - "https://dittnav-event-handler.dev.nav.no"
+  resources:
+    limits:
+      cpu: "3"
+      memory: 768Mi
+    requests:
+      cpu: "500m"
+      memory: 384Mi
+  kafka:
+    pool: nav-dev
+  accessPolicy:
+    outbound:
+      external:
+        - host: kafka-schema-registry.nais-q.adeo.no

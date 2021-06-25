@@ -2,16 +2,16 @@ package no.nav.personbruker.dittnav.eventhandler.config
 
 import no.nav.personbruker.dittnav.common.util.config.StringEnvVar.getEnvVar
 
-data class Environment(val aivenBrokers: String = getEnvVar("KAFKA_BROKERS"),
-                       val aivenSchemaRegistry: String = getEnvVar("KAFKA_SCHEMA_REGISTRY"),
+data class Environment(val bootstrapServers: String = getEnvVar("KAFKA_BOOTSTRAP_SERVERS"),
+                       val schemaRegistryUrl: String = getEnvVar("KAFKA_SCHEMAREGISTRY_SERVERS"),
                        val username: String = getEnvVar("SERVICEUSER_USERNAME"),
                        val password: String = getEnvVar("SERVICEUSER_PASSWORD"),
                        val groupId: String = getEnvVar("GROUP_ID"),
-                       val dbHost: String = getEnvVar("DB_HOST"),
-                       val dbName: String = getEnvVar("DB_DATABASE"),
-                       val dbUser: String = getEnvVar("DB_USERNAME"),
-                       val dbPassword: String = getEnvVar("DB_PASSWORD"),
-                       val dbPort: String = getEnvVar("DB_PORT"),
+                       val dbHost: String = getEnvVar("DB_EVENTHANDLER_HOST"),
+                       val dbName: String = getEnvVar("DB_EVENTHANDLER_DATABASE"),
+                       val dbUser: String = getEnvVar("DB_EVENTHANDLER_USERNAME"),
+                       val dbPassword: String = getEnvVar("DB_EVENTHANDLER_PASSWORD"),
+                       val dbPort: String = getEnvVar("DB_EVENTHANDLER_PORT"),
                        val dbUrl: String = getDbUrl(dbHost, dbPort, dbName)
 )
 

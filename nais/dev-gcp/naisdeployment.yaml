@@ -1,50 +1,193 @@
-apiVersion: "nais.io/v1alpha1"
+apiVersion: "apps/v1"
 kind: "Deployment"
 metadata:
-  name: dittnav-event-handler-deployment
+  name: dittnav-event-handler
   namespace: personbruker
   labels:
     team: personbruker
 spec:
-  containers:
-    envFrom:
-      - secretRef:
-          name: loginservice-idporten
-      - secretRef:
-          name: google-sql-dittnav-event-aggregator-eventhandler
-      - secretRef:
-          name: dittnav-event-handler-secrets
-    image: docker.pkg.github.com/navikt/dittnav-event-handler/dittnav-event-handler:20210625153843-04a453c
-    imagePullPolicy: IfNotPresent
-    name: dittnav-event-handler
-    ports:
-    - containerPort: 8080
-      protocol: TCP
-    livenessProbe:
-      httpGet: /internal/isAlive
-      port: 8080
-      initialDelaySeconds: 20
-    readinessProbe:
-      httpGet: /internal/isReady
-      port: 8080
-      initialDelaySeconds: 20
-  prometheus:
-    enabled: true
-    path: /metrics
-  replicas:
-    min: 4
-    max: 4
-  webproxy: true
-  ingresses:
-    - "https://dittnav-event-handler.dev.nav.no"
-  resources:
-    limits:
-      cpu: "3"
-      memory: 768Mi
-    requests:
-      cpu: "500m"
-      memory: 384Mi
-  accessPolicy:
-    outbound:
-      external:
-        - host: kafka-schema-registry.nais-q.adeo.no
+  progressDeadlineSeconds: 300
+  replicas: 4
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: dittnav-event-handler
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "8080"
+        prometheus.io/scrape: "true"
+      creationTimestamp: null
+      labels:
+        app: dittnav-event-handler
+        team: personbruker
+      name: dittnav-event-handler
+      namespace: personbruker
+      ownerReferences:
+        - apiVersion: v1alpha1
+          kind: Application
+          name: dittnav-event-handler
+          uid: 5cf468f7-3102-45f6-8939-c02f788d6854
+    spec:
+      containers:
+      - env:
+        - name: GCP_TEAM_PROJECT_ID
+        - name: NAV_TRUSTSTORE_PATH
+          value: /etc/ssl/certs/java/cacerts
+        - name: NAV_TRUSTSTORE_PASSWORD
+          value: changeme
+        - name: START_WITHOUT_ENVOY
+          value: "true"
+        - name: NAIS_APP_NAME
+          value: dittnav-event-handler
+        - name: NAIS_NAMESPACE
+          value: personbruker
+        - name: NAIS_APP_IMAGE
+          value: docker.pkg.github.com/navikt/dittnav-event-handler/dittnav-event-handler:20210625153843-04a453c
+        - name: NAIS_CLUSTER_NAME
+          value: dev-gcp
+        - name: NAIS_CLIENT_ID
+          value: dev-gcp:personbruker:dittnav-event-handler
+        envFrom:
+        - configMapRef:
+            name: loginservice-idporten
+        - secretRef:
+            name: google-sql-dittnav-event-aggregator-eventhandler
+        - secretRef:
+            name: dittnav-event-handler-secrets
+        image: docker.pkg.github.com/navikt/dittnav-event-handler/dittnav-event-handler:20210625153843-04a453c
+        imagePullPolicy: IfNotPresent
+        lifecycle:
+          preStop:
+            exec:
+              command:
+                - sleep
+                - "5"
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /internal/isAlive
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: dittnav-event-handler
+        ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /internal/isReady
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          limits:
+            cpu: "3"
+            memory: 768Mi
+          requests:
+            cpu: 500m
+            memory: 384Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+          - mountPath: /etc/ssl/certs/java/cacerts
+            name: ca-bundle-jks
+            readOnly: true
+            subPath: ca-bundle.jks
+          - mountPath: /etc/ssl/certs/ca-certificates.crt
+            name: ca-bundle-pem
+            readOnly: true
+            subPath: ca-bundle.pem
+          - mountPath: /etc/pki/tls/certs/ca-bundle.crt
+            name: ca-bundle-pem
+            readOnly: true
+            subPath: ca-bundle.pem
+          - mountPath: /etc/ssl/ca-bundle.pem
+            name: ca-bundle-pem
+            readOnly: true
+            subPath: ca-bundle.pem
+          - mountPath: /etc/pki/tls/cacert.pem
+            name: ca-bundle-pem
+            readOnly: true
+            subPath: ca-bundle.pem
+          - mountPath: /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
+            name: ca-bundle-pem
+            readOnly: true
+            subPath: ca-bundle.pem
+      - command:
+        - /cloud_sql_proxy
+        - -term_timeout=30s
+        - -instances=personbruker-dev-1e83:europe-north1:brukernotifikasjon-cache=tcp:5432
+        image: gcr.io/cloudsql-docker/gce-proxy:1.23.1
+        imagePullPolicy: IfNotPresent
+        name: brukernotifikasjon-cache-cloudsql-proxy
+        ports:
+        - containerPort: 5432
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 250m
+            memory: 256Mi
+          requests:
+            cpu: 20m
+            memory: 32Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      hostAliases:
+      - hostnames:
+        - b27apvl00045.preprod.local
+        ip: 10.183.160.26
+      - hostnames:
+        - b27apvl00046.preprod.local
+        ip: 10.183.32.47
+      - hostnames:
+        - b27apvl00047.preprod.local
+        ip: 10.183.32.48
+      - hostnames:
+        - b31dbvw005.oera-q.local
+        ip: 10.49.1.52
+      - hostnames:
+        - b27apvl219.preprod.local
+        ip: 10.53.17.117
+      - hostnames:
+        - b27apvl220.preprod.local
+        ip: 10.53.17.118
+      - hostnames:
+        - b27apvl221.preprod.local
+        ip: 10.53.17.119
+      - hostnames:
+        - b27apvl222.preprod.local
+        ip: 10.53.17.120
+      imagePullSecrets:
+        - name: gpr-credentials
+        - name: ghcr-credentials
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: dittnav-event-handler
+      serviceAccountName: dittnav-event-handler
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - configMap:
+            defaultMode: 420
+            name: ca-bundle-jks
+          name: ca-bundle-jks
+        - configMap:
+            defaultMode: 420
+            name: ca-bundle-pem
+          name: ca-bundle-pem

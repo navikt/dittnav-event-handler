@@ -48,6 +48,13 @@ spec:
           podSelector:
             matchLabels:
               component: prometheus
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: nginx
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: gw-dev-nav-no
   podSelector:
     matchLabels:
       app: dittnav-event-handler

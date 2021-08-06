@@ -9,7 +9,7 @@ spec:
   envFrom:
     - secret: dittnav-event-handler-secrets
     - configmap: loginservice-idporten
-  image: docker.pkg.github.com/navikt/dittnav-event-handler/dittnav-event-handler:20210625153843-04a453c
+  image: {{version}}
   port: 8080
   liveness:
     failureThreshold: 3

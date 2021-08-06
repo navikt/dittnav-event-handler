@@ -1,39 +1,58 @@
-apiVersion: "nais.io/v1alpha1"
-kind: "Application"
+apiVersion: nais.io/v1alpha1
+kind: Application
 metadata:
-  name: dittnav-event-handler
-  namespace: personbruker
   labels:
     team: personbruker
+  name: dittnav-event-handler
+  namespace: personbruker
 spec:
   envFrom:
-    - configmap: loginservice-idporten
-    - secret: google-sql-dittnav-event-aggregator-eventhandler
     - secret: dittnav-event-handler-secrets
-  image: {{version}}
+    - configmap: loginservice-idporten
+  image: docker.pkg.github.com/navikt/dittnav-event-handler/dittnav-event-handler:20210625153843-04a453c
   port: 8080
   liveness:
+    failureThreshold: 3
+    initialDelay: 30
     path: /internal/isAlive
-    initialDelay: 20
+    periodSeconds: 10
   readiness:
+    initialDelay: 30
     path: /internal/isReady
-    initialDelay: 20
   prometheus:
     enabled: true
     path: /metrics
   replicas:
-    min: 4
-    max: 4
-  webproxy: true
-  ingresses:
-    - "https://dittnav-event-handler.dev.nav.no"
+    max: 1
+    min: 1
   resources:
     limits:
       cpu: "3"
       memory: 768Mi
     requests:
-      cpu: "500m"
+      cpu: "1"
       memory: 384Mi
+  ingresses:
+    - "https://dittnav-event-handler-gcp.dev.nav.no"
+  gcp:
+    permissions:
+      - resource:
+          apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+          kind: Project
+        role: roles/cloudsql.client
+    sqlInstances:
+      - databases:
+          - envVarPrefix: DB
+            name: brukernotifikasjon-cache
+            users:
+              - name: eventhandler
+        name: brukernotifikasjon-cache
+        diskSize: 10
+        diskType: SSD
+        tier: db-f1-micro
+        type: POSTGRES_11
+  kafka:
+    pool: nav-dev
   accessPolicy:
     outbound:
       external:

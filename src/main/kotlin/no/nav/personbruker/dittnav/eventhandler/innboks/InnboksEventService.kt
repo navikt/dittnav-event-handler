@@ -32,6 +32,10 @@ class InnboksEventService(private val database: Database) {
             .map { innboks -> innboks.toDTO()}
     }
 
+    suspend fun getAllGroupedEventsBySystemuserFromCache(): Map<String, Int> {
+        return database.queryWithExceptionTranslation { getAllGroupedInnboksEventsBySystemuser() }
+    }
+
     private suspend fun getEvents(operationToExecute: Connection.() -> List<Innboks>): List<Innboks> {
         val events = database.queryWithExceptionTranslation {
             operationToExecute()

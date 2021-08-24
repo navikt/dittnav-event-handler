@@ -22,10 +22,10 @@ class InnboksQueriesTest {
     private val produsent = "dittnav"
     private val grupperingsid = "100${bruker1.ident}"
 
-    private val innboks1 = InnboksObjectMother.createInnboks(id = 1, eventId = "123", fodselsnummer = bruker1.ident, aktiv = true)
-    private val innboks2 = InnboksObjectMother.createInnboks(id = 2, eventId = "345", fodselsnummer = bruker1.ident, aktiv = true)
-    private val innboks3 = InnboksObjectMother.createInnboks(id = 3, eventId = "567", fodselsnummer = bruker2.ident, aktiv = true)
-    private val innboks4 = InnboksObjectMother.createInnboks(id = 4, eventId = "789", fodselsnummer = bruker2.ident, aktiv = false)
+    private val innboks1 = InnboksObjectMother.createInnboks(id = 1, eventId = "123", fodselsnummer = bruker1.ident, aktiv = true, systembruker = "x-dittnav")
+    private val innboks2 = InnboksObjectMother.createInnboks(id = 2, eventId = "345", fodselsnummer = bruker1.ident, aktiv = true, systembruker = "x-dittnav")
+    private val innboks3 = InnboksObjectMother.createInnboks(id = 3, eventId = "567", fodselsnummer = bruker2.ident, aktiv = true, systembruker = "y-dittnav")
+    private val innboks4 = InnboksObjectMother.createInnboks(id = 4, eventId = "789", fodselsnummer = bruker2.ident, aktiv = false, systembruker = "x-dittnav")
 
     @BeforeAll
     fun `populer test-data`() {
@@ -143,6 +143,17 @@ class InnboksQueriesTest {
             database.dbQuery {
                 getAllGroupedInnboksEventsByIds(bruker1, noMatchGrupperingsid, produsent)
             }.`should be empty`()
+        }
+    }
+
+    @Test
+    fun `Returnerer en liste av alle grupperte innboks-eventer basert paa systembruker`() {
+        runBlocking {
+            val groupedEventsBySystemuser = database.dbQuery { getAllGroupedInnboksEventsBySystemuser() }
+
+            groupedEventsBySystemuser.size `should be equal to` 2
+            groupedEventsBySystemuser.get(innboks1.systembruker) `should be equal to` 3
+            groupedEventsBySystemuser.get(innboks3.systembruker) `should be equal to` 1
         }
     }
 

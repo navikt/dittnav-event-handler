@@ -16,10 +16,11 @@ object StatusoppdateringObjectMother {
                                 fodselsnummer: String,
                                 statusGlobal: String,
                                 statusIntern: String,
-                                sakstema: String): Statusoppdatering {
+                                sakstema: String,
+                                systembruker: String): Statusoppdatering {
         return Statusoppdatering(
                 id = id,
-                systembruker = "x-dittnav",
+                systembruker = systembruker,
                 eventId = eventId,
                 eventTidspunkt = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
                 fodselsnummer = fodselsnummer,
@@ -30,7 +31,7 @@ object StatusoppdateringObjectMother {
                 statusGlobal = statusGlobal,
                 statusIntern = statusIntern,
                 sakstema = sakstema,
-                produsent = "dittnav")
+                produsent = "$systembruker-produsent")
     }
 
     fun createStatusoppdateringWithSystembruker(id: Int, systembruker: String): Statusoppdatering {
@@ -69,9 +70,9 @@ object StatusoppdateringObjectMother {
 
     fun getStatusoppdateringEvents(bruker: InnloggetBruker): MutableList<Statusoppdatering> {
         return mutableListOf(
-                createStatusoppdatering(1, "$dummyEventId+1", bruker.ident, "$dummyStatusGlobal+1", "$dummyStatusIntern+1", "$dummySakstema+1"),
-                createStatusoppdatering(2, "$dummyEventId+2", bruker.ident, "$dummyStatusGlobal+2", "$dummyStatusIntern+2", "$dummySakstema+2"),
-                createStatusoppdatering(3, "$dummyEventId+3", bruker.ident, "$dummyStatusGlobal+3", "$dummyStatusIntern+3", "$dummySakstema+3"),
-                createStatusoppdatering(4, "$dummyEventId+4", bruker.ident, "$dummyStatusGlobal+4", "$dummyStatusIntern+4", "$dummySakstema+4"))
+                createStatusoppdatering(1, "$dummyEventId+1", bruker.ident, "$dummyStatusGlobal+1", "$dummyStatusIntern+1", "$dummySakstema+1", systembruker = "x-dittnav"),
+                createStatusoppdatering(2, "$dummyEventId+2", bruker.ident, "$dummyStatusGlobal+2", "$dummyStatusIntern+2", "$dummySakstema+2", systembruker = "x-dittnav"),
+                createStatusoppdatering(3, "$dummyEventId+3", bruker.ident, "$dummyStatusGlobal+3", "$dummyStatusIntern+3", "$dummySakstema+3", systembruker = "x-dittnav"),
+                createStatusoppdatering(4, "$dummyEventId+4", bruker.ident, "$dummyStatusGlobal+4", "$dummyStatusIntern+4", "$dummySakstema+4", systembruker = "y-dittnav"))
     }
 }

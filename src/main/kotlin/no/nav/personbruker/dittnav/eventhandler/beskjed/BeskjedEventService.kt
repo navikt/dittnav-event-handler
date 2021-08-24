@@ -38,6 +38,10 @@ class BeskjedEventService(private val database: Database) {
                 .map { beskjed -> beskjed.toDTO() }
     }
 
+    suspend fun getAllGroupedEventsBySystemuserFromCache(): Map<String, Int> {
+        return database.queryWithExceptionTranslation { getAllGroupedBeskjedEventsBySystemuser() }
+    }
+
     private suspend fun getAllEventsFromCacheForUser(bruker: InnloggetBruker): List<Beskjed> {
         return getEvents { getAllBeskjedForInnloggetBruker(bruker) }
     }

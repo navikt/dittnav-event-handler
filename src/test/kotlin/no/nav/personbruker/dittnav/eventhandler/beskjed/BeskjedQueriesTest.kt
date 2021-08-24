@@ -23,27 +23,29 @@ class BeskjedQueriesTest {
     private val uid = "22"
     private val eventId = "124"
     private val grupperingsid = "100${bruker.ident}"
-    private val produsent = "dittnav"
+    private val produsent = "x-dittnav-produsent"
 
     private val beskjed1 = BeskjedObjectMother.createBeskjed(id = 1, eventId = "123", fodselsnummer = bruker.ident,
-            synligFremTil = ZonedDateTime.now().plusHours(1), uid = "11", aktiv = true)
+            synligFremTil = ZonedDateTime.now().plusHours(1), uid = "11", aktiv = true, systembruker = "x-dittnav")
     private val beskjed2 = BeskjedObjectMother.createBeskjed(id = 2, eventId = eventId, fodselsnummer = bruker.ident,
-            synligFremTil = ZonedDateTime.now().plusHours(1), uid = "22", aktiv = true)
+            synligFremTil = ZonedDateTime.now().plusHours(1), uid = "22", aktiv = true, systembruker = "x-dittnav")
     private val beskjed3 = BeskjedObjectMother.createBeskjed(id = 3, eventId = "567", fodselsnummer = bruker.ident,
-            synligFremTil = ZonedDateTime.now().plusHours(1), uid = "33", aktiv = false)
+            synligFremTil = ZonedDateTime.now().plusHours(1), uid = "33", aktiv = false, systembruker = "x-dittnav")
     private val beskjed4 = BeskjedObjectMother.createBeskjed(id = 4, eventId = "789", fodselsnummer = "54321",
-            synligFremTil = ZonedDateTime.now().plusHours(1), uid = "44", aktiv = true)
+            synligFremTil = ZonedDateTime.now().plusHours(1), uid = "44", aktiv = true, systembruker = "y-dittnav")
 
     @BeforeAll
     fun `populer testdata`() {
         createBeskjed(listOf(beskjed1, beskjed2, beskjed3, beskjed4))
-        createSystembruker(systembruker = "x-dittnav", produsentnavn = "dittnav")
+        createSystembruker(systembruker = "x-dittnav", produsentnavn = "x-dittnav-produsent")
+        createSystembruker(systembruker = "y-dittnav", produsentnavn = "y-dittnav-produsent")
     }
 
     @AfterAll
     fun `slett testdata`() {
         deleteBeskjed(listOf(beskjed1, beskjed2, beskjed3, beskjed4))
         deleteSystembruker(systembruker = "x-dittnav")
+        deleteSystembruker(systembruker = "y-dittnav")
     }
 
     @Test
@@ -93,7 +95,7 @@ class BeskjedQueriesTest {
     fun `Returnerer lesbart navn for produsent som kan eksponeres for aktive eventer`() {
         runBlocking {
             val beskjed = database.dbQuery { getAktivBeskjedForInnloggetBruker(bruker) }.first()
-            beskjed.produsent `should be equal to` "dittnav"
+            beskjed.produsent `should be equal to` "x-dittnav-produsent"
         }
     }
 
@@ -101,7 +103,7 @@ class BeskjedQueriesTest {
     fun `Returnerer lesbart navn for produsent som kan eksponeres for inaktive eventer`() {
         runBlocking {
             val beskjed = database.dbQuery { getInaktivBeskjedForInnloggetBruker(bruker) }.first()
-            beskjed.produsent `should be equal to` "dittnav"
+            beskjed.produsent `should be equal to` "x-dittnav-produsent"
         }
     }
 
@@ -109,7 +111,7 @@ class BeskjedQueriesTest {
     fun `Returnerer lesbart navn for produsent som kan eksponeres for alle eventer`() {
         runBlocking {
             val beskjed = database.dbQuery { getAllBeskjedForInnloggetBruker(bruker) }.first()
-            beskjed.produsent `should be equal to` "dittnav"
+            beskjed.produsent `should be equal to` "x-dittnav-produsent"
         }
     }
 
@@ -146,8 +148,7 @@ class BeskjedQueriesTest {
     @Test
     fun `Returnerer tom streng for produsent hvis eventet er produsert av systembruker vi ikke har i systembruker-tabellen`() {
         var beskjedMedAnnenProdusent = BeskjedObjectMother.createBeskjed(id = 5, eventId = "111", fodselsnummer = "112233",
-                synligFremTil = ZonedDateTime.now().plusHours(1), uid = "11", aktiv = true)
-                .copy(systembruker = "ukjent-systembruker")
+                synligFremTil = ZonedDateTime.now().plusHours(1), uid = "11", aktiv = true, systembruker = "ukjent-systembruker")
         createBeskjed(listOf(beskjedMedAnnenProdusent))
         val beskjed = runBlocking {
             database.dbQuery {
@@ -198,6 +199,17 @@ class BeskjedQueriesTest {
             database.dbQuery {
                 getAllGroupedBeskjedEventsByIds(bruker, noMatchGrupperingsid, produsent)
             }.`should be empty`()
+        }
+    }
+
+    @Test
+    fun `Returnerer en liste av alle grupperte Beskjed-eventer basert paa systembruker`() {
+        runBlocking {
+            val groupedEventsBySystemuser = database.dbQuery { getAllGroupedBeskjedEventsBySystemuser() }
+
+            groupedEventsBySystemuser.size `should be equal to` 2
+            groupedEventsBySystemuser.get(beskjed1.systembruker) `should be equal to` 3
+            groupedEventsBySystemuser.get(beskjed4.systembruker) `should be equal to` 1
         }
     }
 

@@ -145,6 +145,20 @@ fun Connection.getAllGroupedBeskjedEventsByIds(bruker: InnloggetBruker, grupperi
                     }
                 }
 
+fun Connection.getAllGroupedBeskjedEventsBySystemuser(): Map<String, Int> {
+    return prepareStatement("SELECT systembruker, COUNT(*) FROM beskjed GROUP BY systembruker",
+            ResultSet.TYPE_SCROLL_INSENSITIVE,
+            ResultSet.CONCUR_READ_ONLY)
+            .use { statement ->
+                val resultSet = statement.executeQuery()
+                mutableMapOf<String, Int>().apply {
+                    while (resultSet.next()) {
+                        put(resultSet.getString(1), resultSet.getInt(2))
+                    }
+                }
+            }
+}
+
 fun ResultSet.toBeskjed(): Beskjed {
     return Beskjed(
             id = getInt("id"),

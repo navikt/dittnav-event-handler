@@ -50,4 +50,14 @@ fun Route.oppgaveApi(oppgaveEventService: OppgaveEventService) {
             respondWithError(call, log, exception)
         }
     }
+
+    get("/fetch/grouped/systemuser/oppgave") {
+        try {
+            val oppgaveEvents =
+                    oppgaveEventService.getAllGroupedEventsBySystemuserFromCache()
+            call.respond(HttpStatusCode.OK, oppgaveEvents)
+        } catch (exception: Exception) {
+            respondWithError(call, log, exception)
+        }
+    }
 }

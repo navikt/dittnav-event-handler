@@ -19,7 +19,7 @@ class InnboksQueriesTest {
 
     private val bruker1 = InnloggetBrukerObjectMother.createInnloggetBruker("12345")
     private val bruker2 = InnloggetBrukerObjectMother.createInnloggetBruker("67890")
-    private val produsent = "dittnav"
+    private val produsent = "x-dittnav-produsent"
     private val grupperingsid = "100${bruker1.ident}"
 
     private val innboks1 = InnboksObjectMother.createInnboks(id = 1, eventId = "123", fodselsnummer = bruker1.ident, aktiv = true, systembruker = "x-dittnav")
@@ -30,13 +30,15 @@ class InnboksQueriesTest {
     @BeforeAll
     fun `populer test-data`() {
         createInnboks(listOf(innboks1, innboks2, innboks3, innboks4))
-        createSystembruker(systembruker = "x-dittnav", produsentnavn = "dittnav")
+        createSystembruker(systembruker = "x-dittnav", produsentnavn = "x-dittnav-produsent")
+        createSystembruker(systembruker = "y-dittnav", produsentnavn = "y-dittnav-produsent")
     }
 
     @AfterAll
     fun `slett Innboks-eventer fra tabellen`() {
         deleteInnboks(listOf(innboks1, innboks2, innboks3, innboks4))
         deleteSystembruker(systembruker = "x-dittnav")
+        deleteSystembruker(systembruker = "y-dittnav")
     }
 
     @Test
@@ -83,7 +85,7 @@ class InnboksQueriesTest {
     fun `Returnerer lesbart navn for produsent som kan eksponeres for aktive eventer`() {
         runBlocking {
             val innboks = database.dbQuery { getAktivInnboksForInnloggetBruker(bruker1) }.first()
-            innboks.produsent `should be equal to` "dittnav"
+            innboks.produsent `should be equal to` "x-dittnav-produsent"
         }
     }
 
@@ -91,7 +93,7 @@ class InnboksQueriesTest {
     fun `Returnerer lesbart navn for produsent som kan eksponeres for inaktive eventer`() {
         runBlocking {
             val innboks = database.dbQuery { getInaktivInnboksForInnloggetBruker(bruker2) }.first()
-            innboks.produsent `should be equal to` "dittnav"
+            innboks.produsent `should be equal to` "x-dittnav-produsent"
         }
     }
 
@@ -99,7 +101,7 @@ class InnboksQueriesTest {
     fun `Returnerer lesbart navn for produsent som kan eksponeres for alle eventer`() {
         runBlocking {
             val innboks = database.dbQuery { getAllInnboksForInnloggetBruker(bruker1) }.first()
-            innboks.produsent `should be equal to` "dittnav"
+            innboks.produsent `should be equal to` "x-dittnav-produsent"
         }
     }
 

@@ -9,6 +9,7 @@ import io.ktor.util.pipeline.*
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.DuplicateEventException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.EventMarkedInactiveException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.NoEventsException
+import no.nav.personbruker.dittnav.eventhandler.common.exceptions.respondWithError
 import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
 import org.slf4j.LoggerFactory
 
@@ -46,6 +47,20 @@ fun Route.doneApi(doneEventService: DoneEventService) {
         }
     }
 
+    get("/fetch/grouped/systemuser/done") {
+        try {
+            val result = mutableMapOf<String, Int>()
+            val doneEvents = doneEventService.getAllGroupedEventsBySystemuserFromCache()
+            val inactiveBrukernotifikasjoner = doneEventService.getNumberOfInactiveBrukernotifikasjonerGroupedBySystemuser()
+
+            result.putAll(doneEvents)
+            result.putAll(inactiveBrukernotifikasjoner)
+
+            call.respond(HttpStatusCode.OK, result)
+        } catch (exception: Exception) {
+            respondWithError(call, log, exception)
+        }
+    }
 }
 
 suspend inline fun <reified T : Any> PipelineContext<Unit, ApplicationCall>.respondForParameterType(handler: (T) -> DoneResponse) {

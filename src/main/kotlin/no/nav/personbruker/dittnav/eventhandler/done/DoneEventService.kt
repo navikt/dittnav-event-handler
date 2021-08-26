@@ -23,6 +23,15 @@ class DoneEventService(private val database: Database, private val doneProducer:
         return validBeskjed(result)
     }
 
+    suspend fun getAllGroupedEventsBySystemuserFromCache(): Map<String, Int> {
+        return database.queryWithExceptionTranslation { getAllGroupedDoneEventsBySystemuser() }
+    }
+
+    suspend fun getNumberOfInactiveBrukernotifikasjonerGroupedBySystemuser(): Map<String, Int> {
+        return database.queryWithExceptionTranslation {
+            countTotalNumberOfBrukernotifikasjonerByActiveStatus(false)
+        }
+    }
 
     fun validBeskjed(events: List<Beskjed>): Beskjed {
         if (events.isEmpty()) {

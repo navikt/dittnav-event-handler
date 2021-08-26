@@ -24,4 +24,15 @@ fun Route.statusoppdateringApi(statusoppdateringEventService: StatusoppdateringE
             respondWithError(call, log, exception)
         }
     }
+
+    get("/fetch/grouped/systemuser/statusoppdatering") {
+        try {
+            val statusoppdateringEvents =
+                    statusoppdateringEventService.getAllGroupedEventsBySystemuserFromCache()
+            call.respond(HttpStatusCode.OK, statusoppdateringEvents)
+        } catch (exception: Exception) {
+            respondWithError(call, log, exception)
+        }
+    }
 }
+

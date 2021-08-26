@@ -17,13 +17,14 @@ class StatusoppdateringTestQueriesTest {
     private val bruker = InnloggetBrukerObjectMother.createInnloggetBruker("12345")
     private val statusoppdateringEvents = StatusoppdateringObjectMother.getStatusoppdateringEvents(bruker)
     private val grupperingsid = "100${bruker.ident}"
-    private val produsent = "dittnav"
+    private val produsent = "x-dittnav-produsent"
 
     @BeforeEach
     fun `populer testdata`() {
         runBlocking {
             database.dbQuery { createStatusoppdatering(statusoppdateringEvents) }
-            database.dbQuery { createProdusent(systembruker = "x-dittnav", produsentnavn = "dittnav") }
+            database.dbQuery { createProdusent(systembruker = "x-dittnav", produsentnavn = "x-dittnav-produsent") }
+            database.dbQuery { createProdusent(systembruker = "y-dittnav", produsentnavn = "y-dittnav-produsent") }
         }
     }
 
@@ -32,6 +33,7 @@ class StatusoppdateringTestQueriesTest {
         runBlocking {
             database.dbQuery { deleteStatusoppdatering(statusoppdateringEvents) }
             database.dbQuery { deleteProdusent(systembruker = "x-dittnav") }
+            database.dbQuery { deleteProdusent(systembruker = "y-dittnav") }
         }
     }
 
@@ -40,7 +42,7 @@ class StatusoppdateringTestQueriesTest {
         runBlocking {
             database.dbQuery {
                 getAllGroupedStatusoppdateringEventsByIds(bruker, grupperingsid, produsent)
-            }.size `should be equal to` 4
+            }.size `should be equal to` 3
         }
     }
 
@@ -83,7 +85,7 @@ class StatusoppdateringTestQueriesTest {
         runBlocking {
             val statusoppdatering = database.dbQuery {
                 getAllGroupedStatusoppdateringEventsByIds(bruker, grupperingsid, produsent) }.first()
-            statusoppdatering.produsent `should be equal to` "dittnav"
+            statusoppdatering.produsent `should be equal to` "x-dittnav-produsent"
         }
     }
 
@@ -104,6 +106,15 @@ class StatusoppdateringTestQueriesTest {
             database.dbQuery {
                 getAllGroupedStatusoppdateringEventsByIds(bruker, noMatchGrupperingsid, produsent)
             }.`should be empty`()
+        }
+    }
+
+    @Test
+    fun `Returnerer en liste av alle grupperte statusoppdaterings-eventer basert paa systembruker`() {
+        runBlocking {
+            val groupedEventsBySystemuser = database.dbQuery { getAllGroupedStatusoppdateringEventsBySystemuser() }
+
+            groupedEventsBySystemuser.size `should be equal to` 2
         }
     }
 

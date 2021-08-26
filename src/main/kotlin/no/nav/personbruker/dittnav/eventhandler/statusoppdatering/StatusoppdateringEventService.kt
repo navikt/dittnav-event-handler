@@ -17,6 +17,10 @@ class StatusoppdateringEventService(private val database: Database) {
             .map { statusoppdatering -> statusoppdatering.toDTO() }
     }
 
+    suspend fun getAllGroupedEventsBySystemuserFromCache(): Map<String, Int> {
+        return database.queryWithExceptionTranslation { getAllGroupedStatusoppdateringEventsBySystemuser() }
+    }
+
     private suspend fun getEvents(operationToExecute: Connection.() -> List<Statusoppdatering>): List<Statusoppdatering> {
         val events = database.queryWithExceptionTranslation {
             operationToExecute()

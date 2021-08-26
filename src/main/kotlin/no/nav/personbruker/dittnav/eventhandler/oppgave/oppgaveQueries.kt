@@ -152,3 +152,17 @@ private fun Connection.getOppgaveForInnloggetBruker(bruker: InnloggetBruker, akt
                         toOppgave()
                     }
                 }
+
+fun Connection.getAllGroupedOppgaveEventsBySystemuser(): Map<String, Int> {
+    return prepareStatement("SELECT systembruker, COUNT(*) FROM oppgave GROUP BY systembruker",
+            ResultSet.TYPE_SCROLL_INSENSITIVE,
+            ResultSet.CONCUR_READ_ONLY)
+            .use { statement ->
+                val resultSet = statement.executeQuery()
+                mutableMapOf<String, Int>().apply {
+                    while (resultSet.next()) {
+                        put(resultSet.getString(1), resultSet.getInt(2))
+                    }
+                }
+            }
+}

@@ -17,24 +17,26 @@ class OppgaveQueriesTest {
 
     private val database = H2Database()
     private val bruker = InnloggetBrukerObjectMother.createInnloggetBruker("12345")
-    private val produsent = "dittnav"
+    private val produsent = "x-dittnav-produsent"
     private val grupperingsid = "100${bruker.ident}"
 
-    private val oppgave1 = OppgaveObjectMother.createOppgave(id = 1, eventId = "123", fodselsnummer = bruker.ident, aktiv = true)
-    private val oppgave2 = OppgaveObjectMother.createOppgave(id = 2, eventId = "345", fodselsnummer = bruker.ident, aktiv = true)
-    private val oppgave3 = OppgaveObjectMother.createOppgave(id = 3, eventId = "567", fodselsnummer = bruker.ident, aktiv = false)
-    private val oppgave4 = OppgaveObjectMother.createOppgave(id = 4, eventId = "789", fodselsnummer = "54321", aktiv = true)
+    private val oppgave1 = OppgaveObjectMother.createOppgave(id = 1, eventId = "123", fodselsnummer = bruker.ident, aktiv = true, systembruker = "x-dittnav")
+    private val oppgave2 = OppgaveObjectMother.createOppgave(id = 2, eventId = "345", fodselsnummer = bruker.ident, aktiv = true, systembruker = "x-dittnav")
+    private val oppgave3 = OppgaveObjectMother.createOppgave(id = 3, eventId = "567", fodselsnummer = bruker.ident, aktiv = false, systembruker = "x-dittnav")
+    private val oppgave4 = OppgaveObjectMother.createOppgave(id = 4, eventId = "789", fodselsnummer = "54321", aktiv = true, systembruker = "y-dittnav")
 
     @BeforeAll
     fun `populer test-data`() {
         createOppgave(listOf(oppgave1, oppgave2, oppgave3, oppgave4))
-        createSystembruker(systembruker = "x-dittnav", produsentnavn = "dittnav")
+        createSystembruker(systembruker = "x-dittnav", produsentnavn = "x-dittnav-produsent")
+        createSystembruker(systembruker = "y-dittnav", produsentnavn = "y-dittnav-produsent")
     }
 
     @AfterAll
     fun `slett Oppgave-eventer fra tabellen`() {
         deleteOppgave(listOf(oppgave1, oppgave2, oppgave3, oppgave4))
         deleteSystembruker(systembruker = "x-dittnav")
+        deleteSystembruker(systembruker = "y-dittnav")
     }
 
     @Test
@@ -78,7 +80,7 @@ class OppgaveQueriesTest {
     fun `Returnerer lesbart navn for produsent som kan eksponeres for aktive eventer`() {
         runBlocking {
             val oppgave = database.dbQuery { getAktivOppgaveForInnloggetBruker(bruker) }.first()
-            oppgave.produsent `should be equal to` "dittnav"
+            oppgave.produsent `should be equal to` "x-dittnav-produsent"
         }
     }
 
@@ -86,7 +88,7 @@ class OppgaveQueriesTest {
     fun `Returnerer lesbart navn for produsent som kan eksponeres for inaktive eventer`() {
         runBlocking {
             val oppgave = database.dbQuery { getInaktivOppgaveForInnloggetBruker(bruker) }.first()
-            oppgave.produsent `should be equal to` "dittnav"
+            oppgave.produsent `should be equal to` "x-dittnav-produsent"
         }
     }
 
@@ -94,7 +96,7 @@ class OppgaveQueriesTest {
     fun `Returnerer lesbart navn for produsent som kan eksponeres for alle eventer`() {
         runBlocking {
             val oppgave = database.dbQuery { getAllOppgaveForInnloggetBruker(bruker) }.first()
-            oppgave.produsent `should be equal to` "dittnav"
+            oppgave.produsent `should be equal to` "x-dittnav-produsent"
         }
     }
 
@@ -153,6 +155,17 @@ class OppgaveQueriesTest {
             database.dbQuery {
                 getAllGroupedOppgaveEventsByIds(bruker, noMatchGrupperingsid, produsent)
             }.`should be empty`()
+        }
+    }
+
+    @Test
+    fun `Returnerer en liste av alle grupperte Oppgave-eventer basert paa systembruker`() {
+        runBlocking {
+            val groupedEventsBySystemuser = database.dbQuery { getAllGroupedOppgaveEventsBySystemuser() }
+
+            groupedEventsBySystemuser.size `should be equal to` 2
+            groupedEventsBySystemuser.get(oppgave1.systembruker) `should be equal to` 3
+            groupedEventsBySystemuser.get(oppgave4.systembruker) `should be equal to` 1
         }
     }
 

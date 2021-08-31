@@ -6,8 +6,6 @@ metadata:
   labels:
     team: personbruker
 spec:
-  envFrom:
-    - configmap: loginservice-idporten
   image: {{version}}
   port: 8080
   liveness:
@@ -25,6 +23,10 @@ spec:
   webproxy: true
   ingresses:
     - "https://dittnav-event-handler.dev.nav.no"
+  azure:
+    enabled: true
+  tokenx:
+    enabled: true
   vault:
     enabled: true
     paths:

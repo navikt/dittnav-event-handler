@@ -1,7 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.statusoppdatering
 
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBrukerObjectMother
+import no.nav.personbruker.dittnav.eventhandler.common.TokenXUserObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
 import no.nav.personbruker.dittnav.eventhandler.common.database.createProdusent
 import no.nav.personbruker.dittnav.eventhandler.common.database.deleteProdusent
@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test
 class StatusoppdateringTestQueriesTest {
 
     private val database = H2Database()
-    private val bruker = InnloggetBrukerObjectMother.createInnloggetBruker("12345")
+    private val bruker = TokenXUserObjectMother.createInnloggetBruker("12345")
     private val statusoppdateringEvents = StatusoppdateringObjectMother.getStatusoppdateringEvents(bruker)
     private val grupperingsid = "100${bruker.ident}"
     private val produsent = "x-dittnav-produsent"
@@ -58,7 +58,7 @@ class StatusoppdateringTestQueriesTest {
 
     @Test
     fun `Returnerer tom liste hvis Statusoppdatering-eventer for fodselsnummer ikke finnes`() {
-        val brukerSomIkkeFinnes = InnloggetBrukerObjectMother.createInnloggetBruker("0")
+        val brukerSomIkkeFinnes = TokenXUserObjectMother.createInnloggetBruker("0")
         val grupperingsid = "100${brukerSomIkkeFinnes.ident}"
 
         runBlocking {
@@ -70,7 +70,7 @@ class StatusoppdateringTestQueriesTest {
 
     @Test
     fun `Returnerer tom liste hvis fodselsnummer er tomt`() {
-        val fodselsnummerMangler = InnloggetBrukerObjectMother.createInnloggetBruker("")
+        val fodselsnummerMangler = TokenXUserObjectMother.createInnloggetBruker("")
         val grupperingsid = "100${fodselsnummerMangler.ident}"
 
         runBlocking {

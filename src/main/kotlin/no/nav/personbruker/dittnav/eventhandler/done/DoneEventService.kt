@@ -2,15 +2,15 @@ package no.nav.personbruker.dittnav.eventhandler.done
 
 import Beskjed
 import no.nav.personbruker.dittnav.eventhandler.beskjed.getBeskjedByIds
-import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.DuplicateEventException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.EventMarkedInactiveException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.NoEventsException
+import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 
 class DoneEventService(private val database: Database, private val doneProducer: DoneProducer) {
 
-    suspend fun markEventAsDone(innloggetBruker: InnloggetBruker, doneDTODto: DoneDTO) {
+    suspend fun markEventAsDone(innloggetBruker: TokenXUser, doneDTODto: DoneDTO) {
         val beskjedEvent = getBeskjedFromCacheForUser(innloggetBruker.ident, doneDTODto.uid, doneDTODto.eventId)
         doneProducer.produceDoneEventForSuppliedEventId(innloggetBruker.ident, doneDTODto.eventId, beskjedEvent)
     }

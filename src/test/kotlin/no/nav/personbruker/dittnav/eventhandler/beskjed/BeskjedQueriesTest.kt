@@ -2,7 +2,7 @@ package no.nav.personbruker.dittnav.eventhandler.beskjed
 
 import Beskjed
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBrukerObjectMother
+import no.nav.personbruker.dittnav.eventhandler.common.TokenXUserObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
 import no.nav.personbruker.dittnav.eventhandler.common.database.createProdusent
 import no.nav.personbruker.dittnav.eventhandler.common.database.deleteProdusent
@@ -19,7 +19,7 @@ class BeskjedQueriesTest {
 
     private val database = H2Database()
 
-    private val bruker = InnloggetBrukerObjectMother.createInnloggetBruker("12345")
+    private val bruker = TokenXUserObjectMother.createInnloggetBruker("12345")
     private val uid = "22"
     private val eventId = "124"
     private val grupperingsid = "100${bruker.ident}"
@@ -77,7 +77,7 @@ class BeskjedQueriesTest {
 
     @Test
     fun `Returnerer tom liste hvis Beskjed-eventer for fodselsnummer ikke finnes`() {
-        val brukerSomIkkeFinnes = InnloggetBrukerObjectMother.createInnloggetBruker("0")
+        val brukerSomIkkeFinnes = TokenXUserObjectMother.createInnloggetBruker("0")
         runBlocking {
             database.dbQuery { getAktivBeskjedForInnloggetBruker(brukerSomIkkeFinnes) }.`should be empty`()
         }
@@ -85,7 +85,7 @@ class BeskjedQueriesTest {
 
     @Test
     fun `Returnerer tom liste hvis fodselsnummer er tomt`() {
-        val fodselsnummerMangler = InnloggetBrukerObjectMother.createInnloggetBruker("")
+        val fodselsnummerMangler = TokenXUserObjectMother.createInnloggetBruker("")
         runBlocking {
             database.dbQuery { getAktivBeskjedForInnloggetBruker(fodselsnummerMangler) }.`should be empty`()
         }
@@ -131,7 +131,7 @@ class BeskjedQueriesTest {
 
     @Test
     fun `Returnerer tom liste hvis Beskjed-eventer ikke stemmer med fodselsnummer`() {
-        val brukerSomIkkeFinnes = InnloggetBrukerObjectMother.createInnloggetBruker("000")
+        val brukerSomIkkeFinnes = TokenXUserObjectMother.createInnloggetBruker("000")
         runBlocking {
             database.dbQuery { getBeskjedByIds(brukerSomIkkeFinnes.ident, uid, eventId) }.`should be empty`()
         }
@@ -139,7 +139,7 @@ class BeskjedQueriesTest {
 
     @Test
     fun `Returnerer tom liste av Beskjed-eventer hvis fodselsnummer er tomt`() {
-        val fodselsnummerMangler = InnloggetBrukerObjectMother.createInnloggetBruker("")
+        val fodselsnummerMangler = TokenXUserObjectMother.createInnloggetBruker("")
         runBlocking {
             database.dbQuery { getBeskjedByIds(fodselsnummerMangler.ident, uid, eventId) }.`should be empty`()
         }
@@ -152,7 +152,7 @@ class BeskjedQueriesTest {
         createBeskjed(listOf(beskjedMedAnnenProdusent))
         val beskjed = runBlocking {
             database.dbQuery {
-                getAllBeskjedForInnloggetBruker(InnloggetBrukerObjectMother.createInnloggetBruker("112233"))
+                getAllBeskjedForInnloggetBruker(TokenXUserObjectMother.createInnloggetBruker("112233"))
             }.first()
         }
         beskjed.produsent `should be equal to` ""

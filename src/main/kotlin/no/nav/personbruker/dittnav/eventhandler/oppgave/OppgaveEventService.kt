@@ -1,8 +1,8 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
 import no.nav.brukernotifikasjon.schemas.builders.util.ValidationUtil.validateNonNullFieldMaxLength
-import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
+import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 import org.slf4j.LoggerFactory
 import java.sql.Connection
 
@@ -10,22 +10,22 @@ class OppgaveEventService(private val database: Database) {
 
     private val log = LoggerFactory.getLogger(OppgaveEventService::class.java)
 
-    suspend fun getActiveCachedEventsForUser(bruker: InnloggetBruker): List<OppgaveDTO> {
+    suspend fun getActiveCachedEventsForUser(bruker: TokenXUser): List<OppgaveDTO> {
         return getEvents { getAktivOppgaveForInnloggetBruker(bruker) }
             .map { oppgave -> oppgave.toDTO() }
     }
 
-    suspend fun getInactiveCachedEventsForUser(bruker: InnloggetBruker): List<OppgaveDTO> {
+    suspend fun getInactiveCachedEventsForUser(bruker: TokenXUser): List<OppgaveDTO> {
         return getEvents { getInaktivOppgaveForInnloggetBruker(bruker) }
             .map { oppgave -> oppgave.toDTO() }
     }
 
-    suspend fun getAllCachedEventsForUser(bruker: InnloggetBruker): List<OppgaveDTO> {
+    suspend fun getAllCachedEventsForUser(bruker: TokenXUser): List<OppgaveDTO> {
         return getEvents { getAllOppgaveForInnloggetBruker(bruker) }
             .map { oppgave -> oppgave.toDTO() }
     }
 
-    suspend fun getAllGroupedEventsFromCacheForUser(bruker: InnloggetBruker, grupperingsid: String?, producer: String?): List<OppgaveDTO> {
+    suspend fun getAllGroupedEventsFromCacheForUser(bruker: TokenXUser, grupperingsid: String?, producer: String?): List<OppgaveDTO> {
         val grupperingsId = validateNonNullFieldMaxLength(grupperingsid, "grupperingsid", 100)
         val produsent = validateNonNullFieldMaxLength(producer, "produsent", 100)
         return getEvents { getAllGroupedOppgaveEventsByIds(bruker, grupperingsId, produsent) }

@@ -11,7 +11,7 @@ import no.nav.personbruker.dittnav.eventhandler.common.`with message containing`
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
 import no.nav.personbruker.dittnav.eventhandler.beskjed.deleteAllBeskjed
-import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBrukerObjectMother
+import no.nav.personbruker.dittnav.eventhandler.common.TokenXUserObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
 import no.nav.personbruker.dittnav.eventhandler.common.database.createProdusent
 import no.nav.personbruker.dittnav.eventhandler.common.database.deleteProdusent
@@ -32,7 +32,7 @@ internal class BackupBeskjedServiceTest {
     private val doneProducer = mockk<KafkaProducerWrapper<no.nav.brukernotifikasjon.schemas.Done>>(relaxUnitFun = true)
     private val backupBeskjedService = BackupBeskjedService(database, beskjedProducer, doneProducer)
 
-    private val bruker = InnloggetBrukerObjectMother.createInnloggetBruker("12345678901")
+    private val bruker = TokenXUserObjectMother.createInnloggetBruker("12345678901")
     private val beskjed1 = BeskjedObjectMother.createBeskjed(id = 1, eventId = "123", fodselsnummer = bruker.ident,
             synligFremTil = ZonedDateTime.now().plusHours(1), uid = "11", aktiv = true)
     private val beskjed2 = BeskjedObjectMother.createBeskjed(id = 2, eventId = "345", fodselsnummer = bruker.ident,

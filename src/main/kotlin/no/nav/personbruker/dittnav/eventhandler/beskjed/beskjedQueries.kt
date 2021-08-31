@@ -1,23 +1,23 @@
 package no.nav.personbruker.dittnav.eventhandler.beskjed
 
 import Beskjed
-import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.getNullableUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
 import no.nav.personbruker.dittnav.eventhandler.config.Kafka.BACKUP_EVENT_CHUNCK_SIZE
+import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-fun Connection.getInaktivBeskjedForInnloggetBruker(bruker: InnloggetBruker): List<Beskjed> =
+fun Connection.getInaktivBeskjedForInnloggetBruker(bruker: TokenXUser): List<Beskjed> =
         getBeskjedForInnloggetBruker(bruker, false)
 
-fun Connection.getAktivBeskjedForInnloggetBruker(bruker: InnloggetBruker): List<Beskjed> =
+fun Connection.getAktivBeskjedForInnloggetBruker(bruker: TokenXUser): List<Beskjed> =
         getBeskjedForInnloggetBruker(bruker, true)
 
-fun Connection.getAllBeskjedForInnloggetBruker(bruker: InnloggetBruker): List<Beskjed> =
+fun Connection.getAllBeskjedForInnloggetBruker(bruker: TokenXUser): List<Beskjed> =
         prepareStatement("""SELECT 
             |beskjed.id, 
             |beskjed.uid, 
@@ -118,7 +118,7 @@ fun Connection.getAllInactiveBeskjedEvents(): List<Beskjed> =
                     }
                 }
 
-fun Connection.getAllGroupedBeskjedEventsByIds(bruker: InnloggetBruker, grupperingsid: String, produsent: String): List<Beskjed> =
+fun Connection.getAllGroupedBeskjedEventsByIds(bruker: TokenXUser, grupperingsid: String, produsent: String): List<Beskjed> =
         prepareStatement("""SELECT 
             |beskjed.id, 
             |beskjed.uid, 
@@ -178,7 +178,7 @@ fun ResultSet.toBeskjed(): Beskjed {
     )
 }
 
-private fun Connection.getBeskjedForInnloggetBruker(bruker: InnloggetBruker, aktiv: Boolean): List<Beskjed> =
+private fun Connection.getBeskjedForInnloggetBruker(bruker: TokenXUser, aktiv: Boolean): List<Beskjed> =
         prepareStatement("""SELECT 
             |beskjed.id, 
             |beskjed.uid, 

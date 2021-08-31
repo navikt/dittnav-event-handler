@@ -7,7 +7,7 @@ import io.mockk.verify
 import kafka.common.KafkaException
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.`with message containing`
-import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBrukerObjectMother
+import no.nav.personbruker.dittnav.eventhandler.common.TokenXUserObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
 import no.nav.personbruker.dittnav.eventhandler.common.database.createProdusent
 import no.nav.personbruker.dittnav.eventhandler.common.database.deleteProdusent
@@ -31,7 +31,7 @@ internal class BackupOppgaveServiceTest {
     private val doneProducer = mockk<KafkaProducerWrapper<no.nav.brukernotifikasjon.schemas.Done>>(relaxUnitFun = true)
     private val backupOppgaveService = BackupOppgaveService(database, oppgaveProducer, doneProducer)
 
-    private val bruker = InnloggetBrukerObjectMother.createInnloggetBruker("12345678901")
+    private val bruker = TokenXUserObjectMother.createInnloggetBruker("12345678901")
     private val oppgave1 = OppgaveObjectMother.createOppgave(id = 1, eventId = "123", fodselsnummer = bruker.ident, aktiv = true)
     private val oppgave2 = OppgaveObjectMother.createOppgave(id = 2, eventId = "345", fodselsnummer = bruker.ident, aktiv = true)
     private val oppgave3 = OppgaveObjectMother.createOppgave(id = 3, eventId = "567", fodselsnummer = bruker.ident, aktiv = false)

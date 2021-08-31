@@ -1,20 +1,20 @@
 package no.nav.personbruker.dittnav.eventhandler.innboks
 
-import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
+import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-fun Connection.getInaktivInnboksForInnloggetBruker(bruker: InnloggetBruker): List<Innboks> =
+fun Connection.getInaktivInnboksForInnloggetBruker(bruker: TokenXUser): List<Innboks> =
         getInnboksForInnloggetBruker(bruker, false)
 
-fun Connection.getAktivInnboksForInnloggetBruker(bruker: InnloggetBruker): List<Innboks> =
+fun Connection.getAktivInnboksForInnloggetBruker(bruker: TokenXUser): List<Innboks> =
         getInnboksForInnloggetBruker(bruker, true)
 
-fun Connection.getAllInnboksForInnloggetBruker(bruker: InnloggetBruker): List<Innboks> =
+fun Connection.getAllInnboksForInnloggetBruker(bruker: TokenXUser): List<Innboks> =
         prepareStatement("""SELECT
             |innboks.id,
             |innboks.eventTidspunkt,
@@ -37,7 +37,7 @@ fun Connection.getAllInnboksForInnloggetBruker(bruker: InnloggetBruker): List<In
                     }
                 }
 
-fun Connection.getAllGroupedInnboksEventsByIds(bruker: InnloggetBruker, grupperingsid: String, produsent: String): List<Innboks> =
+fun Connection.getAllGroupedInnboksEventsByIds(bruker: TokenXUser, grupperingsid: String, produsent: String): List<Innboks> =
         prepareStatement("""SELECT
             |innboks.id,
             |innboks.eventTidspunkt,
@@ -79,7 +79,7 @@ private fun ResultSet.toInnboks(): Innboks {
     )
 }
 
-private fun Connection.getInnboksForInnloggetBruker(bruker: InnloggetBruker, aktiv: Boolean): List<Innboks> =
+private fun Connection.getInnboksForInnloggetBruker(bruker: TokenXUser, aktiv: Boolean): List<Innboks> =
         prepareStatement("""SELECT
             |innboks.id,
             |innboks.eventTidspunkt,

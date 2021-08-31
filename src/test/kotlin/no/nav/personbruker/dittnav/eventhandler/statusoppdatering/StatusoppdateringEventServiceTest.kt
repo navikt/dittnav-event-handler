@@ -7,7 +7,7 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.brukernotifikasjon.schemas.builders.exception.FieldValidationException
-import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBrukerObjectMother
+import no.nav.personbruker.dittnav.eventhandler.common.TokenXUserObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should contain`
@@ -22,7 +22,7 @@ internal class StatusoppdateringEventServiceTest {
 
     private val database = mockk<Database>()
     private val statusoppdateringEventService = StatusoppdateringEventService(database)
-    private val bruker = InnloggetBrukerObjectMother.createInnloggetBruker("123")
+    private val bruker = TokenXUserObjectMother.createInnloggetBruker("123")
     private val produsent = "dittnav"
     private val grupperingsid = "100${bruker.ident}"
     private val appender: ListAppender<ILoggingEvent> = ListAppender()

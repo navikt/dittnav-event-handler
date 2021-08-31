@@ -5,7 +5,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
 import no.nav.personbruker.dittnav.eventhandler.beskjed.deleteBeskjed
-import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBrukerObjectMother
+import no.nav.personbruker.dittnav.eventhandler.common.TokenXUserObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.AfterAll
@@ -19,8 +19,8 @@ class BrukernotifikasjonQueriesTest {
 
     private val database = H2Database()
 
-    private val brukerUtenEventer = InnloggetBrukerObjectMother.createInnloggetBruker("123")
-    private val brukerMedEventer = InnloggetBrukerObjectMother.createInnloggetBruker("456")
+    private val brukerUtenEventer = TokenXUserObjectMother.createInnloggetBruker("123")
+    private val brukerMedEventer = TokenXUserObjectMother.createInnloggetBruker("456")
 
     private val inaktivBeskjed = BeskjedObjectMother.createBeskjed(id = 1, eventId = "12", fodselsnummer = brukerMedEventer.ident,
             synligFremTil = ZonedDateTime.now().plusHours(1), uid = "11", aktiv = false)

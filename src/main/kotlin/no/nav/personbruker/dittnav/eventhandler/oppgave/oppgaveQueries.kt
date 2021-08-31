@@ -1,23 +1,22 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
-import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.convertIfUnlikelyDate
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
-import no.nav.personbruker.dittnav.eventhandler.common.exceptions.EventCacheException
 import no.nav.personbruker.dittnav.eventhandler.config.Kafka.BACKUP_EVENT_CHUNCK_SIZE
+import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-fun Connection.getInaktivOppgaveForInnloggetBruker(bruker: InnloggetBruker): List<Oppgave> =
+fun Connection.getInaktivOppgaveForInnloggetBruker(bruker: TokenXUser): List<Oppgave> =
         getOppgaveForInnloggetBruker(bruker, false)
 
-fun Connection.getAktivOppgaveForInnloggetBruker(bruker: InnloggetBruker): List<Oppgave> =
+fun Connection.getAktivOppgaveForInnloggetBruker(bruker: TokenXUser): List<Oppgave> =
         getOppgaveForInnloggetBruker(bruker, true)
 
-fun Connection.getAllOppgaveForInnloggetBruker(bruker: InnloggetBruker): List<Oppgave> =
+fun Connection.getAllOppgaveForInnloggetBruker(bruker: TokenXUser): List<Oppgave> =
         prepareStatement("""SELECT 
             |oppgave.id,
             |oppgave.eventTidspunkt,
@@ -85,7 +84,7 @@ fun Connection.getAllInactiveOppgaveEvents(): List<Oppgave> =
                     }
                 }
 
-fun Connection.getAllGroupedOppgaveEventsByIds(bruker: InnloggetBruker, grupperingsid: String, produsent: String): List<Oppgave> =
+fun Connection.getAllGroupedOppgaveEventsByIds(bruker: TokenXUser, grupperingsid: String, produsent: String): List<Oppgave> =
         prepareStatement("""SELECT
             |oppgave.id,
             |oppgave.eventTidspunkt,
@@ -129,7 +128,7 @@ private fun ResultSet.toOppgave(): Oppgave {
     )
 }
 
-private fun Connection.getOppgaveForInnloggetBruker(bruker: InnloggetBruker, aktiv: Boolean): List<Oppgave> =
+private fun Connection.getOppgaveForInnloggetBruker(bruker: TokenXUser, aktiv: Boolean): List<Oppgave> =
         prepareStatement("""SELECT
             |oppgave.id,
             |oppgave.eventTidspunkt,

@@ -1,7 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.innboks
 
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBrukerObjectMother
+import no.nav.personbruker.dittnav.eventhandler.common.TokenXUserObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
 import no.nav.personbruker.dittnav.eventhandler.common.database.createProdusent
 import no.nav.personbruker.dittnav.eventhandler.common.database.deleteProdusent
@@ -17,8 +17,8 @@ class InnboksQueriesTest {
 
     private val database = H2Database()
 
-    private val bruker1 = InnloggetBrukerObjectMother.createInnloggetBruker("12345")
-    private val bruker2 = InnloggetBrukerObjectMother.createInnloggetBruker("67890")
+    private val bruker1 = TokenXUserObjectMother.createInnloggetBruker("12345")
+    private val bruker2 = TokenXUserObjectMother.createInnloggetBruker("67890")
     private val produsent = "x-dittnav-produsent"
     private val grupperingsid = "100${bruker1.ident}"
 
@@ -67,7 +67,7 @@ class InnboksQueriesTest {
 
     @Test
     fun `Returnerer tom liste hvis Innboks-eventer for fodselsnummer ikke finnes`() {
-        val brukerUtenEventer = InnloggetBrukerObjectMother.createInnloggetBruker("0")
+        val brukerUtenEventer = TokenXUserObjectMother.createInnloggetBruker("0")
         runBlocking {
             database.dbQuery { getAllInnboksForInnloggetBruker(brukerUtenEventer) }.size `should be equal to` 0
         }
@@ -75,7 +75,7 @@ class InnboksQueriesTest {
 
     @Test
     fun `Returnerer tom liste hvis fodselsnummer er tomt`() {
-        val brukerUtenEventer = InnloggetBrukerObjectMother.createInnloggetBruker("")
+        val brukerUtenEventer = TokenXUserObjectMother.createInnloggetBruker("")
         runBlocking {
             database.dbQuery { getAllInnboksForInnloggetBruker(brukerUtenEventer) }.size `should be equal to` 0
         }
@@ -112,7 +112,7 @@ class InnboksQueriesTest {
         createInnboks(listOf(innboksMedAnnenProdusent))
         val innboks = runBlocking {
             database.dbQuery {
-                getAllInnboksForInnloggetBruker(InnloggetBrukerObjectMother.createInnloggetBruker("112233"))
+                getAllInnboksForInnloggetBruker(TokenXUserObjectMother.createInnloggetBruker("112233"))
             }.first()
         }
         innboks.produsent `should be equal to` ""

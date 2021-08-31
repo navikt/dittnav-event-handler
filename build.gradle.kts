@@ -38,7 +38,6 @@ dependencies {
     implementation(Ktor.htmlBuilder)
     implementation(Ktor.serialization)
     implementation(Ktor.serverNetty)
-    implementation(NAV.tokenValidatorKtor)
     implementation(NAV.vaultJdbc)
     implementation(Postgresql.postgresql)
     implementation(Prometheus.common)
@@ -46,6 +45,9 @@ dependencies {
     implementation(Prometheus.logback)
     implementation(Prometheus.simpleClient)
     implementation(Prometheus.httpServer)
+
+    implementation("com.github.navikt.tms-ktor-token-support:token-support-authentication-installer:2021.08.04-15.00-9d8a637f971e")
+    implementation("com.github.navikt.tms-ktor-token-support:token-support-tokenx-validation:2021.08.04-15.00-9d8a637f971e")
 
     testImplementation(H2Database.h2)
     testImplementation(Jjwt.api)

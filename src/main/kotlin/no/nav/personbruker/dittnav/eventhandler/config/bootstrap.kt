@@ -17,6 +17,7 @@ import no.nav.personbruker.dittnav.eventhandler.innboks.innboksApi
 import no.nav.personbruker.dittnav.eventhandler.oppgave.oppgaveApi
 import no.nav.personbruker.dittnav.eventhandler.statusoppdatering.statusoppdateringApi
 import no.nav.tms.token.support.authentication.installer.installAuthenticators
+import no.nav.tms.token.support.azure.validation.AzureAuthenticator
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUserFactory
 
@@ -33,6 +34,9 @@ fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()
         installTokenXAuth {
             setAsDefault = true
         }
+        installAzureAuth{
+            setAsDefault = false
+        }
     }
 
     routing {
@@ -45,6 +49,9 @@ fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()
             oppgaveApi(appContext.oppgaveEventService)
             brukernotifikasjoner(appContext.brukernotifikasjonService)
             statusoppdateringApi(appContext.statusoppdateringEventService)
+        }
+        authenticate(AzureAuthenticator.name) {
+            /* endepunkter for metrikker, som brukes for client-client kommunikasjon uten brukertoken */
         }
     }
 

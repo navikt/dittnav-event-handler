@@ -46,6 +46,7 @@ dependencies {
     implementation(Prometheus.simpleClient)
     implementation(Prometheus.httpServer)
     implementation(Tms.KtorTokenSupport.authenticationInstaller)
+    implementation(Tms.KtorTokenSupport.azureValidation)
     implementation(Tms.KtorTokenSupport.tokenXValidation)
 
     testImplementation(H2Database.h2)

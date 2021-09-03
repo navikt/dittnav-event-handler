@@ -50,16 +50,19 @@ fun Route.beskjedApi(beskjedEventService: BeskjedEventService) {
             respondWithError(call, log, exception)
         }
     }
+}
+
+fun Route.beskjedSystemuserApi(beskjedEventService: BeskjedEventService) {
+
+    val log = LoggerFactory.getLogger(BeskjedEventService::class.java)
 
     get("/fetch/grouped/systemuser/beskjed") {
         try {
             val beskjedEvents =
-                    beskjedEventService.getAllGroupedEventsBySystemuserFromCache()
+                beskjedEventService.getAllGroupedEventsBySystemuserFromCache()
             call.respond(HttpStatusCode.OK, beskjedEvents)
         } catch (exception: Exception) {
             respondWithError(call, log, exception)
         }
     }
 }
-
-

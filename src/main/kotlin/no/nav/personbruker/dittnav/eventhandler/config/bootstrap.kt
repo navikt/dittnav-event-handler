@@ -9,13 +9,18 @@ import io.ktor.util.*
 import io.ktor.util.pipeline.*
 import io.prometheus.client.hotspot.DefaultExports
 import no.nav.personbruker.dittnav.eventhandler.beskjed.beskjedApi
+import no.nav.personbruker.dittnav.eventhandler.beskjed.beskjedSystemuserApi
 import no.nav.personbruker.dittnav.eventhandler.brukernotifikasjon.brukernotifikasjoner
 import no.nav.personbruker.dittnav.eventhandler.common.health.healthApi
 import no.nav.personbruker.dittnav.eventhandler.common.produsent.producerNameAliasApi
 import no.nav.personbruker.dittnav.eventhandler.done.doneApi
+import no.nav.personbruker.dittnav.eventhandler.done.doneSystemuserApi
 import no.nav.personbruker.dittnav.eventhandler.innboks.innboksApi
+import no.nav.personbruker.dittnav.eventhandler.innboks.innboksSystemuserApi
 import no.nav.personbruker.dittnav.eventhandler.oppgave.oppgaveApi
+import no.nav.personbruker.dittnav.eventhandler.oppgave.oppgaveSystemuserApi
 import no.nav.personbruker.dittnav.eventhandler.statusoppdatering.statusoppdateringApi
+import no.nav.personbruker.dittnav.eventhandler.statusoppdatering.statusoppdateringSystemuserApi
 import no.nav.tms.token.support.authentication.installer.installAuthenticators
 import no.nav.tms.token.support.azure.validation.AzureAuthenticator
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
@@ -51,10 +56,13 @@ fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()
             statusoppdateringApi(appContext.statusoppdateringEventService)
         }
         authenticate(AzureAuthenticator.name) {
-            /* endepunkter for metrikker, som brukes for client-client kommunikasjon uten brukertoken */
+            doneSystemuserApi(appContext.doneEventService)
+            beskjedSystemuserApi(appContext.beskjedEventService)
+            innboksSystemuserApi(appContext.innboksEventService)
+            oppgaveSystemuserApi(appContext.oppgaveEventService)
+            statusoppdateringSystemuserApi(appContext.statusoppdateringEventService)
         }
     }
-
     configureShutdownHook(appContext)
 }
 

@@ -25,17 +25,20 @@ fun Route.doneApi(doneEventService: DoneEventService) {
                 DoneResponse(msg, HttpStatusCode.OK)
 
             } catch (e: EventMarkedInactiveException) {
-                val msg = "Det ble ikke produsert et done-event fordi eventet allerede er markert inaktivt. EventId: ${doneDto.eventId}, Uid: ${doneDto.uid}."
+                val msg =
+                    "Det ble ikke produsert et done-event fordi eventet allerede er markert inaktivt. EventId: ${doneDto.eventId}, Uid: ${doneDto.uid}."
                 log.info(msg, e)
                 DoneResponse(msg, HttpStatusCode.OK)
 
-            }  catch (e: NoEventsException) {
-                val msg = "Det ble ikke produsert et done-event fordi vi fant ikke eventet i cachen. EventId: ${doneDto.eventId}, Uid: ${doneDto.uid}."
+            } catch (e: NoEventsException) {
+                val msg =
+                    "Det ble ikke produsert et done-event fordi vi fant ikke eventet i cachen. EventId: ${doneDto.eventId}, Uid: ${doneDto.uid}."
                 log.warn(msg, e)
                 DoneResponse(msg, HttpStatusCode.NotFound)
 
             } catch (e: DuplicateEventException) {
-                val msg = "Det ble ikke produsert done-event fordi det finnes duplikat av event. EventId: ${doneDto.eventId}, Uid: ${doneDto.uid}."
+                val msg =
+                    "Det ble ikke produsert done-event fordi det finnes duplikat av event. EventId: ${doneDto.eventId}, Uid: ${doneDto.uid}."
                 log.error(msg, e)
                 DoneResponse(msg, HttpStatusCode.InternalServerError)
 
@@ -46,6 +49,11 @@ fun Route.doneApi(doneEventService: DoneEventService) {
             }
         }
     }
+}
+
+fun Route.doneSystemuserApi(doneEventService: DoneEventService) {
+
+    val log = LoggerFactory.getLogger(DoneEventService::class.java)
 
     get("/fetch/grouped/systemuser/done") {
         try {
@@ -68,4 +76,3 @@ suspend inline fun <reified T : Any> PipelineContext<Unit, ApplicationCall>.resp
     val message = handler.invoke(postParametersDto)
     call.respond(message.httpStatus, message)
 }
-

@@ -52,7 +52,7 @@ fun Route.beskjedApi(beskjedEventService: BeskjedEventService) {
     }
 }
 
-fun Route.beskjedSystemuserApi(beskjedEventService: BeskjedEventService) {
+fun Route.beskjedSystemClientApi(beskjedEventService: BeskjedEventService) {
 
     val log = LoggerFactory.getLogger(BeskjedEventService::class.java)
 

@@ -52,7 +52,7 @@ fun Route.oppgaveApi(oppgaveEventService: OppgaveEventService) {
     }
 }
 
-fun Route.oppgaveSystemuserApi(oppgaveEventService: OppgaveEventService) {
+fun Route.oppgaveSystemClientApi(oppgaveEventService: OppgaveEventService) {
 
     val log = LoggerFactory.getLogger(OppgaveEventService::class.java)
 

@@ -53,7 +53,7 @@ fun Route.innboksApi(innboksEventService: InnboksEventService) {
     }
 }
 
-fun Route.innboksSystemuserApi(innboksEventService: InnboksEventService) {
+fun Route.innboksSystemClientApi(innboksEventService: InnboksEventService) {
 
     val log = LoggerFactory.getLogger(InnboksEventService::class.java)
 

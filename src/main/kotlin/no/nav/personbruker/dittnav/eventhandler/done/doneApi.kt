@@ -51,7 +51,7 @@ fun Route.doneApi(doneEventService: DoneEventService) {
     }
 }
 
-fun Route.doneSystemuserApi(doneEventService: DoneEventService) {
+fun Route.doneSystemClientApi(doneEventService: DoneEventService) {
 
     val log = LoggerFactory.getLogger(DoneEventService::class.java)
 

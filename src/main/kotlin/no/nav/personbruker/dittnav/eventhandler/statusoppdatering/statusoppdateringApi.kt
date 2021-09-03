@@ -25,7 +25,7 @@ fun Route.statusoppdateringApi(statusoppdateringEventService: StatusoppdateringE
     }
 }
 
-fun Route.statusoppdateringSystemuserApi(statusoppdateringEventService: StatusoppdateringEventService) {
+fun Route.statusoppdateringSystemClientApi(statusoppdateringEventService: StatusoppdateringEventService) {
 
     val log = LoggerFactory.getLogger(StatusoppdateringEventService::class.java)
 

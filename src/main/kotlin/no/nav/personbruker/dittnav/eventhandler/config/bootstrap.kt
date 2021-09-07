@@ -9,7 +9,6 @@ import io.ktor.util.*
 import io.ktor.util.pipeline.*
 import io.prometheus.client.hotspot.DefaultExports
 import no.nav.personbruker.dittnav.eventhandler.beskjed.beskjedApi
-import no.nav.personbruker.dittnav.eventhandler.brukernotifikasjon.brukernotifikasjoner
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBrukerFactory
 import no.nav.personbruker.dittnav.eventhandler.common.health.healthApi
@@ -43,7 +42,6 @@ fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()
             beskjedApi(appContext.beskjedEventService)
             innboksApi(appContext.innboksEventService)
             oppgaveApi(appContext.oppgaveEventService)
-            brukernotifikasjoner(appContext.brukernotifikasjonService)
             statusoppdateringApi(appContext.statusoppdateringEventService)
         }
     }

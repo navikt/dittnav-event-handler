@@ -69,10 +69,6 @@ private fun Application.configureShutdownHook(appContext: ApplicationContext) {
     environment.monitor.subscribe(ApplicationStopPreparing) {
         closeTheDatabaseConectionPool(appContext)
         appContext.kafkaProducerDone.flushAndClose()
-        appContext.kafkaProducerDoneBackup.flushAndClose()
-        appContext.kafkaProducerBeskjedBackup.flushAndClose()
-        appContext.kafkaProducerOppgaveBackup.flushAndClose()
-        appContext.kafkaProducerTableDoneBackup.flushAndClose()
     }
 }
 

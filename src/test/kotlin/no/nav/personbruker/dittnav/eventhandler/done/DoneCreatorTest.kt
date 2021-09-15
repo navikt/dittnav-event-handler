@@ -1,6 +1,8 @@
-package no.nav.personbruker.dittnav.eventhandler.backup
+package no.nav.personbruker.dittnav.eventhandler.done
 
 import kotlinx.coroutines.runBlocking
+import no.nav.personbruker.dittnav.eventhandler.done.createDoneEvent
+import no.nav.personbruker.dittnav.eventhandler.done.createKeyForEvent
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 import java.time.ZoneOffset

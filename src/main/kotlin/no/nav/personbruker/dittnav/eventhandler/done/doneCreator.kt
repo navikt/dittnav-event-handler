@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventhandler.backup
+package no.nav.personbruker.dittnav.eventhandler.done
 
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.brukernotifikasjon.schemas.builders.DoneBuilder

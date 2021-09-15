@@ -53,6 +53,8 @@ spec:
         type: POSTGRES_11
   kafka:
     pool: nav-dev
+  tokenx:
+    enabled: true
   accessPolicy:
     inbound:
       rules:

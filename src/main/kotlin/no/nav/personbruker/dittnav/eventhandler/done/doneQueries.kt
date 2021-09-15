@@ -9,21 +9,6 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 
 
-fun Connection.getAllDoneEvents(): List<Done> =
-        prepareStatement("""SELECT 
-            |done.fodselsnummer,
-            |done.grupperingsId,
-            |done.eventId, 
-            |done.eventTidspunkt,
-            |done.systembruker 
-            |FROM done""".trimMargin())
-                .use {
-                    it.fetchSize = Kafka.BACKUP_EVENT_CHUNCK_SIZE
-                    it.executeQuery().mapList {
-                        toDone()
-                    }
-                }
-
 fun Connection.getAllGroupedDoneEventsBySystemuser(): Map<String, Int> {
     return prepareStatement("SELECT systembruker, COUNT(*) FROM done GROUP BY systembruker",
             ResultSet.TYPE_SCROLL_INSENSITIVE,

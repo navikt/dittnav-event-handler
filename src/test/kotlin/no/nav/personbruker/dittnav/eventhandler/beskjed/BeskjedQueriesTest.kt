@@ -160,20 +160,6 @@ class BeskjedQueriesTest {
     }
 
     @Test
-    fun `Returnerer liste av alle Beskjed-eventer`() {
-        runBlocking {
-            database.dbQuery { getAllBeskjedEvents() }.size `should be equal to` 4
-        }
-    }
-
-    @Test
-    fun `Returnerer liste av alle inaktive Beskjed-eventer`() {
-        runBlocking {
-            database.dbQuery { getAllInactiveBeskjedEvents() }.size `should be equal to` 1
-        }
-    }
-
-    @Test
     fun `Returnerer en liste av alle grupperte Beskjed-eventer`() {
         runBlocking {
             database.dbQuery {

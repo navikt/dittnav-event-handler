@@ -47,25 +47,6 @@ internal class DoneQueriesTest {
     }
 
     @Test
-    fun `Finn alle cachede Done-eventer`() {
-        runBlocking {
-            database.dbQuery { getAllDoneEvents() }.size `should be equal to` 2
-        }
-    }
-
-    @Test
-    fun `Finn alle cachede `() {
-        runBlocking {
-            val doneEvents = database.dbQuery { getAllDoneEvents() }
-            doneEvents.first().eventId `should be equal to` "1"
-            doneEvents.first().systembruker `should be equal to` systembruker
-            doneEvents.first().grupperingsId `should be equal to` grupperingsId
-            doneEvents.first().fodselsnummer `should be equal to` fodselsnummer
-            doneEvents.first().eventTidspunkt.toString() `should be equal to` osloDateTime.toString()
-        }
-    }
-
-    @Test
     fun `Returnerer en liste av alle grupperte done-eventer basert paa systembruker`() {
         runBlocking {
             val groupedEventsBySystemuser = database.dbQuery { getAllGroupedDoneEventsBySystemuser() }

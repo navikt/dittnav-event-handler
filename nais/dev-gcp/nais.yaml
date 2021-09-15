@@ -55,6 +55,9 @@ spec:
     pool: nav-dev
   tokenx:
     enabled: true
+  azure:
+    application:
+      enabled: true
   accessPolicy:
     inbound:
       rules:

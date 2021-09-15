@@ -39,7 +39,7 @@ fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()
         installTokenXAuth {
             setAsDefault = true
         }
-        installAzureAuth{
+        installAzureAuth {
             setAsDefault = false
         }
     }

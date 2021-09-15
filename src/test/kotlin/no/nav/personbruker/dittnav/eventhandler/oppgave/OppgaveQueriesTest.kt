@@ -1,7 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBrukerObjectMother
+import no.nav.personbruker.dittnav.eventhandler.common.TokenXUserObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
 import no.nav.personbruker.dittnav.eventhandler.common.database.createProdusent
 import no.nav.personbruker.dittnav.eventhandler.common.database.deleteProdusent
@@ -16,7 +16,7 @@ import org.junit.jupiter.api.TestInstance
 class OppgaveQueriesTest {
 
     private val database = H2Database()
-    private val bruker = InnloggetBrukerObjectMother.createInnloggetBruker("12345")
+    private val bruker = TokenXUserObjectMother.createInnloggetBruker("12345")
     private val produsent = "x-dittnav-produsent"
     private val grupperingsid = "100${bruker.ident}"
 
@@ -62,7 +62,7 @@ class OppgaveQueriesTest {
 
     @Test
     fun `Returnerer tom liste hvis Oppgave-eventer for fodselsnummer ikke finnes`() {
-        val brukerSomIkkeFinnes = InnloggetBrukerObjectMother.createInnloggetBruker("0")
+        val brukerSomIkkeFinnes = TokenXUserObjectMother.createInnloggetBruker("0")
         runBlocking {
             database.dbQuery { getAktivOppgaveForInnloggetBruker(brukerSomIkkeFinnes) }.isEmpty()
         }
@@ -70,7 +70,7 @@ class OppgaveQueriesTest {
 
     @Test
     fun `Returnerer tom liste hvis fodselsnummer er tomt`() {
-        val fodselsnummerMangler = InnloggetBrukerObjectMother.createInnloggetBruker("")
+        val fodselsnummerMangler = TokenXUserObjectMother.createInnloggetBruker("")
         runBlocking {
             database.dbQuery { getAktivOppgaveForInnloggetBruker(fodselsnummerMangler) }.isEmpty()
         }
@@ -107,7 +107,7 @@ class OppgaveQueriesTest {
         createOppgave(listOf(oppgaveMedAnnenProdusent))
         val oppgave = runBlocking {
             database.dbQuery {
-                getAllOppgaveForInnloggetBruker(InnloggetBrukerObjectMother.createInnloggetBruker("112233"))
+                getAllOppgaveForInnloggetBruker(TokenXUserObjectMother.createInnloggetBruker("112233"))
             }.first()
         }
         oppgave.produsent `should be equal to` ""

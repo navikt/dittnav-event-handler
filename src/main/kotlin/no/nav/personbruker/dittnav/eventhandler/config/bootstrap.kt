@@ -8,16 +8,23 @@ import io.ktor.serialization.*
 import io.ktor.util.*
 import io.ktor.util.pipeline.*
 import io.prometheus.client.hotspot.DefaultExports
+import no.nav.personbruker.dittnav.common.util.config.StringEnvVar
 import no.nav.personbruker.dittnav.eventhandler.beskjed.beskjedApi
-import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
-import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBrukerFactory
+import no.nav.personbruker.dittnav.eventhandler.beskjed.beskjedSystemClientApi
 import no.nav.personbruker.dittnav.eventhandler.common.health.healthApi
 import no.nav.personbruker.dittnav.eventhandler.common.produsent.producerNameAliasApi
 import no.nav.personbruker.dittnav.eventhandler.done.doneApi
+import no.nav.personbruker.dittnav.eventhandler.done.doneSystemClientApi
 import no.nav.personbruker.dittnav.eventhandler.innboks.innboksApi
+import no.nav.personbruker.dittnav.eventhandler.innboks.innboksSystemClientApi
 import no.nav.personbruker.dittnav.eventhandler.oppgave.oppgaveApi
+import no.nav.personbruker.dittnav.eventhandler.oppgave.oppgaveSystemClientApi
 import no.nav.personbruker.dittnav.eventhandler.statusoppdatering.statusoppdateringApi
-import no.nav.security.token.support.ktor.tokenValidationSupport
+import no.nav.personbruker.dittnav.eventhandler.statusoppdatering.statusoppdateringSystemClientApi
+import no.nav.tms.token.support.authentication.installer.installAuthenticators
+import no.nav.tms.token.support.azure.validation.AzureAuthenticator
+import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
+import no.nav.tms.token.support.tokenx.validation.user.TokenXUserFactory
 
 @KtorExperimentalAPI
 fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()) {
@@ -28,10 +35,13 @@ fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()
         json()
     }
 
-    val config = this.environment.config
-
-    install(Authentication) {
-        tokenValidationSupport(config = config)
+    installAuthenticators {
+        installTokenXAuth {
+            setAsDefault = true
+        }
+        installAzureAuth {
+            setAsDefault = false
+        }
     }
 
     routing {
@@ -44,8 +54,14 @@ fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()
             oppgaveApi(appContext.oppgaveEventService)
             statusoppdateringApi(appContext.statusoppdateringEventService)
         }
+        authenticate(AzureAuthenticator.name) {
+            doneSystemClientApi(appContext.doneEventService)
+            beskjedSystemClientApi(appContext.beskjedEventService)
+            innboksSystemClientApi(appContext.innboksEventService)
+            oppgaveSystemClientApi(appContext.oppgaveEventService)
+            statusoppdateringSystemClientApi(appContext.statusoppdateringEventService)
+        }
     }
-
     configureShutdownHook(appContext)
 }
 
@@ -64,5 +80,12 @@ private fun closeTheDatabaseConectionPool(appContext: ApplicationContext) {
     appContext.database.dataSource.close()
 }
 
-val PipelineContext<Unit, ApplicationCall>.innloggetBruker: InnloggetBruker
-    get() = InnloggetBrukerFactory.createNewInnloggetBruker(call.authentication.principal())
+val PipelineContext<Unit, ApplicationCall>.innloggetBruker: TokenXUser
+    get(): TokenXUser {
+        val claimName = StringEnvVar.getOptionalEnvVar("OIDC_CLAIM_CONTAINING_THE_IDENTITY")
+        return if(claimName.isNullOrEmpty()) {
+            TokenXUserFactory.createTokenXUser(call)
+        } else {
+            TokenXUserFactory.createTokenXUser(call, claimName)
+        }
+    }

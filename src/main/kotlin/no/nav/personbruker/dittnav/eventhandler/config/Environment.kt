@@ -15,7 +15,6 @@ data class Environment(val bootstrapServers: String = getEnvVar("KAFKA_BOOTSTRAP
                        val dbUrl: String = getDbUrl(dbHost, dbPort, dbName)
 )
 
-
 fun getDbUrl(host: String, port: String, name: String): String {
     return if (host.endsWith(":$port")) {
         "jdbc:postgresql://${host}/$name"

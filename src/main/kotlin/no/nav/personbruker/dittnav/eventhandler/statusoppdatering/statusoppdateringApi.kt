@@ -1,10 +1,9 @@
 package no.nav.personbruker.dittnav.eventhandler.statusoppdatering
 
-import io.ktor.application.call
-import io.ktor.http.HttpStatusCode
-import io.ktor.response.respond
-import io.ktor.routing.Route
-import io.ktor.routing.get
+import io.ktor.application.*
+import io.ktor.http.*
+import io.ktor.response.*
+import io.ktor.routing.*
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.respondWithError
 import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
 import org.slf4j.LoggerFactory
@@ -24,15 +23,19 @@ fun Route.statusoppdateringApi(statusoppdateringEventService: StatusoppdateringE
             respondWithError(call, log, exception)
         }
     }
+}
+
+fun Route.statusoppdateringSystemClientApi(statusoppdateringEventService: StatusoppdateringEventService) {
+
+    val log = LoggerFactory.getLogger(StatusoppdateringEventService::class.java)
 
     get("/fetch/grouped/systemuser/statusoppdatering") {
         try {
             val statusoppdateringEvents =
-                    statusoppdateringEventService.getAllGroupedEventsBySystemuserFromCache()
+                statusoppdateringEventService.getAllGroupedEventsBySystemuserFromCache()
             call.respond(HttpStatusCode.OK, statusoppdateringEvents)
         } catch (exception: Exception) {
             respondWithError(call, log, exception)
         }
     }
 }
-

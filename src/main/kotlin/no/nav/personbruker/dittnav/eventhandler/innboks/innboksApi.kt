@@ -51,11 +51,16 @@ fun Route.innboksApi(innboksEventService: InnboksEventService) {
             respondWithError(call, log, exception)
         }
     }
+}
+
+fun Route.innboksSystemClientApi(innboksEventService: InnboksEventService) {
+
+    val log = LoggerFactory.getLogger(InnboksEventService::class.java)
 
     get("/fetch/grouped/systemuser/innboks") {
         try {
             val innboksEvents =
-                    innboksEventService.getAllGroupedEventsBySystemuserFromCache()
+                innboksEventService.getAllGroupedEventsBySystemuserFromCache()
             call.respond(HttpStatusCode.OK, innboksEvents)
         } catch (exception: Exception) {
             respondWithError(call, log, exception)

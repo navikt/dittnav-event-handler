@@ -7,7 +7,7 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.brukernotifikasjon.schemas.builders.exception.FieldValidationException
-import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBrukerObjectMother
+import no.nav.personbruker.dittnav.eventhandler.common.TokenXUserObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should contain`
@@ -24,7 +24,7 @@ class OppgaveEventServiceTest {
 
     private val database = mockk<Database>()
     private val oppgaveEventService = OppgaveEventService(database)
-    private val bruker = InnloggetBrukerObjectMother.createInnloggetBruker("123")
+    private val bruker = TokenXUserObjectMother.createInnloggetBruker("123")
     private val produsent = "dittnav"
     private val grupperingsid = "100${bruker.ident}"
 
@@ -60,7 +60,7 @@ class OppgaveEventServiceTest {
 
     @Test
     fun `Should return all events that are grouped together by ids`() {
-        val innloggetbruker = InnloggetBrukerObjectMother.createInnloggetBruker("100")
+        val innloggetbruker = TokenXUserObjectMother.createInnloggetBruker("100")
         val grupperingsid = "100${innloggetbruker.ident}"
         val oppgaveEvents = listOf(
                 OppgaveObjectMother.createOppgave(id = 1, eventId = "1", fodselsnummer = innloggetbruker.ident, aktiv = false),

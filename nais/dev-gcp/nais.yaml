@@ -53,7 +53,15 @@ spec:
         type: POSTGRES_11
   kafka:
     pool: nav-dev
+  tokenx:
+    enabled: true
+  azure:
+    application:
+      enabled: true
   accessPolicy:
+    inbound:
+      rules:
+        - application: dittnav-api
     outbound:
       external:
         - host: kafka-schema-registry.nais-q.adeo.no

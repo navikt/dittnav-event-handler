@@ -1,14 +1,14 @@
 package no.nav.personbruker.dittnav.eventhandler.statusoppdatering
 
-import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
+import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-fun Connection.getAllGroupedStatusoppdateringEventsByIds(bruker: InnloggetBruker, grupperingsid: String, produsent: String): List<Statusoppdatering> =
+fun Connection.getAllGroupedStatusoppdateringEventsByIds(bruker: TokenXUser, grupperingsid: String, produsent: String): List<Statusoppdatering> =
         prepareStatement("""SELECT 
             |statusoppdatering.id,
             |statusoppdatering.eventTidspunkt,

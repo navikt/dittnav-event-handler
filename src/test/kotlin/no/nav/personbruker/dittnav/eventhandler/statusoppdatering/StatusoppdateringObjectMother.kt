@@ -1,6 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.statusoppdatering
 
-import no.nav.personbruker.dittnav.eventhandler.common.InnloggetBruker
+import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
@@ -68,7 +68,7 @@ object StatusoppdateringObjectMother {
                 sakstema = "dummySakstema")
     }
 
-    fun getStatusoppdateringEvents(bruker: InnloggetBruker): MutableList<Statusoppdatering> {
+    fun getStatusoppdateringEvents(bruker: TokenXUser): MutableList<Statusoppdatering> {
         return mutableListOf(
                 createStatusoppdatering(1, "$dummyEventId+1", bruker.ident, "$dummyStatusGlobal+1", "$dummyStatusIntern+1", "$dummySakstema+1", systembruker = "x-dittnav"),
                 createStatusoppdatering(2, "$dummyEventId+2", bruker.ident, "$dummyStatusGlobal+2", "$dummyStatusIntern+2", "$dummySakstema+2", systembruker = "x-dittnav"),

@@ -8,6 +8,7 @@ import io.ktor.serialization.*
 import io.ktor.util.*
 import io.ktor.util.pipeline.*
 import io.prometheus.client.hotspot.DefaultExports
+import no.nav.personbruker.dittnav.common.util.config.StringEnvVar
 import no.nav.personbruker.dittnav.eventhandler.beskjed.beskjedApi
 import no.nav.personbruker.dittnav.eventhandler.beskjed.beskjedSystemClientApi
 import no.nav.personbruker.dittnav.eventhandler.brukernotifikasjon.brukernotifikasjoner
@@ -82,4 +83,11 @@ private fun closeTheDatabaseConectionPool(appContext: ApplicationContext) {
 }
 
 val PipelineContext<Unit, ApplicationCall>.innloggetBruker: TokenXUser
-    get() = TokenXUserFactory.createTokenXUser(call)
+    get(): TokenXUser {
+        val claimName = StringEnvVar.getOptionalEnvVar("OIDC_CLAIM_CONTAINING_THE_IDENTITY")
+        return if(claimName.isNullOrEmpty()) {
+            TokenXUserFactory.createTokenXUser(call)
+        } else {
+            TokenXUserFactory.createTokenXUser(call, claimName)
+        }
+    }

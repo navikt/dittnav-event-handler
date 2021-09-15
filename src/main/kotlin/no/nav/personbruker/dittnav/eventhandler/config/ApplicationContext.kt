@@ -5,21 +5,18 @@ import no.nav.brukernotifikasjon.schemas.Done
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.brukernotifikasjon.schemas.Oppgave
 import no.nav.personbruker.dittnav.eventhandler.backup.BackupBeskjedService
+import no.nav.personbruker.dittnav.eventhandler.backup.BackupDoneService
+import no.nav.personbruker.dittnav.eventhandler.backup.BackupOppgaveService
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService
-import no.nav.personbruker.dittnav.eventhandler.backup.BackupBeskjedTransformer
 import no.nav.personbruker.dittnav.eventhandler.brukernotifikasjon.BrukernotifikasjonService
-import no.nav.personbruker.dittnav.eventhandler.common.produsent.ProducerNameAliasService
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.health.HealthService
 import no.nav.personbruker.dittnav.eventhandler.common.kafka.KafkaProducerWrapper
-import no.nav.personbruker.dittnav.eventhandler.backup.BackupDoneTranformer
-import no.nav.personbruker.dittnav.eventhandler.backup.BackupDoneService
+import no.nav.personbruker.dittnav.eventhandler.common.produsent.ProducerNameAliasService
 import no.nav.personbruker.dittnav.eventhandler.done.DoneEventService
 import no.nav.personbruker.dittnav.eventhandler.done.DoneProducer
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksEventService
-import no.nav.personbruker.dittnav.eventhandler.backup.BackupOppgaveService
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveEventService
-import no.nav.personbruker.dittnav.eventhandler.backup.BackupOppgaveTransformer
 import no.nav.personbruker.dittnav.eventhandler.statusoppdatering.StatusoppdateringEventService
 import org.apache.kafka.clients.producer.KafkaProducer
 

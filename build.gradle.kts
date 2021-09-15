@@ -45,9 +45,16 @@ dependencies {
     implementation(Prometheus.logback)
     implementation(Prometheus.simpleClient)
     implementation(Prometheus.httpServer)
+
+    implementation("com.github.navikt.tms-ktor-token-support:token-support-authentication-installer:2021.09.15-12.26-2b3dd2a9ca44")
+    implementation("com.github.navikt.tms-ktor-token-support:token-support-azure-validation:2021.09.15-12.26-2b3dd2a9ca44")
+    implementation("com.github.navikt.tms-ktor-token-support:token-support-tokenx-validation:2021.09.15-12.26-2b3dd2a9ca44")
+    /*
     implementation(Tms.KtorTokenSupport.authenticationInstaller)
     implementation(Tms.KtorTokenSupport.azureValidation)
     implementation(Tms.KtorTokenSupport.tokenXValidation)
+*/
+
 
     testImplementation(H2Database.h2)
     testImplementation(Jjwt.api)

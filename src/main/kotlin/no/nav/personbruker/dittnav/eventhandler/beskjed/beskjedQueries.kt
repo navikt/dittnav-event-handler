@@ -4,7 +4,6 @@ import Beskjed
 import no.nav.personbruker.dittnav.eventhandler.common.database.getNullableUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
-import no.nav.personbruker.dittnav.eventhandler.config.Kafka.BACKUP_EVENT_CHUNCK_SIZE
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 import java.sql.Connection
 import java.sql.ResultSet
@@ -64,55 +63,6 @@ fun Connection.getBeskjedByIds(fodselsnummer: String, uid: String, eventId: Stri
                     it.setString(1, fodselsnummer)
                     it.setString(2, uid)
                     it.setString(3, eventId)
-                    it.executeQuery().mapList {
-                        toBeskjed()
-                    }
-                }
-
-fun Connection.getAllBeskjedEvents(): List<Beskjed> =
-        prepareStatement("""SELECT 
-            |beskjed.id, 
-            |beskjed.uid, 
-            |beskjed.eventTidspunkt,
-            |beskjed.fodselsnummer,
-            |beskjed.eventId, 
-            |beskjed.grupperingsId,
-            |beskjed.tekst,
-            |beskjed.link,
-            |beskjed.sikkerhetsnivaa,
-            |beskjed.sistOppdatert,
-            |beskjed.synligFremTil,
-            |beskjed.aktiv,
-            |beskjed.systembruker,
-            |systembrukere.produsentnavn AS produsent
-            |FROM beskjed LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker""".trimMargin())
-                .use {
-                    it.fetchSize = BACKUP_EVENT_CHUNCK_SIZE
-                    it.executeQuery().mapList {
-                        toBeskjed()
-                    }
-                }
-
-fun Connection.getAllInactiveBeskjedEvents(): List<Beskjed> =
-        prepareStatement("""SELECT 
-            |beskjed.id, 
-            |beskjed.uid, 
-            |beskjed.eventTidspunkt,
-            |beskjed.fodselsnummer,
-            |beskjed.eventId, 
-            |beskjed.grupperingsId,
-            |beskjed.tekst,
-            |beskjed.link,
-            |beskjed.sikkerhetsnivaa,
-            |beskjed.sistOppdatert,
-            |beskjed.synligFremTil,
-            |beskjed.aktiv,
-            |beskjed.systembruker,
-            |systembrukere.produsentnavn AS produsent
-            |FROM (SELECT * FROM beskjed WHERE aktiv = false) AS beskjed
-            |LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker""".trimMargin())
-                .use {
-                    it.fetchSize = BACKUP_EVENT_CHUNCK_SIZE
                     it.executeQuery().mapList {
                         toBeskjed()
                     }

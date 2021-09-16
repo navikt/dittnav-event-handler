@@ -116,20 +116,6 @@ class OppgaveQueriesTest {
     }
 
     @Test
-    fun `Returnerer liste av alle Oppgave-eventer`() {
-        runBlocking {
-            database.dbQuery { getAllOppgaveEvents() }.size `should be equal to` 4
-        }
-    }
-
-    @Test
-    fun `Returnerer liste av alle inaktive Oppgave-eventer`() {
-        runBlocking {
-            database.dbQuery { getAllInactiveOppgaveEvents() }.size `should be equal to` 1
-        }
-    }
-
-    @Test
     fun `Returnerer en liste av alle grupperte Oppgave-eventer`() {
         runBlocking {
             database.dbQuery {

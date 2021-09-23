@@ -1,0 +1,67 @@
+apiVersion: nais.io/v1alpha1
+kind: Application
+metadata:
+  labels:
+    team: min-side
+  name: dittnav-event-handler
+  namespace: min-side
+spec:
+  envFrom:
+    - secret: dittnav-event-handler-secrets
+    - configmap: loginservice-idporten
+  image: {{version}}
+  port: 8080
+  liveness:
+    failureThreshold: 3
+    initialDelay: 30
+    path: /internal/isAlive
+    periodSeconds: 10
+  readiness:
+    initialDelay: 30
+    path: /internal/isReady
+  prometheus:
+    enabled: true
+    path: /metrics
+  replicas:
+    max: 4
+    min: 4
+  resources:
+    limits:
+      cpu: "3"
+      memory: 768Mi
+    requests:
+      cpu: "1"
+      memory: 384Mi
+  ingresses:
+    - "https://dittnav-event-handler-gcp.nais.oera.no"
+  gcp:
+    permissions:
+      - resource:
+          apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+          kind: Project
+        role: roles/cloudsql.client
+    sqlInstances:
+      - databases:
+          - envVarPrefix: DB
+            name: brukernotifikasjon-cache
+            users:
+              - name: eventhandler
+        name: brukernotifikasjon-cache
+        diskSize: 10
+        diskType: SSD
+        tier: db-f1-micro
+        type: POSTGRES_11
+  kafka:
+    pool: nav-prod
+  tokenx:
+    enabled: true
+  azure:
+    application:
+      enabled: true
+  accessPolicy:
+    inbound:
+      rules:
+        - application: dittnav-api
+    outbound:
+      external:
+        - host: kafka-schema-registry.nais.adeo.no

@@ -62,6 +62,7 @@ spec:
     inbound:
       rules:
         - application: dittnav-api
+        - application: internal-periodic-metrics-reporter
     outbound:
       external:
         - host: kafka-schema-registry.nais.adeo.no

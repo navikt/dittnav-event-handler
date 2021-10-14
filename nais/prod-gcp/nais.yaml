@@ -47,9 +47,9 @@ spec:
             users:
               - name: eventhandler
         name: brukernotifikasjon-cache
-        diskSize: 10
+        diskSize: 100
         diskType: SSD
-        tier: db-f1-micro
+        tier: db-custom-2-12288
         type: POSTGRES_11
   kafka:
     pool: nav-prod

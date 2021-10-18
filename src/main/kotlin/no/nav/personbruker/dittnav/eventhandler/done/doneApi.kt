@@ -57,18 +57,26 @@ fun Route.doneSystemClientApi(doneEventService: DoneEventService) {
 
     get("/fetch/grouped/systemuser/done") {
         try {
-            val result = mutableMapOf<String, Int>()
             val doneEvents = doneEventService.getAllGroupedEventsBySystemuserFromCache()
             val inactiveBrukernotifikasjoner = doneEventService.getNumberOfInactiveBrukernotifikasjonerGroupedBySystemuser()
 
-            result.putAll(doneEvents)
-            result.putAll(inactiveBrukernotifikasjoner)
+            val result = doneEvents.mergeAndSumWith(inactiveBrukernotifikasjoner)
 
             call.respond(HttpStatusCode.OK, result)
         } catch (exception: Exception) {
             respondWithError(call, log, exception)
         }
     }
+}
+
+private fun Map<String, Int>.mergeAndSumWith(other: Map<String, Int>): Map<String, Int> {
+    val result = toMutableMap()
+
+    other.entries.forEach { (keyOther, valueOther) ->
+        result.merge(keyOther, valueOther, Int::plus)
+    }
+
+    return result
 }
 
 suspend inline fun <reified T : Any> PipelineContext<Unit, ApplicationCall>.respondForParameterType(handler: (T) -> DoneResponse) {

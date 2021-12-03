@@ -63,6 +63,8 @@ spec:
       rules:
         - application: dittnav-api
         - application: internal-periodic-metrics-reporter
+        - application: tms-event-test-producer
+          namespace: min-side
     outbound:
       external:
         - host: kafka-schema-registry.nais-q.adeo.no

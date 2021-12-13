@@ -75,7 +75,6 @@ private fun Map<String, Int>.mergeAndSumWith(other: Map<String, Int>): Map<Strin
     other.entries.forEach { (keyOther, valueOther) ->
         result.merge(keyOther, valueOther, Int::plus)
     }
-
     return result
 }
 

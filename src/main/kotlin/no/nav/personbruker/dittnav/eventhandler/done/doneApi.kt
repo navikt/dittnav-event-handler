@@ -53,4 +53,3 @@ suspend inline fun <reified T : Any> PipelineContext<Unit, ApplicationCall>.resp
     val message = handler.invoke(postParametersDto)
     call.respond(message.httpStatus, message)
 }
-

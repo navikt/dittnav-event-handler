@@ -101,4 +101,5 @@ internal class oppgaveCreatorTest {
             }
         } `should throw` FieldValidationException::class `with message containing` "Sikkerhetsnivaa"
     }
+
 }

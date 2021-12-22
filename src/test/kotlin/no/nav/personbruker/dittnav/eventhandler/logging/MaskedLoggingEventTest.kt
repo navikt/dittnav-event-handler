@@ -43,4 +43,5 @@ class MaskedLoggingEventTest {
         private val LOGGER = LoggerFactory.getLogger(MaskedLoggingEventTest::class.java)
         const val MASKED_FNR = "***********"
     }
+
 }

@@ -28,6 +28,8 @@ fun Connection.getAllOppgaveForInnloggetBruker(bruker: TokenXUser): List<Oppgave
             |oppgave.sistOppdatert,
             |oppgave.aktiv,
             |oppgave.systembruker,
+            |oppgave.namespace,
+            |oppgave.appnavn,
             |systembrukere.produsentnavn AS produsent
             |FROM (SELECT * FROM oppgave WHERE fodselsnummer = ?) AS oppgave
             |LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker""".trimMargin())
@@ -51,6 +53,8 @@ fun Connection.getAllGroupedOppgaveEventsByIds(bruker: TokenXUser, grupperingsid
             |oppgave.sistOppdatert,
             |oppgave.aktiv,
             |oppgave.systembruker,
+            |oppgave.namespace,
+            |oppgave.appnavn,
             |systembrukere.produsentnavn AS produsent
             |FROM (SELECT * FROM oppgave WHERE fodselsnummer = ? AND grupperingsid = ?) AS oppgave
             |LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker WHERE systembrukere.produsentnavn = ?""".trimMargin())
@@ -70,6 +74,8 @@ private fun ResultSet.toOppgave(): Oppgave {
             id = getInt("id"),
             produsent = getString("produsent") ?: "",
             systembruker = getString("systembruker"),
+            namespace = getString("namespace"),
+            appnavn = getString("appnavn"),
             eventTidspunkt = verifiedEventTidspunkt,
             fodselsnummer = getString("fodselsnummer"),
             eventId = getString("eventId"),
@@ -95,6 +101,8 @@ private fun Connection.getOppgaveForInnloggetBruker(bruker: TokenXUser, aktiv: B
             |oppgave.sistOppdatert,
             |oppgave.aktiv,
             |oppgave.systembruker,
+            |oppgave.namespace,
+            |oppgave.appnavn,
             |systembrukere.produsentnavn AS produsent
             |FROM (SELECT * FROM oppgave WHERE fodselsnummer = ? AND aktiv = ?) AS oppgave
             |LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker""".trimMargin())

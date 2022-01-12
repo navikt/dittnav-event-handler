@@ -9,6 +9,8 @@ data class Beskjed(
         val eventTidspunkt: ZonedDateTime,
         val produsent: String,
         val systembruker: String,
+        val namespace: String,
+        val appnavn: String,
         val sikkerhetsnivaa: Int,
         val sistOppdatert: ZonedDateTime,
         val synligFremTil: ZonedDateTime?,
@@ -26,6 +28,8 @@ data class Beskjed(
                 "eventTidspunkt=$eventTidspunkt, " +
                 "produsent=$produsent, " +
                 "systembruker=$systembruker, " +
+                "namespace=$namespace, " +
+                "appnavn=$appnavn, " +
                 "sikkerhetsnivaa=$sikkerhetsnivaa, " +
                 "sistOppdatert=$sistOppdatert, " +
                 "synligFremTil=$synligFremTil, " +

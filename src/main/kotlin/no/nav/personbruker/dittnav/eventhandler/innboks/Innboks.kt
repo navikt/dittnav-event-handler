@@ -6,6 +6,8 @@ data class Innboks(
         val id: Int,
         val produsent: String,
         val systembruker: String,
+        val namespace: String,
+        val appnavn: String,
         val eventTidspunkt: ZonedDateTime,
         val fodselsnummer: String,
         val eventId: String,
@@ -21,6 +23,8 @@ data class Innboks(
                 "id=$id, " +
                 "produsent=$produsent, " +
                 "systembruker=$systembruker, " +
+                "namespace=$namespace, " +
+                "appnavn=$appnavn, " +
                 "eventTidspunkt=$eventTidspunkt, " +
                 "fodselsnummer=***, " +
                 "eventId=$eventId, " +

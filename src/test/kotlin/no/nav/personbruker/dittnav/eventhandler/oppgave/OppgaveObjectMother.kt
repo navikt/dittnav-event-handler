@@ -13,27 +13,13 @@ object OppgaveObjectMother {
                 eventTidspunkt = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
                 produsent = "dittnav",
                 systembruker = "x-dittnav",
+                namespace = "dummyNamespace",
+                appnavn = "dummyAppnavn",
                 sikkerhetsnivaa = 4,
                 sistOppdatert = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
                 tekst = "Dette er melding til brukeren",
                 link = "https://nav.no/systemX/$fodselsnummer",
                 aktiv = aktiv)
-    }
-
-    fun createOppgave(id: Int, eventId: String, fodselsnummer: String, systembruker: String, tekst: String, grupperingsId: String, link: String, sikkerhetsnivaa: Int): Oppgave {
-        return Oppgave(
-                id = id,
-                produsent = "dittnav",
-                systembruker = systembruker,
-                eventTidspunkt = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
-                fodselsnummer = fodselsnummer,
-                eventId = eventId,
-                grupperingsId = grupperingsId,
-                tekst = tekst,
-                link = link,
-                sistOppdatert = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
-                sikkerhetsnivaa = sikkerhetsnivaa,
-                aktiv = true)
     }
 
     fun createOppgave(id: Int, eventId: String, fodselsnummer: String, aktiv: Boolean, systembruker: String): Oppgave {
@@ -45,6 +31,8 @@ object OppgaveObjectMother {
                 eventTidspunkt = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
                 produsent = "$systembruker-produsent",
                 systembruker = systembruker,
+                namespace = "dummyNamespace",
+                appnavn = "dummyAppnavn",
                 sikkerhetsnivaa = 4,
                 sistOppdatert = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
                 tekst = "Dette er melding til brukeren",

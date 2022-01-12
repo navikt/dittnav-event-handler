@@ -22,6 +22,8 @@ fun Connection.getAllGroupedStatusoppdateringEventsByIds(bruker: TokenXUser, gru
             |statusoppdatering.statusIntern,
             |statusoppdatering.sakstema,
             |statusoppdatering.systembruker,
+            |statusoppdatering.namespace,
+            |statusoppdatering.appnavn,
             |systembrukere.produsentnavn AS produsent
             |FROM (SELECT * FROM statusoppdatering WHERE fodselsnummer = ? AND grupperingsid = ?) AS statusoppdatering
             |LEFT JOIN systembrukere ON statusoppdatering.systembruker = systembrukere.systembruker WHERE systembrukere.produsentnavn = ?""".trimMargin())
@@ -48,7 +50,9 @@ fun ResultSet.toStatusoppdatering(): Statusoppdatering {
             link = getString("link"),
             statusGlobal = getString("statusGlobal"),
             statusIntern = getString("statusIntern"),
-            sakstema = getString("sakstema")
+            sakstema = getString("sakstema"),
+            namespace = getString("namespace"),
+            appnavn = getString("appnavn")
     )
 }
 

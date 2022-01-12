@@ -5,13 +5,13 @@ import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
+import java.util.*
 
 internal class doneCreatorTest {
 
     private val fodselsnummer = "12345678901"
     private val grupperingsId = "789"
-    private val eventId = "11"
-    private val produsent = "DittNAV"
+    private val eventId = UUID.randomUUID().toString()
     private val eventTidspunkt = ZonedDateTime.now(ZoneOffset.UTC)
     private val namespace = "local"
     private val appnavn = "eventhandler"

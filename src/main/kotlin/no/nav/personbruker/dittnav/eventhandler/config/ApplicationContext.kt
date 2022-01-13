@@ -18,7 +18,7 @@ class ApplicationContext {
 
     private val environment = Environment()
 
-    val kafkaProducerDone = KafkaProducerWrapper(Kafka.doneTopicName ,KafkaProducer<NokkelInput, DoneInput>(Kafka.producerProps(environment)))
+    val kafkaProducerDone = KafkaProducerWrapper(environment.doneInputTopicName ,KafkaProducer<NokkelInput, DoneInput>(Kafka.producerProps(environment)))
 
     val database: Database = PostgresDatabase(environment)
 

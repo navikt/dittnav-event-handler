@@ -14,8 +14,6 @@ import java.util.*
 
 object Kafka {
 
-    val doneTopicName = "aapen-brukernotifikasjon-done-v1"
-
     private fun credentialProps(env: Environment): Properties {
         return Properties().apply {
             put(SaslConfigs.SASL_MECHANISM, "PLAIN")

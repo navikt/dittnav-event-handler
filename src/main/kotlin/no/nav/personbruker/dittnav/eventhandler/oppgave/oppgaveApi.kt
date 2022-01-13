@@ -65,4 +65,14 @@ fun Route.oppgaveSystemClientApi(oppgaveEventService: OppgaveEventService) {
             respondWithError(call, log, exception)
         }
     }
+
+    get("/fetch/grouped/producer/oppgave") {
+        try {
+            val beskjedEvents =
+                oppgaveEventService.getAllGroupedEventsByProducerFromCache()
+            call.respond(HttpStatusCode.OK, beskjedEvents)
+        } catch (exception: Exception) {
+            respondWithError(call, log, exception)
+        }
+    }
 }

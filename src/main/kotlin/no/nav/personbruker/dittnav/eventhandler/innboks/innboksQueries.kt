@@ -2,6 +2,7 @@ package no.nav.personbruker.dittnav.eventhandler.innboks
 
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
+import no.nav.personbruker.dittnav.eventhandler.common.statistics.EventCountForProducer
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 import java.sql.Connection
 import java.sql.ResultSet
@@ -123,4 +124,17 @@ fun Connection.getAllGroupedInnboksEventsBySystemuser(): Map<String, Int> {
                     }
                 }
             }
+}
+
+fun Connection.getAllGroupedInnboksEventsByProducer(): List<EventCountForProducer> {
+    return prepareStatement("SELECT namespace, appnavn, COUNT(*) FROM innboks GROUP BY namespace, appnavn")
+        .use { statement ->
+            statement.executeQuery().mapList {
+                EventCountForProducer(
+                    namespace = getString(1),
+                    appName = getString(2),
+                    count = getInt(3),
+                )
+            }
+        }
 }

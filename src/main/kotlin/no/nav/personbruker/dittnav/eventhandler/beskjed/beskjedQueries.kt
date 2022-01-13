@@ -4,6 +4,7 @@ import Beskjed
 import no.nav.personbruker.dittnav.eventhandler.common.database.getNullableUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
+import no.nav.personbruker.dittnav.eventhandler.common.statistics.EventCountForProducer
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 import java.sql.Connection
 import java.sql.ResultSet
@@ -111,6 +112,19 @@ fun Connection.getAllGroupedBeskjedEventsBySystemuser(): Map<String, Int> {
                     while (resultSet.next()) {
                         put(resultSet.getString(1), resultSet.getInt(2))
                     }
+                }
+            }
+}
+
+fun Connection.getAllGroupedBeskjedEventsByProducer(): List<EventCountForProducer> {
+    return prepareStatement("SELECT namespace, appnavn, COUNT(*) FROM beskjed GROUP BY namespace, appnavn")
+            .use { statement ->
+                statement.executeQuery().mapList {
+                    EventCountForProducer(
+                        namespace = getString(1),
+                        appName = getString(2),
+                        count = getInt(3),
+                    )
                 }
             }
 }

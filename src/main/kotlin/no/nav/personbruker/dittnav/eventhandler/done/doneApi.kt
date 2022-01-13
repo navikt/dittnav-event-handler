@@ -10,6 +10,7 @@ import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.Duplicat
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.EventMarkedInactiveException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.NoEventsException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.respondWithError
+import no.nav.personbruker.dittnav.eventhandler.common.statistics.EventCountForProducer
 import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
 import org.slf4j.LoggerFactory
 
@@ -67,15 +68,51 @@ fun Route.doneSystemClientApi(doneEventService: DoneEventService) {
             respondWithError(call, log, exception)
         }
     }
+
+    get("/fetch/grouped/producer/done") {
+        try {
+            val doneEvents = doneEventService.getAllGroupedEventsByProducerFromCache()
+            val inactiveBrukernotifikasjoner = doneEventService.getNumberOfInactiveBrukernotifikasjonerByProducer()
+
+            val result = doneEvents.mergeAndSumWith(inactiveBrukernotifikasjoner)
+
+            call.respond(HttpStatusCode.OK, result)
+        } catch (exception: Exception) {
+            respondWithError(call, log, exception)
+        }
+    }
 }
 
-private fun Map<String, Int>.mergeAndSumWith(other: Map<String, Int>): Map<String, Int> {
+private fun <T> Map<T, Int>.mergeAndSumWith(other: Map<T, Int>): Map<T, Int> {
     val result = toMutableMap()
 
     other.entries.forEach { (keyOther, valueOther) ->
         result.merge(keyOther, valueOther, Int::plus)
     }
     return result
+}
+
+private fun List<EventCountForProducer>.mergeAndSumWith(other: List<EventCountForProducer>): List<EventCountForProducer> {
+    val thisAsMap = this.transformToMap()
+    val otherAsMap = other.transformToMap()
+
+    val mergedMap = thisAsMap.mergeAndSumWith(otherAsMap)
+
+    return mergedMap.transformToList()
+}
+
+private fun Map<Pair<String, String>, Int>.transformToList(): List<EventCountForProducer> {
+    return entries.map { (namespaceAppName, count) ->
+
+        val (namespace, appName) = namespaceAppName
+        EventCountForProducer(namespace, appName, count)
+    }
+}
+
+private fun List<EventCountForProducer>.transformToMap(): Map<Pair<String, String>, Int> {
+    return map {
+        (it.namespace to it.appName) to it.count
+    }.toMap()
 }
 
 suspend inline fun <reified T : Any> PipelineContext<Unit, ApplicationCall>.respondForParameterType(handler: (T) -> DoneResponse) {

@@ -65,13 +65,13 @@ fun Connection.countTotalNumberOfBrukernotifikasjonerByActiveStatus(aktiv: Boole
 fun Connection.countTotalNumberPerProducerByActiveStatus(aktiv: Boolean): List<EventCountForProducer> {
     return prepareStatement(
             """SELECT
-                subquery.appname, namespace, sum(count)
+                subquery.appnavn, namespace, sum(count)
         FROM (
-             SELECT appname, namespace, COUNT(1) as count FROM BESKJED WHERE aktiv = ? GROUP BY appname, namespace
+             SELECT appnavn, namespace, COUNT(1) as count FROM BESKJED WHERE aktiv = ? GROUP BY appnavn, namespace
              UNION ALL
-             SELECT appname, namespace, COUNT(1) as count FROM OPPGAVE WHERE aktiv = ? GROUP BY appname, namespace
+             SELECT appnavn, namespace, COUNT(1) as count FROM OPPGAVE WHERE aktiv = ? GROUP BY appnavn, namespace
              UNION ALL
-             SELECT appname, namespace, COUNT(1) as count FROM INNBOKS WHERE aktiv = ? GROUP BY appname, namespace
+             SELECT appnavn, namespace, COUNT(1) as count FROM INNBOKS WHERE aktiv = ? GROUP BY appnavn, namespace
         ) as subquery group by subquery.systembruker order by subquery.systembruker;
     """,
             ResultSet.TYPE_SCROLL_INSENSITIVE,

@@ -6,6 +6,9 @@ import no.nav.personbruker.dittnav.eventhandler.common.TokenXUserObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
 import no.nav.personbruker.dittnav.eventhandler.common.database.createProdusent
 import no.nav.personbruker.dittnav.eventhandler.common.database.deleteProdusent
+import no.nav.personbruker.dittnav.eventhandler.common.findCountFor
+import no.nav.personbruker.dittnav.eventhandler.common.produsent.Produsent
+import no.nav.personbruker.dittnav.eventhandler.common.statistics.EventCountForProducer
 import org.amshove.kluent.`should be empty`
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.AfterAll
@@ -26,13 +29,13 @@ class BeskjedQueriesTest {
     private val produsent = "x-dittnav-produsent"
 
     private val beskjed1 = BeskjedObjectMother.createBeskjed(id = 1, eventId = "123", fodselsnummer = bruker.ident,
-            synligFremTil = ZonedDateTime.now().plusHours(1), uid = "11", aktiv = true, systembruker = "x-dittnav")
+            synligFremTil = ZonedDateTime.now().plusHours(1), uid = "11", aktiv = true, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
     private val beskjed2 = BeskjedObjectMother.createBeskjed(id = 2, eventId = eventId, fodselsnummer = bruker.ident,
-            synligFremTil = ZonedDateTime.now().plusHours(1), uid = "22", aktiv = true, systembruker = "x-dittnav")
+            synligFremTil = ZonedDateTime.now().plusHours(1), uid = "22", aktiv = true, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
     private val beskjed3 = BeskjedObjectMother.createBeskjed(id = 3, eventId = "567", fodselsnummer = bruker.ident,
-            synligFremTil = ZonedDateTime.now().plusHours(1), uid = "33", aktiv = false, systembruker = "x-dittnav")
+            synligFremTil = ZonedDateTime.now().plusHours(1), uid = "33", aktiv = false, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
     private val beskjed4 = BeskjedObjectMother.createBeskjed(id = 4, eventId = "789", fodselsnummer = "54321",
-            synligFremTil = ZonedDateTime.now().plusHours(1), uid = "44", aktiv = true, systembruker = "y-dittnav")
+            synligFremTil = ZonedDateTime.now().plusHours(1), uid = "44", aktiv = true, systembruker = "y-dittnav", namespace = "dummyNamespace", appnavn = "y-dittnav")
 
     @BeforeAll
     fun `populer testdata`() {
@@ -148,7 +151,7 @@ class BeskjedQueriesTest {
     @Test
     fun `Returnerer tom streng for produsent hvis eventet er produsert av systembruker vi ikke har i systembruker-tabellen`() {
         var beskjedMedAnnenProdusent = BeskjedObjectMother.createBeskjed(id = 5, eventId = "111", fodselsnummer = "112233",
-                synligFremTil = ZonedDateTime.now().plusHours(1), uid = "11", aktiv = true, systembruker = "ukjent-systembruker")
+                synligFremTil = ZonedDateTime.now().plusHours(1), uid = "11", aktiv = true, systembruker = "ukjent-systembruker", namespace = "", appnavn = "")
         createBeskjed(listOf(beskjedMedAnnenProdusent))
         val beskjed = runBlocking {
             database.dbQuery {
@@ -196,6 +199,17 @@ class BeskjedQueriesTest {
             groupedEventsBySystemuser.size `should be equal to` 2
             groupedEventsBySystemuser.get(beskjed1.systembruker) `should be equal to` 3
             groupedEventsBySystemuser.get(beskjed4.systembruker) `should be equal to` 1
+        }
+    }
+
+    @Test
+    fun `Returnerer en liste av alle grupperte Beskjed-eventer basert paa produsent`() {
+        runBlocking {
+            val groupedEventsBySystemuser = database.dbQuery { getAllGroupedBeskjedEventsByProducer() }
+
+            groupedEventsBySystemuser.size `should be equal to` 2
+            groupedEventsBySystemuser.findCountFor(beskjed1.namespace, beskjed1.appnavn) `should be equal to` 3
+            groupedEventsBySystemuser.findCountFor(beskjed4.namespace, beskjed4.appnavn) `should be equal to` 1
         }
     }
 

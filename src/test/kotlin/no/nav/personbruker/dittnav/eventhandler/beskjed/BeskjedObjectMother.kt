@@ -6,14 +6,14 @@ import java.time.ZonedDateTime
 
 object BeskjedObjectMother {
 
-    fun createBeskjed(id: Int, eventId: String, fodselsnummer: String, synligFremTil: ZonedDateTime?, uid: String, aktiv: Boolean, systembruker: String): Beskjed {
+    fun createBeskjed(id: Int, eventId: String, fodselsnummer: String, synligFremTil: ZonedDateTime?, uid: String, aktiv: Boolean, systembruker: String, namespace: String, appnavn: String): Beskjed {
         return Beskjed(
                 uid = uid,
                 id = id,
                 produsent = "$systembruker-produsent",
                 systembruker = systembruker,
-                namespace = "dummyNamespace",
-                appnavn = "dummyAppnavn",
+                namespace = namespace,
+                appnavn = appnavn,
                 eventTidspunkt = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
                 fodselsnummer = fodselsnummer,
                 eventId = eventId,

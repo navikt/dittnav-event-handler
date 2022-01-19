@@ -6,10 +6,13 @@ import java.time.ZonedDateTime
 
 object StatusoppdateringObjectMother {
 
-    private val dummyEventId = "1"
-    private val dummyStatusGlobal = "dummyStatusGlobal"
-    private val dummyStatusIntern = "dummyStatusIntern"
-    private val dummySakstema = "dummySakstema"
+    private const val dummyEventId = "1"
+    private const val dummyStatusGlobal = "dummyStatusGlobal"
+    private const val dummyStatusIntern = "dummyStatusIntern"
+    private const val dummySakstema = "dummySakstema"
+    private const val dummyNamespace = "dummyNamespace"
+    private const val dummyAppnavn = "dummyAppnavn"
+
 
     fun createStatusoppdatering(id: Int,
                                 eventId: String,
@@ -17,7 +20,9 @@ object StatusoppdateringObjectMother {
                                 statusGlobal: String,
                                 statusIntern: String,
                                 sakstema: String,
-                                systembruker: String): Statusoppdatering {
+                                systembruker: String,
+                                namespace: String = dummyNamespace,
+                                appnavn: String = dummyAppnavn): Statusoppdatering {
         return Statusoppdatering(
                 id = id,
                 systembruker = systembruker,
@@ -32,8 +37,8 @@ object StatusoppdateringObjectMother {
                 statusIntern = statusIntern,
                 sakstema = sakstema,
                 produsent = "$systembruker-produsent",
-                namespace = "dummyNamespace",
-                appnavn = "dummyAppnavn")
+                namespace = namespace,
+                appnavn = appnavn)
     }
 
     fun createStatusoppdateringWithSystembruker(id: Int, systembruker: String): Statusoppdatering {
@@ -76,9 +81,9 @@ object StatusoppdateringObjectMother {
 
     fun getStatusoppdateringEvents(bruker: TokenXUser): MutableList<Statusoppdatering> {
         return mutableListOf(
-                createStatusoppdatering(1, "$dummyEventId+1", bruker.ident, "$dummyStatusGlobal+1", "$dummyStatusIntern+1", "$dummySakstema+1", systembruker = "x-dittnav"),
-                createStatusoppdatering(2, "$dummyEventId+2", bruker.ident, "$dummyStatusGlobal+2", "$dummyStatusIntern+2", "$dummySakstema+2", systembruker = "x-dittnav"),
-                createStatusoppdatering(3, "$dummyEventId+3", bruker.ident, "$dummyStatusGlobal+3", "$dummyStatusIntern+3", "$dummySakstema+3", systembruker = "x-dittnav"),
-                createStatusoppdatering(4, "$dummyEventId+4", bruker.ident, "$dummyStatusGlobal+4", "$dummyStatusIntern+4", "$dummySakstema+4", systembruker = "y-dittnav"))
+                createStatusoppdatering(1, "$dummyEventId+1", bruker.ident, "$dummyStatusGlobal+1", "$dummyStatusIntern+1", "$dummySakstema+1", systembruker = "x-dittnav", appnavn = "x-dittnav"),
+                createStatusoppdatering(2, "$dummyEventId+2", bruker.ident, "$dummyStatusGlobal+2", "$dummyStatusIntern+2", "$dummySakstema+2", systembruker = "x-dittnav", appnavn = "x-dittnav"),
+                createStatusoppdatering(3, "$dummyEventId+3", bruker.ident, "$dummyStatusGlobal+3", "$dummyStatusIntern+3", "$dummySakstema+3", systembruker = "x-dittnav", appnavn = "x-dittnav"),
+                createStatusoppdatering(4, "$dummyEventId+4", bruker.ident, "$dummyStatusGlobal+4", "$dummyStatusIntern+4", "$dummySakstema+4", systembruker = "y-dittnav", appnavn = "y-dittnav"))
     }
 }

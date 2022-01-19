@@ -22,7 +22,7 @@ object OppgaveObjectMother {
                 aktiv = aktiv)
     }
 
-    fun createOppgave(id: Int, eventId: String, fodselsnummer: String, aktiv: Boolean, systembruker: String): Oppgave {
+    fun createOppgave(id: Int, eventId: String, fodselsnummer: String, aktiv: Boolean, systembruker: String, namespace: String, appnavn: String): Oppgave {
         return Oppgave(
                 id = id,
                 fodselsnummer = fodselsnummer,
@@ -31,8 +31,8 @@ object OppgaveObjectMother {
                 eventTidspunkt = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
                 produsent = "$systembruker-produsent",
                 systembruker = systembruker,
-                namespace = "dummyNamespace",
-                appnavn = "dummyAppnavn",
+                namespace = namespace,
+                appnavn = appnavn,
                 sikkerhetsnivaa = 4,
                 sistOppdatert = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
                 tekst = "Dette er melding til brukeren",

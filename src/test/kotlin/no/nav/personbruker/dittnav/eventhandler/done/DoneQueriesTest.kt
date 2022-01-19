@@ -5,6 +5,7 @@ import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
 import no.nav.personbruker.dittnav.eventhandler.beskjed.deleteBeskjed
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
+import no.nav.personbruker.dittnav.eventhandler.common.findCountFor
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksObjectMother
 import no.nav.personbruker.dittnav.eventhandler.innboks.createInnboks
 import no.nav.personbruker.dittnav.eventhandler.innboks.deleteInnboks
@@ -32,9 +33,9 @@ internal class DoneQueriesTest {
 
     private val done1 = DoneObjectMother.createDone(systembruker = "x-dittnav", utcDateTime, fodselsnummer, "1", grupperingsId)
     private val done2 = DoneObjectMother.createDone(systembruker = "y-dittnav", utcDateTime, fodselsnummer, "2", grupperingsId)
-    private val inaktivBeskjed = BeskjedObjectMother.createBeskjed(id = 1, eventId = "123", fodselsnummer = "00", synligFremTil = ZonedDateTime.now().plusHours(1), uid = "11", aktiv = false, systembruker = "x-dittnav")
-    private val inaktivOppgave = OppgaveObjectMother.createOppgave(id = 1, eventId = "123", fodselsnummer = "01", aktiv = false, systembruker = "x-dittnav")
-    private val inaktivInnboks = InnboksObjectMother.createInnboks(id = 1, eventId = "123", fodselsnummer = "02", aktiv = false, systembruker = "y-dittnav")
+    private val inaktivBeskjed = BeskjedObjectMother.createBeskjed(id = 1, eventId = "123", fodselsnummer = "00", synligFremTil = ZonedDateTime.now().plusHours(1), uid = "11", aktiv = false, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
+    private val inaktivOppgave = OppgaveObjectMother.createOppgave(id = 1, eventId = "123", fodselsnummer = "01", aktiv = false, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
+    private val inaktivInnboks = InnboksObjectMother.createInnboks(id = 1, eventId = "123", fodselsnummer = "02", aktiv = false, systembruker = "y-dittnav", namespace = "dummyNamespace", appnavn = "y-dittnav")
 
     @BeforeAll
     fun `populer testdata`() {
@@ -67,6 +68,21 @@ internal class DoneQueriesTest {
             groupedEventsBySystemuser.get(inaktivBeskjed.systembruker) `should be equal to` 2
             groupedEventsBySystemuser.get(inaktivOppgave.systembruker) `should be equal to` 2
             groupedEventsBySystemuser.get(inaktivInnboks.systembruker) `should be equal to` 1
+        }
+        deleteInactiveBrukernotifikasjoner()
+    }
+
+
+    @Test
+    fun `Returnerer en liste av alle grupperte inaktive brukernotifikasjoner basert paa produsent`() {
+        createInactiveBrukernotifikasjoner()
+        runBlocking {
+            val groupedEventsBySystemuser = database.dbQuery { countTotalNumberPerProducerByActiveStatus(aktiv = false) }
+
+            groupedEventsBySystemuser.size `should be equal to` 2
+            groupedEventsBySystemuser.findCountFor(inaktivBeskjed.namespace, inaktivBeskjed.appnavn) `should be equal to` 2
+            groupedEventsBySystemuser.findCountFor(inaktivOppgave.namespace, inaktivOppgave.appnavn) `should be equal to` 2
+            groupedEventsBySystemuser.findCountFor(inaktivInnboks.namespace, inaktivInnboks.appnavn) `should be equal to` 1
         }
         deleteInactiveBrukernotifikasjoner()
     }

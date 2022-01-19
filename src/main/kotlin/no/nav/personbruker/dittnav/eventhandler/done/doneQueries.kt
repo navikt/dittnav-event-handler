@@ -3,7 +3,6 @@ package no.nav.personbruker.dittnav.eventhandler.done
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
 import no.nav.personbruker.dittnav.eventhandler.common.statistics.EventCountForProducer
-import no.nav.personbruker.dittnav.eventhandler.config.Kafka
 import java.sql.Connection
 import java.sql.ResultSet
 
@@ -65,7 +64,7 @@ fun Connection.countTotalNumberOfBrukernotifikasjonerByActiveStatus(aktiv: Boole
 fun Connection.countTotalNumberPerProducerByActiveStatus(aktiv: Boolean): List<EventCountForProducer> {
     return prepareStatement(
             """SELECT
-                subquery.appnavn, subquery.namespace, sum(count)
+                subquery.namespace, subquery.appnavn, sum(count)
         FROM (
              SELECT appnavn, namespace, COUNT(1) as count FROM BESKJED WHERE aktiv = ? GROUP BY appnavn, namespace
              UNION ALL
@@ -89,14 +88,4 @@ fun Connection.countTotalNumberPerProducerByActiveStatus(aktiv: Boolean): List<E
                     )
                 }
             }
-}
-
-fun ResultSet.toDone(): Done {
-    return Done(
-            fodselsnummer = getString("fodselsnummer"),
-            grupperingsId = getString("grupperingsId"),
-            eventId = getString("eventId"),
-            eventTidspunkt = ZonedDateTime.ofInstant(getUtcTimeStamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),
-            systembruker = getString("systembruker")
-    )
 }

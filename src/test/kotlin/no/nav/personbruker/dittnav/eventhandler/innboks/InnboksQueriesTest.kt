@@ -1,10 +1,12 @@
 package no.nav.personbruker.dittnav.eventhandler.innboks
 
 import kotlinx.coroutines.runBlocking
+import no.nav.personbruker.dittnav.eventhandler.beskjed.getAllGroupedBeskjedEventsByProducer
 import no.nav.personbruker.dittnav.eventhandler.common.TokenXUserObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
 import no.nav.personbruker.dittnav.eventhandler.common.database.createProdusent
 import no.nav.personbruker.dittnav.eventhandler.common.database.deleteProdusent
+import no.nav.personbruker.dittnav.eventhandler.common.findCountFor
 import org.amshove.kluent.`should be empty`
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.AfterAll
@@ -22,10 +24,10 @@ class InnboksQueriesTest {
     private val produsent = "x-dittnav-produsent"
     private val grupperingsid = "100${bruker1.ident}"
 
-    private val innboks1 = InnboksObjectMother.createInnboks(id = 1, eventId = "123", fodselsnummer = bruker1.ident, aktiv = true, systembruker = "x-dittnav")
-    private val innboks2 = InnboksObjectMother.createInnboks(id = 2, eventId = "345", fodselsnummer = bruker1.ident, aktiv = true, systembruker = "x-dittnav")
-    private val innboks3 = InnboksObjectMother.createInnboks(id = 3, eventId = "567", fodselsnummer = bruker2.ident, aktiv = true, systembruker = "y-dittnav")
-    private val innboks4 = InnboksObjectMother.createInnboks(id = 4, eventId = "789", fodselsnummer = bruker2.ident, aktiv = false, systembruker = "x-dittnav")
+    private val innboks1 = InnboksObjectMother.createInnboks(id = 1, eventId = "123", fodselsnummer = bruker1.ident, aktiv = true, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
+    private val innboks2 = InnboksObjectMother.createInnboks(id = 2, eventId = "345", fodselsnummer = bruker1.ident, aktiv = true, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
+    private val innboks3 = InnboksObjectMother.createInnboks(id = 3, eventId = "567", fodselsnummer = bruker2.ident, aktiv = true, systembruker = "y-dittnav", namespace = "dummyNamespace", appnavn = "y-dittnav")
+    private val innboks4 = InnboksObjectMother.createInnboks(id = 4, eventId = "789", fodselsnummer = bruker2.ident, aktiv = false, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
 
     @BeforeAll
     fun `populer test-data`() {
@@ -156,6 +158,18 @@ class InnboksQueriesTest {
             groupedEventsBySystemuser.size `should be equal to` 2
             groupedEventsBySystemuser.get(innboks1.systembruker) `should be equal to` 3
             groupedEventsBySystemuser.get(innboks3.systembruker) `should be equal to` 1
+        }
+    }
+
+
+    @Test
+    fun `Returnerer en liste av alle grupperte innboks-eventer basert paa produsent`() {
+        runBlocking {
+            val groupedEventsBySystemuser = database.dbQuery { getAllGroupedInnboksEventsByProducer() }
+
+            groupedEventsBySystemuser.size `should be equal to` 2
+            groupedEventsBySystemuser.findCountFor(innboks1.namespace, innboks1.appnavn) `should be equal to` 3
+            groupedEventsBySystemuser.findCountFor(innboks3.namespace, innboks3.appnavn) `should be equal to` 1
         }
     }
 

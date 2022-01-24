@@ -1,11 +1,13 @@
 package no.nav.personbruker.dittnav.eventhandler.done
 
 import Beskjed
+import no.nav.personbruker.dittnav.eventhandler.beskjed.getAllGroupedBeskjedEventsByProducer
 import no.nav.personbruker.dittnav.eventhandler.beskjed.getBeskjedByIds
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.DuplicateEventException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.EventMarkedInactiveException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.NoEventsException
+import no.nav.personbruker.dittnav.eventhandler.common.statistics.EventCountForProducer
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 
 class DoneEventService(private val database: Database, private val doneProducer: DoneProducer) {
@@ -27,9 +29,19 @@ class DoneEventService(private val database: Database, private val doneProducer:
         return database.queryWithExceptionTranslation { getAllGroupedDoneEventsBySystemuser() }
     }
 
+    suspend fun getAllGroupedEventsByProducerFromCache(): List<EventCountForProducer> {
+        return database.queryWithExceptionTranslation { getAllGroupedDoneEventsByProducer() }
+    }
+
     suspend fun getNumberOfInactiveBrukernotifikasjonerGroupedBySystemuser(): Map<String, Int> {
         return database.queryWithExceptionTranslation {
             countTotalNumberOfBrukernotifikasjonerByActiveStatus(false)
+        }
+    }
+
+    suspend fun getNumberOfInactiveBrukernotifikasjonerByProducer(): List<EventCountForProducer> {
+        return database.queryWithExceptionTranslation {
+            countTotalNumberPerProducerByActiveStatus(false)
         }
     }
 

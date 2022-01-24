@@ -3,6 +3,7 @@ package no.nav.personbruker.dittnav.eventhandler.beskjed
 import Beskjed
 import no.nav.brukernotifikasjon.schemas.builders.util.ValidationUtil.validateNonNullFieldMaxLength
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
+import no.nav.personbruker.dittnav.eventhandler.common.statistics.EventCountForProducer
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 import org.slf4j.LoggerFactory
 import java.sql.Connection
@@ -35,6 +36,10 @@ class BeskjedEventService(private val database: Database) {
 
     suspend fun getAllGroupedEventsBySystemuserFromCache(): Map<String, Int> {
         return database.queryWithExceptionTranslation { getAllGroupedBeskjedEventsBySystemuser() }
+    }
+
+    suspend fun getAllGroupedEventsByProducerFromCache(): List<EventCountForProducer> {
+        return database.queryWithExceptionTranslation { getAllGroupedBeskjedEventsByProducer() }
     }
 
     private suspend fun getEvents(operationToExecute: Connection.() -> List<Beskjed>): List<Beskjed> {

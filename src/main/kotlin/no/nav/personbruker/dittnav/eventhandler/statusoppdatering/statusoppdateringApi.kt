@@ -38,4 +38,14 @@ fun Route.statusoppdateringSystemClientApi(statusoppdateringEventService: Status
             respondWithError(call, log, exception)
         }
     }
+
+    get("/fetch/grouped/producer/statusoppdatering") {
+        try {
+            val beskjedEvents =
+                statusoppdateringEventService.getAllGroupedEventsByProducerFromCache()
+            call.respond(HttpStatusCode.OK, beskjedEvents)
+        } catch (exception: Exception) {
+            respondWithError(call, log, exception)
+        }
+    }
 }

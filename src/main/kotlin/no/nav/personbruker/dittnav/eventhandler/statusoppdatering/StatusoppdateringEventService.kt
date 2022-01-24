@@ -1,7 +1,9 @@
 package no.nav.personbruker.dittnav.eventhandler.statusoppdatering
 
 import no.nav.brukernotifikasjon.schemas.builders.util.ValidationUtil.validateNonNullFieldMaxLength
+import no.nav.personbruker.dittnav.eventhandler.beskjed.getAllGroupedBeskjedEventsByProducer
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
+import no.nav.personbruker.dittnav.eventhandler.common.statistics.EventCountForProducer
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 import org.slf4j.LoggerFactory
 import java.sql.Connection
@@ -20,6 +22,11 @@ class StatusoppdateringEventService(private val database: Database) {
     suspend fun getAllGroupedEventsBySystemuserFromCache(): Map<String, Int> {
         return database.queryWithExceptionTranslation { getAllGroupedStatusoppdateringEventsBySystemuser() }
     }
+
+    suspend fun getAllGroupedEventsByProducerFromCache(): List<EventCountForProducer> {
+        return database.queryWithExceptionTranslation { getAllGroupedStatusoppdateringEventsByProducer() }
+    }
+
 
     private suspend fun getEvents(operationToExecute: Connection.() -> List<Statusoppdatering>): List<Statusoppdatering> {
         val events = database.queryWithExceptionTranslation {

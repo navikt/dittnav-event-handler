@@ -66,4 +66,14 @@ fun Route.innboksSystemClientApi(innboksEventService: InnboksEventService) {
             respondWithError(call, log, exception)
         }
     }
+
+    get("/fetch/grouped/producer/innboks") {
+        try {
+            val beskjedEvents =
+                innboksEventService.getAllGroupedEventsByProducerFromCache()
+            call.respond(HttpStatusCode.OK, beskjedEvents)
+        } catch (exception: Exception) {
+            respondWithError(call, log, exception)
+        }
+    }
 }

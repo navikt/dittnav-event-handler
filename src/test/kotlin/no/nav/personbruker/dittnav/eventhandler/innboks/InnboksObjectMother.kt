@@ -23,13 +23,13 @@ object InnboksObjectMother {
                 aktiv = aktiv)
     }
 
-    fun createInnboks(id: Int, eventId: String, fodselsnummer: String, aktiv: Boolean, systembruker: String): Innboks {
+    fun createInnboks(id: Int, eventId: String, fodselsnummer: String, aktiv: Boolean, systembruker: String, namespace: String, appnavn: String): Innboks {
         return Innboks(
                 id = id,
                 produsent = "$systembruker-produsent",
                 systembruker = systembruker,
-                namespace = "dummyNamespace",
-                appnavn = "dummyAppnavn",
+                namespace = namespace,
+                appnavn = appnavn,
                 eventTidspunkt = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
                 fodselsnummer = fodselsnummer,
                 eventId = eventId,

@@ -1,10 +1,12 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
 import kotlinx.coroutines.runBlocking
+import no.nav.personbruker.dittnav.eventhandler.beskjed.getAllGroupedBeskjedEventsByProducer
 import no.nav.personbruker.dittnav.eventhandler.common.TokenXUserObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
 import no.nav.personbruker.dittnav.eventhandler.common.database.createProdusent
 import no.nav.personbruker.dittnav.eventhandler.common.database.deleteProdusent
+import no.nav.personbruker.dittnav.eventhandler.common.findCountFor
 import org.amshove.kluent.`should be empty`
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.AfterAll
@@ -20,10 +22,10 @@ class OppgaveQueriesTest {
     private val produsent = "x-dittnav-produsent"
     private val grupperingsid = "100${bruker.ident}"
 
-    private val oppgave1 = OppgaveObjectMother.createOppgave(id = 1, eventId = "123", fodselsnummer = bruker.ident, aktiv = true, systembruker = "x-dittnav")
-    private val oppgave2 = OppgaveObjectMother.createOppgave(id = 2, eventId = "345", fodselsnummer = bruker.ident, aktiv = true, systembruker = "x-dittnav")
-    private val oppgave3 = OppgaveObjectMother.createOppgave(id = 3, eventId = "567", fodselsnummer = bruker.ident, aktiv = false, systembruker = "x-dittnav")
-    private val oppgave4 = OppgaveObjectMother.createOppgave(id = 4, eventId = "789", fodselsnummer = "54321", aktiv = true, systembruker = "y-dittnav")
+    private val oppgave1 = OppgaveObjectMother.createOppgave(id = 1, eventId = "123", fodselsnummer = bruker.ident, aktiv = true, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
+    private val oppgave2 = OppgaveObjectMother.createOppgave(id = 2, eventId = "345", fodselsnummer = bruker.ident, aktiv = true, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
+    private val oppgave3 = OppgaveObjectMother.createOppgave(id = 3, eventId = "567", fodselsnummer = bruker.ident, aktiv = false, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
+    private val oppgave4 = OppgaveObjectMother.createOppgave(id = 4, eventId = "789", fodselsnummer = "54321", aktiv = true, systembruker = "y-dittnav", namespace = "dummyNamespace", appnavn = "y-dittnav")
 
     @BeforeAll
     fun `populer test-data`() {
@@ -152,6 +154,18 @@ class OppgaveQueriesTest {
             groupedEventsBySystemuser.size `should be equal to` 2
             groupedEventsBySystemuser.get(oppgave1.systembruker) `should be equal to` 3
             groupedEventsBySystemuser.get(oppgave4.systembruker) `should be equal to` 1
+        }
+    }
+
+
+    @Test
+    fun `Returnerer en liste av alle grupperte Oppgave-eventer basert paa produsent`() {
+        runBlocking {
+            val groupedEventsBySystemuser = database.dbQuery { getAllGroupedOppgaveEventsByProducer() }
+
+            groupedEventsBySystemuser.size `should be equal to` 2
+            groupedEventsBySystemuser.findCountFor(oppgave1.namespace, oppgave1.appnavn) `should be equal to` 3
+            groupedEventsBySystemuser.findCountFor(oppgave4.namespace, oppgave4.appnavn) `should be equal to` 1
         }
     }
 

@@ -56,10 +56,21 @@ fun Route.beskjedSystemClientApi(beskjedEventService: BeskjedEventService) {
 
     val log = LoggerFactory.getLogger(BeskjedEventService::class.java)
 
+    // TODO: Remove
     get("/fetch/grouped/systemuser/beskjed") {
         try {
             val beskjedEvents =
                 beskjedEventService.getAllGroupedEventsBySystemuserFromCache()
+            call.respond(HttpStatusCode.OK, beskjedEvents)
+        } catch (exception: Exception) {
+            respondWithError(call, log, exception)
+        }
+    }
+
+    get("/fetch/grouped/producer/beskjed") {
+        try {
+            val beskjedEvents =
+                beskjedEventService.getAllGroupedEventsByProducerFromCache()
             call.respond(HttpStatusCode.OK, beskjedEvents)
         } catch (exception: Exception) {
             respondWithError(call, log, exception)

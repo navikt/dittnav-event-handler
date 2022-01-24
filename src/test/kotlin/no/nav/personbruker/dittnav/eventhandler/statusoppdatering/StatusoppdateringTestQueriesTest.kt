@@ -118,4 +118,13 @@ class StatusoppdateringTestQueriesTest {
         }
     }
 
+    @Test
+    fun `Returnerer en liste av alle grupperte statusoppdaterings-eventer basert paa produsent`() {
+        runBlocking {
+            val groupedEventsBySystemuser = database.dbQuery { getAllGroupedStatusoppdateringEventsByProducer() }
+
+            groupedEventsBySystemuser.size `should be equal to` 2
+        }
+    }
+
 }

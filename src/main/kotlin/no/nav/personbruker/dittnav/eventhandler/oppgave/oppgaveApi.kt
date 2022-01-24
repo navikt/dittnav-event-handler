@@ -5,6 +5,7 @@ import io.ktor.http.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.respondWithError
+import no.nav.personbruker.dittnav.eventhandler.common.modia.doIfValidRequest
 import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
 import org.slf4j.LoggerFactory
 
@@ -56,6 +57,7 @@ fun Route.oppgaveSystemClientApi(oppgaveEventService: OppgaveEventService) {
 
     val log = LoggerFactory.getLogger(OppgaveEventService::class.java)
 
+    // TODO: remove
     get("/fetch/grouped/systemuser/oppgave") {
         try {
             val oppgaveEvents =
@@ -73,6 +75,41 @@ fun Route.oppgaveSystemClientApi(oppgaveEventService: OppgaveEventService) {
             call.respond(HttpStatusCode.OK, beskjedEvents)
         } catch (exception: Exception) {
             respondWithError(call, log, exception)
+        }
+    }
+
+    get("/modia/fetch/oppgave/aktive") {
+        doIfValidRequest { userToFetchEventsFor ->
+            try {
+                val aktiveOppgaveEvents = oppgaveEventService.getActiveCachedEventsForUser(userToFetchEventsFor)
+                call.respond(HttpStatusCode.OK, aktiveOppgaveEvents)
+
+            } catch (exception: Exception) {
+                respondWithError(call, log, exception)
+            }
+        }
+    }
+
+    get("/modia/fetch/oppgave/inaktive") {
+        doIfValidRequest { userToFetchEventsFor ->
+            try {
+                val inaktiveOppgaveEvents = oppgaveEventService.getInactiveCachedEventsForUser(userToFetchEventsFor)
+                call.respond(HttpStatusCode.OK, inaktiveOppgaveEvents)
+            } catch (exception: Exception) {
+                respondWithError(call, log, exception)
+            }
+        }
+    }
+
+    get("/modia/fetch/oppgave/all") {
+        doIfValidRequest { userToFetchEventsFor ->
+            try {
+                val oppgaveEvents = oppgaveEventService.getAllCachedEventsForUser(userToFetchEventsFor)
+                call.respond(HttpStatusCode.OK, oppgaveEvents)
+
+            } catch (exception: Exception) {
+                respondWithError(call, log, exception)
+            }
         }
     }
 }

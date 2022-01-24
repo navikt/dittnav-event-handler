@@ -4,19 +4,18 @@ import no.nav.personbruker.dittnav.eventhandler.common.database.convertIfUnlikel
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
 import no.nav.personbruker.dittnav.eventhandler.common.statistics.EventCountForProducer
-import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-fun Connection.getInaktivOppgaveForInnloggetBruker(bruker: TokenXUser): List<Oppgave> =
-        getOppgaveForInnloggetBruker(bruker, false)
+fun Connection.getInaktivOppgaveForInnloggetBruker(fodselsnummer: String): List<Oppgave> =
+        getOppgaveForInnloggetBruker(fodselsnummer, false)
 
-fun Connection.getAktivOppgaveForInnloggetBruker(bruker: TokenXUser): List<Oppgave> =
-        getOppgaveForInnloggetBruker(bruker, true)
+fun Connection.getAktivOppgaveForInnloggetBruker(fodselsnummer: String): List<Oppgave> =
+        getOppgaveForInnloggetBruker(fodselsnummer, true)
 
-fun Connection.getAllOppgaveForInnloggetBruker(bruker: TokenXUser): List<Oppgave> =
+fun Connection.getAllOppgaveForInnloggetBruker(fodselsnummer: String): List<Oppgave> =
         prepareStatement("""SELECT 
             |oppgave.id,
             |oppgave.eventTidspunkt,
@@ -35,13 +34,13 @@ fun Connection.getAllOppgaveForInnloggetBruker(bruker: TokenXUser): List<Oppgave
             |FROM (SELECT * FROM oppgave WHERE fodselsnummer = ?) AS oppgave
             |LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker""".trimMargin())
                 .use {
-                    it.setString(1, bruker.ident)
+                    it.setString(1, fodselsnummer)
                     it.executeQuery().mapList {
                         toOppgave()
                     }
                 }
 
-fun Connection.getAllGroupedOppgaveEventsByIds(bruker: TokenXUser, grupperingsid: String, produsent: String): List<Oppgave> =
+fun Connection.getAllGroupedOppgaveEventsByIds(fodselsnummer: String, grupperingsid: String, produsent: String): List<Oppgave> =
         prepareStatement("""SELECT
             |oppgave.id,
             |oppgave.eventTidspunkt,
@@ -60,7 +59,7 @@ fun Connection.getAllGroupedOppgaveEventsByIds(bruker: TokenXUser, grupperingsid
             |FROM (SELECT * FROM oppgave WHERE fodselsnummer = ? AND grupperingsid = ?) AS oppgave
             |LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker WHERE systembrukere.produsentnavn = ?""".trimMargin())
                 .use {
-                    it.setString(1, bruker.ident)
+                    it.setString(1, fodselsnummer)
                     it.setString(2, grupperingsid)
                     it.setString(3, produsent)
                     it.executeQuery().mapList {
@@ -89,7 +88,7 @@ private fun ResultSet.toOppgave(): Oppgave {
     )
 }
 
-private fun Connection.getOppgaveForInnloggetBruker(bruker: TokenXUser, aktiv: Boolean): List<Oppgave> =
+private fun Connection.getOppgaveForInnloggetBruker(fodselsnummer: String, aktiv: Boolean): List<Oppgave> =
         prepareStatement("""SELECT
             |oppgave.id,
             |oppgave.eventTidspunkt,
@@ -108,7 +107,7 @@ private fun Connection.getOppgaveForInnloggetBruker(bruker: TokenXUser, aktiv: B
             |FROM (SELECT * FROM oppgave WHERE fodselsnummer = ? AND aktiv = ?) AS oppgave
             |LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker""".trimMargin())
                 .use {
-                    it.setString(1, bruker.ident)
+                    it.setString(1, fodselsnummer)
                     it.setBoolean(2, aktiv)
                     it.executeQuery().mapList {
                         toOppgave()

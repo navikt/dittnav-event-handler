@@ -1,11 +1,11 @@
 package no.nav.personbruker.dittnav.eventhandler.innboks
 
-import io.ktor.application.call
-import io.ktor.http.HttpStatusCode
-import io.ktor.response.respond
-import io.ktor.routing.Route
-import io.ktor.routing.get
+import io.ktor.application.*
+import io.ktor.http.*
+import io.ktor.response.*
+import io.ktor.routing.*
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.respondWithError
+import no.nav.personbruker.dittnav.eventhandler.common.modia.doIfValidRequest
 import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
 import org.slf4j.LoggerFactory
 
@@ -57,6 +57,7 @@ fun Route.innboksSystemClientApi(innboksEventService: InnboksEventService) {
 
     val log = LoggerFactory.getLogger(InnboksEventService::class.java)
 
+    // TODO: remove
     get("/fetch/grouped/systemuser/innboks") {
         try {
             val innboksEvents =
@@ -74,6 +75,43 @@ fun Route.innboksSystemClientApi(innboksEventService: InnboksEventService) {
             call.respond(HttpStatusCode.OK, beskjedEvents)
         } catch (exception: Exception) {
             respondWithError(call, log, exception)
+        }
+    }
+
+    get("/modia/fetch/innboks/aktive") {
+        doIfValidRequest { userToFetchEventsFor ->
+            try {
+                val aktiveInnboksEvents = innboksEventService.getActiveCachedEventsForUser(userToFetchEventsFor)
+                call.respond(HttpStatusCode.OK, aktiveInnboksEvents)
+
+            } catch (exception: Exception) {
+                respondWithError(call, log, exception)
+            }
+        }
+    }
+
+
+    get("/modia/fetch/innboks/inaktive") {
+        doIfValidRequest { userToFetchEventsFor ->
+            try {
+                val inaktiveInnboksEvents = innboksEventService.getInctiveCachedEventsForUser(userToFetchEventsFor)
+                call.respond(HttpStatusCode.OK, inaktiveInnboksEvents)
+
+            } catch (exception: Exception) {
+                respondWithError(call, log, exception)
+            }
+        }
+    }
+
+    get("/modia/fetch/innboks/all") {
+        doIfValidRequest { userToFetchEventsFor ->
+            try {
+                val innboksEvents = innboksEventService.getAllCachedEventsForUser(userToFetchEventsFor)
+                call.respond(HttpStatusCode.OK, innboksEvents)
+
+            } catch (exception: Exception) {
+                respondWithError(call, log, exception)
+            }
         }
     }
 }

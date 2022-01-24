@@ -26,7 +26,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.navikt:brukernotifikasjon-schemas:v2.4.1")
+    implementation("com.github.navikt:brukernotifikasjon-schemas:v2.5.0")
     implementation(DittNAV.Common.utils)
     implementation(Hikari.cp)
     implementation(Logback.classic)

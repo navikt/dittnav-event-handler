@@ -2,9 +2,9 @@ apiVersion: nais.io/v1alpha1
 kind: Application
 metadata:
   labels:
-    team: personbruker
+    team: min-side
   name: dittnav-event-handler
-  namespace: personbruker
+  namespace: min-side
 spec:
   envFrom:
     - secret: dittnav-event-handler-secrets

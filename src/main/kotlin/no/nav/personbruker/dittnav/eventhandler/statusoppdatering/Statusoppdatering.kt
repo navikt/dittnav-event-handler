@@ -6,6 +6,8 @@ class Statusoppdatering(
         val id: Int,
         val produsent: String,
         val systembruker: String,
+        val namespace: String,
+        val appnavn: String,
         val eventId: String,
         val eventTidspunkt: ZonedDateTime,
         val fodselsnummer: String,
@@ -21,6 +23,8 @@ class Statusoppdatering(
         return "Statusoppdatering(" +
                 "id=$id, " +
                 "systembruker=$systembruker, " +
+                "namespace=$namespace, " +
+                "appnavn=$appnavn, " +
                 "eventId=$eventId, " +
                 "eventTidspunkt=$eventTidspunkt, " +
                 "fodselsnummer=***, " +

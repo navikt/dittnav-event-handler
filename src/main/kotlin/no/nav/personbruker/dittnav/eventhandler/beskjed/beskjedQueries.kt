@@ -31,6 +31,8 @@ fun Connection.getAllBeskjedForInnloggetBruker(bruker: TokenXUser): List<Beskjed
             |beskjed.synligFremTil,
             |beskjed.aktiv,
             |beskjed.systembruker,
+            |beskjed.namespace,
+            |beskjed.appnavn,
             |systembrukere.produsentnavn AS produsent
             |FROM (SELECT * FROM beskjed WHERE fodselsnummer = ?) AS beskjed
             |LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker""".trimMargin())
@@ -56,6 +58,8 @@ fun Connection.getBeskjedByIds(fodselsnummer: String, uid: String, eventId: Stri
             |beskjed.synligFremTil,
             |beskjed.aktiv,
             |beskjed.systembruker,
+            |beskjed.namespace,
+            |beskjed.appnavn,
             |systembrukere.produsentnavn AS produsent
             |FROM (SELECT * FROM beskjed WHERE fodselsnummer = ? AND uid = ? AND eventId = ?) AS beskjed
             |LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker""".trimMargin())
@@ -83,6 +87,8 @@ fun Connection.getAllGroupedBeskjedEventsByIds(bruker: TokenXUser, grupperingsid
             |beskjed.synligFremTil,
             |beskjed.aktiv,
             |beskjed.systembruker,
+            |beskjed.namespace,
+            |beskjed.appnavn,
             |systembrukere.produsentnavn AS produsent
             |FROM (SELECT * FROM beskjed WHERE fodselsnummer = ? AND grupperingsid = ?) AS beskjed
             |LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker WHERE systembrukere.produsentnavn = ?""".trimMargin())
@@ -119,6 +125,8 @@ fun ResultSet.toBeskjed(): Beskjed {
             eventTidspunkt = ZonedDateTime.ofInstant(getUtcTimeStamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),
             produsent = getString("produsent") ?: "",
             systembruker = getString("systembruker"),
+            namespace = getString("namespace"),
+            appnavn = getString("appnavn"),
             sikkerhetsnivaa = getInt("sikkerhetsnivaa"),
             sistOppdatert = ZonedDateTime.ofInstant(getUtcTimeStamp("sistOppdatert").toInstant(), ZoneId.of("Europe/Oslo")),
             synligFremTil = getNullableZonedDateTime("synligFremTil"),
@@ -143,6 +151,8 @@ private fun Connection.getBeskjedForInnloggetBruker(bruker: TokenXUser, aktiv: B
             |beskjed.synligFremTil,
             |beskjed.aktiv,
             |beskjed.systembruker,
+            |beskjed.namespace,
+            |beskjed.appnavn,
             |systembrukere.produsentnavn AS produsent
             |FROM (SELECT * FROM BESKJED WHERE beskjed.fodselsnummer = ? AND beskjed.aktiv = ?) AS beskjed
             |LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker""".trimMargin())

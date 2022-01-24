@@ -15,6 +15,8 @@ create table if not exists beskjed
   aktiv           boolean,
   synligfremtil   timestamp,
   uid             varchar(100),
+  namespace       varchar(100),
+  appnavn         varchar(100),
   constraint beskjedeventidprodusent
   unique (eventid, systembruker)
 );
@@ -34,6 +36,8 @@ create table if not exists oppgave
   sikkerhetsnivaa integer,
   sistoppdatert   timestamp,
   aktiv           boolean,
+  namespace       varchar(100),
+  appnavn         varchar(100),
   constraint oppgaveeventidprodusent
   unique (eventid, systembruker)
 );
@@ -53,6 +57,8 @@ create table if not exists innboks
   sikkerhetsnivaa integer,
   sistoppdatert   timestamp,
   aktiv           boolean,
+  namespace       varchar(100),
+  appnavn         varchar(100),
   constraint innbokseventidprodusent
   unique (eventid, systembruker)
 );
@@ -68,6 +74,8 @@ create table if not exists done (
     fodselsnummer   varchar(50),
     eventId         varchar(50),
     grupperingsId   varchar(100),
+    namespace       varchar(100),
+    appnavn         varchar(100),
     constraint doneeventidprodusent
     unique (eventid, systembruker)
 );
@@ -97,6 +105,8 @@ CREATE TABLE IF NOT EXISTS statusoppdatering (
     statusglobal varchar(100),
     statusintern varchar(100),
     sakstema varchar(100),
+    namespace varchar(100),
+    appnavn varchar(100),
     constraint statusoppdateringeventidprodusent
     unique (eventid, systembruker)
 );

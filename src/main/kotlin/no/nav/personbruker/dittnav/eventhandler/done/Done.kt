@@ -5,6 +5,8 @@ import java.time.ZonedDateTime
 data class Done(
         val eventId: String,
         val systembruker: String,
+        val namespace: String,
+        val appnavn: String,
         val fodselsnummer: String,
         val grupperingsId: String,
         val eventTidspunkt: ZonedDateTime
@@ -13,6 +15,8 @@ data class Done(
         return "Done(" +
                 "eventId=$eventId, " +
                 "systembruker=$systembruker, " +
+                "namespace=$namespace, " +
+                "appnavn=$appnavn, " +
                 "fodselsnummer=***, " +
                 "grupperingsId=$grupperingsId, " +
                 "eventTidspunkt=$eventTidspunkt"

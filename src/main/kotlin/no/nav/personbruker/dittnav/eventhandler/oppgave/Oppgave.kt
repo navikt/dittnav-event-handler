@@ -10,6 +10,8 @@ data class Oppgave(
         val eventTidspunkt: ZonedDateTime,
         val produsent: String,
         val systembruker: String,
+        val namespace: String,
+        val appnavn: String,
         val sikkerhetsnivaa: Int,
         val sistOppdatert: ZonedDateTime,
         val tekst: String,
@@ -25,6 +27,8 @@ data class Oppgave(
                 "eventTidspunkt=$eventTidspunkt, " +
                 "produsent=$produsent, " +
                 "systembruker=$systembruker, " +
+                "namespace=$namespace, " +
+                "appnavn=$appnavn, " +
                 "sikkerhetsnivaa=$sikkerhetsnivaa, " +
                 "sistOppdatert=$sistOppdatert, " +
                 "tekst=***, " +

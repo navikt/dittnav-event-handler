@@ -6,8 +6,8 @@ import java.sql.Types
 
 
 fun Connection.createStatusoppdatering(statusoppdateringer: List<Statusoppdatering>) =
-        prepareStatement("""INSERT INTO statusoppdatering(id, systembruker, eventId, eventTidspunkt, fodselsnummer, grupperingsId, link, sikkerhetsnivaa, sistOppdatert, statusGlobal, statusIntern, sakstema)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""")
+        prepareStatement("""INSERT INTO statusoppdatering(id, systembruker, eventId, eventTidspunkt, fodselsnummer, grupperingsId, link, sikkerhetsnivaa, sistOppdatert, statusGlobal, statusIntern, sakstema, namespace, appnavn)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""")
                 .use {
                     statusoppdateringer.forEach { statusoppdatering ->
                         run {
@@ -23,6 +23,8 @@ fun Connection.createStatusoppdatering(statusoppdateringer: List<Statusoppdateri
                             it.setString(10, statusoppdatering.statusGlobal)
                             it.setString(11, statusoppdatering.statusIntern)
                             it.setString(12, statusoppdatering.sakstema)
+                            it.setString(13, statusoppdatering.namespace)
+                            it.setString(14, statusoppdatering.appnavn)
                             it.addBatch()
                         }
                     }
@@ -55,6 +57,8 @@ fun Connection.getAllStatusoppdateringEvents(): List<Statusoppdatering> =
             |statusoppdatering.statusIntern,
             |statusoppdatering.sakstema,
             |statusoppdatering.systembruker,
+            |statusoppdatering.namespace,
+            |statusoppdatering.appnavn,
             |systembrukere.produsentnavn AS produsent
             |FROM (SELECT * FROM statusoppdatering) AS statusoppdatering
             |LEFT JOIN systembrukere ON statusoppdatering.systembruker = systembrukere.systembruker""".trimMargin())

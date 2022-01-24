@@ -27,6 +27,8 @@ fun Connection.getAllInnboksForInnloggetBruker(bruker: TokenXUser): List<Innboks
             |innboks.sistOppdatert,
             |innboks.aktiv,
             |innboks.systembruker,
+            |innboks.namespace,
+            |innboks.appnavn,
             |systembrukere.produsentnavn AS produsent
             |FROM (SELECT * FROM innboks WHERE fodselsnummer = ?) AS innboks
             |LEFT JOIN systembrukere ON innboks.systembruker = systembrukere.systembruker""".trimMargin())
@@ -50,6 +52,8 @@ fun Connection.getAllGroupedInnboksEventsByIds(bruker: TokenXUser, grupperingsid
             |innboks.sistOppdatert,
             |innboks.aktiv,
             |innboks.systembruker,
+            |innboks.namespace,
+            |innboks.appnavn,
             |systembrukere.produsentnavn AS produsent
             |FROM (SELECT * FROM innboks WHERE fodselsnummer = ? AND grupperingsid = ?) AS innboks
             |LEFT JOIN systembrukere ON innboks.systembruker = systembrukere.systembruker WHERE systembrukere.produsentnavn = ?""".trimMargin())
@@ -67,6 +71,8 @@ private fun ResultSet.toInnboks(): Innboks {
             id = getInt("id"),
             produsent = getString("produsent") ?: "",
             systembruker = getString("systembruker"),
+            namespace = getString("namespace"),
+            appnavn = getString("appnavn"),
             eventTidspunkt = ZonedDateTime.ofInstant(getUtcTimeStamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),
             fodselsnummer = getString("fodselsnummer"),
             eventId = getString("eventId"),
@@ -92,6 +98,8 @@ private fun Connection.getInnboksForInnloggetBruker(bruker: TokenXUser, aktiv: B
             |innboks.sistOppdatert,
             |innboks.aktiv,
             |innboks.systembruker,
+            |innboks.namespace,
+            |innboks.appnavn,
             |systembrukere.produsentnavn AS produsent
             |FROM (SELECT * FROM innboks WHERE fodselsnummer = ? AND aktiv = ?) AS innboks
             |LEFT JOIN systembrukere ON innboks.systembruker = systembrukere.systembruker""".trimMargin())

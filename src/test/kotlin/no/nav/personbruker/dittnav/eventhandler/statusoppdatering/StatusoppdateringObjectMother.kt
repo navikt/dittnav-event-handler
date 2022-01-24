@@ -31,7 +31,9 @@ object StatusoppdateringObjectMother {
                 statusGlobal = statusGlobal,
                 statusIntern = statusIntern,
                 sakstema = sakstema,
-                produsent = "$systembruker-produsent")
+                produsent = "$systembruker-produsent",
+                namespace = "dummyNamespace",
+                appnavn = "dummyAppnavn")
     }
 
     fun createStatusoppdateringWithSystembruker(id: Int, systembruker: String): Statusoppdatering {
@@ -48,7 +50,9 @@ object StatusoppdateringObjectMother {
                 link = "https://nav.no/systemX",
                 statusGlobal = "dummyStatusGlobal",
                 statusIntern = "dummyStatusIntern",
-                sakstema = "dummySakstema")
+                sakstema = "dummySakstema",
+                namespace = "dummyNamespace",
+                appnavn = "dummyAppnavn")
     }
 
     fun createStatusoppdateringWithFodselsnummer(id: Int, fodselsnummer: String): Statusoppdatering {
@@ -65,7 +69,9 @@ object StatusoppdateringObjectMother {
                 link = "https://nav.no/systemX",
                 statusGlobal = "dummyStatusGlobal",
                 statusIntern = "dummyStatusIntern",
-                sakstema = "dummySakstema")
+                sakstema = "dummySakstema",
+                namespace = "dummyNamespace",
+                appnavn = "dummyAppnavn")
     }
 
     fun getStatusoppdateringEvents(bruker: TokenXUser): MutableList<Statusoppdatering> {

@@ -78,7 +78,7 @@ fun Route.beskjedSystemClientApi(beskjedEventService: BeskjedEventService) {
         }
     }
 
-    get("/modia/fetch/beskjed/aktive") {
+    get("/fetch/modia/beskjed/aktive") {
         doIfValidRequest { userToFetchEventsFor ->
             try {
                 val aktiveBeskjedEvents = beskjedEventService.getActiveCachedEventsForUser(userToFetchEventsFor)
@@ -90,7 +90,7 @@ fun Route.beskjedSystemClientApi(beskjedEventService: BeskjedEventService) {
         }
     }
 
-    get("/modia/fetch/beskjed/inaktive") {
+    get("/fetch/modia/beskjed/inaktive") {
         doIfValidRequest { userToFetchEventsFor ->
             try {
                 val inaktiveBeskjedEvents = beskjedEventService.getInactiveCachedEventsForUser(userToFetchEventsFor)
@@ -102,7 +102,7 @@ fun Route.beskjedSystemClientApi(beskjedEventService: BeskjedEventService) {
         }
     }
 
-    get("/modia/fetch/beskjed/all") {
+    get("/fetch/modia/beskjed/all") {
         doIfValidRequest { userToFetchEventsFor ->
             try {
                 val beskjedEvents = beskjedEventService.getAllCachedEventsForUser(userToFetchEventsFor)

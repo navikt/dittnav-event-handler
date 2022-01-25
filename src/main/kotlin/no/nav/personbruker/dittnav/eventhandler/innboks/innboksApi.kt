@@ -78,7 +78,7 @@ fun Route.innboksSystemClientApi(innboksEventService: InnboksEventService) {
         }
     }
 
-    get("/modia/fetch/innboks/aktive") {
+    get("/fetch/modia/innboks/aktive") {
         doIfValidRequest { userToFetchEventsFor ->
             try {
                 val aktiveInnboksEvents = innboksEventService.getActiveCachedEventsForUser(userToFetchEventsFor)
@@ -91,7 +91,7 @@ fun Route.innboksSystemClientApi(innboksEventService: InnboksEventService) {
     }
 
 
-    get("/modia/fetch/innboks/inaktive") {
+    get("/fetch/modia/innboks/inaktive") {
         doIfValidRequest { userToFetchEventsFor ->
             try {
                 val inaktiveInnboksEvents = innboksEventService.getInctiveCachedEventsForUser(userToFetchEventsFor)
@@ -103,7 +103,7 @@ fun Route.innboksSystemClientApi(innboksEventService: InnboksEventService) {
         }
     }
 
-    get("/modia/fetch/innboks/all") {
+    get("/fetch/modia/innboks/all") {
         doIfValidRequest { userToFetchEventsFor ->
             try {
                 val innboksEvents = innboksEventService.getAllCachedEventsForUser(userToFetchEventsFor)

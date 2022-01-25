@@ -37,7 +37,7 @@ fun Connection.getAllBeskjedForInnloggetBruker(fodselsnummer: String): List<Besk
             |FROM (SELECT * FROM beskjed WHERE fodselsnummer = ?) AS beskjed
             |LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker""".trimMargin())
                 .use {
-                    it.setString(1, bruker.ident)
+                    it.setString(1, fodselsnummer)
                     it.executeQuery().mapList {
                         toBeskjed()
                     }

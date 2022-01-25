@@ -56,6 +56,7 @@ fun Route.doneSystemClientApi(doneEventService: DoneEventService) {
 
     val log = LoggerFactory.getLogger(DoneEventService::class.java)
 
+    // TODO: remove
     get("/fetch/grouped/systemuser/done") {
         try {
             val doneEvents = doneEventService.getAllGroupedEventsBySystemuserFromCache()

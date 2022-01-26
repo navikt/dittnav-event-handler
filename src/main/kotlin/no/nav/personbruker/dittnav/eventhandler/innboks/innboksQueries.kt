@@ -9,13 +9,13 @@ import java.sql.ResultSet
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-fun Connection.getInaktivInnboksForInnloggetBruker(bruker: TokenXUser): List<Innboks> =
-        getInnboksForInnloggetBruker(bruker, false)
+fun Connection.getInaktivInnboksForInnloggetBruker(fodselsnummer: String): List<Innboks> =
+        getInnboksForInnloggetBruker(fodselsnummer, false)
 
-fun Connection.getAktivInnboksForInnloggetBruker(bruker: TokenXUser): List<Innboks> =
-        getInnboksForInnloggetBruker(bruker, true)
+fun Connection.getAktivInnboksForInnloggetBruker(fodselsnummer: String): List<Innboks> =
+        getInnboksForInnloggetBruker(fodselsnummer, true)
 
-fun Connection.getAllInnboksForInnloggetBruker(bruker: TokenXUser): List<Innboks> =
+fun Connection.getAllInnboksForInnloggetBruker(fodselsnummer: String): List<Innboks> =
         prepareStatement("""SELECT
             |innboks.id,
             |innboks.eventTidspunkt,
@@ -34,13 +34,13 @@ fun Connection.getAllInnboksForInnloggetBruker(bruker: TokenXUser): List<Innboks
             |FROM (SELECT * FROM innboks WHERE fodselsnummer = ?) AS innboks
             |LEFT JOIN systembrukere ON innboks.systembruker = systembrukere.systembruker""".trimMargin())
                 .use {
-                    it.setString(1, bruker.ident)
+                    it.setString(1, fodselsnummer)
                     it.executeQuery().mapList {
                         toInnboks()
                     }
                 }
 
-fun Connection.getAllGroupedInnboksEventsByIds(bruker: TokenXUser, grupperingsid: String, produsent: String): List<Innboks> =
+fun Connection.getAllGroupedInnboksEventsByIds(fodselsnummer: String, grupperingsid: String, produsent: String): List<Innboks> =
         prepareStatement("""SELECT
             |innboks.id,
             |innboks.eventTidspunkt,
@@ -59,7 +59,7 @@ fun Connection.getAllGroupedInnboksEventsByIds(bruker: TokenXUser, grupperingsid
             |FROM (SELECT * FROM innboks WHERE fodselsnummer = ? AND grupperingsid = ?) AS innboks
             |LEFT JOIN systembrukere ON innboks.systembruker = systembrukere.systembruker WHERE systembrukere.produsentnavn = ?""".trimMargin())
                 .use {
-                    it.setString(1, bruker.ident)
+                    it.setString(1, fodselsnummer)
                     it.setString(2, grupperingsid)
                     it.setString(3, produsent)
                     it.executeQuery().mapList {
@@ -86,7 +86,7 @@ private fun ResultSet.toInnboks(): Innboks {
     )
 }
 
-private fun Connection.getInnboksForInnloggetBruker(bruker: TokenXUser, aktiv: Boolean): List<Innboks> =
+private fun Connection.getInnboksForInnloggetBruker(fodselsnummer: String, aktiv: Boolean): List<Innboks> =
         prepareStatement("""SELECT
             |innboks.id,
             |innboks.eventTidspunkt,
@@ -105,7 +105,7 @@ private fun Connection.getInnboksForInnloggetBruker(bruker: TokenXUser, aktiv: B
             |FROM (SELECT * FROM innboks WHERE fodselsnummer = ? AND aktiv = ?) AS innboks
             |LEFT JOIN systembrukere ON innboks.systembruker = systembrukere.systembruker""".trimMargin())
                 .use {
-                    it.setString(1, bruker.ident)
+                    it.setString(1, fodselsnummer)
                     it.setBoolean(2, aktiv)
                     it.executeQuery().mapList {
                         toInnboks()

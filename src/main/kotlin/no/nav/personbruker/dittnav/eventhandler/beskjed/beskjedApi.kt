@@ -5,6 +5,7 @@ import io.ktor.http.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.respondWithError
+import no.nav.personbruker.dittnav.eventhandler.common.modia.doIfValidRequest
 import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
 import org.slf4j.LoggerFactory
 
@@ -74,6 +75,42 @@ fun Route.beskjedSystemClientApi(beskjedEventService: BeskjedEventService) {
             call.respond(HttpStatusCode.OK, beskjedEvents)
         } catch (exception: Exception) {
             respondWithError(call, log, exception)
+        }
+    }
+
+    get("/fetch/modia/beskjed/aktive") {
+        doIfValidRequest { userToFetchEventsFor ->
+            try {
+                val aktiveBeskjedEvents = beskjedEventService.getActiveCachedEventsForUser(userToFetchEventsFor)
+                call.respond(HttpStatusCode.OK, aktiveBeskjedEvents)
+
+            } catch (exception: Exception) {
+                respondWithError(call, log, exception)
+            }
+        }
+    }
+
+    get("/fetch/modia/beskjed/inaktive") {
+        doIfValidRequest { userToFetchEventsFor ->
+            try {
+                val inaktiveBeskjedEvents = beskjedEventService.getInactiveCachedEventsForUser(userToFetchEventsFor)
+                call.respond(HttpStatusCode.OK, inaktiveBeskjedEvents)
+
+            } catch (exception: Exception) {
+                respondWithError(call, log, exception)
+            }
+        }
+    }
+
+    get("/fetch/modia/beskjed/all") {
+        doIfValidRequest { userToFetchEventsFor ->
+            try {
+                val beskjedEvents = beskjedEventService.getAllCachedEventsForUser(userToFetchEventsFor)
+                call.respond(HttpStatusCode.OK, beskjedEvents)
+
+            } catch (exception: Exception) {
+                respondWithError(call, log, exception)
+            }
         }
     }
 }

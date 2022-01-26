@@ -1,8 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.eventhandler.beskjed.getAllGroupedBeskjedEventsByProducer
-import no.nav.personbruker.dittnav.eventhandler.common.TokenXUserObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
 import no.nav.personbruker.dittnav.eventhandler.common.database.createProdusent
 import no.nav.personbruker.dittnav.eventhandler.common.database.deleteProdusent
@@ -18,13 +16,13 @@ import org.junit.jupiter.api.TestInstance
 class OppgaveQueriesTest {
 
     private val database = H2Database()
-    private val bruker = TokenXUserObjectMother.createInnloggetBruker("12345")
+    private val fodselsnummer = "12345"
     private val produsent = "x-dittnav-produsent"
-    private val grupperingsid = "100${bruker.ident}"
+    private val grupperingsid = "100${fodselsnummer}"
 
-    private val oppgave1 = OppgaveObjectMother.createOppgave(id = 1, eventId = "123", fodselsnummer = bruker.ident, aktiv = true, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
-    private val oppgave2 = OppgaveObjectMother.createOppgave(id = 2, eventId = "345", fodselsnummer = bruker.ident, aktiv = true, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
-    private val oppgave3 = OppgaveObjectMother.createOppgave(id = 3, eventId = "567", fodselsnummer = bruker.ident, aktiv = false, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
+    private val oppgave1 = OppgaveObjectMother.createOppgave(id = 1, eventId = "123", fodselsnummer = fodselsnummer, aktiv = true, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
+    private val oppgave2 = OppgaveObjectMother.createOppgave(id = 2, eventId = "345", fodselsnummer = fodselsnummer, aktiv = true, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
+    private val oppgave3 = OppgaveObjectMother.createOppgave(id = 3, eventId = "567", fodselsnummer = fodselsnummer, aktiv = false, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
     private val oppgave4 = OppgaveObjectMother.createOppgave(id = 4, eventId = "789", fodselsnummer = "54321", aktiv = true, systembruker = "y-dittnav", namespace = "dummyNamespace", appnavn = "y-dittnav")
 
     @BeforeAll
@@ -44,27 +42,27 @@ class OppgaveQueriesTest {
     @Test
     fun `Finn alle cachede Oppgave-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getAllOppgaveForInnloggetBruker(bruker) }.size `should be equal to` 3
+            database.dbQuery { getAllOppgaveForInnloggetBruker(fodselsnummer) }.size `should be equal to` 3
         }
     }
 
     @Test
     fun `Finn kun aktive cachede Oppgave-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getAktivOppgaveForInnloggetBruker(bruker) }.size `should be equal to` 2
+            database.dbQuery { getAktivOppgaveForInnloggetBruker(fodselsnummer) }.size `should be equal to` 2
         }
     }
 
     @Test
     fun `Finn kun inaktive cachede Oppgave-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getInaktivOppgaveForInnloggetBruker(bruker) }.size `should be equal to` 1
+            database.dbQuery { getInaktivOppgaveForInnloggetBruker(fodselsnummer) }.size `should be equal to` 1
         }
     }
 
     @Test
     fun `Returnerer tom liste hvis Oppgave-eventer for fodselsnummer ikke finnes`() {
-        val brukerSomIkkeFinnes = TokenXUserObjectMother.createInnloggetBruker("0")
+        val brukerSomIkkeFinnes = "0"
         runBlocking {
             database.dbQuery { getAktivOppgaveForInnloggetBruker(brukerSomIkkeFinnes) }.isEmpty()
         }
@@ -72,7 +70,7 @@ class OppgaveQueriesTest {
 
     @Test
     fun `Returnerer tom liste hvis fodselsnummer er tomt`() {
-        val fodselsnummerMangler = TokenXUserObjectMother.createInnloggetBruker("")
+        val fodselsnummerMangler = ""
         runBlocking {
             database.dbQuery { getAktivOppgaveForInnloggetBruker(fodselsnummerMangler) }.isEmpty()
         }
@@ -81,7 +79,7 @@ class OppgaveQueriesTest {
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for aktive eventer`() {
         runBlocking {
-            val oppgave = database.dbQuery { getAktivOppgaveForInnloggetBruker(bruker) }.first()
+            val oppgave = database.dbQuery { getAktivOppgaveForInnloggetBruker(fodselsnummer) }.first()
             oppgave.produsent `should be equal to` "x-dittnav-produsent"
         }
     }
@@ -89,7 +87,7 @@ class OppgaveQueriesTest {
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for inaktive eventer`() {
         runBlocking {
-            val oppgave = database.dbQuery { getInaktivOppgaveForInnloggetBruker(bruker) }.first()
+            val oppgave = database.dbQuery { getInaktivOppgaveForInnloggetBruker(fodselsnummer) }.first()
             oppgave.produsent `should be equal to` "x-dittnav-produsent"
         }
     }
@@ -97,7 +95,7 @@ class OppgaveQueriesTest {
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for alle eventer`() {
         runBlocking {
-            val oppgave = database.dbQuery { getAllOppgaveForInnloggetBruker(bruker) }.first()
+            val oppgave = database.dbQuery { getAllOppgaveForInnloggetBruker(fodselsnummer) }.first()
             oppgave.produsent `should be equal to` "x-dittnav-produsent"
         }
     }
@@ -109,7 +107,7 @@ class OppgaveQueriesTest {
         createOppgave(listOf(oppgaveMedAnnenProdusent))
         val oppgave = runBlocking {
             database.dbQuery {
-                getAllOppgaveForInnloggetBruker(TokenXUserObjectMother.createInnloggetBruker("112233"))
+                getAllOppgaveForInnloggetBruker("112233")
             }.first()
         }
         oppgave.produsent `should be equal to` ""
@@ -121,7 +119,7 @@ class OppgaveQueriesTest {
     fun `Returnerer en liste av alle grupperte Oppgave-eventer`() {
         runBlocking {
             database.dbQuery {
-                getAllGroupedOppgaveEventsByIds(bruker, grupperingsid, produsent)
+                getAllGroupedOppgaveEventsByIds(fodselsnummer, grupperingsid, produsent)
             }.size `should be equal to` 3
         }
     }
@@ -131,7 +129,7 @@ class OppgaveQueriesTest {
         val noMatchProdusent = "dummyProdusent"
         runBlocking {
             database.dbQuery {
-                getAllGroupedOppgaveEventsByIds(bruker, grupperingsid, noMatchProdusent)
+                getAllGroupedOppgaveEventsByIds(fodselsnummer, grupperingsid, noMatchProdusent)
             }.`should be empty`()
         }
     }
@@ -141,7 +139,7 @@ class OppgaveQueriesTest {
         val noMatchGrupperingsid = "dummyGrupperingsid"
         runBlocking {
             database.dbQuery {
-                getAllGroupedOppgaveEventsByIds(bruker, noMatchGrupperingsid, produsent)
+                getAllGroupedOppgaveEventsByIds(fodselsnummer, noMatchGrupperingsid, produsent)
             }.`should be empty`()
         }
     }

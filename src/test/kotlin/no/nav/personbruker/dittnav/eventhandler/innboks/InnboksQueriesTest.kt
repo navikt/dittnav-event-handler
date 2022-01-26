@@ -1,8 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.innboks
 
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.eventhandler.beskjed.getAllGroupedBeskjedEventsByProducer
-import no.nav.personbruker.dittnav.eventhandler.common.TokenXUserObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
 import no.nav.personbruker.dittnav.eventhandler.common.database.createProdusent
 import no.nav.personbruker.dittnav.eventhandler.common.database.deleteProdusent
@@ -19,15 +17,15 @@ class InnboksQueriesTest {
 
     private val database = H2Database()
 
-    private val bruker1 = TokenXUserObjectMother.createInnloggetBruker("12345")
-    private val bruker2 = TokenXUserObjectMother.createInnloggetBruker("67890")
+    private val fodselsnummer1 = "12345"
+    private val fodselsnummer2 = "67890"
     private val produsent = "x-dittnav-produsent"
-    private val grupperingsid = "100${bruker1.ident}"
+    private val grupperingsid = "100${fodselsnummer1}"
 
-    private val innboks1 = InnboksObjectMother.createInnboks(id = 1, eventId = "123", fodselsnummer = bruker1.ident, aktiv = true, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
-    private val innboks2 = InnboksObjectMother.createInnboks(id = 2, eventId = "345", fodselsnummer = bruker1.ident, aktiv = true, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
-    private val innboks3 = InnboksObjectMother.createInnboks(id = 3, eventId = "567", fodselsnummer = bruker2.ident, aktiv = true, systembruker = "y-dittnav", namespace = "dummyNamespace", appnavn = "y-dittnav")
-    private val innboks4 = InnboksObjectMother.createInnboks(id = 4, eventId = "789", fodselsnummer = bruker2.ident, aktiv = false, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
+    private val innboks1 = InnboksObjectMother.createInnboks(id = 1, eventId = "123", fodselsnummer = fodselsnummer1, aktiv = true, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
+    private val innboks2 = InnboksObjectMother.createInnboks(id = 2, eventId = "345", fodselsnummer = fodselsnummer1, aktiv = true, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
+    private val innboks3 = InnboksObjectMother.createInnboks(id = 3, eventId = "567", fodselsnummer = fodselsnummer2, aktiv = true, systembruker = "y-dittnav", namespace = "dummyNamespace", appnavn = "y-dittnav")
+    private val innboks4 = InnboksObjectMother.createInnboks(id = 4, eventId = "789", fodselsnummer = fodselsnummer2, aktiv = false, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
 
     @BeforeAll
     fun `populer test-data`() {
@@ -46,30 +44,30 @@ class InnboksQueriesTest {
     @Test
     fun `Finn alle cachede Innboks-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getAllInnboksForInnloggetBruker(bruker1) }.size `should be equal to` 2
-            database.dbQuery { getAllInnboksForInnloggetBruker(bruker2) }.size `should be equal to` 2
+            database.dbQuery { getAllInnboksForInnloggetBruker(fodselsnummer1) }.size `should be equal to` 2
+            database.dbQuery { getAllInnboksForInnloggetBruker(fodselsnummer2) }.size `should be equal to` 2
         }
     }
 
     @Test
     fun `Finn kun aktive cachede Innboks-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getAktivInnboksForInnloggetBruker(bruker1) }.size `should be equal to` 2
-            database.dbQuery { getAktivInnboksForInnloggetBruker(bruker2) }.size `should be equal to` 1
+            database.dbQuery { getAktivInnboksForInnloggetBruker(fodselsnummer1) }.size `should be equal to` 2
+            database.dbQuery { getAktivInnboksForInnloggetBruker(fodselsnummer2) }.size `should be equal to` 1
         }
     }
 
     @Test
     fun `Finn kun inaktive cachede Innboks-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getInaktivInnboksForInnloggetBruker(bruker1) }.`should be empty`()
-            database.dbQuery { getInaktivInnboksForInnloggetBruker(bruker2) }.size `should be equal to` 1
+            database.dbQuery { getInaktivInnboksForInnloggetBruker(fodselsnummer1) }.`should be empty`()
+            database.dbQuery { getInaktivInnboksForInnloggetBruker(fodselsnummer2) }.size `should be equal to` 1
         }
     }
 
     @Test
     fun `Returnerer tom liste hvis Innboks-eventer for fodselsnummer ikke finnes`() {
-        val brukerUtenEventer = TokenXUserObjectMother.createInnloggetBruker("0")
+        val brukerUtenEventer = "0"
         runBlocking {
             database.dbQuery { getAllInnboksForInnloggetBruker(brukerUtenEventer) }.size `should be equal to` 0
         }
@@ -77,7 +75,7 @@ class InnboksQueriesTest {
 
     @Test
     fun `Returnerer tom liste hvis fodselsnummer er tomt`() {
-        val brukerUtenEventer = TokenXUserObjectMother.createInnloggetBruker("")
+        val brukerUtenEventer = ""
         runBlocking {
             database.dbQuery { getAllInnboksForInnloggetBruker(brukerUtenEventer) }.size `should be equal to` 0
         }
@@ -86,7 +84,7 @@ class InnboksQueriesTest {
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for aktive eventer`() {
         runBlocking {
-            val innboks = database.dbQuery { getAktivInnboksForInnloggetBruker(bruker1) }.first()
+            val innboks = database.dbQuery { getAktivInnboksForInnloggetBruker(fodselsnummer1) }.first()
             innboks.produsent `should be equal to` "x-dittnav-produsent"
         }
     }
@@ -94,7 +92,7 @@ class InnboksQueriesTest {
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for inaktive eventer`() {
         runBlocking {
-            val innboks = database.dbQuery { getInaktivInnboksForInnloggetBruker(bruker2) }.first()
+            val innboks = database.dbQuery { getInaktivInnboksForInnloggetBruker(fodselsnummer2) }.first()
             innboks.produsent `should be equal to` "x-dittnav-produsent"
         }
     }
@@ -102,7 +100,7 @@ class InnboksQueriesTest {
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for alle eventer`() {
         runBlocking {
-            val innboks = database.dbQuery { getAllInnboksForInnloggetBruker(bruker1) }.first()
+            val innboks = database.dbQuery { getAllInnboksForInnloggetBruker(fodselsnummer1) }.first()
             innboks.produsent `should be equal to` "x-dittnav-produsent"
         }
     }
@@ -114,7 +112,7 @@ class InnboksQueriesTest {
         createInnboks(listOf(innboksMedAnnenProdusent))
         val innboks = runBlocking {
             database.dbQuery {
-                getAllInnboksForInnloggetBruker(TokenXUserObjectMother.createInnloggetBruker("112233"))
+                getAllInnboksForInnloggetBruker("112233")
             }.first()
         }
         innboks.produsent `should be equal to` ""
@@ -125,7 +123,7 @@ class InnboksQueriesTest {
     fun `Returnerer en liste av alle grupperte Innboks-eventer`() {
         runBlocking {
             database.dbQuery {
-                getAllGroupedInnboksEventsByIds(bruker1, grupperingsid, produsent)
+                getAllGroupedInnboksEventsByIds(fodselsnummer1, grupperingsid, produsent)
             }.size `should be equal to` 2
         }
     }
@@ -135,7 +133,7 @@ class InnboksQueriesTest {
         val noMatchProdusent = "dummyProdusent"
         runBlocking {
             database.dbQuery {
-                getAllGroupedInnboksEventsByIds(bruker1, grupperingsid, noMatchProdusent)
+                getAllGroupedInnboksEventsByIds(fodselsnummer1, grupperingsid, noMatchProdusent)
             }.`should be empty`()
         }
     }
@@ -145,7 +143,7 @@ class InnboksQueriesTest {
         val noMatchGrupperingsid = "dummyGrupperingsid"
         runBlocking {
             database.dbQuery {
-                getAllGroupedInnboksEventsByIds(bruker1, noMatchGrupperingsid, produsent)
+                getAllGroupedInnboksEventsByIds(fodselsnummer1, noMatchGrupperingsid, produsent)
             }.`should be empty`()
         }
     }

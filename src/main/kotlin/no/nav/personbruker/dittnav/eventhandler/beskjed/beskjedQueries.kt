@@ -5,20 +5,19 @@ import no.nav.personbruker.dittnav.eventhandler.common.database.getNullableUtcTi
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
 import no.nav.personbruker.dittnav.eventhandler.common.statistics.EventCountForProducer
-import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-fun Connection.getInaktivBeskjedForInnloggetBruker(bruker: TokenXUser): List<Beskjed> =
-        getBeskjedForInnloggetBruker(bruker, false)
+fun Connection.getInaktivBeskjedForInnloggetBruker(fodselsnummer: String): List<Beskjed> =
+        getBeskjedForInnloggetBruker(fodselsnummer, false)
 
-fun Connection.getAktivBeskjedForInnloggetBruker(bruker: TokenXUser): List<Beskjed> =
-        getBeskjedForInnloggetBruker(bruker, true)
+fun Connection.getAktivBeskjedForInnloggetBruker(fodselsnummer: String): List<Beskjed> =
+        getBeskjedForInnloggetBruker(fodselsnummer, true)
 
-fun Connection.getAllBeskjedForInnloggetBruker(bruker: TokenXUser): List<Beskjed> =
-        prepareStatement("""SELECT 
+fun Connection.getAllBeskjedForInnloggetBruker(fodselsnummer: String): List<Beskjed> =
+    prepareStatement("""SELECT 
             |beskjed.id, 
             |beskjed.uid, 
             |beskjed.eventTidspunkt,
@@ -38,7 +37,7 @@ fun Connection.getAllBeskjedForInnloggetBruker(bruker: TokenXUser): List<Beskjed
             |FROM (SELECT * FROM beskjed WHERE fodselsnummer = ?) AS beskjed
             |LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker""".trimMargin())
                 .use {
-                    it.setString(1, bruker.ident)
+                    it.setString(1, fodselsnummer)
                     it.executeQuery().mapList {
                         toBeskjed()
                     }
@@ -73,7 +72,7 @@ fun Connection.getBeskjedByIds(fodselsnummer: String, uid: String, eventId: Stri
                     }
                 }
 
-fun Connection.getAllGroupedBeskjedEventsByIds(bruker: TokenXUser, grupperingsid: String, produsent: String): List<Beskjed> =
+fun Connection.getAllGroupedBeskjedEventsByIds(fodselsnummer: String, grupperingsid: String, produsent: String): List<Beskjed> =
         prepareStatement("""SELECT 
             |beskjed.id, 
             |beskjed.uid, 
@@ -94,7 +93,7 @@ fun Connection.getAllGroupedBeskjedEventsByIds(bruker: TokenXUser, grupperingsid
             |FROM (SELECT * FROM beskjed WHERE fodselsnummer = ? AND grupperingsid = ?) AS beskjed
             |LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker WHERE systembrukere.produsentnavn = ?""".trimMargin())
                 .use {
-                    it.setString(1, bruker.ident)
+                    it.setString(1, fodselsnummer)
                     it.setString(2, grupperingsid)
                     it.setString(3, produsent)
                     it.executeQuery().mapList {
@@ -150,7 +149,7 @@ fun ResultSet.toBeskjed(): Beskjed {
     )
 }
 
-private fun Connection.getBeskjedForInnloggetBruker(bruker: TokenXUser, aktiv: Boolean): List<Beskjed> =
+private fun Connection.getBeskjedForInnloggetBruker(fodselsnummer: String, aktiv: Boolean): List<Beskjed> =
         prepareStatement("""SELECT 
             |beskjed.id, 
             |beskjed.uid, 
@@ -171,7 +170,7 @@ private fun Connection.getBeskjedForInnloggetBruker(bruker: TokenXUser, aktiv: B
             |FROM (SELECT * FROM BESKJED WHERE beskjed.fodselsnummer = ? AND beskjed.aktiv = ?) AS beskjed
             |LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker""".trimMargin())
                 .use {
-                    it.setString(1, bruker.ident)
+                    it.setString(1, fodselsnummer)
                     it.setBoolean(2, aktiv)
                     it.executeQuery().mapList {
                         toBeskjed()

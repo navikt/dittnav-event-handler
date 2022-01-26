@@ -7,8 +7,6 @@ import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
 import no.nav.personbruker.dittnav.eventhandler.common.database.createProdusent
 import no.nav.personbruker.dittnav.eventhandler.common.database.deleteProdusent
 import no.nav.personbruker.dittnav.eventhandler.common.findCountFor
-import no.nav.personbruker.dittnav.eventhandler.common.produsent.Produsent
-import no.nav.personbruker.dittnav.eventhandler.common.statistics.EventCountForProducer
 import org.amshove.kluent.`should be empty`
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.AfterAll
@@ -22,17 +20,17 @@ class BeskjedQueriesTest {
 
     private val database = H2Database()
 
-    private val bruker = TokenXUserObjectMother.createInnloggetBruker("12345")
+    private val fodselsnummer = "12345"
     private val uid = "22"
     private val eventId = "124"
-    private val grupperingsid = "100${bruker.ident}"
+    private val grupperingsid = "100${fodselsnummer}"
     private val produsent = "x-dittnav-produsent"
 
-    private val beskjed1 = BeskjedObjectMother.createBeskjed(id = 1, eventId = "123", fodselsnummer = bruker.ident,
+    private val beskjed1 = BeskjedObjectMother.createBeskjed(id = 1, eventId = "123", fodselsnummer = fodselsnummer,
             synligFremTil = ZonedDateTime.now().plusHours(1), uid = "11", aktiv = true, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
-    private val beskjed2 = BeskjedObjectMother.createBeskjed(id = 2, eventId = eventId, fodselsnummer = bruker.ident,
+    private val beskjed2 = BeskjedObjectMother.createBeskjed(id = 2, eventId = eventId, fodselsnummer = fodselsnummer,
             synligFremTil = ZonedDateTime.now().plusHours(1), uid = "22", aktiv = true, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
-    private val beskjed3 = BeskjedObjectMother.createBeskjed(id = 3, eventId = "567", fodselsnummer = bruker.ident,
+    private val beskjed3 = BeskjedObjectMother.createBeskjed(id = 3, eventId = "567", fodselsnummer = fodselsnummer,
             synligFremTil = ZonedDateTime.now().plusHours(1), uid = "33", aktiv = false, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
     private val beskjed4 = BeskjedObjectMother.createBeskjed(id = 4, eventId = "789", fodselsnummer = "54321",
             synligFremTil = ZonedDateTime.now().plusHours(1), uid = "44", aktiv = true, systembruker = "y-dittnav", namespace = "dummyNamespace", appnavn = "y-dittnav")
@@ -54,7 +52,7 @@ class BeskjedQueriesTest {
     @Test
     fun `Finn alle cachede Beskjed-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getAllBeskjedForInnloggetBruker(bruker) }.size `should be equal to` 3
+            database.dbQuery { getAllBeskjedForInnloggetBruker(fodselsnummer) }.size `should be equal to` 3
         }
     }
 
@@ -62,7 +60,7 @@ class BeskjedQueriesTest {
     fun `Finn kun aktive cachede Beskjed-eventer for fodselsnummer`() {
         runBlocking {
             database.dbQuery {
-                val aktivBeskjedByUser = getAktivBeskjedForInnloggetBruker(bruker)
+                val aktivBeskjedByUser = getAktivBeskjedForInnloggetBruker(fodselsnummer)
                 aktivBeskjedByUser
             }.size `should be equal to` 2
         }
@@ -72,7 +70,7 @@ class BeskjedQueriesTest {
     fun `Finn kun inaktive cachede Beskjed-eventer for fodselsnummer`() {
         runBlocking {
             database.dbQuery {
-                val inaktivBeskjedByUser = getInaktivBeskjedForInnloggetBruker(bruker)
+                val inaktivBeskjedByUser = getInaktivBeskjedForInnloggetBruker(fodselsnummer)
                 inaktivBeskjedByUser
             }.size `should be equal to` 1
         }
@@ -80,7 +78,7 @@ class BeskjedQueriesTest {
 
     @Test
     fun `Returnerer tom liste hvis Beskjed-eventer for fodselsnummer ikke finnes`() {
-        val brukerSomIkkeFinnes = TokenXUserObjectMother.createInnloggetBruker("0")
+        val brukerSomIkkeFinnes = "0"
         runBlocking {
             database.dbQuery { getAktivBeskjedForInnloggetBruker(brukerSomIkkeFinnes) }.`should be empty`()
         }
@@ -88,7 +86,7 @@ class BeskjedQueriesTest {
 
     @Test
     fun `Returnerer tom liste hvis fodselsnummer er tomt`() {
-        val fodselsnummerMangler = TokenXUserObjectMother.createInnloggetBruker("")
+        val fodselsnummerMangler = ""
         runBlocking {
             database.dbQuery { getAktivBeskjedForInnloggetBruker(fodselsnummerMangler) }.`should be empty`()
         }
@@ -97,7 +95,7 @@ class BeskjedQueriesTest {
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for aktive eventer`() {
         runBlocking {
-            val beskjed = database.dbQuery { getAktivBeskjedForInnloggetBruker(bruker) }.first()
+            val beskjed = database.dbQuery { getAktivBeskjedForInnloggetBruker(fodselsnummer) }.first()
             beskjed.produsent `should be equal to` "x-dittnav-produsent"
         }
     }
@@ -105,7 +103,7 @@ class BeskjedQueriesTest {
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for inaktive eventer`() {
         runBlocking {
-            val beskjed = database.dbQuery { getInaktivBeskjedForInnloggetBruker(bruker) }.first()
+            val beskjed = database.dbQuery { getInaktivBeskjedForInnloggetBruker(fodselsnummer) }.first()
             beskjed.produsent `should be equal to` "x-dittnav-produsent"
         }
     }
@@ -113,7 +111,7 @@ class BeskjedQueriesTest {
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for alle eventer`() {
         runBlocking {
-            val beskjed = database.dbQuery { getAllBeskjedForInnloggetBruker(bruker) }.first()
+            val beskjed = database.dbQuery { getAllBeskjedForInnloggetBruker(fodselsnummer) }.first()
             beskjed.produsent `should be equal to` "x-dittnav-produsent"
         }
     }
@@ -121,30 +119,30 @@ class BeskjedQueriesTest {
     @Test
     fun `Finn alle cachede events som matcher fodselsnummer, uid og eventId`() {
         runBlocking {
-            database.dbQuery { getBeskjedByIds(bruker.ident, uid, eventId) }.size `should be equal to` 1
+            database.dbQuery { getBeskjedByIds(fodselsnummer, uid, eventId) }.size `should be equal to` 1
         }
     }
 
     @Test
     fun `Returnerer tom liste hvis Beskjed-eventer ikke stemmer med eventId`() {
         runBlocking {
-            database.dbQuery { getBeskjedByIds(bruker.ident, uid, "dummyEventId") }.`should be empty`()
+            database.dbQuery { getBeskjedByIds(fodselsnummer, uid, "dummyEventId") }.`should be empty`()
         }
     }
 
     @Test
     fun `Returnerer tom liste hvis Beskjed-eventer ikke stemmer med fodselsnummer`() {
-        val brukerSomIkkeFinnes = TokenXUserObjectMother.createInnloggetBruker("000")
+        val brukerSomIkkeFinnes = "000"
         runBlocking {
-            database.dbQuery { getBeskjedByIds(brukerSomIkkeFinnes.ident, uid, eventId) }.`should be empty`()
+            database.dbQuery { getBeskjedByIds(brukerSomIkkeFinnes, uid, eventId) }.`should be empty`()
         }
     }
 
     @Test
     fun `Returnerer tom liste av Beskjed-eventer hvis fodselsnummer er tomt`() {
-        val fodselsnummerMangler = TokenXUserObjectMother.createInnloggetBruker("")
+        val fodselsnummerMangler = ""
         runBlocking {
-            database.dbQuery { getBeskjedByIds(fodselsnummerMangler.ident, uid, eventId) }.`should be empty`()
+            database.dbQuery { getBeskjedByIds(fodselsnummerMangler, uid, eventId) }.`should be empty`()
         }
     }
 
@@ -155,7 +153,7 @@ class BeskjedQueriesTest {
         createBeskjed(listOf(beskjedMedAnnenProdusent))
         val beskjed = runBlocking {
             database.dbQuery {
-                getAllBeskjedForInnloggetBruker(TokenXUserObjectMother.createInnloggetBruker("112233"))
+                getAllBeskjedForInnloggetBruker(TokenXUserObjectMother.createInnloggetBruker("112233").ident)
             }.first()
         }
         beskjed.produsent `should be equal to` ""
@@ -166,7 +164,7 @@ class BeskjedQueriesTest {
     fun `Returnerer en liste av alle grupperte Beskjed-eventer`() {
         runBlocking {
             database.dbQuery {
-                getAllGroupedBeskjedEventsByIds(bruker, grupperingsid, produsent)
+                getAllGroupedBeskjedEventsByIds(fodselsnummer, grupperingsid, produsent)
             }.size `should be equal to` 3
         }
     }
@@ -176,7 +174,7 @@ class BeskjedQueriesTest {
         val noMatchProdusent = "dummyProdusent"
         runBlocking {
             database.dbQuery {
-                getAllGroupedBeskjedEventsByIds(bruker, grupperingsid, noMatchProdusent)
+                getAllGroupedBeskjedEventsByIds(fodselsnummer, grupperingsid, noMatchProdusent)
             }.`should be empty`()
         }
     }
@@ -186,7 +184,7 @@ class BeskjedQueriesTest {
         val noMatchGrupperingsid = "dummyGrupperingsid"
         runBlocking {
             database.dbQuery {
-                getAllGroupedBeskjedEventsByIds(bruker, noMatchGrupperingsid, produsent)
+                getAllGroupedBeskjedEventsByIds(fodselsnummer, noMatchGrupperingsid, produsent)
             }.`should be empty`()
         }
     }

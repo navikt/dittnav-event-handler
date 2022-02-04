@@ -20,7 +20,6 @@ import no.nav.personbruker.dittnav.eventhandler.oppgave.oppgaveApi
 import no.nav.personbruker.dittnav.eventhandler.statusoppdatering.statusoppdateringApi
 import no.nav.security.token.support.ktor.tokenValidationSupport
 
-@KtorExperimentalAPI
 fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()) {
     DefaultExports.initialize()
     install(DefaultHeaders)

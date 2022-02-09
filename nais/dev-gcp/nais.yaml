@@ -62,6 +62,7 @@ spec:
     inbound:
       rules:
         - application: dittnav-api
+          namespace: personbruker
         - application: internal-periodic-metrics-reporter
         - application: tms-event-test-producer
           namespace: min-side

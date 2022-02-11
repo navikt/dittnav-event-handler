@@ -49,7 +49,7 @@ spec:
         name: brukernotifikasjon-cache
         diskSize: 100
         diskType: SSD
-        tier: db-custom-2-12288
+        tier: db-custom-4-24576
         type: POSTGRES_11
   kafka:
     pool: nav-prod

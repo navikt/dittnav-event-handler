@@ -2,10 +2,7 @@ package no.nav.personbruker.dittnav.eventhandler.beskjed
 
 import Beskjed
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.eventhandler.common.TokenXUserObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
-import no.nav.personbruker.dittnav.eventhandler.common.database.createProdusent
-import no.nav.personbruker.dittnav.eventhandler.common.database.deleteProdusent
 import no.nav.personbruker.dittnav.eventhandler.common.findCountFor
 import org.amshove.kluent.`should be empty`
 import org.amshove.kluent.`should be equal to`
@@ -24,29 +21,27 @@ class BeskjedQueriesTest {
     private val uid = "22"
     private val eventId = "124"
     private val grupperingsid = "100${fodselsnummer}"
-    private val produsent = "x-dittnav-produsent"
+    private val systembruker = "x-dittnav"
+    private val namespace = "localhost"
+    private val appnavn = "dittnav"
 
     private val beskjed1 = BeskjedObjectMother.createBeskjed(id = 1, eventId = "123", fodselsnummer = fodselsnummer,
-            synligFremTil = ZonedDateTime.now().plusHours(1), uid = "11", aktiv = true, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
+            synligFremTil = ZonedDateTime.now().plusHours(1), uid = "11", aktiv = true, systembruker = systembruker, namespace = namespace, appnavn = appnavn)
     private val beskjed2 = BeskjedObjectMother.createBeskjed(id = 2, eventId = eventId, fodselsnummer = fodselsnummer,
-            synligFremTil = ZonedDateTime.now().plusHours(1), uid = "22", aktiv = true, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
+            synligFremTil = ZonedDateTime.now().plusHours(1), uid = "22", aktiv = true, systembruker = systembruker, namespace = namespace, appnavn = appnavn)
     private val beskjed3 = BeskjedObjectMother.createBeskjed(id = 3, eventId = "567", fodselsnummer = fodselsnummer,
-            synligFremTil = ZonedDateTime.now().plusHours(1), uid = "33", aktiv = false, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
+            synligFremTil = ZonedDateTime.now().plusHours(1), uid = "33", aktiv = false, systembruker = systembruker, namespace = namespace, appnavn = appnavn)
     private val beskjed4 = BeskjedObjectMother.createBeskjed(id = 4, eventId = "789", fodselsnummer = "54321",
-            synligFremTil = ZonedDateTime.now().plusHours(1), uid = "44", aktiv = true, systembruker = "y-dittnav", namespace = "dummyNamespace", appnavn = "y-dittnav")
+            synligFremTil = ZonedDateTime.now().plusHours(1), uid = "44", aktiv = true, systembruker = "x-dittnav-2", namespace = namespace, appnavn = "dittnav-2")
 
     @BeforeAll
     fun `populer testdata`() {
         createBeskjed(listOf(beskjed1, beskjed2, beskjed3, beskjed4))
-        createSystembruker(systembruker = "x-dittnav", produsentnavn = "x-dittnav-produsent")
-        createSystembruker(systembruker = "y-dittnav", produsentnavn = "y-dittnav-produsent")
     }
 
     @AfterAll
     fun `slett testdata`() {
         deleteBeskjed(listOf(beskjed1, beskjed2, beskjed3, beskjed4))
-        deleteSystembruker(systembruker = "x-dittnav")
-        deleteSystembruker(systembruker = "y-dittnav")
     }
 
     @Test
@@ -96,7 +91,7 @@ class BeskjedQueriesTest {
     fun `Returnerer lesbart navn for produsent som kan eksponeres for aktive eventer`() {
         runBlocking {
             val beskjed = database.dbQuery { getAktivBeskjedForInnloggetBruker(fodselsnummer) }.first()
-            beskjed.produsent `should be equal to` "x-dittnav-produsent"
+            beskjed.produsent `should be equal to` appnavn
         }
     }
 
@@ -104,7 +99,7 @@ class BeskjedQueriesTest {
     fun `Returnerer lesbart navn for produsent som kan eksponeres for inaktive eventer`() {
         runBlocking {
             val beskjed = database.dbQuery { getInaktivBeskjedForInnloggetBruker(fodselsnummer) }.first()
-            beskjed.produsent `should be equal to` "x-dittnav-produsent"
+            beskjed.produsent `should be equal to` appnavn
         }
     }
 
@@ -112,7 +107,7 @@ class BeskjedQueriesTest {
     fun `Returnerer lesbart navn for produsent som kan eksponeres for alle eventer`() {
         runBlocking {
             val beskjed = database.dbQuery { getAllBeskjedForInnloggetBruker(fodselsnummer) }.first()
-            beskjed.produsent `should be equal to` "x-dittnav-produsent"
+            beskjed.produsent `should be equal to` appnavn
         }
     }
 
@@ -147,24 +142,10 @@ class BeskjedQueriesTest {
     }
 
     @Test
-    fun `Returnerer tom streng for produsent hvis eventet er produsert av systembruker vi ikke har i systembruker-tabellen`() {
-        var beskjedMedAnnenProdusent = BeskjedObjectMother.createBeskjed(id = 5, eventId = "111", fodselsnummer = "112233",
-                synligFremTil = ZonedDateTime.now().plusHours(1), uid = "11", aktiv = true, systembruker = "ukjent-systembruker", namespace = "", appnavn = "")
-        createBeskjed(listOf(beskjedMedAnnenProdusent))
-        val beskjed = runBlocking {
-            database.dbQuery {
-                getAllBeskjedForInnloggetBruker(TokenXUserObjectMother.createInnloggetBruker("112233").ident)
-            }.first()
-        }
-        beskjed.produsent `should be equal to` ""
-        deleteBeskjed(listOf(beskjedMedAnnenProdusent))
-    }
-
-    @Test
     fun `Returnerer en liste av alle grupperte Beskjed-eventer`() {
         runBlocking {
             database.dbQuery {
-                getAllGroupedBeskjedEventsByIds(fodselsnummer, grupperingsid, produsent)
+                getAllGroupedBeskjedEventsByIds(fodselsnummer, grupperingsid, appnavn)
             }.size `should be equal to` 3
         }
     }
@@ -184,7 +165,7 @@ class BeskjedQueriesTest {
         val noMatchGrupperingsid = "dummyGrupperingsid"
         runBlocking {
             database.dbQuery {
-                getAllGroupedBeskjedEventsByIds(fodselsnummer, noMatchGrupperingsid, produsent)
+                getAllGroupedBeskjedEventsByIds(fodselsnummer, noMatchGrupperingsid, appnavn)
             }.`should be empty`()
         }
     }
@@ -195,8 +176,8 @@ class BeskjedQueriesTest {
             val groupedEventsBySystemuser = database.dbQuery { getAllGroupedBeskjedEventsBySystemuser() }
 
             groupedEventsBySystemuser.size `should be equal to` 2
-            groupedEventsBySystemuser.get(beskjed1.systembruker) `should be equal to` 3
-            groupedEventsBySystemuser.get(beskjed4.systembruker) `should be equal to` 1
+            groupedEventsBySystemuser[beskjed1.systembruker] `should be equal to` 3
+            groupedEventsBySystemuser[beskjed4.systembruker] `should be equal to` 1
         }
     }
 
@@ -217,21 +198,9 @@ class BeskjedQueriesTest {
         }
     }
 
-    private fun createSystembruker(systembruker: String, produsentnavn: String) {
-        runBlocking {
-            database.dbQuery { createProdusent(systembruker, produsentnavn) }
-        }
-    }
-
     private fun deleteBeskjed(beskjeder: List<Beskjed>) {
         runBlocking {
             database.dbQuery { deleteBeskjed(beskjeder) }
-        }
-    }
-
-    private fun deleteSystembruker(systembruker: String) {
-        runBlocking {
-            database.dbQuery { deleteProdusent(systembruker) }
         }
     }
 }

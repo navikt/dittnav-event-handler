@@ -12,10 +12,10 @@ class StatusoppdateringEventService(private val database: Database) {
 
     private val log = LoggerFactory.getLogger(StatusoppdateringEventService::class.java)
 
-    suspend fun getAllGroupedEventsFromCacheForUser(bruker: TokenXUser, grupperingsid: String?, producer: String?): List<StatusoppdateringDTO> {
+    suspend fun getAllGroupedEventsFromCacheForUser(bruker: TokenXUser, grupperingsid: String?, appnavn: String?): List<StatusoppdateringDTO> {
         val grupperingsId = validateNonNullFieldMaxLength(grupperingsid, "grupperingsid", 100)
-        val produsent = validateNonNullFieldMaxLength(producer, "produsent", 100)
-        return getEvents { getAllGroupedStatusoppdateringEventsByIds(bruker, grupperingsId, produsent) }
+        val app = validateNonNullFieldMaxLength(appnavn, "appnavn", 100)
+        return getEvents { getAllGroupedStatusoppdateringEventsByIds(bruker, grupperingsId, app) }
             .map { statusoppdatering -> statusoppdatering.toDTO() }
     }
 

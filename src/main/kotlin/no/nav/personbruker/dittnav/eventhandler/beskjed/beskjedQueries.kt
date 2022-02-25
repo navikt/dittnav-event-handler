@@ -18,24 +18,22 @@ fun Connection.getAktivBeskjedForInnloggetBruker(fodselsnummer: String): List<Be
 
 fun Connection.getAllBeskjedForInnloggetBruker(fodselsnummer: String): List<Beskjed> =
     prepareStatement("""SELECT 
-            |beskjed.id, 
-            |beskjed.uid, 
-            |beskjed.eventTidspunkt,
-            |beskjed.fodselsnummer,
-            |beskjed.eventId, 
-            |beskjed.grupperingsId,
-            |beskjed.tekst,
-            |beskjed.link,
-            |beskjed.sikkerhetsnivaa,
-            |beskjed.sistOppdatert,
-            |beskjed.synligFremTil,
-            |beskjed.aktiv,
-            |beskjed.systembruker,
-            |beskjed.namespace,
-            |beskjed.appnavn,
-            |systembrukere.produsentnavn AS produsent
-            |FROM (SELECT * FROM beskjed WHERE fodselsnummer = ?) AS beskjed
-            |LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker""".trimMargin())
+            |id, 
+            |uid, 
+            |eventTidspunkt,
+            |fodselsnummer,
+            |eventId, 
+            |grupperingsId,
+            |tekst,
+            |link,
+            |sikkerhetsnivaa,
+            |sistOppdatert,
+            |synligFremTil,
+            |aktiv,
+            |systembruker,
+            |namespace,
+            |appnavn
+            |FROM beskjed WHERE fodselsnummer = ?""".trimMargin())
                 .use {
                     it.setString(1, fodselsnummer)
                     it.executeQuery().mapList {
@@ -45,24 +43,22 @@ fun Connection.getAllBeskjedForInnloggetBruker(fodselsnummer: String): List<Besk
 
 fun Connection.getBeskjedByIds(fodselsnummer: String, uid: String, eventId: String): List<Beskjed> =
         prepareStatement("""SELECT 
-            |beskjed.id, 
-            |beskjed.uid, 
-            |beskjed.eventTidspunkt,
-            |beskjed.fodselsnummer,
-            |beskjed.eventId, 
-            |beskjed.grupperingsId,
-            |beskjed.tekst,
-            |beskjed.link,
-            |beskjed.sikkerhetsnivaa,
-            |beskjed.sistOppdatert,
-            |beskjed.synligFremTil,
-            |beskjed.aktiv,
-            |beskjed.systembruker,
-            |beskjed.namespace,
-            |beskjed.appnavn,
-            |systembrukere.produsentnavn AS produsent
-            |FROM (SELECT * FROM beskjed WHERE fodselsnummer = ? AND uid = ? AND eventId = ?) AS beskjed
-            |LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker""".trimMargin())
+            |id, 
+            |uid, 
+            |eventTidspunkt,
+            |fodselsnummer,
+            |eventId, 
+            |grupperingsId,
+            |tekst,
+            |link,
+            |sikkerhetsnivaa,
+            |sistOppdatert,
+            |synligFremTil,
+            |aktiv,
+            |systembruker,
+            |namespace,
+            |appnavn
+            |FROM beskjed WHERE fodselsnummer = ? AND uid = ? AND eventId = ?""".trimMargin())
                 .use {
                     it.setString(1, fodselsnummer)
                     it.setString(2, uid)
@@ -72,30 +68,28 @@ fun Connection.getBeskjedByIds(fodselsnummer: String, uid: String, eventId: Stri
                     }
                 }
 
-fun Connection.getAllGroupedBeskjedEventsByIds(fodselsnummer: String, grupperingsid: String, produsent: String): List<Beskjed> =
+fun Connection.getAllGroupedBeskjedEventsByIds(fodselsnummer: String, grupperingsid: String, appnavn: String): List<Beskjed> =
         prepareStatement("""SELECT 
-            |beskjed.id, 
-            |beskjed.uid, 
-            |beskjed.eventTidspunkt,
-            |beskjed.fodselsnummer,
-            |beskjed.eventId, 
-            |beskjed.grupperingsId,
-            |beskjed.tekst,
-            |beskjed.link,
-            |beskjed.sikkerhetsnivaa,
-            |beskjed.sistOppdatert,
-            |beskjed.synligFremTil,
-            |beskjed.aktiv,
-            |beskjed.systembruker,
-            |beskjed.namespace,
-            |beskjed.appnavn,
-            |systembrukere.produsentnavn AS produsent
-            |FROM (SELECT * FROM beskjed WHERE fodselsnummer = ? AND grupperingsid = ?) AS beskjed
-            |LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker WHERE systembrukere.produsentnavn = ?""".trimMargin())
+            |id, 
+            |uid, 
+            |eventTidspunkt,
+            |fodselsnummer,
+            |eventId, 
+            |grupperingsId,
+            |tekst,
+            |link,
+            |sikkerhetsnivaa,
+            |sistOppdatert,
+            |synligFremTil,
+            |aktiv,
+            |systembruker,
+            |namespace,
+            |appnavn
+            |FROM beskjed WHERE fodselsnummer = ? AND grupperingsId = ? AND appnavn = ?""".trimMargin())
                 .use {
                     it.setString(1, fodselsnummer)
                     it.setString(2, grupperingsid)
-                    it.setString(3, produsent)
+                    it.setString(3, appnavn)
                     it.executeQuery().mapList {
                         toBeskjed()
                     }
@@ -136,7 +130,7 @@ fun ResultSet.toBeskjed(): Beskjed {
             grupperingsId = getString("grupperingsId"),
             eventId = getString("eventId"),
             eventTidspunkt = ZonedDateTime.ofInstant(getUtcTimeStamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),
-            produsent = getString("produsent") ?: "",
+            produsent = getString("appnavn") ?: "",
             systembruker = getString("systembruker"),
             namespace = getString("namespace"),
             appnavn = getString("appnavn"),
@@ -151,24 +145,22 @@ fun ResultSet.toBeskjed(): Beskjed {
 
 private fun Connection.getBeskjedForInnloggetBruker(fodselsnummer: String, aktiv: Boolean): List<Beskjed> =
         prepareStatement("""SELECT 
-            |beskjed.id, 
-            |beskjed.uid, 
-            |beskjed.eventTidspunkt,
-            |beskjed.fodselsnummer,
-            |beskjed.eventId, 
-            |beskjed.grupperingsId,
-            |beskjed.tekst,
-            |beskjed.link,
-            |beskjed.sikkerhetsnivaa,
-            |beskjed.sistOppdatert,
-            |beskjed.synligFremTil,
-            |beskjed.aktiv,
-            |beskjed.systembruker,
-            |beskjed.namespace,
-            |beskjed.appnavn,
-            |systembrukere.produsentnavn AS produsent
-            |FROM (SELECT * FROM BESKJED WHERE beskjed.fodselsnummer = ? AND beskjed.aktiv = ?) AS beskjed
-            |LEFT JOIN systembrukere ON beskjed.systembruker = systembrukere.systembruker""".trimMargin())
+            |id, 
+            |uid, 
+            |eventTidspunkt,
+            |fodselsnummer,
+            |eventId, 
+            |grupperingsId,
+            |tekst,
+            |link,
+            |sikkerhetsnivaa,
+            |sistOppdatert,
+            |synligFremTil,
+            |aktiv,
+            |systembruker,
+            |namespace,
+            |appnavn
+            |FROM beskjed WHERE fodselsnummer = ? AND aktiv = ?""".trimMargin())
                 .use {
                     it.setString(1, fodselsnummer)
                     it.setBoolean(2, aktiv)

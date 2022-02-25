@@ -1,6 +1,5 @@
 package no.nav.personbruker.dittnav.eventhandler.done
 
-import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
 import no.nav.personbruker.dittnav.eventhandler.common.statistics.EventCountForProducer
 import java.sql.Connection

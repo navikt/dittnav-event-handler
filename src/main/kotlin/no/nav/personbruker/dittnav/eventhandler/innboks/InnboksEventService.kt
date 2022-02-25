@@ -43,10 +43,10 @@ class InnboksEventService(private val database: Database) {
             .map { innboks -> innboks.toDTO()}
     }
 
-    suspend fun getAllGroupedEventsFromCacheForUser(bruker: TokenXUser, grupperingsid: String?, producer: String?): List<InnboksDTO> {
+    suspend fun getAllGroupedEventsFromCacheForUser(bruker: TokenXUser, grupperingsid: String?, appnavn: String?): List<InnboksDTO> {
         val grupperingsId = validateNonNullFieldMaxLength(grupperingsid, "grupperingsid", 100)
-        val produsent = validateNonNullFieldMaxLength(producer, "produsent", 100)
-        return getEvents { getAllGroupedInnboksEventsByIds(bruker.ident, grupperingsId, produsent) }
+        val app = validateNonNullFieldMaxLength(appnavn, "appnavn", 100)
+        return getEvents { getAllGroupedInnboksEventsByIds(bruker.ident, grupperingsId, app) }
             .map { innboks -> innboks.toDTO()}
     }
 

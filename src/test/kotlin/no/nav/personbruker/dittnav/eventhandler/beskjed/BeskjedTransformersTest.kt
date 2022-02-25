@@ -15,7 +15,7 @@ internal class BeskjedTransformersTest {
         beskjedDTO.grupperingsId `should be equal to` beskjed.grupperingsId
         beskjedDTO.eventId `should be equal to` beskjed.eventId
         beskjedDTO.eventTidspunkt `should be equal to` beskjed.eventTidspunkt
-        beskjedDTO.produsent `should be equal to` beskjed.produsent
+        beskjedDTO.produsent `should be equal to` beskjed.appnavn
         beskjedDTO.sikkerhetsnivaa `should be equal to` beskjed.sikkerhetsnivaa
         beskjedDTO.sistOppdatert `should be equal to` beskjed.sistOppdatert
         beskjedDTO.tekst `should be equal to` beskjed.tekst

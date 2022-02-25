@@ -13,7 +13,7 @@ internal class OppgaveTransformersTest {
         oppgaveDTO.grupperingsId `should be equal to` oppgave.grupperingsId
         oppgaveDTO.eventId `should be equal to` oppgave.eventId
         oppgaveDTO.eventTidspunkt `should be equal to` oppgave.eventTidspunkt
-        oppgaveDTO.produsent `should be equal to` oppgave.produsent
+        oppgaveDTO.produsent `should be equal to` oppgave.appnavn
         oppgaveDTO.sikkerhetsnivaa `should be equal to` oppgave.sikkerhetsnivaa
         oppgaveDTO.sistOppdatert `should be equal to` oppgave.sistOppdatert
         oppgaveDTO.tekst `should be equal to` oppgave.tekst

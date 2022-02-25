@@ -1,7 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.innboks
 
 fun Innboks.toDTO() = InnboksDTO(
-    produsent = produsent,
+    produsent = appnavn,
     eventTidspunkt = eventTidspunkt,
     fodselsnummer = fodselsnummer,
     eventId = eventId,

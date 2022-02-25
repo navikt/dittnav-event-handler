@@ -15,7 +15,7 @@ internal class InnboksTransformersTest {
         innboksDTO.eventTidspunkt `should be equal to` innboks.eventTidspunkt
         innboksDTO.grupperingsId `should be equal to` innboks.grupperingsId
         innboksDTO.link `should be equal to` innboks.link
-        innboksDTO.produsent `should be equal to` innboks.produsent
+        innboksDTO.produsent `should be equal to` innboks.appnavn
         innboksDTO.sikkerhetsnivaa `should be equal to` innboks.sikkerhetsnivaa
         innboksDTO.sistOppdatert `should be equal to` innboks.sistOppdatert
         innboksDTO.tekst `should be equal to` innboks.tekst

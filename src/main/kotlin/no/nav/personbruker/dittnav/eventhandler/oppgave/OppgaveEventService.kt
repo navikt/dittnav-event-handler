@@ -42,10 +42,10 @@ class OppgaveEventService(private val database: Database) {
             .map { oppgave -> oppgave.toDTO() }
     }
 
-    suspend fun getAllGroupedEventsFromCacheForUser(bruker: TokenXUser, grupperingsid: String?, producer: String?): List<OppgaveDTO> {
+    suspend fun getAllGroupedEventsFromCacheForUser(bruker: TokenXUser, grupperingsid: String?, appnavn: String?): List<OppgaveDTO> {
         val grupperingsId = validateNonNullFieldMaxLength(grupperingsid, "grupperingsid", 100)
-        val produsent = validateNonNullFieldMaxLength(producer, "produsent", 100)
-        return getEvents { getAllGroupedOppgaveEventsByIds(bruker.ident, grupperingsId, produsent) }
+        val app = validateNonNullFieldMaxLength(appnavn, "appnavn", 100)
+        return getEvents { getAllGroupedOppgaveEventsByIds(bruker.ident, grupperingsId, app) }
             .map { oppgave -> oppgave.toDTO() }
     }
 

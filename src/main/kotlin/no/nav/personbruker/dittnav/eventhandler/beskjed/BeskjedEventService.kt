@@ -43,10 +43,10 @@ class BeskjedEventService(private val database: Database) {
             .map { beskjed -> beskjed.toDTO() }
     }
 
-    suspend fun getAllGroupedEventsFromCacheForUser(bruker: TokenXUser, grupperingsid: String?, producer: String?): List<BeskjedDTO> {
+    suspend fun getAllGroupedEventsFromCacheForUser(bruker: TokenXUser, grupperingsid: String?, appnavn: String?): List<BeskjedDTO> {
         val grupperingsId = validateNonNullFieldMaxLength(grupperingsid, "grupperingsid", 100)
-        val produsent = validateNonNullFieldMaxLength(producer, "produsent", 100)
-        return getEvents { getAllGroupedBeskjedEventsByIds(bruker.ident, grupperingsId, produsent) }
+        val app = validateNonNullFieldMaxLength(appnavn, "appnavn", 100)
+        return getEvents { getAllGroupedBeskjedEventsByIds(bruker.ident, grupperingsId, app) }
                 .map { beskjed -> beskjed.toDTO() }
     }
 

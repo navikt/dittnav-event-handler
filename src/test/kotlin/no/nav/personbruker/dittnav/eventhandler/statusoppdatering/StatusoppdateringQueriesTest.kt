@@ -3,28 +3,24 @@ package no.nav.personbruker.dittnav.eventhandler.statusoppdatering
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.TokenXUserObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
-import no.nav.personbruker.dittnav.eventhandler.common.database.createProdusent
-import no.nav.personbruker.dittnav.eventhandler.common.database.deleteProdusent
 import org.amshove.kluent.`should be empty`
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class StatusoppdateringTestQueriesTest {
+class StatusoppdateringQueriesTest {
 
     private val database = H2Database()
     private val bruker = TokenXUserObjectMother.createInnloggetBruker("12345")
     private val statusoppdateringEvents = StatusoppdateringObjectMother.getStatusoppdateringEvents(bruker)
     private val grupperingsid = "100${bruker.ident}"
-    private val produsent = "x-dittnav-produsent"
+    private val appnavn = "dittnav"
 
     @BeforeEach
     fun `populer testdata`() {
         runBlocking {
             database.dbQuery { createStatusoppdatering(statusoppdateringEvents) }
-            database.dbQuery { createProdusent(systembruker = "x-dittnav", produsentnavn = "x-dittnav-produsent") }
-            database.dbQuery { createProdusent(systembruker = "y-dittnav", produsentnavn = "y-dittnav-produsent") }
         }
     }
 
@@ -32,8 +28,6 @@ class StatusoppdateringTestQueriesTest {
     fun `slett testdata`() {
         runBlocking {
             database.dbQuery { deleteStatusoppdatering(statusoppdateringEvents) }
-            database.dbQuery { deleteProdusent(systembruker = "x-dittnav") }
-            database.dbQuery { deleteProdusent(systembruker = "y-dittnav") }
         }
     }
 
@@ -41,7 +35,7 @@ class StatusoppdateringTestQueriesTest {
     fun `Finn alle cachede Statusoppdatering-eventer for fodselsnummer`() {
         runBlocking {
             database.dbQuery {
-                getAllGroupedStatusoppdateringEventsByIds(bruker, grupperingsid, produsent)
+                getAllGroupedStatusoppdateringEventsByIds(bruker, grupperingsid, appnavn)
             }.size `should be equal to` 3
         }
     }
@@ -63,7 +57,7 @@ class StatusoppdateringTestQueriesTest {
 
         runBlocking {
             database.dbQuery {
-                getAllGroupedStatusoppdateringEventsByIds(brukerSomIkkeFinnes, grupperingsid, produsent)
+                getAllGroupedStatusoppdateringEventsByIds(brukerSomIkkeFinnes, grupperingsid, appnavn)
             }.`should be empty`()
         }
     }
@@ -75,7 +69,7 @@ class StatusoppdateringTestQueriesTest {
 
         runBlocking {
             database.dbQuery {
-                getAllGroupedStatusoppdateringEventsByIds(fodselsnummerMangler, grupperingsid, produsent)
+                getAllGroupedStatusoppdateringEventsByIds(fodselsnummerMangler, grupperingsid, appnavn)
             }.`should be empty`()
         }
     }
@@ -84,8 +78,8 @@ class StatusoppdateringTestQueriesTest {
     fun `Returnerer lesbart navn for produsent som kan eksponeres for alle eventer`() {
         runBlocking {
             val statusoppdatering = database.dbQuery {
-                getAllGroupedStatusoppdateringEventsByIds(bruker, grupperingsid, produsent) }.first()
-            statusoppdatering.produsent `should be equal to` "x-dittnav-produsent"
+                getAllGroupedStatusoppdateringEventsByIds(bruker, grupperingsid, appnavn) }.first()
+            statusoppdatering.produsent `should be equal to` appnavn
         }
     }
 
@@ -104,7 +98,7 @@ class StatusoppdateringTestQueriesTest {
         val noMatchGrupperingsid = "dummyGrupperingsid"
         runBlocking {
             database.dbQuery {
-                getAllGroupedStatusoppdateringEventsByIds(bruker, noMatchGrupperingsid, produsent)
+                getAllGroupedStatusoppdateringEventsByIds(bruker, noMatchGrupperingsid, appnavn)
             }.`should be empty`()
         }
     }

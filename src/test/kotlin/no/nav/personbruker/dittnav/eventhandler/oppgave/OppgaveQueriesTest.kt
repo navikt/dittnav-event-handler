@@ -2,8 +2,6 @@ package no.nav.personbruker.dittnav.eventhandler.oppgave
 
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
-import no.nav.personbruker.dittnav.eventhandler.common.database.createProdusent
-import no.nav.personbruker.dittnav.eventhandler.common.database.deleteProdusent
 import no.nav.personbruker.dittnav.eventhandler.common.findCountFor
 import org.amshove.kluent.`should be empty`
 import org.amshove.kluent.`should be equal to`
@@ -17,26 +15,24 @@ class OppgaveQueriesTest {
 
     private val database = H2Database()
     private val fodselsnummer = "12345"
-    private val produsent = "x-dittnav-produsent"
+    private val systembruker = "x-dittnav"
+    private val namespace = "localhost"
+    private val appnavn = "dittnav"
     private val grupperingsid = "100${fodselsnummer}"
 
-    private val oppgave1 = OppgaveObjectMother.createOppgave(id = 1, eventId = "123", fodselsnummer = fodselsnummer, aktiv = true, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
-    private val oppgave2 = OppgaveObjectMother.createOppgave(id = 2, eventId = "345", fodselsnummer = fodselsnummer, aktiv = true, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
-    private val oppgave3 = OppgaveObjectMother.createOppgave(id = 3, eventId = "567", fodselsnummer = fodselsnummer, aktiv = false, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
-    private val oppgave4 = OppgaveObjectMother.createOppgave(id = 4, eventId = "789", fodselsnummer = "54321", aktiv = true, systembruker = "y-dittnav", namespace = "dummyNamespace", appnavn = "y-dittnav")
+    private val oppgave1 = OppgaveObjectMother.createOppgave(id = 1, eventId = "123", fodselsnummer = fodselsnummer, aktiv = true, systembruker = systembruker, namespace = namespace, appnavn = appnavn)
+    private val oppgave2 = OppgaveObjectMother.createOppgave(id = 2, eventId = "345", fodselsnummer = fodselsnummer, aktiv = true, systembruker = systembruker, namespace = namespace, appnavn = appnavn)
+    private val oppgave3 = OppgaveObjectMother.createOppgave(id = 3, eventId = "567", fodselsnummer = fodselsnummer, aktiv = false, systembruker = systembruker, namespace = namespace, appnavn = appnavn)
+    private val oppgave4 = OppgaveObjectMother.createOppgave(id = 4, eventId = "789", fodselsnummer = "54321", aktiv = true, systembruker = "x-dittnav-2", namespace = namespace, appnavn = "x-dittnav")
 
     @BeforeAll
     fun `populer test-data`() {
         createOppgave(listOf(oppgave1, oppgave2, oppgave3, oppgave4))
-        createSystembruker(systembruker = "x-dittnav", produsentnavn = "x-dittnav-produsent")
-        createSystembruker(systembruker = "y-dittnav", produsentnavn = "y-dittnav-produsent")
     }
 
     @AfterAll
     fun `slett Oppgave-eventer fra tabellen`() {
         deleteOppgave(listOf(oppgave1, oppgave2, oppgave3, oppgave4))
-        deleteSystembruker(systembruker = "x-dittnav")
-        deleteSystembruker(systembruker = "y-dittnav")
     }
 
     @Test
@@ -80,7 +76,7 @@ class OppgaveQueriesTest {
     fun `Returnerer lesbart navn for produsent som kan eksponeres for aktive eventer`() {
         runBlocking {
             val oppgave = database.dbQuery { getAktivOppgaveForInnloggetBruker(fodselsnummer) }.first()
-            oppgave.produsent `should be equal to` "x-dittnav-produsent"
+            oppgave.produsent `should be equal to` appnavn
         }
     }
 
@@ -88,7 +84,7 @@ class OppgaveQueriesTest {
     fun `Returnerer lesbart navn for produsent som kan eksponeres for inaktive eventer`() {
         runBlocking {
             val oppgave = database.dbQuery { getInaktivOppgaveForInnloggetBruker(fodselsnummer) }.first()
-            oppgave.produsent `should be equal to` "x-dittnav-produsent"
+            oppgave.produsent `should be equal to` appnavn
         }
     }
 
@@ -96,30 +92,15 @@ class OppgaveQueriesTest {
     fun `Returnerer lesbart navn for produsent som kan eksponeres for alle eventer`() {
         runBlocking {
             val oppgave = database.dbQuery { getAllOppgaveForInnloggetBruker(fodselsnummer) }.first()
-            oppgave.produsent `should be equal to` "x-dittnav-produsent"
+            oppgave.produsent `should be equal to` appnavn
         }
-    }
-
-    @Test
-    fun `Returnerer tom streng for produsent hvis eventet er produsert av systembruker vi ikke har i systembruker-tabellen`() {
-        var oppgaveMedAnnenProdusent = OppgaveObjectMother.createOppgave(id = 5, eventId = "111", fodselsnummer = "112233", aktiv = true)
-                .copy(systembruker = "ukjent-systembruker")
-        createOppgave(listOf(oppgaveMedAnnenProdusent))
-        val oppgave = runBlocking {
-            database.dbQuery {
-                getAllOppgaveForInnloggetBruker("112233")
-            }.first()
-        }
-        oppgave.produsent `should be equal to` ""
-        oppgave.systembruker `should be equal to` "ukjent-systembruker"
-        deleteOppgave(listOf(oppgaveMedAnnenProdusent))
     }
 
     @Test
     fun `Returnerer en liste av alle grupperte Oppgave-eventer`() {
         runBlocking {
             database.dbQuery {
-                getAllGroupedOppgaveEventsByIds(fodselsnummer, grupperingsid, produsent)
+                getAllGroupedOppgaveEventsByIds(fodselsnummer, grupperingsid, appnavn)
             }.size `should be equal to` 3
         }
     }
@@ -139,7 +120,7 @@ class OppgaveQueriesTest {
         val noMatchGrupperingsid = "dummyGrupperingsid"
         runBlocking {
             database.dbQuery {
-                getAllGroupedOppgaveEventsByIds(fodselsnummer, noMatchGrupperingsid, produsent)
+                getAllGroupedOppgaveEventsByIds(fodselsnummer, noMatchGrupperingsid, appnavn)
             }.`should be empty`()
         }
     }
@@ -150,8 +131,8 @@ class OppgaveQueriesTest {
             val groupedEventsBySystemuser = database.dbQuery { getAllGroupedOppgaveEventsBySystemuser() }
 
             groupedEventsBySystemuser.size `should be equal to` 2
-            groupedEventsBySystemuser.get(oppgave1.systembruker) `should be equal to` 3
-            groupedEventsBySystemuser.get(oppgave4.systembruker) `should be equal to` 1
+            groupedEventsBySystemuser[oppgave1.systembruker] `should be equal to` 3
+            groupedEventsBySystemuser[oppgave4.systembruker] `should be equal to` 1
         }
     }
 
@@ -173,21 +154,9 @@ class OppgaveQueriesTest {
         }
     }
 
-    private fun createSystembruker(systembruker: String, produsentnavn: String) {
-        runBlocking {
-            database.dbQuery { createProdusent(systembruker, produsentnavn) }
-        }
-    }
-
     private fun deleteOppgave(oppgaver: List<Oppgave>) {
         runBlocking {
             database.dbQuery { deleteOppgave(oppgaver) }
-        }
-    }
-
-    private fun deleteSystembruker(systembruker: String) {
-        runBlocking {
-            database.dbQuery { deleteProdusent(systembruker) }
         }
     }
 }

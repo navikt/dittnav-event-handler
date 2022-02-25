@@ -11,7 +11,6 @@ import no.nav.brukernotifikasjon.schemas.builders.exception.FieldValidationExcep
 import no.nav.personbruker.dittnav.eventhandler.common.TokenXUserObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import org.amshove.kluent.`should be equal to`
-import org.amshove.kluent.`should contain`
 import org.amshove.kluent.`should throw`
 import org.amshove.kluent.invoking
 import org.junit.jupiter.api.AfterAll
@@ -55,22 +54,6 @@ class BeskjedEventServiceTest {
             val actualBeskjeds = beskjedEventService.getAllCachedEventsForUser(bruker)
             actualBeskjeds.size `should be equal to` beskjedList.size
         }
-    }
-
-    @Test
-    fun `Should log warning if producer is empty`() {
-        val beskjedListWithEmptyProducer = listOf(
-                BeskjedObjectMother.createBeskjed(1, "1", bruker.ident, null, "123", true).copy(produsent = ""))
-        runBlocking {
-            coEvery {
-                database.queryWithExceptionTranslation<List<Beskjed>>(any())
-            }.returns(beskjedListWithEmptyProducer)
-            beskjedEventService.getActiveCachedEventsForUser(bruker)
-        }
-        val logevent = appender.list.first()
-        logevent.level.levelStr `should be equal to` "WARN"
-        logevent.formattedMessage `should contain` "produsent"
-        logevent.formattedMessage `should contain` "fodselsnummer=***"
     }
 
     @Test

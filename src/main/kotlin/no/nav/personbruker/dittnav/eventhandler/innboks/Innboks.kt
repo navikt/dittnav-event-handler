@@ -4,8 +4,8 @@ import java.time.ZonedDateTime
 
 data class Innboks(
         val id: Int,
-        val produsent: String? = null,
-        val systembruker: String? = null,
+        val produsent: String,
+        val systembruker: String,
         val namespace: String,
         val appnavn: String,
         val eventTidspunkt: ZonedDateTime,

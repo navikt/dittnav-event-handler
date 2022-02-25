@@ -4,7 +4,7 @@ import java.time.ZonedDateTime
 
 data class Done(
         val eventId: String,
-        val systembruker: String? = null,
+        val systembruker: String,
         val namespace: String,
         val appnavn: String,
         val fodselsnummer: String,

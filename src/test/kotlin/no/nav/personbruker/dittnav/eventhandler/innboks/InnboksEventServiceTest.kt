@@ -10,7 +10,6 @@ import no.nav.brukernotifikasjon.schemas.builders.exception.FieldValidationExcep
 import no.nav.personbruker.dittnav.eventhandler.common.TokenXUserObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import org.amshove.kluent.`should be equal to`
-import org.amshove.kluent.`should contain`
 import org.amshove.kluent.`should throw`
 import org.amshove.kluent.invoking
 import org.junit.jupiter.api.AfterAll
@@ -40,22 +39,6 @@ class InnboksEventServiceTest {
     @AfterAll
     fun `teardown`() {
         logger.detachAppender(appender)
-    }
-
-    @Test
-    fun `Should log warning if producer is empty`() {
-        val innboksListWithEmptyProducer = listOf(
-                InnboksObjectMother.createInnboks(id = 1, eventId = "123", fodselsnummer = "12345", aktiv = true).copy(produsent = ""))
-        runBlocking {
-            coEvery {
-                database.queryWithExceptionTranslation<List<Innboks>>(any())
-            }.returns(innboksListWithEmptyProducer)
-            innboksEventService.getActiveCachedEventsForUser(bruker)
-        }
-        val logevent = appender.list.first()
-        logevent.level.levelStr `should be equal to` "WARN"
-        logevent.formattedMessage `should contain` "produsent"
-        logevent.formattedMessage `should contain` "fodselsnummer=***"
     }
 
     @Test

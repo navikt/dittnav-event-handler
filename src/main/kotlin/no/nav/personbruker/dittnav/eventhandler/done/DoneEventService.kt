@@ -1,7 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.done
 
 import Beskjed
-import no.nav.personbruker.dittnav.eventhandler.beskjed.getAllGroupedBeskjedEventsByProducer
 import no.nav.personbruker.dittnav.eventhandler.beskjed.getBeskjedByIds
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.DuplicateEventException
@@ -49,7 +48,7 @@ class DoneEventService(private val database: Database, private val doneProducer:
         if (events.isEmpty()) {
             throw NoEventsException("Listen(beskjed) var tom.")
         } else if (events.size > 1) {
-            throw DuplicateEventException("Producer: ${events.first().produsent}, ListSize: ${events.size}")
+            throw DuplicateEventException("Appnavn: ${events.first().appnavn}, ListSize: ${events.size}")
         } else if (!events.first().aktiv) {
             throw EventMarkedInactiveException("Tilhørende event er allerede markert done.")
         }

@@ -5,12 +5,9 @@ import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.modia.User
 import no.nav.personbruker.dittnav.eventhandler.common.statistics.EventCountForProducer
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
-import org.slf4j.LoggerFactory
 import java.sql.Connection
 
 class OppgaveEventService(private val database: Database) {
-
-    private val log = LoggerFactory.getLogger(OppgaveEventService::class.java)
 
     suspend fun getActiveCachedEventsForUser(bruker: TokenXUser): List<OppgaveDTO> {
         return getEvents { getAktivOppgaveForInnloggetBruker(bruker.ident) }
@@ -62,17 +59,6 @@ class OppgaveEventService(private val database: Database) {
         val events = database.queryWithExceptionTranslation {
             operationToExecute()
         }
-        val eventsWithEmptyProdusent = events.filter { oppgave -> oppgave.produsent.isNullOrEmpty() }
-
-        if (eventsWithEmptyProdusent.isNotEmpty()) {
-            logEventsWithEmptyProdusent(eventsWithEmptyProdusent)
-        }
         return events
-    }
-
-    private fun logEventsWithEmptyProdusent(events: List<Oppgave>) {
-        events.forEach { oppgave ->
-            log.warn("Returnerer oppgave-eventer med tom produsent til frontend. Kanskje er ikke systembrukeren lagt inn i systembruker-tabellen? ${oppgave.toString()}")
-        }
     }
 }

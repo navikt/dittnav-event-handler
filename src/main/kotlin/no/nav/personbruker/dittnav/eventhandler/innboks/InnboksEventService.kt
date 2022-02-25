@@ -63,17 +63,6 @@ class InnboksEventService(private val database: Database) {
         val events = database.queryWithExceptionTranslation {
             operationToExecute()
         }
-        val eventsWithEmptyProdusent = events.filter { innboks -> innboks.produsent.isNullOrEmpty() }
-
-        if (eventsWithEmptyProdusent.isNotEmpty()) {
-            logEventsWithEmptyProdusent(eventsWithEmptyProdusent)
-        }
         return events
-    }
-
-    fun logEventsWithEmptyProdusent(events: List<Innboks>) {
-        events.forEach { innboks ->
-            log.warn("Returnerer innboks-eventer med tom produsent til frontend. Kanskje er ikke systembrukeren lagt inn i systembruker-tabellen? ${innboks.toString()}")
-        }
     }
 }

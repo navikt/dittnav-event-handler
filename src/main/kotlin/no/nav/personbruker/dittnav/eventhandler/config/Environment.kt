@@ -5,8 +5,6 @@ import no.nav.personbruker.dittnav.eventhandler.config.ConfigUtil.isCurrentlyRun
 
 data class Environment(val kafkaBrokers: String = getEnvVar("KAFKA_BROKERS"),
                        val kafkaSchemaRegistry: String = getEnvVar("KAFKA_SCHEMA_REGISTRY"),
-                       val username: String = getEnvVar("SERVICEUSER_USERNAME"),
-                       val password: String = getEnvVar("SERVICEUSER_PASSWORD"),
                        val groupId: String = getEnvVar("GROUP_ID"),
                        val dbHost: String = getEnvVar("DB_EVENTHANDLER_HOST"),
                        val dbName: String = getEnvVar("DB_EVENTHANDLER_DATABASE"),

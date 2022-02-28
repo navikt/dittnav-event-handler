@@ -43,10 +43,10 @@ class InnboksEventService(private val database: Database) {
             .map { innboks -> innboks.toDTO()}
     }
 
-    suspend fun getAllGroupedEventsFromCacheForUser(bruker: TokenXUser, grupperingsid: String?, producer: String?): List<InnboksDTO> {
+    suspend fun getAllGroupedEventsFromCacheForUser(bruker: TokenXUser, grupperingsid: String?, appnavn: String?): List<InnboksDTO> {
         val grupperingsId = validateNonNullFieldMaxLength(grupperingsid, "grupperingsid", 100)
-        val produsent = validateNonNullFieldMaxLength(producer, "produsent", 100)
-        return getEvents { getAllGroupedInnboksEventsByIds(bruker.ident, grupperingsId, produsent) }
+        val app = validateNonNullFieldMaxLength(appnavn, "appnavn", 100)
+        return getEvents { getAllGroupedInnboksEventsByIds(bruker.ident, grupperingsId, app) }
             .map { innboks -> innboks.toDTO()}
     }
 
@@ -63,17 +63,6 @@ class InnboksEventService(private val database: Database) {
         val events = database.queryWithExceptionTranslation {
             operationToExecute()
         }
-        val eventsWithEmptyProdusent = events.filter { innboks -> innboks.produsent.isNullOrEmpty() }
-
-        if (eventsWithEmptyProdusent.isNotEmpty()) {
-            logEventsWithEmptyProdusent(eventsWithEmptyProdusent)
-        }
         return events
-    }
-
-    fun logEventsWithEmptyProdusent(events: List<Innboks>) {
-        events.forEach { innboks ->
-            log.warn("Returnerer innboks-eventer med tom produsent til frontend. Kanskje er ikke systembrukeren lagt inn i systembruker-tabellen? ${innboks.toString()}")
-        }
     }
 }

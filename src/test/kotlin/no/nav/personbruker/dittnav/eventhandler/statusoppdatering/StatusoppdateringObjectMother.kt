@@ -53,11 +53,11 @@ object StatusoppdateringObjectMother {
                 sikkerhetsnivaa = 4,
                 sistOppdatert = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
                 link = "https://nav.no/systemX",
-                statusGlobal = "dummyStatusGlobal",
-                statusIntern = "dummyStatusIntern",
-                sakstema = "dummySakstema",
-                namespace = "dummyNamespace",
-                appnavn = "dummyAppnavn")
+                statusGlobal = dummyStatusGlobal,
+                statusIntern = dummyStatusIntern,
+                sakstema = dummySakstema,
+                namespace = dummyNamespace,
+                appnavn = dummyAppnavn)
     }
 
     fun createStatusoppdateringWithFodselsnummer(id: Int, fodselsnummer: String): Statusoppdatering {
@@ -72,18 +72,18 @@ object StatusoppdateringObjectMother {
                 sikkerhetsnivaa = 4,
                 sistOppdatert = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
                 link = "https://nav.no/systemX",
-                statusGlobal = "dummyStatusGlobal",
-                statusIntern = "dummyStatusIntern",
-                sakstema = "dummySakstema",
-                namespace = "dummyNamespace",
-                appnavn = "dummyAppnavn")
+                statusGlobal = dummyStatusGlobal,
+                statusIntern = dummyStatusIntern,
+                sakstema = dummySakstema,
+                namespace = dummyNamespace,
+                appnavn = dummyAppnavn)
     }
 
     fun getStatusoppdateringEvents(bruker: TokenXUser): MutableList<Statusoppdatering> {
         return mutableListOf(
-                createStatusoppdatering(1, "$dummyEventId+1", bruker.ident, "$dummyStatusGlobal+1", "$dummyStatusIntern+1", "$dummySakstema+1", systembruker = "x-dittnav", appnavn = "x-dittnav"),
-                createStatusoppdatering(2, "$dummyEventId+2", bruker.ident, "$dummyStatusGlobal+2", "$dummyStatusIntern+2", "$dummySakstema+2", systembruker = "x-dittnav", appnavn = "x-dittnav"),
-                createStatusoppdatering(3, "$dummyEventId+3", bruker.ident, "$dummyStatusGlobal+3", "$dummyStatusIntern+3", "$dummySakstema+3", systembruker = "x-dittnav", appnavn = "x-dittnav"),
-                createStatusoppdatering(4, "$dummyEventId+4", bruker.ident, "$dummyStatusGlobal+4", "$dummyStatusIntern+4", "$dummySakstema+4", systembruker = "y-dittnav", appnavn = "y-dittnav"))
+                createStatusoppdatering(1, "$dummyEventId+1", bruker.ident, "$dummyStatusGlobal+1", "$dummyStatusIntern+1", "$dummySakstema+1", systembruker = "x-dittnav", appnavn = "dittnav"),
+                createStatusoppdatering(2, "$dummyEventId+2", bruker.ident, "$dummyStatusGlobal+2", "$dummyStatusIntern+2", "$dummySakstema+2", systembruker = "x-dittnav", appnavn = "dittnav"),
+                createStatusoppdatering(3, "$dummyEventId+3", bruker.ident, "$dummyStatusGlobal+3", "$dummyStatusIntern+3", "$dummySakstema+3", systembruker = "x-dittnav", appnavn = "dittnav"),
+                createStatusoppdatering(4, "$dummyEventId+4", bruker.ident, "$dummyStatusGlobal+4", "$dummyStatusIntern+4", "$dummySakstema+4", systembruker = "y-dittnav", appnavn = "dittnav-2"))
     }
 }

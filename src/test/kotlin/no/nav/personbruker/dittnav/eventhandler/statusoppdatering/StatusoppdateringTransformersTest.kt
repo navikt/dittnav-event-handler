@@ -14,7 +14,7 @@ internal class StatusoppdateringTransformersTest {
         statusoppdateringDTO.fodselsnummer `should be equal to` statusoppdatering.fodselsnummer
         statusoppdateringDTO.grupperingsId `should be equal to` statusoppdatering.grupperingsId
         statusoppdateringDTO.link `should be equal to` statusoppdatering.link
-        statusoppdateringDTO.produsent `should be equal to` statusoppdatering.produsent
+        statusoppdateringDTO.produsent `should be equal to` statusoppdatering.appnavn
         statusoppdateringDTO.sakstema `should be equal to` statusoppdatering.sakstema
         statusoppdateringDTO.statusGlobal `should be equal to` statusoppdatering.statusGlobal
         statusoppdateringDTO.statusIntern `should be equal to` statusoppdatering.statusIntern

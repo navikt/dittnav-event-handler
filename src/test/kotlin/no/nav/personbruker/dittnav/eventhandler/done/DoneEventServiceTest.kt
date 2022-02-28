@@ -7,8 +7,6 @@ import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
 import no.nav.personbruker.dittnav.eventhandler.beskjed.deleteBeskjed
 import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
-import no.nav.personbruker.dittnav.eventhandler.common.database.createProdusent
-import no.nav.personbruker.dittnav.eventhandler.common.database.deleteProdusent
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.DuplicateEventException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.EventMarkedInactiveException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.NoEventsException
@@ -38,7 +36,6 @@ class DoneEventServiceTest {
     fun `populer testdata`() {
         runBlocking {
             database.dbQuery { createBeskjed(listOf(beskjed1)) }
-            database.dbQuery { createProdusent(systembruker = "x-dittnav", produsentnavn = "dittnav") }
         }
     }
 
@@ -46,7 +43,6 @@ class DoneEventServiceTest {
     fun `slett testdata`() {
         runBlocking {
             database.dbQuery { deleteBeskjed(listOf(beskjed1)) }
-            database.dbQuery { deleteProdusent(systembruker = "x-dittnav") }
         }
     }
 

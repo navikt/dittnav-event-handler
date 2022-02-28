@@ -45,23 +45,21 @@ fun Connection.deleteStatusoppdatering(statusoppdateringer: List<Statusoppdateri
 
 fun Connection.getAllStatusoppdateringEvents(): List<Statusoppdatering> =
         prepareStatement("""SELECT 
-            |statusoppdatering.id,
-            |statusoppdatering.eventTidspunkt,
-            |statusoppdatering.fodselsnummer,
-            |statusoppdatering.eventId, 
-            |statusoppdatering.grupperingsId,
-            |statusoppdatering.link,
-            |statusoppdatering.sikkerhetsnivaa,
-            |statusoppdatering.sistOppdatert,
-            |statusoppdatering.statusGlobal,
-            |statusoppdatering.statusIntern,
-            |statusoppdatering.sakstema,
-            |statusoppdatering.systembruker,
-            |statusoppdatering.namespace,
-            |statusoppdatering.appnavn,
-            |systembrukere.produsentnavn AS produsent
-            |FROM (SELECT * FROM statusoppdatering) AS statusoppdatering
-            |LEFT JOIN systembrukere ON statusoppdatering.systembruker = systembrukere.systembruker""".trimMargin())
+            |id,
+            |eventTidspunkt,
+            |fodselsnummer,
+            |eventId, 
+            |grupperingsId,
+            |link,
+            |sikkerhetsnivaa,
+            |sistOppdatert,
+            |statusGlobal,
+            |statusIntern,
+            |sakstema,
+            |systembruker,
+            |namespace,
+            |appnavn
+            |FROM statusoppdatering""".trimMargin())
                 .use {
                     it.executeQuery().mapList {
                         toStatusoppdatering()

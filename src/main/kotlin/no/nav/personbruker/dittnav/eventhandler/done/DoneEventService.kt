@@ -1,13 +1,12 @@
 package no.nav.personbruker.dittnav.eventhandler.done
 
 import Beskjed
-import no.nav.personbruker.dittnav.eventhandler.beskjed.getAllGroupedBeskjedEventsByProducer
 import no.nav.personbruker.dittnav.eventhandler.beskjed.getBeskjedByIds
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.DuplicateEventException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.EventMarkedInactiveException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.NoEventsException
-import no.nav.personbruker.dittnav.eventhandler.common.statistics.EventCountForProducer
+import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 
 class DoneEventService(private val database: Database, private val doneProducer: DoneProducer) {

@@ -1,10 +1,9 @@
 package no.nav.personbruker.dittnav.eventhandler.innboks
 
 import no.nav.brukernotifikasjon.schemas.builders.util.ValidationUtil.validateNonNullFieldMaxLength
-import no.nav.personbruker.dittnav.eventhandler.beskjed.getAllGroupedBeskjedEventsByProducer
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.modia.User
-import no.nav.personbruker.dittnav.eventhandler.common.statistics.EventCountForProducer
+import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 import org.slf4j.LoggerFactory
 import java.sql.Connection

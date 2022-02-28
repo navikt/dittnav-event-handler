@@ -3,7 +3,7 @@ package no.nav.personbruker.dittnav.eventhandler.oppgave
 import no.nav.personbruker.dittnav.eventhandler.common.database.convertIfUnlikelyDate
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
-import no.nav.personbruker.dittnav.eventhandler.common.statistics.EventCountForProducer
+import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId

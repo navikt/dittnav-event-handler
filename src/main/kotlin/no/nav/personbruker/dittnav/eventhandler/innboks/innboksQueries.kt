@@ -2,8 +2,7 @@ package no.nav.personbruker.dittnav.eventhandler.innboks
 
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
-import no.nav.personbruker.dittnav.eventhandler.common.statistics.EventCountForProducer
-import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
+import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId

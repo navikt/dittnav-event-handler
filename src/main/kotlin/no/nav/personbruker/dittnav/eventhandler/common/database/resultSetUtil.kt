@@ -1,6 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.common.database
 
 import java.sql.ResultSet
+import java.sql.SQLException
 import java.sql.Timestamp
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -13,6 +14,12 @@ fun <T> ResultSet.mapList(result: ResultSet.() -> T): List<T> =
             }
         }
 
+fun <T> ResultSet.mapSingleResult(resultMapper: ResultSet.() -> T): T =
+    if (next()) {
+        resultMapper()
+    } else {
+        throw SQLException("Found no rows")
+    }
 
 const val YEAR_LOWER_LIMIT = 1975
 val timeZone = ZoneId.of("Europe/Oslo")

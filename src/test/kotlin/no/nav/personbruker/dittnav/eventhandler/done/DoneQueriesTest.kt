@@ -17,7 +17,6 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
@@ -27,15 +26,16 @@ internal class DoneQueriesTest {
     private val database = H2Database()
     private val fodselsnummer = "123"
     private val systembruker = "x-dittnav"
+    private val namespace = "localhost"
+    private val appnavn = "dittnav"
     private val grupperingsId = "xxx"
     private val utcDateTime = ZonedDateTime.now(ZoneOffset.UTC)
-    private val osloDateTime = ZonedDateTime.ofInstant(utcDateTime.toInstant(), ZoneId.of("Europe/Oslo"))
 
     private val done1 = DoneObjectMother.createDone(systembruker = "x-dittnav", utcDateTime, fodselsnummer, "1", grupperingsId)
     private val done2 = DoneObjectMother.createDone(systembruker = "y-dittnav", utcDateTime, fodselsnummer, "2", grupperingsId)
-    private val inaktivBeskjed = BeskjedObjectMother.createBeskjed(id = 1, eventId = "123", fodselsnummer = "00", synligFremTil = ZonedDateTime.now().plusHours(1), uid = "11", aktiv = false, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
-    private val inaktivOppgave = OppgaveObjectMother.createOppgave(id = 1, eventId = "123", fodselsnummer = "01", aktiv = false, systembruker = "x-dittnav", namespace = "dummyNamespace", appnavn = "x-dittnav")
-    private val inaktivInnboks = InnboksObjectMother.createInnboks(id = 1, eventId = "123", fodselsnummer = "02", aktiv = false, systembruker = "y-dittnav", namespace = "dummyNamespace", appnavn = "y-dittnav")
+    private val inaktivBeskjed = BeskjedObjectMother.createBeskjed(id = 1, eventId = "123", fodselsnummer = "00", synligFremTil = ZonedDateTime.now().plusHours(1), uid = "11", aktiv = false, systembruker = systembruker, namespace = namespace, appnavn = appnavn)
+    private val inaktivOppgave = OppgaveObjectMother.createOppgave(id = 1, eventId = "123", fodselsnummer = "01", aktiv = false, systembruker = systembruker, namespace = namespace, appnavn = appnavn)
+    private val inaktivInnboks = InnboksObjectMother.createInnboks(id = 1, eventId = "123", fodselsnummer = "02", aktiv = false, systembruker = "x-dittnav-2", namespace = namespace, appnavn = "dittnav-2")
 
     @BeforeAll
     fun `populer testdata`() {
@@ -53,8 +53,8 @@ internal class DoneQueriesTest {
             val groupedEventsBySystemuser = database.dbQuery { getAllGroupedDoneEventsBySystemuser() }
 
             groupedEventsBySystemuser.size `should be equal to` 2
-            groupedEventsBySystemuser.get(done1.systembruker) `should be equal to` 1
-            groupedEventsBySystemuser.get(done2.systembruker) `should be equal to` 1
+            groupedEventsBySystemuser[done1.systembruker] `should be equal to` 1
+            groupedEventsBySystemuser[done2.systembruker] `should be equal to` 1
         }
     }
 
@@ -65,9 +65,9 @@ internal class DoneQueriesTest {
             val groupedEventsBySystemuser = database.dbQuery { countTotalNumberOfBrukernotifikasjonerByActiveStatus(aktiv = false) }
 
             groupedEventsBySystemuser.size `should be equal to` 2
-            groupedEventsBySystemuser.get(inaktivBeskjed.systembruker) `should be equal to` 2
-            groupedEventsBySystemuser.get(inaktivOppgave.systembruker) `should be equal to` 2
-            groupedEventsBySystemuser.get(inaktivInnboks.systembruker) `should be equal to` 1
+            groupedEventsBySystemuser[inaktivBeskjed.systembruker] `should be equal to` 2
+            groupedEventsBySystemuser[inaktivOppgave.systembruker] `should be equal to` 2
+            groupedEventsBySystemuser[inaktivInnboks.systembruker] `should be equal to` 1
         }
         deleteInactiveBrukernotifikasjoner()
     }

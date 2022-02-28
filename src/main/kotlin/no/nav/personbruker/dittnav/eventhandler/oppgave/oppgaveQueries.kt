@@ -17,22 +17,20 @@ fun Connection.getAktivOppgaveForInnloggetBruker(fodselsnummer: String): List<Op
 
 fun Connection.getAllOppgaveForInnloggetBruker(fodselsnummer: String): List<Oppgave> =
         prepareStatement("""SELECT 
-            |oppgave.id,
-            |oppgave.eventTidspunkt,
-            |oppgave.fodselsnummer,
-            |oppgave.eventId,
-            |oppgave.grupperingsId,
-            |oppgave.tekst,
-            |oppgave.link,
-            |oppgave.sikkerhetsnivaa,
-            |oppgave.sistOppdatert,
-            |oppgave.aktiv,
-            |oppgave.systembruker,
-            |oppgave.namespace,
-            |oppgave.appnavn,
-            |systembrukere.produsentnavn AS produsent
-            |FROM (SELECT * FROM oppgave WHERE fodselsnummer = ?) AS oppgave
-            |LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker""".trimMargin())
+            |id,
+            |eventTidspunkt,
+            |fodselsnummer,
+            |eventId,
+            |grupperingsId,
+            |tekst,
+            |link,
+            |sikkerhetsnivaa,
+            |sistOppdatert,
+            |aktiv,
+            |systembruker,
+            |namespace,
+            |appnavn
+            |FROM oppgave WHERE fodselsnummer = ?""".trimMargin())
                 .use {
                     it.setString(1, fodselsnummer)
                     it.executeQuery().mapList {
@@ -40,28 +38,26 @@ fun Connection.getAllOppgaveForInnloggetBruker(fodselsnummer: String): List<Oppg
                     }
                 }
 
-fun Connection.getAllGroupedOppgaveEventsByIds(fodselsnummer: String, grupperingsid: String, produsent: String): List<Oppgave> =
+fun Connection.getAllGroupedOppgaveEventsByIds(fodselsnummer: String, grupperingsid: String, appnavn: String): List<Oppgave> =
         prepareStatement("""SELECT
-            |oppgave.id,
-            |oppgave.eventTidspunkt,
-            |oppgave.fodselsnummer,
-            |oppgave.eventId,
-            |oppgave.grupperingsId,
-            |oppgave.tekst,
-            |oppgave.link,
-            |oppgave.sikkerhetsnivaa,
-            |oppgave.sistOppdatert,
-            |oppgave.aktiv,
-            |oppgave.systembruker,
-            |oppgave.namespace,
-            |oppgave.appnavn,
-            |systembrukere.produsentnavn AS produsent
-            |FROM (SELECT * FROM oppgave WHERE fodselsnummer = ? AND grupperingsid = ?) AS oppgave
-            |LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker WHERE systembrukere.produsentnavn = ?""".trimMargin())
+            |id,
+            |eventTidspunkt,
+            |fodselsnummer,
+            |eventId,
+            |grupperingsId,
+            |tekst,
+            |link,
+            |sikkerhetsnivaa,
+            |sistOppdatert,
+            |aktiv,
+            |systembruker,
+            |namespace,
+            |appnavn
+            |FROM oppgave WHERE fodselsnummer = ? AND grupperingsid = ? AND appnavn = ?""".trimMargin())
                 .use {
                     it.setString(1, fodselsnummer)
                     it.setString(2, grupperingsid)
-                    it.setString(3, produsent)
+                    it.setString(3, appnavn)
                     it.executeQuery().mapList {
                         toOppgave()
                     }
@@ -72,7 +68,7 @@ private fun ResultSet.toOppgave(): Oppgave {
     val verifiedEventTidspunkt = convertIfUnlikelyDate(rawEventTidspunkt)
     return Oppgave(
             id = getInt("id"),
-            produsent = getString("produsent") ?: "",
+            produsent = getString("appnavn") ?: "",
             systembruker = getString("systembruker"),
             namespace = getString("namespace"),
             appnavn = getString("appnavn"),
@@ -90,22 +86,20 @@ private fun ResultSet.toOppgave(): Oppgave {
 
 private fun Connection.getOppgaveForInnloggetBruker(fodselsnummer: String, aktiv: Boolean): List<Oppgave> =
         prepareStatement("""SELECT
-            |oppgave.id,
-            |oppgave.eventTidspunkt,
-            |oppgave.fodselsnummer,
-            |oppgave.eventId,
-            |oppgave.grupperingsId,
-            |oppgave.tekst,
-            |oppgave.link,
-            |oppgave.sikkerhetsnivaa,
-            |oppgave.sistOppdatert,
-            |oppgave.aktiv,
-            |oppgave.systembruker,
-            |oppgave.namespace,
-            |oppgave.appnavn,
-            |systembrukere.produsentnavn AS produsent
-            |FROM (SELECT * FROM oppgave WHERE fodselsnummer = ? AND aktiv = ?) AS oppgave
-            |LEFT JOIN systembrukere ON oppgave.systembruker = systembrukere.systembruker""".trimMargin())
+            |id,
+            |eventTidspunkt,
+            |fodselsnummer,
+            |eventId,
+            |grupperingsId,
+            |tekst,
+            |link,
+            |sikkerhetsnivaa,
+            |sistOppdatert,
+            |aktiv,
+            |systembruker,
+            |namespace,
+            |appnavn
+            |FROM oppgave WHERE fodselsnummer = ? AND aktiv = ?""".trimMargin())
                 .use {
                     it.setString(1, fodselsnummer)
                     it.setBoolean(2, aktiv)

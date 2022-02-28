@@ -43,22 +43,6 @@ class OppgaveEventServiceTest {
     }
 
     @Test
-    fun `Should log warning if producer is empty`() {
-        val oppgaveListWithEmptyProducer = listOf(
-                OppgaveObjectMother.createOppgave(id = 1, eventId = "123", fodselsnummer = "12345", aktiv = true).copy(produsent = ""))
-        runBlocking {
-            coEvery {
-                database.queryWithExceptionTranslation<List<Oppgave>>(any())
-            }.returns(oppgaveListWithEmptyProducer)
-            oppgaveEventService.getActiveCachedEventsForUser(bruker)
-        }
-        val logevent = appender.list.first()
-        logevent.level.levelStr `should be equal to` "WARN"
-        logevent.formattedMessage `should contain` "produsent"
-        logevent.formattedMessage `should contain` "fodselsnummer=***"
-    }
-
-    @Test
     fun `Should return all events that are grouped together by ids`() {
         val innloggetbruker = TokenXUserObjectMother.createInnloggetBruker("100")
         val grupperingsid = "100${innloggetbruker.ident}"

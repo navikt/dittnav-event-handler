@@ -16,22 +16,20 @@ fun Connection.getAktivInnboksForInnloggetBruker(fodselsnummer: String): List<In
 
 fun Connection.getAllInnboksForInnloggetBruker(fodselsnummer: String): List<Innboks> =
         prepareStatement("""SELECT
-            |innboks.id,
-            |innboks.eventTidspunkt,
-            |innboks.fodselsnummer,
-            |innboks.eventId,
-            |innboks.grupperingsId,
-            |innboks.tekst,
-            |innboks.link,
-            |innboks.sikkerhetsnivaa,
-            |innboks.sistOppdatert,
-            |innboks.aktiv,
-            |innboks.systembruker,
-            |innboks.namespace,
-            |innboks.appnavn,
-            |systembrukere.produsentnavn AS produsent
-            |FROM (SELECT * FROM innboks WHERE fodselsnummer = ?) AS innboks
-            |LEFT JOIN systembrukere ON innboks.systembruker = systembrukere.systembruker""".trimMargin())
+            |id,
+            |eventTidspunkt,
+            |fodselsnummer,
+            |eventId,
+            |grupperingsId,
+            |tekst,
+            |link,
+            |sikkerhetsnivaa,
+            |sistOppdatert,
+            |aktiv,
+            |systembruker,
+            |namespace,
+            |appnavn
+            |FROM innboks WHERE fodselsnummer = ?""".trimMargin())
                 .use {
                     it.setString(1, fodselsnummer)
                     it.executeQuery().mapList {
@@ -39,28 +37,26 @@ fun Connection.getAllInnboksForInnloggetBruker(fodselsnummer: String): List<Innb
                     }
                 }
 
-fun Connection.getAllGroupedInnboksEventsByIds(fodselsnummer: String, grupperingsid: String, produsent: String): List<Innboks> =
+fun Connection.getAllGroupedInnboksEventsByIds(fodselsnummer: String, grupperingsid: String, appnavn: String): List<Innboks> =
         prepareStatement("""SELECT
-            |innboks.id,
-            |innboks.eventTidspunkt,
-            |innboks.fodselsnummer,
-            |innboks.eventId,
-            |innboks.grupperingsId,
-            |innboks.tekst,
-            |innboks.link,
-            |innboks.sikkerhetsnivaa,
-            |innboks.sistOppdatert,
-            |innboks.aktiv,
-            |innboks.systembruker,
-            |innboks.namespace,
-            |innboks.appnavn,
-            |systembrukere.produsentnavn AS produsent
-            |FROM (SELECT * FROM innboks WHERE fodselsnummer = ? AND grupperingsid = ?) AS innboks
-            |LEFT JOIN systembrukere ON innboks.systembruker = systembrukere.systembruker WHERE systembrukere.produsentnavn = ?""".trimMargin())
+            |id,
+            |eventTidspunkt,
+            |fodselsnummer,
+            |eventId,
+            |grupperingsId,
+            |tekst,
+            |link,
+            |sikkerhetsnivaa,
+            |sistOppdatert,
+            |aktiv,
+            |systembruker,
+            |namespace,
+            |appnavn
+            |FROM innboks WHERE fodselsnummer = ? AND grupperingsid = ? AND appnavn = ?""".trimMargin())
                 .use {
                     it.setString(1, fodselsnummer)
                     it.setString(2, grupperingsid)
-                    it.setString(3, produsent)
+                    it.setString(3, appnavn)
                     it.executeQuery().mapList {
                         toInnboks()
                     }
@@ -69,7 +65,7 @@ fun Connection.getAllGroupedInnboksEventsByIds(fodselsnummer: String, gruppering
 private fun ResultSet.toInnboks(): Innboks {
     return Innboks(
             id = getInt("id"),
-            produsent = getString("produsent") ?: "",
+            produsent = getString("appnavn") ?: "",
             systembruker = getString("systembruker"),
             namespace = getString("namespace"),
             appnavn = getString("appnavn"),
@@ -87,22 +83,20 @@ private fun ResultSet.toInnboks(): Innboks {
 
 private fun Connection.getInnboksForInnloggetBruker(fodselsnummer: String, aktiv: Boolean): List<Innboks> =
         prepareStatement("""SELECT
-            |innboks.id,
-            |innboks.eventTidspunkt,
-            |innboks.fodselsnummer,
-            |innboks.eventId,
-            |innboks.grupperingsId,
-            |innboks.tekst,
-            |innboks.link,
-            |innboks.sikkerhetsnivaa,
-            |innboks.sistOppdatert,
-            |innboks.aktiv,
-            |innboks.systembruker,
-            |innboks.namespace,
-            |innboks.appnavn,
-            |systembrukere.produsentnavn AS produsent
-            |FROM (SELECT * FROM innboks WHERE fodselsnummer = ? AND aktiv = ?) AS innboks
-            |LEFT JOIN systembrukere ON innboks.systembruker = systembrukere.systembruker""".trimMargin())
+            |id,
+            |eventTidspunkt,
+            |fodselsnummer,
+            |eventId,
+            |grupperingsId,
+            |tekst,
+            |link,
+            |sikkerhetsnivaa,
+            |sistOppdatert,
+            |aktiv,
+            |systembruker,
+            |namespace,
+            |appnavn
+            |FROM innboks WHERE fodselsnummer = ? AND aktiv = ?""".trimMargin())
                 .use {
                     it.setString(1, fodselsnummer)
                     it.setBoolean(2, aktiv)

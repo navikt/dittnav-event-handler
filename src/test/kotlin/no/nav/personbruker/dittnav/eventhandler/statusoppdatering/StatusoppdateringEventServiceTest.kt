@@ -54,25 +54,6 @@ internal class StatusoppdateringEventServiceTest {
     }
 
     @Test
-    fun `Should log warning if producer is empty`() {
-        val statusoppdateringEventsWithEmptyProducer = listOf(
-                StatusoppdateringObjectMother.createStatusoppdateringWithSystembruker(1, "x-dittnav"))
-
-        runBlocking {
-            coEvery {
-                database.queryWithExceptionTranslation<List<Statusoppdatering>>(any())
-            }.returns(statusoppdateringEventsWithEmptyProducer)
-
-            statusoppdateringEventService.getAllGroupedEventsFromCacheForUser(bruker, grupperingsid, produsent)
-        }
-
-        val logevent = appender.list.first()
-        logevent.level.levelStr `should be equal to` "WARN"
-        logevent.formattedMessage `should contain` "produsent"
-        logevent.formattedMessage `should contain` "fodselsnummer=***"
-    }
-
-    @Test
     fun `Kaster FieldValidationException hvis grupperingsid er null`() {
         val grupperingsidSomErNull = null
         invoking {

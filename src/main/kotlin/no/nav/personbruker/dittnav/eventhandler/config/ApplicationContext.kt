@@ -6,7 +6,6 @@ import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.health.HealthService
 import no.nav.personbruker.dittnav.eventhandler.common.kafka.KafkaProducerWrapper
-import no.nav.personbruker.dittnav.eventhandler.common.produsent.ProducerNameAliasService
 import no.nav.personbruker.dittnav.eventhandler.done.DoneEventService
 import no.nav.personbruker.dittnav.eventhandler.done.DoneProducer
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksEventService
@@ -33,5 +32,4 @@ class ApplicationContext {
     val eventStatisticsService = EventStatisticsService(database)
 
     val healthService = HealthService(this)
-    val producerNameAliasService = ProducerNameAliasService(database)
 }

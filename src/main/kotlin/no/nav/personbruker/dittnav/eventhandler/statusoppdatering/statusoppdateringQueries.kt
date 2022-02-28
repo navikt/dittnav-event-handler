@@ -9,29 +9,27 @@ import java.sql.ResultSet
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-fun Connection.getAllGroupedStatusoppdateringEventsByIds(bruker: TokenXUser, grupperingsid: String, produsent: String): List<Statusoppdatering> =
+fun Connection.getAllGroupedStatusoppdateringEventsByIds(bruker: TokenXUser, grupperingsid: String, appnavn: String): List<Statusoppdatering> =
         prepareStatement("""SELECT 
-            |statusoppdatering.id,
-            |statusoppdatering.eventTidspunkt,
-            |statusoppdatering.fodselsnummer,
-            |statusoppdatering.eventId, 
-            |statusoppdatering.grupperingsId,
-            |statusoppdatering.link,
-            |statusoppdatering.sikkerhetsnivaa,
-            |statusoppdatering.sistOppdatert,
-            |statusoppdatering.statusGlobal,
-            |statusoppdatering.statusIntern,
-            |statusoppdatering.sakstema,
-            |statusoppdatering.systembruker,
-            |statusoppdatering.namespace,
-            |statusoppdatering.appnavn,
-            |systembrukere.produsentnavn AS produsent
-            |FROM (SELECT * FROM statusoppdatering WHERE fodselsnummer = ? AND grupperingsid = ?) AS statusoppdatering
-            |LEFT JOIN systembrukere ON statusoppdatering.systembruker = systembrukere.systembruker WHERE systembrukere.produsentnavn = ?""".trimMargin())
+            |id,
+            |eventTidspunkt,
+            |fodselsnummer,
+            |eventId, 
+            |grupperingsId,
+            |link,
+            |sikkerhetsnivaa,
+            |sistOppdatert,
+            |statusGlobal,
+            |statusIntern,
+            |sakstema,
+            |systembruker,
+            |namespace,
+            |appnavn
+            |FROM statusoppdatering WHERE fodselsnummer = ? AND grupperingsid = ? AND appnavn = ?""".trimMargin())
                 .use {
                     it.setString(1, bruker.ident)
                     it.setString(2, grupperingsid)
-                    it.setString(3, produsent)
+                    it.setString(3, appnavn)
                     it.executeQuery().mapList {
                         toStatusoppdatering()
                     }
@@ -44,7 +42,7 @@ fun ResultSet.toStatusoppdatering(): Statusoppdatering {
             grupperingsId = getString("grupperingsId"),
             eventId = getString("eventId"),
             eventTidspunkt = ZonedDateTime.ofInstant(getUtcTimeStamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),
-            produsent = getString("produsent") ?: "",
+            produsent = getString("appnavn") ?: "",
             systembruker = getString("systembruker"),
             sikkerhetsnivaa = getInt("sikkerhetsnivaa"),
             sistOppdatert = ZonedDateTime.ofInstant(getUtcTimeStamp("sistOppdatert").toInstant(), ZoneId.of("Europe/Oslo")),

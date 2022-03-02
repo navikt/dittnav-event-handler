@@ -34,7 +34,7 @@ spec:
       memory: 384Mi
   ingresses:
     - "https://dittnav-event-handler-gcp.dev.nav.no"
-    - "https://dittnav-event-handler.intern.dev.nav.no"
+    - "https://dittnav-event-handler.dev.intern.nav.no"
   gcp:
     permissions:
       - resource:

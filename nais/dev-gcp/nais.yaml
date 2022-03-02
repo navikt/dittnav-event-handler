@@ -72,6 +72,9 @@ spec:
         - application: dittnav-nightly-statistics
         - application: tms-event-test-producer
           namespace: min-side
+        - application: dittnav-eventer-modia
+          namespace: personbruker
+          cluster: dev-fss
     outbound:
       external:
         - host: kafka-schema-registry.nais-q.adeo.no

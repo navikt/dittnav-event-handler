@@ -25,6 +25,7 @@ import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUserFactory
 
 fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()) {
+
     DefaultExports.initialize()
     install(DefaultHeaders)
 

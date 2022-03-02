@@ -33,7 +33,6 @@ spec:
       cpu: "50m"
       memory: 384Mi
   ingresses:
-    - "https://dittnav-event-handler-gcp.nais.oera.no"
     - "https://dittnav-event-handler.intern.nav.no"
   gcp:
     permissions:

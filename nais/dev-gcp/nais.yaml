@@ -33,7 +33,7 @@ spec:
       cpu: "50m"
       memory: 384Mi
   ingresses:
-    - "https://dittnav-event-handler-gcp.dev.nav.no"
+    - "https://dittnav-event-handler.dev.nav.no"
   gcp:
     permissions:
       - resource:
@@ -71,6 +71,9 @@ spec:
         - application: dittnav-nightly-statistics
         - application: tms-event-test-producer
           namespace: min-side
+        - application: dittnav-eventer-modia
+          namespace: personbruker
+          cluster: dev-fss
     outbound:
       external:
         - host: kafka-schema-registry.nais-q.adeo.no

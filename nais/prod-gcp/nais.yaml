@@ -33,7 +33,7 @@ spec:
       cpu: "50m"
       memory: 384Mi
   ingresses:
-    - "https://dittnav-event-handler-gcp.nais.oera.no"
+    - "https://dittnav-event-handler.intern.nav.no"
   gcp:
     permissions:
       - resource:
@@ -67,6 +67,9 @@ spec:
         - application: dittnav-api
           namespace: personbruker
           cluster: prod-sbs
+        - application: dittnav-eventer-modia
+          namespace: personbruker
+          cluster: prod-fss
     outbound:
       external:
         - host: kafka-schema-registry.nais.adeo.no

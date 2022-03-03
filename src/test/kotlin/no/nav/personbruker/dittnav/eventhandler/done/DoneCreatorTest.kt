@@ -20,7 +20,7 @@ internal class doneCreatorTest {
     fun `should create done-event`() {
         runBlocking {
             val doneEvent = createDoneEvent(eventTidspunkt)
-            doneEvent.getTidspunkt() `should be equal to` eventTidspunkt.toLocalDateTime().toEpochSecond(ZoneOffset.UTC)
+            doneEvent.getTidspunkt() `should be equal to` eventTidspunkt.toInstant().toEpochMilli()
         }
     }
 

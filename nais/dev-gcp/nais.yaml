@@ -68,7 +68,6 @@ spec:
           cluster: dev-sbs
         - application: internal-periodic-metrics-reporter
         - application: dittnav-nightly-usage-statistics-reporter
-        - application: dittnav-nightly-statistics
         - application: tms-event-test-producer
           namespace: min-side
         - application: dittnav-eventer-modia

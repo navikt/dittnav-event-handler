@@ -15,42 +15,50 @@ fun Route.statisticsSystemClientApi(statisticsService: EventStatisticsService) {
 
     get("/stats/all") {
         try {
-            val measurements = mutableListOf<Any>()
-            measurements += statisticsService.getEventsStatisticsPerUser(EventType.BESKJED)
-            measurements += statisticsService.getEventsStatisticsPerUser(EventType.OPPGAVE)
-            measurements += statisticsService.getEventsStatisticsPerUser(EventType.INNBOKS)
+            val intMeasurements = mutableListOf<IntegerMeasurement>()
+            val decimalMeasurements = mutableListOf<DecimalMeasurement>()
+            val countMeasurements = mutableListOf<CountMeasurement>()
+            intMeasurements += statisticsService.getEventsStatisticsPerUser(EventType.BESKJED)
+            intMeasurements += statisticsService.getEventsStatisticsPerUser(EventType.OPPGAVE)
+            intMeasurements += statisticsService.getEventsStatisticsPerUser(EventType.INNBOKS)
 
-            measurements += statisticsService.getActiveEventsStatisticsPerUser(EventType.BESKJED)
-            measurements += statisticsService.getActiveEventsStatisticsPerUser(EventType.OPPGAVE)
-            measurements += statisticsService.getActiveEventsStatisticsPerUser(EventType.INNBOKS)
+            intMeasurements += statisticsService.getActiveEventsStatisticsPerUser(EventType.BESKJED)
+            intMeasurements += statisticsService.getActiveEventsStatisticsPerUser(EventType.OPPGAVE)
+            intMeasurements += statisticsService.getActiveEventsStatisticsPerUser(EventType.INNBOKS)
 
-            measurements += statisticsService.getActiveRateEventsStatisticsPerUser(EventType.BESKJED)
-            measurements += statisticsService.getActiveRateEventsStatisticsPerUser(EventType.OPPGAVE)
-            measurements += statisticsService.getActiveRateEventsStatisticsPerUser(EventType.INNBOKS)
+            decimalMeasurements += statisticsService.getActiveRateEventsStatisticsPerUser(EventType.BESKJED)
+            decimalMeasurements += statisticsService.getActiveRateEventsStatisticsPerUser(EventType.OPPGAVE)
+            decimalMeasurements += statisticsService.getActiveRateEventsStatisticsPerUser(EventType.INNBOKS)
 
-            measurements += statisticsService.getEventsStatisticsPerGroupId(EventType.BESKJED)
-            measurements += statisticsService.getEventsStatisticsPerGroupId(EventType.OPPGAVE)
-            measurements += statisticsService.getEventsStatisticsPerGroupId(EventType.INNBOKS)
+            intMeasurements += statisticsService.getEventsStatisticsPerGroupId(EventType.BESKJED)
+            intMeasurements += statisticsService.getEventsStatisticsPerGroupId(EventType.OPPGAVE)
+            intMeasurements += statisticsService.getEventsStatisticsPerGroupId(EventType.INNBOKS)
 
-            measurements += statisticsService.getGroupIdsPerUser(EventType.BESKJED)
-            measurements += statisticsService.getGroupIdsPerUser(EventType.OPPGAVE)
-            measurements += statisticsService.getGroupIdsPerUser(EventType.INNBOKS)
+            intMeasurements += statisticsService.getGroupIdsPerUser(EventType.BESKJED)
+            intMeasurements += statisticsService.getGroupIdsPerUser(EventType.OPPGAVE)
+            intMeasurements += statisticsService.getGroupIdsPerUser(EventType.INNBOKS)
 
-            measurements += statisticsService.getTextLength(EventType.BESKJED)
-            measurements += statisticsService.getTextLength(EventType.OPPGAVE)
-            measurements += statisticsService.getTextLength(EventType.INNBOKS)
+            intMeasurements += statisticsService.getTextLength(EventType.BESKJED)
+            intMeasurements += statisticsService.getTextLength(EventType.OPPGAVE)
+            intMeasurements += statisticsService.getTextLength(EventType.INNBOKS)
 
-            measurements += statisticsService.getCountUsersWithEvents(EventType.BESKJED)
-            measurements += statisticsService.getCountUsersWithEvents(EventType.OPPGAVE)
-            measurements += statisticsService.getCountUsersWithEvents(EventType.INNBOKS)
+            countMeasurements += statisticsService.getCountUsersWithEvents(EventType.BESKJED)
+            countMeasurements += statisticsService.getCountUsersWithEvents(EventType.OPPGAVE)
+            countMeasurements += statisticsService.getCountUsersWithEvents(EventType.INNBOKS)
 
-            measurements += statisticsService.getEventCount(EventType.BESKJED)
-            measurements += statisticsService.getEventCount(EventType.OPPGAVE)
-            measurements += statisticsService.getEventCount(EventType.INNBOKS)
+            countMeasurements += statisticsService.getEventCount(EventType.BESKJED)
+            countMeasurements += statisticsService.getEventCount(EventType.OPPGAVE)
+            countMeasurements += statisticsService.getEventCount(EventType.INNBOKS)
 
-            measurements += statisticsService.getActiveEventCount(EventType.BESKJED)
-            measurements += statisticsService.getActiveEventCount(EventType.OPPGAVE)
-            measurements += statisticsService.getActiveEventCount(EventType.INNBOKS)
+            countMeasurements += statisticsService.getActiveEventCount(EventType.BESKJED)
+            countMeasurements += statisticsService.getActiveEventCount(EventType.OPPGAVE)
+            countMeasurements += statisticsService.getActiveEventCount(EventType.INNBOKS)
+
+            val measurements = mapOf(
+                "intMeasurements" to intMeasurements,
+                "decimalMeasurements" to decimalMeasurements,
+                "countMeasurements" to countMeasurements
+            )
 
             call.respond(HttpStatusCode.OK, measurements)
         } catch (exception: Exception) {

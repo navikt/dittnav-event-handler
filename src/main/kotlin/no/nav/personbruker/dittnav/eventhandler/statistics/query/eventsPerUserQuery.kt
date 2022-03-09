@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventhandler.common.statistics.query
+package no.nav.personbruker.dittnav.eventhandler.statistics.query
 
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapSingleResult
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventType
@@ -32,7 +32,6 @@ fun Connection.getEventsPerUserForOppgave(): IntegerMeasurement {
             }
         }
 }
-
 fun Connection.getEventsPerUserForInnboks(): IntegerMeasurement {
     return prepareStatement(innboksEventsPerUserQueryString)
         .use {
@@ -41,7 +40,6 @@ fun Connection.getEventsPerUserForInnboks(): IntegerMeasurement {
             }
         }
 }
-
 fun Connection.getEventsPerUserForBeskjed(): IntegerMeasurement {
     return prepareStatement(beskjedEventsPerUserQueryString)
         .use {
@@ -63,6 +61,14 @@ val totalEventsPerUserQueryString = """
         percentile_disc(0.99) within group ( order by aggregate.events ) as "99th_percentile"
     from (select count(1) as events from brukernotifikasjon_view group by fodselsnummer) as aggregate
 """
+fun Connection.getTotalEventsPerUser(): IntegerMeasurement {
+    return prepareStatement(totalEventsPerUserQueryString)
+        .use {
+            it.executeQuery().mapSingleResult {
+                toEventsPerUser()
+            }
+        }
+}
 
 fun ResultSet.toEventsPerUser(): EventsPerUser {
     return EventsPerUser(

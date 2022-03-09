@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventhandler.common.statistics.query
+package no.nav.personbruker.dittnav.eventhandler.statistics.query
 
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapSingleResult
 import no.nav.personbruker.dittnav.eventhandler.statistics.DecimalMeasurement
@@ -63,6 +63,13 @@ val totalEventActiveRatePerUserQueryString = """
         percentile_disc(0.99) within group ( order by aggregate.rate ) as "99th_percentile"
     from (select count(1) filter ( where aktiv = true )::decimal / count(1)::decimal as rate from brukernotifikasjon_view group by fodselsnummer) as aggregate
 """
+fun Connection.getTotalActiveRateEventsStatisticsPerUser(): EventActiveRatePerUser =
+    prepareStatement(totalEventActiveRatePerUserQueryString)
+        .use {
+            it.executeQuery().mapSingleResult {
+                toEventActiveRate()
+            }
+        }
 
 fun ResultSet.toEventActiveRate(): EventActiveRatePerUser {
     return EventActiveRatePerUser(

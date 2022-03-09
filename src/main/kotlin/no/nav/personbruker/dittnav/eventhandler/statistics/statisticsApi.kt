@@ -77,10 +77,30 @@ fun Route.statisticsSystemClientApi(statisticsService: EventStatisticsService) {
         }
     }
 
+    get("/stats/total/grouped/bruker") {
+        try {
+            val measurement = statisticsService.getTotalEventsStatisticsPerUser()
+
+            call.respond(HttpStatusCode.OK, measurement)
+        } catch (exception: Exception) {
+            respondWithError(call, log, exception)
+        }
+    }
+
     get("/stats/grouped/bruker/{type}/active") {
         try {
             val type = EventType.fromOriginalType(call.parameters["type"]!!)
             val measurement = statisticsService.getActiveEventsStatisticsPerUser(type)
+
+            call.respond(HttpStatusCode.OK, measurement)
+        } catch (exception: Exception) {
+            respondWithError(call, log, exception)
+        }
+    }
+
+    get("/stats/total/grouped/bruker/active") {
+        try {
+            val measurement = statisticsService.getTotalActiveEventsStatisticsPerUser()
 
             call.respond(HttpStatusCode.OK, measurement)
         } catch (exception: Exception) {
@@ -99,10 +119,30 @@ fun Route.statisticsSystemClientApi(statisticsService: EventStatisticsService) {
         }
     }
 
+    get("/stats/total/grouped/bruker/active-rate") {
+        try {
+            val measurement = statisticsService.getTotalActiveRateEventsStatisticsPerUser()
+
+            call.respond(HttpStatusCode.OK, measurement)
+        } catch (exception: Exception) {
+            respondWithError(call, log, exception)
+        }
+    }
+
     get("/stats/grouped/gruppering/{type}") {
         try {
             val type = EventType.fromOriginalType(call.parameters["type"]!!)
             val measurement = statisticsService.getEventsStatisticsPerGroupId(type)
+
+            call.respond(HttpStatusCode.OK, measurement)
+        } catch (exception: Exception) {
+            respondWithError(call, log, exception)
+        }
+    }
+
+    get("/stats/total/grouped/gruppering") {
+        try {
+            val measurement = statisticsService.getTotalEventsStatisticsPerGroupId()
 
             call.respond(HttpStatusCode.OK, measurement)
         } catch (exception: Exception) {
@@ -121,10 +161,30 @@ fun Route.statisticsSystemClientApi(statisticsService: EventStatisticsService) {
         }
     }
 
+    get("/stats/total/grouped/bruker/grupperings") {
+        try {
+            val measurement = statisticsService.getTotalGroupIdsPerUser()
+
+            call.respond(HttpStatusCode.OK, measurement)
+        } catch (exception: Exception) {
+            respondWithError(call, log, exception)
+        }
+    }
+
     get("/stats/{type}/text-length") {
         try {
             val type = EventType.fromOriginalType(call.parameters["type"]!!)
             val measurement = statisticsService.getTextLength(type)
+
+            call.respond(HttpStatusCode.OK, measurement)
+        } catch (exception: Exception) {
+            respondWithError(call, log, exception)
+        }
+    }
+
+    get("/stats/total/text-length") {
+        try {
+            val measurement = statisticsService.getTotalTextLength()
 
             call.respond(HttpStatusCode.OK, measurement)
         } catch (exception: Exception) {
@@ -143,8 +203,17 @@ fun Route.statisticsSystemClientApi(statisticsService: EventStatisticsService) {
         }
     }
 
+    get("/stats/total/bruker-count") {
+        try {
+            val measurement = statisticsService.getTotalCountUsersWithEvents()
 
-    get("/stats/{type}") {
+            call.respond(HttpStatusCode.OK, measurement)
+        } catch (exception: Exception) {
+            respondWithError(call, log, exception)
+        }
+    }
+
+    get("/stats/count/{type}") {
         try {
             val type = EventType.fromOriginalType(call.parameters["type"]!!)
             val measurement = statisticsService.getEventCount(type)
@@ -155,10 +224,30 @@ fun Route.statisticsSystemClientApi(statisticsService: EventStatisticsService) {
         }
     }
 
-    get("/stats/{type}/active") {
+    get("/stats/total/count") {
+        try {
+            val measurement = statisticsService.getTotalEventCount()
+
+            call.respond(HttpStatusCode.OK, measurement)
+        } catch (exception: Exception) {
+            respondWithError(call, log, exception)
+        }
+    }
+
+    get("/stats/count/{type}/active") {
         try {
             val type = EventType.fromOriginalType(call.parameters["type"]!!)
             val measurement = statisticsService.getActiveEventCount(type)
+
+            call.respond(HttpStatusCode.OK, measurement)
+        } catch (exception: Exception) {
+            respondWithError(call, log, exception)
+        }
+    }
+
+    get("/stats/total/count/active") {
+        try {
+            val measurement = statisticsService.getTotalActiveEventCount()
 
             call.respond(HttpStatusCode.OK, measurement)
         } catch (exception: Exception) {

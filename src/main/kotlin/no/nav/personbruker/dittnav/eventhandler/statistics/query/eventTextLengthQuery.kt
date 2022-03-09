@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventhandler.common.statistics.query
+package no.nav.personbruker.dittnav.eventhandler.statistics.query
 
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapSingleResult
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventTextLength
@@ -69,6 +69,13 @@ val totalEventTextLengthQueryString = """
         SELECT length(tekst) as tekstLength FROM INNBOKS
     ) as inner_view
 """
+fun Connection.getTotalTextLength(): EventTextLength =
+    prepareStatement(totalEventTextLengthQueryString)
+        .use {
+            it.executeQuery().mapSingleResult {
+                toEventTextLength()
+            }
+        }
 
 fun ResultSet.toEventTextLength(): EventTextLength {
     return EventTextLength(

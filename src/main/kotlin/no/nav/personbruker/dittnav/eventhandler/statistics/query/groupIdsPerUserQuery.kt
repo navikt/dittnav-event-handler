@@ -1,7 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.statistics.query
 
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapSingleResult
-import no.nav.personbruker.dittnav.eventhandler.common.statistics.query.toEventsPerUser
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventType
 import no.nav.personbruker.dittnav.eventhandler.statistics.GroupIdsPerUser
 import no.nav.personbruker.dittnav.eventhandler.statistics.IntegerMeasurement
@@ -72,6 +71,14 @@ percentile_disc(0.99) within group ( order by aggregate.events ) as "99th_percen
             ) as inner_view group by systembruker, fodselsnummer
          ) as aggregate
 """
+
+fun Connection.getTotalEventGroupIdsPerUser(): GroupIdsPerUser =
+    prepareStatement(totalGroupIdsPerUserQueryString)
+        .use {
+            it.executeQuery().mapSingleResult {
+                toGroupIdsPerUser()
+            }
+        }
 
 fun ResultSet.toGroupIdsPerUser(): GroupIdsPerUser {
     return GroupIdsPerUser(

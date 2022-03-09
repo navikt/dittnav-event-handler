@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventhandler.common.statistics.query
+package no.nav.personbruker.dittnav.eventhandler.statistics.query
 
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapSingleResult
 import no.nav.personbruker.dittnav.eventhandler.statistics.CountMeasurement
@@ -36,11 +36,17 @@ fun Connection.getCountUsersWithEventsForBeskjed(): CountMeasurement {
             }
         }
 }
-
+fun Connection.getCountUsersWithEvents(): CountMeasurement =
+    prepareStatement(totalUsersQueryString)
+        .use {
+            it.executeQuery().mapSingleResult {
+                toCountMeasurement()
+            }
+        }
 
 private fun eventsQueryString(type: EventType) = "select count(1) as scalar_value from ${type.eventType}"
-
 val totalEventsQueryString = "select count(1) as scalar_value from brukernotifikasjon_view"
+val cachedDoneEventsQueryString = "select count(1) as scalar_value from done"
 val beskjedEventsQueryString = eventsQueryString(EventType.BESKJED)
 val oppgaveEventsQueryString = eventsQueryString(EventType.OPPGAVE)
 val innboksEventsQueryString = eventsQueryString(EventType.INNBOKS)
@@ -68,7 +74,21 @@ fun Connection.getCountForBeskjed(): CountMeasurement {
             }
         }
 }
-
+fun Connection.getCountForDone(): CountMeasurement {
+    return prepareStatement(cachedDoneEventsQueryString)
+        .use {
+            it.executeQuery().mapSingleResult {
+                toCountMeasurement()
+            }
+        }
+}
+fun Connection.getCountNumberOfEvents(): CountMeasurement =
+    prepareStatement(totalEventsQueryString)
+        .use {
+            it.executeQuery().mapSingleResult {
+                toCountMeasurement()
+            }
+        }
 
 private fun eventsActiveQueryString(type: EventType) = "select count(1) as scalar_value from ${type.eventType} where aktiv"
 
@@ -100,9 +120,13 @@ fun Connection.getActiveCountForBeskjed(): CountMeasurement {
             }
         }
 }
-
-
-val cachedDoneEventsQueryString = "select count(1) as scalar_value from done"
+fun Connection.getCountNumberOfActiveEvents(): CountMeasurement =
+    prepareStatement(totalEventsActiveQueryString)
+        .use {
+            it.executeQuery().mapSingleResult {
+                toCountMeasurement()
+            }
+        }
 
 fun ResultSet.toScalarInt(): Int {
     return getInt("scalar_value")

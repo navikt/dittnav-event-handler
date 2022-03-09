@@ -15,5 +15,3 @@ data class DecimalMeasurement (
 )
 
 typealias EventActiveRatePerUser = DecimalMeasurement
-typealias EventExpiredRatePerUser = DecimalMeasurement
-typealias EventExpiredRateByInvisiblePerUser= DecimalMeasurement

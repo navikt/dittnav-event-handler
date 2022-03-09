@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventhandler.common.statistics.query
+package no.nav.personbruker.dittnav.eventhandler.statistics.query
 
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapSingleResult
 import no.nav.personbruker.dittnav.eventhandler.statistics.ActiveEventsPerUser
@@ -72,7 +72,13 @@ fun Connection.getActiveEventsStatisticsPerUserForBeskjed(): IntegerMeasurement 
             }
         }
 }
-
+fun Connection.getTotalActiveEventsStatisticsPerUser(): ActiveEventsPerUser =
+    prepareStatement(totalActiveEventsPerUserQueryString)
+        .use {
+            it.executeQuery().mapSingleResult {
+                toActiveEventsPerUser()
+            }
+        }
 fun ResultSet.toActiveEventsPerUser(): ActiveEventsPerUser {
     return ActiveEventsPerUser(
         min = getInt("minEvents"),

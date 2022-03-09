@@ -1,10 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.statistics
 
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
-import no.nav.personbruker.dittnav.eventhandler.common.statistics.query.*
-import no.nav.personbruker.dittnav.eventhandler.statistics.query.getEventGroupIdsPerUserForBeskjed
-import no.nav.personbruker.dittnav.eventhandler.statistics.query.getEventGroupIdsPerUserForInnboks
-import no.nav.personbruker.dittnav.eventhandler.statistics.query.getEventGroupIdsPerUserForOppgave
+import no.nav.personbruker.dittnav.eventhandler.statistics.query.*
 
 class EventStatisticsService(private val database: Database) {
 
@@ -19,6 +16,12 @@ class EventStatisticsService(private val database: Database) {
         }
     }
 
+    suspend fun getTotalEventsStatisticsPerUser(): IntegerMeasurement {
+        return database.queryWithExceptionTranslation {
+            getTotalEventsPerUser()
+        }
+    }
+
     suspend fun getActiveEventsStatisticsPerUser(type: EventType): IntegerMeasurement {
         return database.queryWithExceptionTranslation {
             when (type) {
@@ -27,6 +30,12 @@ class EventStatisticsService(private val database: Database) {
                 EventType.INNBOKS -> getActiveEventsStatisticsPerUserForInnboks()
                 EventType.DONE -> throw Exception("Statistik ikke tilgjengelig for done-eventer")
             }
+        }
+    }
+
+    suspend fun getTotalActiveEventsStatisticsPerUser(): IntegerMeasurement {
+        return database.queryWithExceptionTranslation {
+            getTotalActiveEventsStatisticsPerUser()
         }
     }
 
@@ -41,6 +50,12 @@ class EventStatisticsService(private val database: Database) {
         }
     }
 
+    suspend fun getTotalActiveRateEventsStatisticsPerUser(): DecimalMeasurement {
+        return database.queryWithExceptionTranslation {
+            getTotalActiveRateEventsStatisticsPerUser()
+        }
+    }
+
     suspend fun getEventsStatisticsPerGroupId(type: EventType): IntegerMeasurement {
         return database.queryWithExceptionTranslation {
             when (type) {
@@ -49,6 +64,12 @@ class EventStatisticsService(private val database: Database) {
                 EventType.INNBOKS -> getEventsPerGroupIdForInnboks()
                 EventType.DONE -> throw Exception("Statistik ikke tilgjengelig for done-eventer")
             }
+        }
+    }
+
+    suspend fun getTotalEventsStatisticsPerGroupId(): IntegerMeasurement {
+        return database.queryWithExceptionTranslation {
+            getTotalEventsPerGroupId()
         }
     }
 
@@ -63,6 +84,12 @@ class EventStatisticsService(private val database: Database) {
         }
     }
 
+    suspend fun getTotalGroupIdsPerUser(): IntegerMeasurement {
+        return database.queryWithExceptionTranslation {
+            getTotalEventGroupIdsPerUser()
+        }
+    }
+
     suspend fun getTextLength(type: EventType): IntegerMeasurement {
         return database.queryWithExceptionTranslation {
             when (type) {
@@ -71,6 +98,12 @@ class EventStatisticsService(private val database: Database) {
                 EventType.INNBOKS -> getTextLengthForInnboks()
                 EventType.DONE -> throw Exception("Statistik ikke tilgjengelig for done-eventer")
             }
+        }
+    }
+
+    suspend fun getTotalTextLength(): IntegerMeasurement {
+        return database.queryWithExceptionTranslation {
+            getTotalTextLength()
         }
     }
 
@@ -85,14 +118,26 @@ class EventStatisticsService(private val database: Database) {
         }
     }
 
+    suspend fun getTotalCountUsersWithEvents(): CountMeasurement {
+        return database.queryWithExceptionTranslation {
+            getCountUsersWithEvents()
+        }
+    }
+
     suspend fun getEventCount(type: EventType): CountMeasurement {
         return database.queryWithExceptionTranslation {
             when (type) {
                 EventType.BESKJED -> getCountForBeskjed()
                 EventType.OPPGAVE -> getCountForOppgave()
                 EventType.INNBOKS -> getCountForInnboks()
-                EventType.DONE -> throw Exception("Statistik ikke tilgjengelig for done-eventer")
+                EventType.DONE -> getCountForDone()
             }
+        }
+    }
+
+    suspend fun getTotalEventCount(): CountMeasurement {
+        return database.queryWithExceptionTranslation {
+            getCountNumberOfEvents()
         }
     }
 
@@ -104,6 +149,12 @@ class EventStatisticsService(private val database: Database) {
                 EventType.INNBOKS -> getActiveCountForInnboks()
                 EventType.DONE -> throw Exception("Statistik ikke tilgjengelig for done-eventer")
             }
+        }
+    }
+
+    suspend fun getTotalActiveEventCount(): CountMeasurement {
+        return database.queryWithExceptionTranslation {
+            getCountNumberOfActiveEvents()
         }
     }
 }

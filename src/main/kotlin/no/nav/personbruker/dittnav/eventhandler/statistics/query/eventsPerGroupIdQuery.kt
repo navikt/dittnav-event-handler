@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventhandler.common.statistics.query
+package no.nav.personbruker.dittnav.eventhandler.statistics.query
 
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapSingleResult
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventType
@@ -71,6 +71,13 @@ val totalEventsPerGroupIdQueryString = """
             ) as inner_view group by systembruker, fodselsnummer, grupperingsid
         ) as aggregate
 """
+fun Connection.getTotalEventsPerGroupId(): EventsPerGroupId =
+    prepareStatement(totalEventsPerGroupIdQueryString)
+        .use {
+            it.executeQuery().mapSingleResult {
+                toEventsPerGroupId()
+            }
+        }
 
 fun ResultSet.toEventsPerGroupId(): EventsPerGroupId {
     return EventsPerGroupId(

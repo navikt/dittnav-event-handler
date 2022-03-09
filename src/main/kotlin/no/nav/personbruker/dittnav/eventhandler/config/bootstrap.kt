@@ -59,8 +59,8 @@ fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()
             oppgaveSystemClientApi(appContext.oppgaveEventService)
             statusoppdateringSystemClientApi(appContext.statusoppdateringEventService)
 
+            statisticsSystemClientApi(appContext.eventStatisticsService)
         }
-        statisticsSystemClientApi(appContext.eventStatisticsService)
     }
     configureShutdownHook(appContext)
 }

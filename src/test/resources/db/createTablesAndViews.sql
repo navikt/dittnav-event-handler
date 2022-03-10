@@ -36,6 +36,7 @@ create table if not exists oppgave
   sikkerhetsnivaa integer,
   sistoppdatert   timestamp,
   aktiv           boolean,
+  synligfremtil   timestamp,
   namespace       varchar(100),
   appnavn         varchar(100),
   constraint oppgaveeventidprodusent

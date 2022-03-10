@@ -5,39 +5,54 @@ import java.time.ZonedDateTime
 
 object InnboksObjectMother {
 
-    fun createInnboks(id: Int, eventId: String, fodselsnummer: String, aktiv: Boolean): Innboks {
-        return Innboks(
-                id = id,
-                produsent = "dittnav",
-                systembruker = "x-dittnav",
-                namespace = "dummyNamespace",
-                appnavn = "dummyAppnavn",
-                eventTidspunkt = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
-                fodselsnummer = fodselsnummer,
-                eventId = eventId,
-                grupperingsId = "100$fodselsnummer",
-                tekst = "Dette er melding til brukeren",
-                link = "https://nav.no/systemX/$fodselsnummer",
-                sistOppdatert = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
-                sikkerhetsnivaa = 4,
-                aktiv = aktiv)
-    }
+    private var idIncrementor = 0
+    private var eventIdIncrementor = 0
 
-    fun createInnboks(id: Int, eventId: String, fodselsnummer: String, aktiv: Boolean, systembruker: String, namespace: String, appnavn: String): Innboks {
+    val defaultFodselsnummer = "123456789"
+    val defaultAktiv = true
+    val defaultSystembruker = "x-dittnav"
+    val defaultNamespace = "min-side"
+    val defaultAppnavn = "test-app"
+    val defaultProdusent = "$defaultSystembruker-produsent"
+    val defaultEventTidspunkt = ZonedDateTime.now(ZoneId.of("Europe/Oslo"))
+    val defaultGrupperingsId = "100$defaultFodselsnummer"
+    val defaultTekst = "Dette er innboks melding til brukeren"
+    val defaultLink = "https://nav.no/systemX/$defaultFodselsnummer"
+    val defaultSistOppdatert = ZonedDateTime.now(ZoneId.of("Europe/Oslo"))
+    val defaultSikkerhetsnivaa = 4
+
+
+    fun createInnboks(
+        id: Int = ++idIncrementor,
+        eventId: String = (++eventIdIncrementor).toString(),
+        fodselsnummer: String = defaultFodselsnummer,
+        aktiv: Boolean = defaultAktiv,
+        systembruker: String = defaultSystembruker,
+        namespace: String = defaultNamespace,
+        appnavn: String = defaultAppnavn,
+        produsent: String = defaultProdusent,
+        eventTidspunkt: ZonedDateTime = defaultEventTidspunkt,
+        grupperingsId: String = defaultGrupperingsId,
+        tekst: String = defaultTekst,
+        link: String = defaultLink,
+        sistOppdatert: ZonedDateTime = defaultSistOppdatert,
+        sikkerhetsnivaa: Int = defaultSikkerhetsnivaa
+    ): Innboks {
         return Innboks(
-                id = id,
-                produsent = "$systembruker-produsent",
-                systembruker = systembruker,
-                namespace = namespace,
-                appnavn = appnavn,
-                eventTidspunkt = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
-                fodselsnummer = fodselsnummer,
-                eventId = eventId,
-                grupperingsId = "100$fodselsnummer",
-                tekst = "Dette er melding til brukeren",
-                link = "https://nav.no/systemX/$fodselsnummer",
-                sistOppdatert = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
-                sikkerhetsnivaa = 4,
-                aktiv = aktiv)
+            id = id,
+            produsent = produsent,
+            systembruker = systembruker,
+            namespace = namespace,
+            appnavn = appnavn,
+            eventTidspunkt = eventTidspunkt,
+            fodselsnummer = fodselsnummer,
+            eventId = eventId,
+            grupperingsId = grupperingsId,
+            tekst = tekst,
+            link = link,
+            sistOppdatert = sistOppdatert,
+            sikkerhetsnivaa = sikkerhetsnivaa,
+            aktiv = aktiv
+        )
     }
 }

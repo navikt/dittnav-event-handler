@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventhandler.common.statistics
+package no.nav.personbruker.dittnav.eventhandler.statistics
 
 import kotlinx.serialization.Serializable
 

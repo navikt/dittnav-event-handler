@@ -29,8 +29,10 @@ class DoneEventServiceTest {
     private val uid = "11"
     private val eventId = "125"
 
-    private val beskjed1 = BeskjedObjectMother.createBeskjed(id = 1, eventId = "125", fodselsnummer = "12345",
-            synligFremTil = ZonedDateTime.now().plusHours(1), uid = "11", aktiv = true)
+    private val beskjed1 = BeskjedObjectMother.createBeskjed(
+        id = 1, eventId = "125", fodselsnummer = "12345",
+        synligFremTil = ZonedDateTime.now().plusHours(1), uid = "11"
+    )
 
     @BeforeAll
     fun `populer testdata`() {
@@ -58,8 +60,10 @@ class DoneEventServiceTest {
 
     @Test
     fun `Kaster exception hvis det er duplikat i listen`() {
-        val beskjedListDuplicate = listOf(BeskjedObjectMother.createBeskjed(1, "dummyEventId1", "dummmyFnr1", null, "dummyUid1", true),
-                BeskjedObjectMother.createBeskjed(1, "dummyEventId1", "dummyFnr1", null, "dummyUid1", true))
+        val beskjedListDuplicate = listOf(
+            BeskjedObjectMother.createBeskjed(id = 1, eventId = "dummyEventId1", fodselsnummer = "dummmyFnr1", uid = "dummyUid1"),
+            BeskjedObjectMother.createBeskjed(id = 1, eventId = "dummyEventId1", fodselsnummer = "dummyFnr1",  uid = "dummyUid1")
+        )
         invoking {
             runBlocking {
                 doneEventService.validBeskjed(beskjedListDuplicate)
@@ -69,7 +73,8 @@ class DoneEventServiceTest {
 
     @Test
     fun `Kaster exception hvis gjeldende event allerede er markert done`() {
-        val beskjedListDuplicate = listOf(BeskjedObjectMother.createBeskjed(1, "dummyEventId1", "dummmyFnr1", null, "dummyUid1", false))
+        val beskjedListDuplicate =
+            listOf(BeskjedObjectMother.createBeskjed(id = 1, eventId = "dummyEventId1", fodselsnummer = "dummmyFnr1", uid = "dummyUid1", aktiv = false))
         invoking {
             runBlocking {
                 doneEventService.validBeskjed(beskjedListDuplicate)
@@ -80,7 +85,11 @@ class DoneEventServiceTest {
     @Test
     fun `should find event that matches input parameter`() {
         runBlocking {
-            doneEventService.getBeskjedFromCacheForUser(fodselsnummer, uid, eventId).eventId `should be equal to` eventId
+            doneEventService.getBeskjedFromCacheForUser(
+                fodselsnummer,
+                uid,
+                eventId
+            ).eventId `should be equal to` eventId
         }
     }
 }

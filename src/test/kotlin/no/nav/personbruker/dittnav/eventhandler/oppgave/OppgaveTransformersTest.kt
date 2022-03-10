@@ -7,7 +7,7 @@ internal class OppgaveTransformersTest {
 
     @Test
     fun `skal transformere til DTO`() {
-        val oppgave = OppgaveObjectMother.createOppgave(id = 1, eventId = "123", fodselsnummer = "12345678901", aktiv = true)
+        val oppgave = OppgaveObjectMother.createOppgave()
         val oppgaveDTO = oppgave.toDTO()
         oppgaveDTO.fodselsnummer `should be equal to` oppgave.fodselsnummer
         oppgaveDTO.grupperingsId `should be equal to` oppgave.grupperingsId

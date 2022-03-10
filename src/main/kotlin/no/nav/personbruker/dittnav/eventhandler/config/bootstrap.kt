@@ -17,6 +17,7 @@ import no.nav.personbruker.dittnav.eventhandler.innboks.innboksApi
 import no.nav.personbruker.dittnav.eventhandler.innboks.innboksSystemClientApi
 import no.nav.personbruker.dittnav.eventhandler.oppgave.oppgaveApi
 import no.nav.personbruker.dittnav.eventhandler.oppgave.oppgaveSystemClientApi
+import no.nav.personbruker.dittnav.eventhandler.statistics.statisticsSystemClientApi
 import no.nav.personbruker.dittnav.eventhandler.statusoppdatering.statusoppdateringApi
 import no.nav.personbruker.dittnav.eventhandler.statusoppdatering.statusoppdateringSystemClientApi
 import no.nav.tms.token.support.authentication.installer.installAuthenticators
@@ -57,6 +58,8 @@ fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()
             innboksSystemClientApi(appContext.innboksEventService)
             oppgaveSystemClientApi(appContext.oppgaveEventService)
             statusoppdateringSystemClientApi(appContext.statusoppdateringEventService)
+
+            statisticsSystemClientApi(appContext.eventStatisticsService)
         }
     }
     configureShutdownHook(appContext)

@@ -7,7 +7,7 @@ internal class InnboksTransformersTest {
 
     @Test
     fun `skal transformere til DTO`() {
-        val innboks = InnboksObjectMother.createInnboks(id=1, eventId = "123", fodselsnummer = "12345678901", aktiv = true)
+        val innboks = InnboksObjectMother.createInnboks()
         val innboksDTO = innboks.toDTO()
         innboksDTO.fodselsnummer `should be equal to` innboks.fodselsnummer
         innboksDTO.eventId `should be equal to` innboks.eventId

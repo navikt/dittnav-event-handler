@@ -8,7 +8,7 @@ internal class BeskjedTransformersTest {
 
     @Test
     fun `skal transformere til DTO`() {
-        val beskjed = BeskjedObjectMother.createBeskjed(id = 1, eventId = "123", fodselsnummer = "12345678901", synligFremTil = ZonedDateTime.now(), uid = "abc123", aktiv = true)
+        val beskjed = BeskjedObjectMother.createBeskjed()
         val beskjedDTO = beskjed.toDTO()
         beskjedDTO.uid `should be equal to` beskjed.uid
         beskjedDTO.fodselsnummer `should be equal to` beskjed.fodselsnummer

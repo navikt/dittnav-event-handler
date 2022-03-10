@@ -20,9 +20,9 @@ class OppgaveQueriesTest {
     private val appnavn = "dittnav"
     private val grupperingsid = "100${fodselsnummer}"
 
-    private val oppgave1 = OppgaveObjectMother.createOppgave(id = 1, eventId = "123", fodselsnummer = fodselsnummer, aktiv = true, systembruker = systembruker, namespace = namespace, appnavn = appnavn)
-    private val oppgave2 = OppgaveObjectMother.createOppgave(id = 2, eventId = "345", fodselsnummer = fodselsnummer, aktiv = true, systembruker = systembruker, namespace = namespace, appnavn = appnavn)
-    private val oppgave3 = OppgaveObjectMother.createOppgave(id = 3, eventId = "567", fodselsnummer = fodselsnummer, aktiv = false, systembruker = systembruker, namespace = namespace, appnavn = appnavn)
+    private val oppgave1 = OppgaveObjectMother.createOppgave(id = 1, eventId = "123", fodselsnummer = fodselsnummer, grupperingsId = grupperingsid, aktiv = true, systembruker = systembruker, namespace = namespace, appnavn = appnavn)
+    private val oppgave2 = OppgaveObjectMother.createOppgave(id = 2, eventId = "345", fodselsnummer = fodselsnummer, grupperingsId = grupperingsid, aktiv = true, systembruker = systembruker, namespace = namespace, appnavn = appnavn)
+    private val oppgave3 = OppgaveObjectMother.createOppgave(id = 3, eventId = "567", fodselsnummer = fodselsnummer, grupperingsId = grupperingsid, aktiv = false, systembruker = systembruker, namespace = namespace, appnavn = appnavn)
     private val oppgave4 = OppgaveObjectMother.createOppgave(id = 4, eventId = "789", fodselsnummer = "54321", aktiv = true, systembruker = "x-dittnav-2", namespace = namespace, appnavn = "x-dittnav")
 
     @BeforeAll

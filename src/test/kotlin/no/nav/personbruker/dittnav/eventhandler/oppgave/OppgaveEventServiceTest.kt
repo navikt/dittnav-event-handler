@@ -47,8 +47,8 @@ class OppgaveEventServiceTest {
         val innloggetbruker = TokenXUserObjectMother.createInnloggetBruker("100")
         val grupperingsid = "100${innloggetbruker.ident}"
         val oppgaveEvents = listOf(
-                OppgaveObjectMother.createOppgave(id = 1, eventId = "1", fodselsnummer = innloggetbruker.ident, aktiv = false),
-                OppgaveObjectMother.createOppgave(id = 2, eventId = "2", fodselsnummer = innloggetbruker.ident, aktiv = false))
+                OppgaveObjectMother.createOppgave(fodselsnummer = innloggetbruker.ident, grupperingsId = grupperingsid),
+                OppgaveObjectMother.createOppgave(fodselsnummer = innloggetbruker.ident, grupperingsId = grupperingsid))
         runBlocking {
             coEvery {
                 database.queryWithExceptionTranslation<List<Oppgave>>(any())

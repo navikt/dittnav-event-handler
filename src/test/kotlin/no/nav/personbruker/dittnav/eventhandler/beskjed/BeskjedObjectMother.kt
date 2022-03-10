@@ -6,43 +6,59 @@ import java.time.ZonedDateTime
 
 object BeskjedObjectMother {
 
-    fun createBeskjed(id: Int, eventId: String, fodselsnummer: String, synligFremTil: ZonedDateTime?, uid: String, aktiv: Boolean, systembruker: String, namespace: String, appnavn: String): Beskjed {
-        return Beskjed(
-                uid = uid,
-                id = id,
-                produsent = "$systembruker-produsent",
-                systembruker = systembruker,
-                namespace = namespace,
-                appnavn = appnavn,
-                eventTidspunkt = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
-                fodselsnummer = fodselsnummer,
-                eventId = eventId,
-                grupperingsId = "100$fodselsnummer",
-                tekst = "Dette er beskjed til brukeren",
-                link = "https://nav.no/systemX/$fodselsnummer",
-                sistOppdatert = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
-                synligFremTil = synligFremTil,
-                sikkerhetsnivaa = 4,
-                aktiv = aktiv)
-    }
+    private var idIncrementor = 0
+    private var eventIdIncrementor = 0
 
-    fun createBeskjed(id: Int, eventId: String, fodselsnummer: String, synligFremTil: ZonedDateTime?, uid: String, aktiv: Boolean): Beskjed {
+    val defaultFodselsnummer = "123456789"
+    val defaultUid = "123"
+    val defaultSynligFremTil = ZonedDateTime.now(ZoneId.of("Europe/Oslo")).plusDays(7)
+    val defaultAktiv = true
+    val defaultSystembruker = "x-dittnav"
+    val defaultNamespace = "min-side"
+    val defaultAppnavn = "test-app"
+    val defaultProdusent = "$defaultSystembruker-produsent"
+    val defaultEventTidspunkt = ZonedDateTime.now(ZoneId.of("Europe/Oslo"))
+    val defaultGrupperingsId = "100$defaultFodselsnummer"
+    val defaultTekst = "Dette er beskjed til brukeren"
+    val defaultLink = "https://nav.no/systemX/$defaultFodselsnummer"
+    val defaultSistOppdatert = ZonedDateTime.now(ZoneId.of("Europe/Oslo"))
+    val defaultSikkerhetsnivaa = 4
+
+    fun createBeskjed(
+        uid: String = defaultUid,
+        id: Int = ++idIncrementor,
+        eventId: String = (++eventIdIncrementor).toString(),
+        fodselsnummer: String = defaultFodselsnummer,
+        synligFremTil: ZonedDateTime? = defaultSynligFremTil,
+        aktiv: Boolean = defaultAktiv,
+        systembruker: String = defaultSystembruker,
+        namespace: String = defaultNamespace,
+        appnavn: String = defaultAppnavn,
+        produsent: String = defaultProdusent,
+        eventTidspunkt: ZonedDateTime = defaultEventTidspunkt,
+        grupperingsId: String = defaultGrupperingsId,
+        tekst: String = defaultTekst,
+        link: String = defaultLink,
+        sistOppdatert: ZonedDateTime = defaultSistOppdatert,
+        sikkerhetsnivaa: Int = defaultSikkerhetsnivaa
+    ): Beskjed {
         return Beskjed(
-                uid = uid,
-                id = id,
-                produsent = "dittnav",
-                systembruker = "x-dittnav",
-                namespace = "dummyNamespace",
-                appnavn = "dummyAppnavn",
-                eventTidspunkt = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
-                fodselsnummer = fodselsnummer,
-                eventId = eventId,
-                grupperingsId = "100$fodselsnummer",
-                tekst = "Dette er beskjed til brukeren",
-                link = "https://nav.no/systemX/$fodselsnummer",
-                sistOppdatert = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
-                synligFremTil = synligFremTil,
-                sikkerhetsnivaa = 4,
-                aktiv = aktiv)
+            uid = uid,
+            id = id,
+            produsent = produsent,
+            systembruker = systembruker,
+            namespace = namespace,
+            appnavn = appnavn,
+            eventTidspunkt = eventTidspunkt,
+            fodselsnummer = fodselsnummer,
+            eventId = eventId,
+            grupperingsId = grupperingsId,
+            tekst = tekst,
+            link = link,
+            sistOppdatert = sistOppdatert,
+            synligFremTil = synligFremTil,
+            sikkerhetsnivaa = sikkerhetsnivaa,
+            aktiv = aktiv
+        )
     }
 }

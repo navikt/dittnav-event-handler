@@ -61,8 +61,8 @@ class BeskjedEventServiceTest {
         val innloggetbruker = TokenXUserObjectMother.createInnloggetBruker("100")
         val grupperingsid = "100${innloggetbruker.ident}"
         val beskjedEvents = listOf(
-                BeskjedObjectMother.createBeskjed(id = 1, eventId = "1", fodselsnummer = innloggetbruker.ident, synligFremTil = null, uid = "1234", aktiv = false),
-                BeskjedObjectMother.createBeskjed(id = 2, eventId = "2", fodselsnummer = innloggetbruker.ident, synligFremTil = null, uid = "1235", aktiv = false))
+                BeskjedObjectMother.createBeskjed(fodselsnummer = innloggetbruker.ident, grupperingsId = grupperingsid),
+                BeskjedObjectMother.createBeskjed(fodselsnummer = innloggetbruker.ident, grupperingsId = grupperingsid))
         runBlocking {
             coEvery {
                 database.queryWithExceptionTranslation<List<Beskjed>>(any())
@@ -135,7 +135,7 @@ class BeskjedEventServiceTest {
 
     fun getBeskjedList(): MutableList<Beskjed> {
         return mutableListOf(
-                BeskjedObjectMother.createBeskjed(1, "1", bruker.ident, null, "123", true),
-                BeskjedObjectMother.createBeskjed(2, "2", bruker.ident, ZonedDateTime.now().minusDays(2), "123", true))
+                BeskjedObjectMother.createBeskjed(bruker.ident, synligFremTil = null),
+                BeskjedObjectMother.createBeskjed(bruker.ident, synligFremTil = ZonedDateTime.now().minusDays(2)))
     }
 }

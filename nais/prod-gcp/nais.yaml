@@ -63,6 +63,7 @@ spec:
       rules:
         - application: dittnav-api
         - application: internal-periodic-metrics-reporter
+        - application: dittnav-nightly-usage-statistics-reporter
         - application: tms-event-test-producer
         - application: dittnav-api
           namespace: personbruker

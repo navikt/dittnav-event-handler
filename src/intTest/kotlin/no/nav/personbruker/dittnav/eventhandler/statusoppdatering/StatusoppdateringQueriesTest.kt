@@ -2,7 +2,7 @@ package no.nav.personbruker.dittnav.eventhandler.statusoppdatering
 
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.TokenXUserObjectMother
-import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
+import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
 import org.amshove.kluent.`should be empty`
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.AfterEach
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 
 class StatusoppdateringQueriesTest {
 
-    private val database = H2Database()
+    private val database = LocalPostgresDatabase()
     private val bruker = TokenXUserObjectMother.createInnloggetBruker("12345")
     private val statusoppdateringEvents = StatusoppdateringObjectMother.getStatusoppdateringEvents(bruker)
     private val grupperingsid = "100${bruker.ident}"
@@ -42,7 +42,8 @@ class StatusoppdateringQueriesTest {
 
     @Test
     fun `Finn alle cachede Statusoppdatering-eventer`() {
-        val statusoppdateringMedNyBruker = StatusoppdateringObjectMother.createStatusoppdateringWithFodselsnummer(id = 5, fodselsnummer = "123")
+        val statusoppdateringMedNyBruker =
+            StatusoppdateringObjectMother.createStatusoppdateringWithFodselsnummer(id = 5, fodselsnummer = "123")
 
         runBlocking {
             database.dbQuery { createStatusoppdatering(listOf(statusoppdateringMedNyBruker)) }

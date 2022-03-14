@@ -3,11 +3,13 @@ package no.nav.personbruker.dittnav.eventhandler.common.database
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.runBlocking
 
-class H2Database : Database {
+class LocalPostgresDatabase : Database {
 
     private val memDataSource: HikariDataSource
+    private val container = TestPostgresqlContainer()
 
     init {
+        container.start()
         memDataSource = createDataSource()
         createTablesAndViews()
     }
@@ -17,9 +19,10 @@ class H2Database : Database {
 
     private fun createDataSource(): HikariDataSource {
         return HikariDataSource().apply {
-            jdbcUrl = "jdbc:h2:mem:testdb"
-            username = "sa"
-            password = ""
+            jdbcUrl = container.jdbcUrl
+            username = container.username
+            password = container.password
+            isAutoCommit = false
             validate()
         }
     }

@@ -1,7 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
+import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
 import no.nav.personbruker.dittnav.eventhandler.common.findCountFor
 import org.amshove.kluent.`should be empty`
 import org.amshove.kluent.`should be equal to`
@@ -13,17 +13,52 @@ import org.junit.jupiter.api.TestInstance
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class OppgaveQueriesTest {
 
-    private val database = H2Database()
+    private val database = LocalPostgresDatabase()
     private val fodselsnummer = "12345"
     private val systembruker = "x-dittnav"
     private val namespace = "localhost"
     private val appnavn = "dittnav"
     private val grupperingsid = "100${fodselsnummer}"
 
-    private val oppgave1 = OppgaveObjectMother.createOppgave(id = 1, eventId = "123", fodselsnummer = fodselsnummer, grupperingsId = grupperingsid, aktiv = true, systembruker = systembruker, namespace = namespace, appnavn = appnavn)
-    private val oppgave2 = OppgaveObjectMother.createOppgave(id = 2, eventId = "345", fodselsnummer = fodselsnummer, grupperingsId = grupperingsid, aktiv = true, systembruker = systembruker, namespace = namespace, appnavn = appnavn)
-    private val oppgave3 = OppgaveObjectMother.createOppgave(id = 3, eventId = "567", fodselsnummer = fodselsnummer, grupperingsId = grupperingsid, aktiv = false, systembruker = systembruker, namespace = namespace, appnavn = appnavn)
-    private val oppgave4 = OppgaveObjectMother.createOppgave(id = 4, eventId = "789", fodselsnummer = "54321", aktiv = true, systembruker = "x-dittnav-2", namespace = namespace, appnavn = "x-dittnav")
+    private val oppgave1 = OppgaveObjectMother.createOppgave(
+        id = 1,
+        eventId = "123",
+        fodselsnummer = fodselsnummer,
+        grupperingsId = grupperingsid,
+        aktiv = true,
+        systembruker = systembruker,
+        namespace = namespace,
+        appnavn = appnavn
+    )
+    private val oppgave2 = OppgaveObjectMother.createOppgave(
+        id = 2,
+        eventId = "345",
+        fodselsnummer = fodselsnummer,
+        grupperingsId = grupperingsid,
+        aktiv = true,
+        systembruker = systembruker,
+        namespace = namespace,
+        appnavn = appnavn
+    )
+    private val oppgave3 = OppgaveObjectMother.createOppgave(
+        id = 3,
+        eventId = "567",
+        fodselsnummer = fodselsnummer,
+        grupperingsId = grupperingsid,
+        aktiv = false,
+        systembruker = systembruker,
+        namespace = namespace,
+        appnavn = appnavn
+    )
+    private val oppgave4 = OppgaveObjectMother.createOppgave(
+        id = 4,
+        eventId = "789",
+        fodselsnummer = "54321",
+        aktiv = true,
+        systembruker = "x-dittnav-2",
+        namespace = namespace,
+        appnavn = "x-dittnav"
+    )
 
     @BeforeAll
     fun `populer test-data`() {

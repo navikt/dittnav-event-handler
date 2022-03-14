@@ -4,7 +4,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
 import no.nav.personbruker.dittnav.eventhandler.beskjed.deleteBeskjed
-import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
+import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
 import no.nav.personbruker.dittnav.eventhandler.common.findCountFor
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksObjectMother
 import no.nav.personbruker.dittnav.eventhandler.innboks.createInnboks
@@ -23,7 +23,7 @@ import java.time.ZonedDateTime
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class DoneQueriesTest {
 
-    private val database = H2Database()
+    private val database = LocalPostgresDatabase()
     private val fodselsnummer = "123"
     private val systembruker = "x-dittnav"
     private val namespace = "localhost"

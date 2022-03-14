@@ -76,7 +76,7 @@ create table if not exists done (
     unique (eventid, systembruker)
 );
 
-create view if not exists brukernotifikasjon_view as
+CREATE OR REPLACE VIEW brukernotifikasjon_view as
   SELECT beskjed.eventid, beskjed.systembruker, 'beskjed' :: text AS type, beskjed.fodselsnummer, beskjed.aktiv
   FROM beskjed
   UNION

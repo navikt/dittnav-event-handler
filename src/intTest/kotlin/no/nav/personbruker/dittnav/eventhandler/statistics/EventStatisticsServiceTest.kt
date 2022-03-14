@@ -5,7 +5,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
 import no.nav.personbruker.dittnav.eventhandler.beskjed.deleteBeskjed
-import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
+import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
 import no.nav.personbruker.dittnav.eventhandler.innboks.Innboks
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksObjectMother
 import no.nav.personbruker.dittnav.eventhandler.innboks.createInnboks
@@ -14,15 +14,19 @@ import no.nav.personbruker.dittnav.eventhandler.oppgave.Oppgave
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveObjectMother
 import no.nav.personbruker.dittnav.eventhandler.oppgave.createOppgave
 import no.nav.personbruker.dittnav.eventhandler.oppgave.deleteOppgave
-import org.amshove.kluent.*
-import org.junit.jupiter.api.*
-
+import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should be greater or equal to`
+import org.amshove.kluent.`should be greater than`
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import java.time.ZonedDateTime
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class EventStatisticsServiceTest {
 
-    private val database = H2Database()
+    private val database = LocalPostgresDatabase()
     private val eventStatisticsService = EventStatisticsService(database)
 
     private val fodselsnummer = "12345"

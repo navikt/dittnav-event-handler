@@ -2,7 +2,7 @@ package no.nav.personbruker.dittnav.eventhandler.beskjed
 
 import Beskjed
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
+import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
 import no.nav.personbruker.dittnav.eventhandler.common.findCountFor
 import org.amshove.kluent.`should be empty`
 import org.amshove.kluent.`should be equal to`
@@ -15,7 +15,7 @@ import java.time.ZonedDateTime
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BeskjedQueriesTest {
 
-    private val database = H2Database()
+    private val database = LocalPostgresDatabase()
 
     private val fodselsnummer = "12345"
     private val uid = "22"
@@ -25,10 +25,53 @@ class BeskjedQueriesTest {
     private val namespace = "localhost"
     private val appnavn = "dittnav"
 
-    private val beskjed1 = BeskjedObjectMother.createBeskjed(id = 1, eventId = "123", fodselsnummer = fodselsnummer, grupperingsId = grupperingsid, synligFremTil = ZonedDateTime.now().plusHours(1), uid = "11", aktiv = true, systembruker = systembruker, namespace = namespace, appnavn = appnavn)
-    private val beskjed2 = BeskjedObjectMother.createBeskjed(id = 2, eventId = eventId, fodselsnummer = fodselsnummer, grupperingsId = grupperingsid, synligFremTil = ZonedDateTime.now().plusHours(1), uid = "22", aktiv = true, systembruker = systembruker, namespace = namespace, appnavn = appnavn)
-    private val beskjed3 = BeskjedObjectMother.createBeskjed(id = 3, eventId = "567", fodselsnummer = fodselsnummer, grupperingsId = grupperingsid, synligFremTil = ZonedDateTime.now().plusHours(1), uid = "33", aktiv = false, systembruker = systembruker, namespace = namespace, appnavn = appnavn)
-    private val beskjed4 = BeskjedObjectMother.createBeskjed(id = 4, eventId = "789", fodselsnummer = "54321", synligFremTil = ZonedDateTime.now().plusHours(1), uid = "44", aktiv = true, systembruker = "x-dittnav-2", namespace = namespace, appnavn = "dittnav-2")
+    private val beskjed1 = BeskjedObjectMother.createBeskjed(
+        id = 1,
+        eventId = "123",
+        fodselsnummer = fodselsnummer,
+        grupperingsId = grupperingsid,
+        synligFremTil = ZonedDateTime.now().plusHours(1),
+        uid = "11",
+        aktiv = true,
+        systembruker = systembruker,
+        namespace = namespace,
+        appnavn = appnavn
+    )
+    private val beskjed2 = BeskjedObjectMother.createBeskjed(
+        id = 2,
+        eventId = eventId,
+        fodselsnummer = fodselsnummer,
+        grupperingsId = grupperingsid,
+        synligFremTil = ZonedDateTime.now().plusHours(1),
+        uid = "22",
+        aktiv = true,
+        systembruker = systembruker,
+        namespace = namespace,
+        appnavn = appnavn
+    )
+    private val beskjed3 = BeskjedObjectMother.createBeskjed(
+        id = 3,
+        eventId = "567",
+        fodselsnummer = fodselsnummer,
+        grupperingsId = grupperingsid,
+        synligFremTil = ZonedDateTime.now().plusHours(1),
+        uid = "33",
+        aktiv = false,
+        systembruker = systembruker,
+        namespace = namespace,
+        appnavn = appnavn
+    )
+    private val beskjed4 = BeskjedObjectMother.createBeskjed(
+        id = 4,
+        eventId = "789",
+        fodselsnummer = "54321",
+        synligFremTil = ZonedDateTime.now().plusHours(1),
+        uid = "44",
+        aktiv = true,
+        systembruker = "x-dittnav-2",
+        namespace = namespace,
+        appnavn = "dittnav-2"
+    )
 
     @BeforeAll
     fun `populer testdata`() {

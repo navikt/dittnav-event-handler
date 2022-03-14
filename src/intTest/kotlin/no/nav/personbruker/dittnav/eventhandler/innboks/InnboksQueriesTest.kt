@@ -1,7 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.innboks
 
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.eventhandler.common.database.H2Database
+import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
 import no.nav.personbruker.dittnav.eventhandler.common.findCountFor
 import org.amshove.kluent.`should be empty`
 import org.amshove.kluent.`should be equal to`
@@ -13,7 +13,7 @@ import org.junit.jupiter.api.TestInstance
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class InnboksQueriesTest {
 
-    private val database = H2Database()
+    private val database = LocalPostgresDatabase()
 
     private val fodselsnummer1 = "12345"
     private val fodselsnummer2 = "67890"
@@ -22,10 +22,44 @@ class InnboksQueriesTest {
     private val appnavn = "dittnav"
     private val grupperingsid = "100${fodselsnummer1}"
 
-    private val innboks1 = InnboksObjectMother.createInnboks(id = 1, eventId = "123", fodselsnummer = fodselsnummer1, grupperingsId = grupperingsid, aktiv = true, systembruker = systembruker, namespace = namespace, appnavn = appnavn)
-    private val innboks2 = InnboksObjectMother.createInnboks(id = 2, eventId = "345", fodselsnummer = fodselsnummer1, grupperingsId = grupperingsid, aktiv = true, systembruker = systembruker, namespace = namespace, appnavn = appnavn)
-    private val innboks3 = InnboksObjectMother.createInnboks(id = 3, eventId = "567", fodselsnummer = fodselsnummer2, aktiv = true, systembruker = "x-dittnav-2", namespace = namespace, appnavn = "dittnav-2")
-    private val innboks4 = InnboksObjectMother.createInnboks(id = 4, eventId = "789", fodselsnummer = fodselsnummer2, aktiv = false, systembruker = systembruker, namespace = namespace, appnavn = appnavn)
+    private val innboks1 = InnboksObjectMother.createInnboks(
+        id = 1,
+        eventId = "123",
+        fodselsnummer = fodselsnummer1,
+        grupperingsId = grupperingsid,
+        aktiv = true,
+        systembruker = systembruker,
+        namespace = namespace,
+        appnavn = appnavn
+    )
+    private val innboks2 = InnboksObjectMother.createInnboks(
+        id = 2,
+        eventId = "345",
+        fodselsnummer = fodselsnummer1,
+        grupperingsId = grupperingsid,
+        aktiv = true,
+        systembruker = systembruker,
+        namespace = namespace,
+        appnavn = appnavn
+    )
+    private val innboks3 = InnboksObjectMother.createInnboks(
+        id = 3,
+        eventId = "567",
+        fodselsnummer = fodselsnummer2,
+        aktiv = true,
+        systembruker = "x-dittnav-2",
+        namespace = namespace,
+        appnavn = "dittnav-2"
+    )
+    private val innboks4 = InnboksObjectMother.createInnboks(
+        id = 4,
+        eventId = "789",
+        fodselsnummer = fodselsnummer2,
+        aktiv = false,
+        systembruker = systembruker,
+        namespace = namespace,
+        appnavn = appnavn
+    )
 
     @BeforeAll
     fun `populer test-data`() {

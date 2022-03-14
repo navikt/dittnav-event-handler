@@ -31,20 +31,6 @@ class DoneEventServiceTest {
         synligFremTil = ZonedDateTime.now().plusHours(1), uid = "11"
     )
 
-//    @BeforeAll
-//    fun `populer testdata`() {
-//        runBlocking {
-//            database.dbQuery { createBeskjed(listOf(beskjed1)) }
-//        }
-//    }
-//
-//    @AfterAll
-//    fun `slett testdata`() {
-//        runBlocking {
-//            database.dbQuery { deleteBeskjed(listOf(beskjed1)) }
-//        }
-//    }
-
     @Test
     fun `Kaster exception hvis listen er tom`() {
         val emptyListOfBeskjed = emptyList<Beskjed>()

@@ -73,6 +73,9 @@ spec:
         - application: dittnav-eventer-modia
           namespace: personbruker
           cluster: dev-fss
+        - application: salesforce
+          namespace: teamcrm
+          cluster: dev-external
     outbound:
       external:
         - host: kafka-schema-registry.nais-q.adeo.no

@@ -157,4 +157,17 @@ class EventStatisticsService(private val database: Database) {
             getCountNumberOfActiveEvents()
         }
     }
+
+    suspend fun getActiveEventsFrequencyDistribution(type: EventType): List<NumberOfEventsFrequency> {
+        return database.queryWithExceptionTranslation {
+            when (type) {
+                EventType.BESKJED -> getActiveEventsFrequencyDistribution("beskjed")
+                EventType.OPPGAVE -> getActiveEventsFrequencyDistribution("oppgave")
+                EventType.INNBOKS -> getActiveEventsFrequencyDistribution("innboks")
+                EventType.DONE -> throw Exception("Statistik ikke tilgjengelig for done-eventer")
+            }
+        }
+    }
 }
+
+data class NumberOfEventsFrequency(val antallEventer: Int, val antallBrukere: Int)

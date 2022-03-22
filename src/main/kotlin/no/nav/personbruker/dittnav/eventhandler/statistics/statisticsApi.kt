@@ -201,4 +201,15 @@ fun Route.statisticsSystemClientApi(statisticsService: EventStatisticsService) {
             respondWithError(call, log, exception)
         }
     }
+
+    get("/stats/frequency-distribution/active/{type}") {
+        try {
+            val type = EventType.fromOriginalType(call.parameters["type"]!!)
+            val measurement = statisticsService.getActiveEventsFrequencyDistribution(type)
+
+            call.respond(HttpStatusCode.OK, measurement)
+        } catch (exception: Exception) {
+            respondWithError(call, log, exception)
+        }
+    }
 }

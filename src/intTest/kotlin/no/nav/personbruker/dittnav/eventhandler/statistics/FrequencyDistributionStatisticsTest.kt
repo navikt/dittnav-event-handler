@@ -1,0 +1,95 @@
+package no.nav.personbruker.dittnav.eventhandler.statistics
+
+import Beskjed
+import kotlinx.coroutines.runBlocking
+import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
+import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
+import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
+import no.nav.personbruker.dittnav.eventhandler.innboks.Innboks
+import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksObjectMother
+import no.nav.personbruker.dittnav.eventhandler.innboks.createInnboks
+import no.nav.personbruker.dittnav.eventhandler.oppgave.Oppgave
+import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveObjectMother
+import no.nav.personbruker.dittnav.eventhandler.oppgave.createOppgave
+import org.amshove.kluent.`should be equal to`
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import java.time.ZonedDateTime
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class FrequencyDistributionStatisticsTest {
+
+    private val database = LocalPostgresDatabase()
+    private val eventStatisticsService = EventStatisticsService(database)
+
+    private val fodselsnummer = "12345"
+    private val fodselsnummer2 = "67890"
+    private val systembruker = "x-dittnav"
+
+    private val beskjed1 = BeskjedObjectMother.createBeskjed(fodselsnummer = fodselsnummer, synligFremTil = ZonedDateTime.now().plusHours(1), aktiv = true, systembruker = systembruker, tekst = "12")
+    private val beskjed2 = BeskjedObjectMother.createBeskjed(fodselsnummer = fodselsnummer, synligFremTil = ZonedDateTime.now().plusHours(1), aktiv = true, systembruker = systembruker)
+    private val beskjed3 = BeskjedObjectMother.createBeskjed(fodselsnummer = fodselsnummer, synligFremTil = ZonedDateTime.now().plusHours(1), aktiv = false, systembruker = systembruker)
+    private val beskjed4 = BeskjedObjectMother.createBeskjed(fodselsnummer = "54321", synligFremTil = ZonedDateTime.now().plusHours(1), aktiv = true, systembruker = "x-dittnav-2")
+
+    private val oppgave1 = OppgaveObjectMother.createOppgave(fodselsnummer = fodselsnummer, aktiv = true, systembruker = systembruker, tekst = "123")
+    private val oppgave2 = OppgaveObjectMother.createOppgave(fodselsnummer = fodselsnummer, aktiv = true, systembruker = systembruker)
+    private val oppgave3 = OppgaveObjectMother.createOppgave(fodselsnummer = fodselsnummer, aktiv = false, systembruker = systembruker)
+    private val oppgave4 = OppgaveObjectMother.createOppgave(fodselsnummer = "54321", aktiv = true, systembruker = "x-dittnav-2")
+    private val oppgave5 = OppgaveObjectMother.createOppgave(fodselsnummer = "37226687654", aktiv = true, systembruker = systembruker)
+    private val oppgave6 = OppgaveObjectMother.createOppgave(fodselsnummer = "37226687635", aktiv = true, systembruker = systembruker)
+
+    private val innboks1 = InnboksObjectMother.createInnboks(fodselsnummer = fodselsnummer, aktiv = true, systembruker = systembruker, tekst = "ab")
+    private val innboks2 = InnboksObjectMother.createInnboks(fodselsnummer = fodselsnummer2, aktiv = true, systembruker = "x-dittnav-2")
+    private val innboks3 = InnboksObjectMother.createInnboks(fodselsnummer = fodselsnummer2, aktiv = false, systembruker = systembruker)
+
+    @BeforeAll
+    fun `populer testdata`() {
+        createBeskjed(listOf(beskjed1, beskjed2, beskjed3, beskjed4))
+        createInnboks(listOf(innboks1, innboks2, innboks3))
+        createOppgave(listOf(oppgave1, oppgave2, oppgave3, oppgave4, oppgave5, oppgave6))
+    }
+
+    @Test
+    fun `Frekvensfordeling av antall aktive beskjeder`() {
+        runBlocking {
+            val aktiveEventer = eventStatisticsService.getActiveEventsFrequencyDistribution(EventType.BESKJED)
+            aktiveEventer.size `should be equal to` 2
+            aktiveEventer.first { it.antallEventer == 2 }.antallBrukere `should be equal to` 1
+        }
+    }
+
+    @Test
+    fun `Frekvensfordeling av antall aktive oppgaver`() {
+        runBlocking {
+            val aktiveEventer = eventStatisticsService.getActiveEventsFrequencyDistribution(EventType.OPPGAVE)
+            aktiveEventer.size `should be equal to` 2
+            aktiveEventer.first { it.antallEventer == 1 }.antallBrukere `should be equal to` 3
+        }
+    }
+
+    @Test
+    fun `Frekvensfordeling av antall aktive innboks`() {
+        runBlocking {
+            val aktiveEventer = eventStatisticsService.getActiveEventsFrequencyDistribution(EventType.INNBOKS)
+            aktiveEventer.size `should be equal to` 1
+            aktiveEventer.first { it.antallEventer == 1 }.antallBrukere `should be equal to` 2
+        }
+    }
+
+    private fun createBeskjed(beskjeder: List<Beskjed>) {
+        runBlocking {
+            database.dbQuery { createBeskjed(beskjeder) }
+        }
+    }
+    private fun createInnboks(innboks: List<Innboks>) {
+        runBlocking {
+            database.dbQuery { createInnboks(innboks) }
+        }
+    }
+    private fun createOppgave(oppgaver: List<Oppgave>) {
+        runBlocking {
+            database.dbQuery { createOppgave(oppgaver) }
+        }
+    }
+}

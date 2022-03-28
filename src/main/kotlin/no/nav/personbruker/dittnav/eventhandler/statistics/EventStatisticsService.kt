@@ -158,7 +158,7 @@ class EventStatisticsService(private val database: Database) {
         }
     }
 
-    suspend fun getActiveEventsFrequencyDistribution(type: EventType): List<NumberOfEventsFrequency> {
+    suspend fun getActiveEventsFrequencyDistribution(type: EventType): EventFrequencyDistribution {
         return database.queryWithExceptionTranslation {
             when (type) {
                 EventType.BESKJED -> getActiveEventsFrequencyDistribution("beskjed")
@@ -169,5 +169,6 @@ class EventStatisticsService(private val database: Database) {
         }
     }
 }
+data class EventFrequencyDistribution(val eventFrequencies: List<NumberOfEventsFrequency>)
 
 data class NumberOfEventsFrequency(val antallEventer: Int, val antallBrukere: Int)

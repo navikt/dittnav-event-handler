@@ -53,27 +53,27 @@ class FrequencyDistributionStatisticsTest {
     @Test
     fun `Frekvensfordeling av antall aktive beskjeder`() {
         runBlocking {
-            val aktiveEventer = eventStatisticsService.getActiveEventsFrequencyDistribution(EventType.BESKJED)
-            aktiveEventer.size `should be equal to` 2
-            aktiveEventer.first { it.antallEventer == 2 }.antallBrukere `should be equal to` 1
+            val eventFrekvensFordeling = eventStatisticsService.getActiveEventsFrequencyDistribution(EventType.BESKJED)
+            eventFrekvensFordeling.eventFrequencies.size `should be equal to` 2
+            eventFrekvensFordeling.eventFrequencies.first() { it.antallEventer == 2 }.antallBrukere `should be equal to` 1
         }
     }
 
     @Test
     fun `Frekvensfordeling av antall aktive oppgaver`() {
         runBlocking {
-            val aktiveEventer = eventStatisticsService.getActiveEventsFrequencyDistribution(EventType.OPPGAVE)
-            aktiveEventer.size `should be equal to` 2
-            aktiveEventer.first { it.antallEventer == 1 }.antallBrukere `should be equal to` 3
+            val eventFrekvensFordeling = eventStatisticsService.getActiveEventsFrequencyDistribution(EventType.OPPGAVE)
+            eventFrekvensFordeling.eventFrequencies.size `should be equal to` 2
+            eventFrekvensFordeling.eventFrequencies.first() { it.antallEventer == 1 }.antallBrukere `should be equal to` 3
         }
     }
 
     @Test
     fun `Frekvensfordeling av antall aktive innboks`() {
         runBlocking {
-            val aktiveEventer = eventStatisticsService.getActiveEventsFrequencyDistribution(EventType.INNBOKS)
-            aktiveEventer.size `should be equal to` 1
-            aktiveEventer.first { it.antallEventer == 1 }.antallBrukere `should be equal to` 2
+            val eventFrekvensFordeling = eventStatisticsService.getActiveEventsFrequencyDistribution(EventType.INNBOKS)
+            eventFrekvensFordeling.eventFrequencies.size `should be equal to` 1
+            eventFrekvensFordeling.eventFrequencies.first() { it.antallEventer == 1 }.antallBrukere `should be equal to` 2
         }
     }
 

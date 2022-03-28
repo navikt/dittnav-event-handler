@@ -169,6 +169,3 @@ class EventStatisticsService(private val database: Database) {
         }
     }
 }
-data class EventFrequencyDistribution(val eventFrequencies: List<NumberOfEventsFrequency>)
-
-data class NumberOfEventsFrequency(val antallEventer: Int, val antallBrukere: Int)

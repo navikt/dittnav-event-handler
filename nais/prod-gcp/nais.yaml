@@ -71,6 +71,7 @@ spec:
         - application: dittnav-eventer-modia
           namespace: personbruker
           cluster: prod-fss
+        - application: tms-event-api
     outbound:
       external:
         - host: kafka-schema-registry.nais.adeo.no

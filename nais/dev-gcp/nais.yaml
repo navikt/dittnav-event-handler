@@ -75,6 +75,7 @@ spec:
         - application: salesforce
           namespace: teamcrm
           cluster: dev-external
+        - application: tms-event-api
     outbound:
       external:
         - host: kafka-schema-registry.nais-q.adeo.no

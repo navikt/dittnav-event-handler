@@ -8,6 +8,7 @@ import no.nav.personbruker.dittnav.eventhandler.common.health.HealthService
 import no.nav.personbruker.dittnav.eventhandler.common.kafka.KafkaProducerWrapper
 import no.nav.personbruker.dittnav.eventhandler.done.DoneEventService
 import no.nav.personbruker.dittnav.eventhandler.done.DoneProducer
+import no.nav.personbruker.dittnav.eventhandler.event.EventRepository
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksEventService
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveEventService
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventStatisticsService
@@ -30,6 +31,7 @@ class ApplicationContext {
     val doneEventService = DoneEventService(database, doneProducer)
     val statusoppdateringEventService = StatusoppdateringEventService(database)
     val eventStatisticsService = EventStatisticsService(database)
+    val eventRepository = EventRepository(database)
 
     val healthService = HealthService(this)
 }

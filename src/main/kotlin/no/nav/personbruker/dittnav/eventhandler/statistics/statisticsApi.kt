@@ -7,6 +7,7 @@ import io.ktor.routing.Route
 import io.ktor.routing.get
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.respondWithError
+import no.nav.personbruker.dittnav.eventhandler.event.EventType
 import org.slf4j.LoggerFactory
 
 fun Route.statisticsSystemClientApi(statisticsService: EventStatisticsService) {

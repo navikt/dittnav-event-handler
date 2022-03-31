@@ -13,6 +13,7 @@ import no.nav.personbruker.dittnav.eventhandler.beskjed.beskjedSystemClientApi
 import no.nav.personbruker.dittnav.eventhandler.common.health.healthApi
 import no.nav.personbruker.dittnav.eventhandler.done.doneApi
 import no.nav.personbruker.dittnav.eventhandler.done.doneSystemClientApi
+import no.nav.personbruker.dittnav.eventhandler.event.eventApi
 import no.nav.personbruker.dittnav.eventhandler.innboks.innboksApi
 import no.nav.personbruker.dittnav.eventhandler.innboks.innboksSystemClientApi
 import no.nav.personbruker.dittnav.eventhandler.oppgave.oppgaveApi
@@ -51,6 +52,7 @@ fun Application.mainModule(appContext: ApplicationContext = ApplicationContext()
             innboksApi(appContext.innboksEventService)
             oppgaveApi(appContext.oppgaveEventService)
             statusoppdateringApi(appContext.statusoppdateringEventService)
+            eventApi(appContext.eventRepository)
         }
         authenticate(AzureAuthenticator.name) {
             doneSystemClientApi(appContext.doneEventService)

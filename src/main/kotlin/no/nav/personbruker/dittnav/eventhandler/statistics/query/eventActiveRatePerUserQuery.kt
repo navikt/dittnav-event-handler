@@ -3,7 +3,7 @@ package no.nav.personbruker.dittnav.eventhandler.statistics.query
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapSingleResult
 import no.nav.personbruker.dittnav.eventhandler.statistics.DecimalMeasurement
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventActiveRatePerUser
-import no.nav.personbruker.dittnav.eventhandler.statistics.EventType
+import no.nav.personbruker.dittnav.eventhandler.event.EventType
 import java.sql.Connection
 import java.sql.ResultSet
 

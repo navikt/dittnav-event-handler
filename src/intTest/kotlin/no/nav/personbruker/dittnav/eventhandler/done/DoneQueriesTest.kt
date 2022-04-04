@@ -23,7 +23,7 @@ import java.time.ZonedDateTime
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class DoneQueriesTest {
 
-    private val database = LocalPostgresDatabase()
+    private val database = LocalPostgresDatabase.cleanDb()
     private val fodselsnummer = "123"
     private val systembruker = "x-dittnav"
     private val namespace = "localhost"

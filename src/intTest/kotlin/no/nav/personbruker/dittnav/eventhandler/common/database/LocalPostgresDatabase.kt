@@ -5,12 +5,30 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import org.postgresql.util.PSQLException
-import java.lang.Thread.sleep
 
-class LocalPostgresDatabase : Database {
+class LocalPostgresDatabase private constructor() : Database {
 
     private val memDataSource: HikariDataSource
     private val container = TestPostgresqlContainer()
+
+    companion object {
+        private val instance by lazy {
+            LocalPostgresDatabase()
+        }
+
+        fun cleanDb(): LocalPostgresDatabase {
+            runBlocking {
+                instance.dbQuery {
+                    prepareStatement("delete from beskjed").execute()
+                    prepareStatement("delete from oppgave").execute()
+                    prepareStatement("delete from innboks").execute()
+                    prepareStatement("delete from statusoppdatering").execute()
+                    prepareStatement("delete from done").execute()
+                }
+            }
+            return instance
+        }
+    }
 
     init {
         container.start()

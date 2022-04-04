@@ -21,7 +21,7 @@ import java.time.ZonedDateTime
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class FrequencyDistributionStatisticsTest {
 
-    private val database = LocalPostgresDatabase()
+    private val database = LocalPostgresDatabase.cleanDb()
     private val eventStatisticsService = EventStatisticsService(database)
 
     private val fodselsnummer = "12345"

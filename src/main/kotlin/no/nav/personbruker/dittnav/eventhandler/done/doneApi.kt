@@ -56,20 +56,6 @@ fun Route.doneSystemClientApi(doneEventService: DoneEventService) {
 
     val log = LoggerFactory.getLogger(DoneEventService::class.java)
 
-    // TODO: remove
-    get("/fetch/grouped/systemuser/done") {
-        try {
-            val doneEvents = doneEventService.getAllGroupedEventsBySystemuserFromCache()
-            val inactiveBrukernotifikasjoner = doneEventService.getNumberOfInactiveBrukernotifikasjonerGroupedBySystemuser()
-
-            val result = doneEvents.mergeAndSumWith(inactiveBrukernotifikasjoner)
-
-            call.respond(HttpStatusCode.OK, result)
-        } catch (exception: Exception) {
-            respondWithError(call, log, exception)
-        }
-    }
-
     get("/fetch/grouped/producer/done") {
         try {
             val doneEvents = doneEventService.getAllGroupedEventsByProducerFromCache()

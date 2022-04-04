@@ -19,7 +19,7 @@ import java.time.ZonedDateTime
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class EventTest {
-    private val database = LocalPostgresDatabase()
+    private val database = LocalPostgresDatabase.cleanDb()
 
     private val fodselsnummer = "12345678"
     private val uid = "22"

@@ -2,7 +2,6 @@ import java.time.ZonedDateTime
 
 data class Beskjed(
         val id: Int,
-        val uid: String,
         val fodselsnummer: String,
         val grupperingsId: String,
         val eventId: String,
@@ -21,7 +20,6 @@ data class Beskjed(
     override fun toString(): String {
         return "Beskjed(" +
                 "id=$id, " +
-                "uid=$uid, " +
                 "fodselsnummer=***, " +
                 "grupperingsId=$grupperingsId, " +
                 "eventId=$eventId, " +

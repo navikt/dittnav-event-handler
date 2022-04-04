@@ -22,8 +22,6 @@ class EventTest {
     private val database = LocalPostgresDatabase.cleanDb()
 
     private val fodselsnummer = "12345678"
-    private val uid = "22"
-    private val eventId = "124"
     private val grupperingsid = "100${fodselsnummer}"
     private val systembruker = "x-dittnav"
     private val namespace = "localhost"
@@ -35,7 +33,6 @@ class EventTest {
             fodselsnummer = fodselsnummer,
             grupperingsId = grupperingsid,
             synligFremTil = ZonedDateTime.now().plusHours(1),
-            uid = "11",
             aktiv = false,
             systembruker = systembruker,
             namespace = namespace,

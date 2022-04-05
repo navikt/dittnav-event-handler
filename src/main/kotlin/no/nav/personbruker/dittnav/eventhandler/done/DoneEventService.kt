@@ -23,18 +23,8 @@ class DoneEventService(private val database: Database, private val doneProducer:
         return validBeskjed(result)
     }
 
-    suspend fun getAllGroupedEventsBySystemuserFromCache(): Map<String, Int> {
-        return database.queryWithExceptionTranslation { getAllGroupedDoneEventsBySystemuser() }
-    }
-
     suspend fun getAllGroupedEventsByProducerFromCache(): List<EventCountForProducer> {
         return database.queryWithExceptionTranslation { getAllGroupedDoneEventsByProducer() }
-    }
-
-    suspend fun getNumberOfInactiveBrukernotifikasjonerGroupedBySystemuser(): Map<String, Int> {
-        return database.queryWithExceptionTranslation {
-            countTotalNumberOfBrukernotifikasjonerByActiveStatus(false)
-        }
     }
 
     suspend fun getNumberOfInactiveBrukernotifikasjonerByProducer(): List<EventCountForProducer> {

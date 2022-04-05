@@ -70,6 +70,7 @@ dependencies {
     testImplementation(Mockk.mockk)
     testImplementation(NAV.kafkaEmbedded)
     testImplementation(TestContainers.postgresql)
+    testImplementation(Ktor.serverTestHost)
 
     testRuntimeOnly(Bouncycastle.bcprovJdk15on)
     testRuntimeOnly(Jjwt.impl)
@@ -78,7 +79,7 @@ dependencies {
 }
 
 application {
-    mainClass.set("io.ktor.server.netty.EngineMain")
+    mainClass.set("no.nav.personbruker.dittnav.eventhandler.config.ApplicationKt")
 }
 
 tasks {

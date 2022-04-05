@@ -1,5 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.config
 
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
 import no.nav.brukernotifikasjon.schemas.input.DoneInput
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService
@@ -15,15 +17,14 @@ import no.nav.personbruker.dittnav.eventhandler.statistics.EventStatisticsServic
 import no.nav.personbruker.dittnav.eventhandler.statusoppdatering.StatusoppdateringEventService
 import org.apache.kafka.clients.producer.KafkaProducer
 
-class ApplicationContext {
+fun main() {
 
-    private val environment = Environment()
+    val environment = Environment()
 
     val kafkaProducerDone = KafkaProducerWrapper(environment.doneInputTopicName ,KafkaProducer<NokkelInput, DoneInput>(Kafka.producerProps(environment)))
+    val doneProducer = DoneProducer(kafkaProducerDone)
 
     val database: Database = PostgresDatabase(environment)
-
-    private val doneProducer = DoneProducer(kafkaProducerDone)
 
     val beskjedEventService = BeskjedEventService(database)
     val oppgaveEventService = OppgaveEventService(database)
@@ -33,5 +34,20 @@ class ApplicationContext {
     val eventStatisticsService = EventStatisticsService(database)
     val eventRepository = EventRepository(database)
 
-    val healthService = HealthService(this)
+    val healthService = HealthService(database)
+
+    embeddedServer(Netty) {
+        eventHandlerApi(
+            healthService,
+            beskjedEventService,
+            oppgaveEventService,
+            innboksEventService,
+            doneEventService,
+            statusoppdateringEventService,
+            eventRepository,
+            eventStatisticsService,
+            database,
+            doneProducer
+        )
+    }
 }

@@ -1,6 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.event
 
 import Beskjed
+import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
@@ -11,7 +12,6 @@ import no.nav.personbruker.dittnav.eventhandler.innboks.createInnboks
 import no.nav.personbruker.dittnav.eventhandler.oppgave.Oppgave
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveObjectMother
 import no.nav.personbruker.dittnav.eventhandler.oppgave.createOppgave
-import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -76,8 +76,8 @@ class EventTest {
         val eventRepository = EventRepository(database)
         runBlocking {
             val inaktiveEventer = eventRepository.getInactiveEvents(beskjed1.fodselsnummer)
-            inaktiveEventer.size shouldBeEqualTo 3
-            inaktiveEventer.all { it.toEventDTO().fodselsnummer == beskjed1.fodselsnummer } shouldBeEqualTo true
+            inaktiveEventer.size shouldBe 3
+            inaktiveEventer.all { it.toEventDTO().fodselsnummer == beskjed1.fodselsnummer } shouldBe true
         }
     }
 

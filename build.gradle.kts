@@ -72,6 +72,10 @@ dependencies {
     testImplementation(TestContainers.postgresql)
     testImplementation(Ktor.serverTestHost)
 
+    testImplementation("io.kotest:kotest-runner-junit5-jvm:5.2.2")
+    testImplementation("io.kotest:kotest-assertions-core-jvm:5.2.2")
+    testImplementation("io.kotest:kotest-property-jvm:5.2.2")
+
     testRuntimeOnly(Bouncycastle.bcprovJdk15on)
     testRuntimeOnly(Jjwt.impl)
     testRuntimeOnly(Jjwt.orgjson)

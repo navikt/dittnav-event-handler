@@ -29,7 +29,7 @@ class EventTest {
 
     private val beskjed1 = BeskjedObjectMother.createBeskjed(
             id = 1,
-            eventId = "123",
+            eventId = "9876",
             fodselsnummer = fodselsnummer,
             grupperingsId = grupperingsid,
             synligFremTil = ZonedDateTime.now().plusHours(1),
@@ -41,7 +41,7 @@ class EventTest {
 
     private val oppgave1 = OppgaveObjectMother.createOppgave(
             id = 1,
-            eventId = "123",
+            eventId = "234657",
             fodselsnummer = fodselsnummer,
             grupperingsId = grupperingsid,
             aktiv = false,
@@ -74,7 +74,7 @@ class EventTest {
         runBlocking {
             val inaktiveEventer = eventRepository.getInactiveEvents(beskjed1.fodselsnummer)
             inaktiveEventer.size shouldBeEqualTo 3
-            inaktiveEventer.all { it.toEventDTO().fodselsnummer == beskjed1.fodselsnummer } shouldBeEqualTo true
+            inaktiveEventer.map { it.toEventDTO().type }.toSet() shouldBeEqualTo setOf(EventType.BESKJED, EventType.OPPGAVE, EventType.INNBOKS)
         }
     }
 

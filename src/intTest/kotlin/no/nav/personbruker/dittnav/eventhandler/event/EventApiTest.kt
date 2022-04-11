@@ -1,7 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.event
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.kotest.extensions.system.withEnvironment
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
@@ -10,7 +9,6 @@ import io.ktor.server.testing.withTestApplication
 import io.mockk.coEvery
 import io.mockk.mockk
 import mockEventHandlerApi
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -18,7 +16,6 @@ import java.time.ZonedDateTime
 class EventApiTest {
 
     @Test
-    @Disabled
     fun `eventer-apiet skal returnere event på riktig format`() {
         val fodselsnummer = "12354"
         val grupperingsId = "123"
@@ -32,9 +29,9 @@ class EventApiTest {
         val aktiv = true
         val type = EventType.BESKJED
 
-        val eventRepository: EventRepository = mockk()
+        val eventRepositoryMock: EventRepository = mockk()
         coEvery {
-            eventRepository.getInactiveEvents(any())
+            eventRepositoryMock.getInactiveEvents(any())
         }.returns(
             listOf(
                 Event(
@@ -53,28 +50,24 @@ class EventApiTest {
             )
         )
 
-        withEnvironment(mapOf("TOKEN_X_CLIENT_ID" to "test", "TOKEN_X_WELL_KNOWN_URL" to "test")) {
-            withTestApplication(
-                mockEventHandlerApi(eventRepository = eventRepository)
-            ) {
-                handleRequest(HttpMethod.Get, "") {
-                }.apply {
-                    response.status() shouldBe HttpStatusCode.OK
+        val response = withTestApplication(
+            mockEventHandlerApi(eventRepository = eventRepositoryMock)
+        ) {
+            handleRequest(HttpMethod.Get, "/fetch/event/inaktive") {}
+        }.response
 
-                    val eventJson = ObjectMapper().readTree(response.content)[0]
-                    eventJson["fodselsnummer"] shouldBe fodselsnummer
-                    eventJson["fodselsnummer"] shouldBe fodselsnummer
-                    eventJson["grupperingsId"] shouldBe grupperingsId
-                    eventJson["eventId"] shouldBe eventId
-                    eventJson["eventTidspunkt"] shouldBe eventTidspunkt
-                    eventJson["produsent"] shouldBe produsent
-                    eventJson["sikkerhetsnivaa"] shouldBe sikkerhetsnivaa
-                    eventJson["sistOppdatert"] shouldBe sistOppdatert
-                    eventJson["tekst"] shouldBe tekst
-                    eventJson["link"] shouldBe link
-                    eventJson["aktiv"] shouldBe aktiv
-                }
-            }
-        }
+        response.status() shouldBe HttpStatusCode.OK
+
+        val eventJson = ObjectMapper().readTree(response.content)[0]
+        eventJson["fodselsnummer"].asText() shouldBe fodselsnummer
+        eventJson["grupperingsId"].asText() shouldBe grupperingsId
+        eventJson["eventId"].asText() shouldBe eventId
+        ZonedDateTime.parse(eventJson["eventTidspunkt"].asText()) shouldBe eventTidspunkt
+        eventJson["produsent"].asText() shouldBe produsent
+        eventJson["sikkerhetsnivaa"].asInt() shouldBe sikkerhetsnivaa
+        ZonedDateTime.parse(eventJson["sistOppdatert"].asText()) shouldBe sistOppdatert
+        eventJson["tekst"].asText() shouldBe tekst
+        eventJson["link"].asText() shouldBe link
+        eventJson["aktiv"].asBoolean() shouldBe aktiv
     }
 }

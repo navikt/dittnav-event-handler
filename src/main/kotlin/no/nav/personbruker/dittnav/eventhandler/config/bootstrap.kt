@@ -51,7 +51,8 @@ fun Application.eventHandlerApi(
     eventRepository: EventRepository,
     eventStatisticsService: EventStatisticsService,
     database: Database,
-    doneProducer: DoneProducer
+    doneProducer: DoneProducer,
+    installAuthenticatorsFunction: Application.() -> Unit = installAuth()
 ) {
 
     DefaultExports.initialize()
@@ -61,14 +62,7 @@ fun Application.eventHandlerApi(
         json()
     }
 
-    installAuthenticators {
-        installTokenXAuth {
-            setAsDefault = true
-        }
-        installAzureAuth {
-            setAsDefault = false
-        }
-    }
+    installAuthenticatorsFunction()
 
     routing {
         healthApi(healthService)
@@ -93,6 +87,17 @@ fun Application.eventHandlerApi(
     configureShutdownHook(database, doneProducer)
 }
 
+private fun installAuth(): Application.() -> Unit = {
+    installAuthenticators {
+        installTokenXAuth {
+            setAsDefault = true
+        }
+        installAzureAuth {
+            setAsDefault = false
+        }
+    }
+}
+
 private fun Application.configureShutdownHook(database: Database, doneProducer: DoneProducer) {
     environment.monitor.subscribe(ApplicationStopPreparing) {
         closeTheDatabaseConectionPool(database)
@@ -101,13 +106,13 @@ private fun Application.configureShutdownHook(database: Database, doneProducer: 
 }
 
 private fun closeTheDatabaseConectionPool(database: Database) {
-    database.dataSource.close()
+    database.close()
 }
 
 val PipelineContext<Unit, ApplicationCall>.innloggetBruker: TokenXUser
     get(): TokenXUser {
         val claimName = StringEnvVar.getOptionalEnvVar("OIDC_CLAIM_CONTAINING_THE_IDENTITY")
-        return if(claimName.isNullOrEmpty()) {
+        return if (claimName.isNullOrEmpty()) {
             TokenXUserFactory.createTokenXUser(call)
         } else {
             TokenXUserFactory.createTokenXUser(call, claimName)

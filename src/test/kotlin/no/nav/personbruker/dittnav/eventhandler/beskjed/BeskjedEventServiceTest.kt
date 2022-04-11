@@ -135,7 +135,7 @@ class BeskjedEventServiceTest {
 
     fun getBeskjedList(): MutableList<Beskjed> {
         return mutableListOf(
-                BeskjedObjectMother.createBeskjed(bruker.ident, synligFremTil = null),
-                BeskjedObjectMother.createBeskjed(bruker.ident, synligFremTil = ZonedDateTime.now().minusDays(2)))
+                BeskjedObjectMother.createBeskjed(fodselsnummer = bruker.ident, synligFremTil = null),
+                BeskjedObjectMother.createBeskjed(fodselsnummer = bruker.ident, synligFremTil = ZonedDateTime.now().minusDays(2)))
     }
 }

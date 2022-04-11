@@ -18,7 +18,6 @@ class BeskjedQueriesTest {
     private val database = LocalPostgresDatabase.cleanDb()
 
     private val fodselsnummer = "12345"
-    private val uid = "22"
     private val eventId = "124"
     private val grupperingsid = "100${fodselsnummer}"
     private val systembruker = "x-dittnav"
@@ -31,7 +30,6 @@ class BeskjedQueriesTest {
         fodselsnummer = fodselsnummer,
         grupperingsId = grupperingsid,
         synligFremTil = ZonedDateTime.now().plusHours(1),
-        uid = "11",
         aktiv = true,
         systembruker = systembruker,
         namespace = namespace,
@@ -43,7 +41,6 @@ class BeskjedQueriesTest {
         fodselsnummer = fodselsnummer,
         grupperingsId = grupperingsid,
         synligFremTil = ZonedDateTime.now().plusHours(1),
-        uid = "22",
         aktiv = true,
         systembruker = systembruker,
         namespace = namespace,
@@ -55,7 +52,6 @@ class BeskjedQueriesTest {
         fodselsnummer = fodselsnummer,
         grupperingsId = grupperingsid,
         synligFremTil = ZonedDateTime.now().plusHours(1),
-        uid = "33",
         aktiv = false,
         systembruker = systembruker,
         namespace = namespace,
@@ -66,7 +62,6 @@ class BeskjedQueriesTest {
         eventId = "789",
         fodselsnummer = "54321",
         synligFremTil = ZonedDateTime.now().plusHours(1),
-        uid = "44",
         aktiv = true,
         systembruker = "x-dittnav-2",
         namespace = namespace,
@@ -151,16 +146,16 @@ class BeskjedQueriesTest {
     }
 
     @Test
-    fun `Finn alle cachede events som matcher fodselsnummer, uid og eventId`() {
+    fun `Finn alle cachede events som matcher fodselsnummer og eventId`() {
         runBlocking {
-            database.dbQuery { getBeskjedByIds(fodselsnummer, uid, eventId) }.size `should be equal to` 1
+            database.dbQuery { getBeskjedByIds(fodselsnummer, eventId) }.size `should be equal to` 1
         }
     }
 
     @Test
     fun `Returnerer tom liste hvis Beskjed-eventer ikke stemmer med eventId`() {
         runBlocking {
-            database.dbQuery { getBeskjedByIds(fodselsnummer, uid, "dummyEventId") }.`should be empty`()
+            database.dbQuery { getBeskjedByIds(fodselsnummer, "dummyEventId") }.`should be empty`()
         }
     }
 
@@ -168,7 +163,7 @@ class BeskjedQueriesTest {
     fun `Returnerer tom liste hvis Beskjed-eventer ikke stemmer med fodselsnummer`() {
         val brukerSomIkkeFinnes = "000"
         runBlocking {
-            database.dbQuery { getBeskjedByIds(brukerSomIkkeFinnes, uid, eventId) }.`should be empty`()
+            database.dbQuery { getBeskjedByIds(brukerSomIkkeFinnes, eventId) }.`should be empty`()
         }
     }
 
@@ -176,7 +171,7 @@ class BeskjedQueriesTest {
     fun `Returnerer tom liste av Beskjed-eventer hvis fodselsnummer er tomt`() {
         val fodselsnummerMangler = ""
         runBlocking {
-            database.dbQuery { getBeskjedByIds(fodselsnummerMangler, uid, eventId) }.`should be empty`()
+            database.dbQuery { getBeskjedByIds(fodselsnummerMangler, eventId) }.`should be empty`()
         }
     }
 

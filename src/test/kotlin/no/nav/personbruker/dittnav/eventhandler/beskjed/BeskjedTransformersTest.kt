@@ -2,7 +2,6 @@ package no.nav.personbruker.dittnav.eventhandler.beskjed
 
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
-import java.time.ZonedDateTime
 
 internal class BeskjedTransformersTest {
 
@@ -10,7 +9,6 @@ internal class BeskjedTransformersTest {
     fun `skal transformere til DTO`() {
         val beskjed = BeskjedObjectMother.createBeskjed()
         val beskjedDTO = beskjed.toDTO()
-        beskjedDTO.uid `should be equal to` beskjed.uid
         beskjedDTO.fodselsnummer `should be equal to` beskjed.fodselsnummer
         beskjedDTO.grupperingsId `should be equal to` beskjed.grupperingsId
         beskjedDTO.eventId `should be equal to` beskjed.eventId

@@ -57,17 +57,6 @@ fun Route.oppgaveSystemClientApi(oppgaveEventService: OppgaveEventService) {
 
     val log = LoggerFactory.getLogger(OppgaveEventService::class.java)
 
-    // TODO: remove
-    get("/fetch/grouped/systemuser/oppgave") {
-        try {
-            val oppgaveEvents =
-                oppgaveEventService.getAllGroupedEventsBySystemuserFromCache()
-            call.respond(HttpStatusCode.OK, oppgaveEvents)
-        } catch (exception: Exception) {
-            respondWithError(call, log, exception)
-        }
-    }
-
     get("/fetch/grouped/producer/oppgave") {
         try {
             val beskjedEvents =

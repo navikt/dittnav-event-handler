@@ -9,7 +9,6 @@ import java.time.ZonedDateTime
 
 @Serializable
 data class EventDTO(
-        val fodselsnummer: String,
         val grupperingsId: String,
         val eventId: String,
         val eventTidspunkt: ZonedDateTime,
@@ -37,7 +36,6 @@ class Event(
 ) {
     fun toEventDTO(): EventDTO {
         return EventDTO(
-                fodselsnummer = fodselsnummer,
                 grupperingsId = grupperingsId,
                 eventId = eventId,
                 eventTidspunkt = eventTidspunkt,

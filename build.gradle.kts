@@ -25,18 +25,6 @@ repositories {
     maven("https://jitpack.io")
 }
 
-sourceSets {
-    create("intTest") {
-        compileClasspath += sourceSets.main.get().output + sourceSets.test.get().output
-        runtimeClasspath += sourceSets.main.get().output + sourceSets.test.get().output
-    }
-}
-
-val intTestImplementation by configurations.getting {
-    extendsFrom(configurations.testImplementation.get())
-}
-configurations["intTestRuntimeOnly"].extendsFrom(configurations.testRuntimeOnly.get())
-
 dependencies {
     implementation("com.github.navikt:brukernotifikasjon-schemas:v2.5.0")
     implementation(DittNAV.Common.utils)
@@ -107,17 +95,6 @@ tasks {
         classpath = sourceSets["main"].runtimeClasspath
     }
 }
-
-val integrationTest = task<Test>("integrationTest") {
-    description = "Runs integration tests."
-    group = "verification"
-
-    testClassesDirs = sourceSets["intTest"].output.classesDirs
-    classpath = sourceSets["intTest"].runtimeClasspath
-    shouldRunAfter("test")
-}
-
-tasks.check { dependsOn(integrationTest) }
 
 // TODO: Fjern følgende work around i ny versjon av Shadow-pluginet:
 // Skal være løst i denne: https://github.com/johnrengelman/shadow/pull/612

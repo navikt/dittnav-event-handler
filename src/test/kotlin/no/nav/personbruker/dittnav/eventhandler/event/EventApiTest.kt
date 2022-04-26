@@ -8,7 +8,7 @@ import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.withTestApplication
 import io.mockk.coEvery
 import io.mockk.mockk
-import mockEventHandlerApi
+import no.nav.personbruker.dittnav.eventhandler.mockEventHandlerApi
 import org.junit.jupiter.api.Test
 import java.time.ZoneId
 import java.time.ZonedDateTime

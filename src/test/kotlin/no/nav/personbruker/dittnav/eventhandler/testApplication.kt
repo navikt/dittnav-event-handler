@@ -1,3 +1,5 @@
+package no.nav.personbruker.dittnav.eventhandler
+
 import io.ktor.application.Application
 import io.mockk.mockk
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService

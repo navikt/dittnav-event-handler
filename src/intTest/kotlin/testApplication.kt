@@ -12,6 +12,7 @@ import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveEventService
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventStatisticsService
 import no.nav.personbruker.dittnav.eventhandler.statusoppdatering.StatusoppdateringEventService
 import no.nav.tms.token.support.authentication.installer.mock.installMockedAuthenticators
+import no.nav.tms.token.support.tokenx.validation.mock.SecurityLevel
 
 fun mockEventHandlerApi(
     healthService: HealthService = mockk(relaxed = true),
@@ -28,8 +29,10 @@ fun mockEventHandlerApi(
         installMockedAuthenticators {
             installTokenXAuthMock {
                 setAsDefault = true
+
                 alwaysAuthenticated = true
-                staticJwtOverride = dummyJwt
+                staticUserPid = "123"
+                staticSecurityLevel = SecurityLevel.LEVEL_4
             }
             installAzureAuthMock {  }
         }
@@ -51,15 +54,3 @@ fun mockEventHandlerApi(
         )
     }
 }
-
-/* dummyJwt:
-{
-"acr_values":"Level4",
-"acr":"Level4",
-"pid":"123",
-"exp":1649678305,
-"iat":1649674705,
-"jti":"STUB"
-}
- */
-private const val dummyJwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY3JfdmFsdWVzIjoiTGV2ZWw0IiwiYWNyIjoiTGV2ZWw0IiwicGlkIjoiMTIzIiwiZXhwIjoxNjQ5Njc4MzA1LCJpYXQiOjE2NDk2NzQ3MDUsImp0aSI6IlNUVUIifQ.NttjqH45-oM-VFimail6K-1T7MnDBNo-m0bFcktfqnQ"

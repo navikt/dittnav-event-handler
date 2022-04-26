@@ -71,8 +71,8 @@ dependencies {
     testImplementation(NAV.kafkaEmbedded)
     testImplementation(TestContainers.postgresql)
     testImplementation(Ktor.serverTestHost)
-    testImplementation("com.github.navikt.tms-ktor-token-support:token-support-authentication-installer-mock:autheticator-mock-SNAPSHOT")
-    testImplementation("com.github.navikt.tms-ktor-token-support:token-support-tokenx-validation-mock:autheticator-mock-SNAPSHOT")
+    testImplementation("com.github.navikt.tms-ktor-token-support:token-support-authentication-installer-mock:2022.04.20-test-mocks")
+    testImplementation("com.github.navikt.tms-ktor-token-support:token-support-tokenx-validation-mock:2022.04.20-test-mocks")
 
     testImplementation("io.kotest:kotest-runner-junit5-jvm:5.2.2")
     testImplementation("io.kotest:kotest-assertions-core-jvm:5.2.2")

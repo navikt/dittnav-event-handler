@@ -70,6 +70,13 @@ dependencies {
     testImplementation(Mockk.mockk)
     testImplementation(NAV.kafkaEmbedded)
     testImplementation(TestContainers.postgresql)
+    testImplementation(Ktor.serverTestHost)
+    testImplementation(Tms.KtorTokenSupport.authenticationInstallerMock)
+    testImplementation(Tms.KtorTokenSupport.tokenXValidationMock)
+
+    testImplementation("io.kotest:kotest-runner-junit5-jvm:5.2.2")
+    testImplementation("io.kotest:kotest-assertions-core-jvm:5.2.2")
+    testImplementation("io.kotest:kotest-property-jvm:5.2.2")
 
     testRuntimeOnly(Bouncycastle.bcprovJdk15on)
     testRuntimeOnly(Jjwt.impl)
@@ -78,7 +85,7 @@ dependencies {
 }
 
 application {
-    mainClass.set("io.ktor.server.netty.EngineMain")
+    mainClass.set("no.nav.personbruker.dittnav.eventhandler.config.ApplicationKt")
 }
 
 tasks {

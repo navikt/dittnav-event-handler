@@ -21,6 +21,10 @@ interface Database : HealthCheck {
 
     val dataSource: HikariDataSource
 
+    fun close() {
+        dataSource.close()
+    }
+
     suspend fun <T> dbQuery(operationToExecute: Connection.() -> T): T = withContext(Dispatchers.IO) {
         dataSource.connection.use { openConnection ->
             try {

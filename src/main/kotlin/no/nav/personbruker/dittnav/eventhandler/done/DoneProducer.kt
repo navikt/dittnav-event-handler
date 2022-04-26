@@ -3,7 +3,6 @@ package no.nav.personbruker.dittnav.eventhandler.done
 import Beskjed
 import no.nav.brukernotifikasjon.schemas.input.DoneInput
 import no.nav.personbruker.dittnav.eventhandler.common.kafka.KafkaProducerWrapper
-import no.nav.personbruker.dittnav.eventhandler.config.Environment
 
 class DoneProducer(private val kafkaProducerWrapper: KafkaProducerWrapper<DoneInput>) {
 
@@ -13,4 +12,6 @@ class DoneProducer(private val kafkaProducerWrapper: KafkaProducerWrapper<DoneIn
 
         kafkaProducerWrapper.sendEvent(doneKey, doneEvent)
     }
+
+    fun flushAndClose() = kafkaProducerWrapper.flushAndClose()
 }

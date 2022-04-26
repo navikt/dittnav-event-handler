@@ -23,12 +23,11 @@ class DoneEventServiceTest {
     private val doneProducer = mockk<DoneProducer>()
     private val doneEventService = DoneEventService(database, doneProducer)
     private val fodselsnummer = "12345"
-    private val uid = "11"
     private val eventId = "125"
 
     private val beskjed1 = BeskjedObjectMother.createBeskjed(
         id = 1, eventId = "125", fodselsnummer = "12345",
-        synligFremTil = ZonedDateTime.now().plusHours(1), uid = "11"
+        synligFremTil = ZonedDateTime.now().plusHours(1)
     )
 
     @Test
@@ -44,8 +43,8 @@ class DoneEventServiceTest {
     @Test
     fun `Kaster exception hvis det er duplikat i listen`() {
         val beskjedListDuplicate = listOf(
-            BeskjedObjectMother.createBeskjed(id = 1, eventId = "dummyEventId1", fodselsnummer = "dummmyFnr1", uid = "dummyUid1"),
-            BeskjedObjectMother.createBeskjed(id = 1, eventId = "dummyEventId1", fodselsnummer = "dummyFnr1",  uid = "dummyUid1")
+            BeskjedObjectMother.createBeskjed(id = 1, eventId = "dummyEventId1", fodselsnummer = "dummmyFnr1"),
+            BeskjedObjectMother.createBeskjed(id = 1, eventId = "dummyEventId1", fodselsnummer = "dummyFnr1")
         )
         invoking {
             runBlocking {
@@ -57,7 +56,7 @@ class DoneEventServiceTest {
     @Test
     fun `Kaster exception hvis gjeldende event allerede er markert done`() {
         val beskjedListDuplicate =
-            listOf(BeskjedObjectMother.createBeskjed(id = 1, eventId = "dummyEventId1", fodselsnummer = "dummmyFnr1", uid = "dummyUid1", aktiv = false))
+            listOf(BeskjedObjectMother.createBeskjed(id = 1, eventId = "dummyEventId1", fodselsnummer = "dummmyFnr1", aktiv = false))
         invoking {
             runBlocking {
                 doneEventService.validBeskjed(beskjedListDuplicate)
@@ -74,7 +73,6 @@ class DoneEventServiceTest {
 
             doneEventService.getBeskjedFromCacheForUser(
                 fodselsnummer,
-                uid,
                 eventId
             ).eventId `should be equal to` eventId
         }

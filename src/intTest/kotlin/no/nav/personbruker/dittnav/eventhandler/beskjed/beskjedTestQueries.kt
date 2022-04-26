@@ -5,8 +5,8 @@ import java.sql.Connection
 import java.sql.Types
 
 fun Connection.createBeskjed(beskjeder: List<Beskjed>) =
-        prepareStatement("""INSERT INTO beskjed(id, systembruker, eventTidspunkt, fodselsnummer, eventId, grupperingsId, tekst, link, sikkerhetsnivaa, sistOppdatert, aktiv, synligFremTil, uid, namespace, appnavn)
-            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""")
+        prepareStatement("""INSERT INTO beskjed(id, systembruker, eventTidspunkt, fodselsnummer, eventId, grupperingsId, tekst, link, sikkerhetsnivaa, sistOppdatert, aktiv, synligFremTil, namespace, appnavn)
+            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""")
                 .use {
                     beskjeder.forEach { beskjed ->
                         run {
@@ -22,9 +22,8 @@ fun Connection.createBeskjed(beskjeder: List<Beskjed>) =
                             it.setObject(10, beskjed.sistOppdatert.toLocalDateTime(), Types.TIMESTAMP)
                             it.setBoolean(11, beskjed.aktiv)
                             it.setObject(12, beskjed.synligFremTil?.toLocalDateTime(), Types.TIMESTAMP)
-                            it.setString(13, beskjed.uid)
-                            it.setString(14, beskjed.namespace)
-                            it.setString(15, beskjed.appnavn)
+                            it.setString(13, beskjed.namespace)
+                            it.setString(14, beskjed.appnavn)
                             it.addBatch()
                         }
                     }
@@ -42,7 +41,3 @@ fun Connection.deleteBeskjed(beskjeder: List<Beskjed>) =
                     }
                     it.executeBatch()
                 }
-
-fun Connection.deleteAllBeskjed() =
-        prepareStatement("""DELETE FROM BESKJED""")
-                .use { it.execute() }

@@ -18,8 +18,7 @@ fun Connection.getAktivBeskjedForInnloggetBruker(fodselsnummer: String): List<Be
 
 fun Connection.getAllBeskjedForInnloggetBruker(fodselsnummer: String): List<Beskjed> =
     prepareStatement("""SELECT 
-            |id, 
-            |uid, 
+            |id,
             |eventTidspunkt,
             |fodselsnummer,
             |eventId, 
@@ -41,10 +40,9 @@ fun Connection.getAllBeskjedForInnloggetBruker(fodselsnummer: String): List<Besk
                     }
                 }
 
-fun Connection.getBeskjedByIds(fodselsnummer: String, uid: String, eventId: String): List<Beskjed> =
+fun Connection.getBeskjedByIds(fodselsnummer: String, eventId: String): List<Beskjed> =
         prepareStatement("""SELECT 
-            |id, 
-            |uid, 
+            |id,
             |eventTidspunkt,
             |fodselsnummer,
             |eventId, 
@@ -58,11 +56,10 @@ fun Connection.getBeskjedByIds(fodselsnummer: String, uid: String, eventId: Stri
             |systembruker,
             |namespace,
             |appnavn
-            |FROM beskjed WHERE fodselsnummer = ? AND uid = ? AND eventId = ?""".trimMargin())
+            |FROM beskjed WHERE fodselsnummer = ? AND eventId = ?""".trimMargin())
                 .use {
                     it.setString(1, fodselsnummer)
-                    it.setString(2, uid)
-                    it.setString(3, eventId)
+                    it.setString(2, eventId)
                     it.executeQuery().mapList {
                         toBeskjed()
                     }
@@ -70,8 +67,7 @@ fun Connection.getBeskjedByIds(fodselsnummer: String, uid: String, eventId: Stri
 
 fun Connection.getAllGroupedBeskjedEventsByIds(fodselsnummer: String, grupperingsid: String, appnavn: String): List<Beskjed> =
         prepareStatement("""SELECT 
-            |id, 
-            |uid, 
+            |id,
             |eventTidspunkt,
             |fodselsnummer,
             |eventId, 
@@ -125,7 +121,6 @@ fun Connection.getAllGroupedBeskjedEventsByProducer(): List<EventCountForProduce
 fun ResultSet.toBeskjed(): Beskjed {
     return Beskjed(
             id = getInt("id"),
-            uid = getString("uid"),
             fodselsnummer = getString("fodselsnummer"),
             grupperingsId = getString("grupperingsId"),
             eventId = getString("eventId"),
@@ -145,8 +140,7 @@ fun ResultSet.toBeskjed(): Beskjed {
 
 private fun Connection.getBeskjedForInnloggetBruker(fodselsnummer: String, aktiv: Boolean): List<Beskjed> =
         prepareStatement("""SELECT 
-            |id, 
-            |uid, 
+            |id,
             |eventTidspunkt,
             |fodselsnummer,
             |eventId, 

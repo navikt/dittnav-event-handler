@@ -10,7 +10,6 @@ object BeskjedObjectMother {
     private var eventIdIncrementor = 0
 
     val defaultFodselsnummer = "123456789"
-    val defaultUid = "123"
     val defaultSynligFremTil = ZonedDateTime.now(ZoneId.of("Europe/Oslo")).plusDays(7)
     val defaultAktiv = true
     val defaultSystembruker = "x-dittnav"
@@ -25,7 +24,6 @@ object BeskjedObjectMother {
     val defaultSikkerhetsnivaa = 4
 
     fun createBeskjed(
-        uid: String = defaultUid,
         id: Int = ++idIncrementor,
         eventId: String = (++eventIdIncrementor).toString(),
         fodselsnummer: String = defaultFodselsnummer,
@@ -43,7 +41,6 @@ object BeskjedObjectMother {
         sikkerhetsnivaa: Int = defaultSikkerhetsnivaa
     ): Beskjed {
         return Beskjed(
-            uid = uid,
             id = id,
             produsent = produsent,
             systembruker = systembruker,

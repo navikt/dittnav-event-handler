@@ -1,7 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.event
 
 import Beskjed
-import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
@@ -12,6 +11,7 @@ import no.nav.personbruker.dittnav.eventhandler.innboks.createInnboks
 import no.nav.personbruker.dittnav.eventhandler.oppgave.Oppgave
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveObjectMother
 import no.nav.personbruker.dittnav.eventhandler.oppgave.createOppgave
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -22,8 +22,6 @@ class EventTest {
     private val database = LocalPostgresDatabase.cleanDb()
 
     private val fodselsnummer = "12345678"
-    private val uid = "22"
-    private val eventId = "124"
     private val grupperingsid = "100${fodselsnummer}"
     private val systembruker = "x-dittnav"
     private val namespace = "localhost"
@@ -31,11 +29,10 @@ class EventTest {
 
     private val beskjed1 = BeskjedObjectMother.createBeskjed(
             id = 1,
-            eventId = "123",
+            eventId = "9876",
             fodselsnummer = fodselsnummer,
             grupperingsId = grupperingsid,
             synligFremTil = ZonedDateTime.now().plusHours(1),
-            uid = "11",
             aktiv = false,
             systembruker = systembruker,
             namespace = namespace,
@@ -44,7 +41,7 @@ class EventTest {
 
     private val oppgave1 = OppgaveObjectMother.createOppgave(
             id = 1,
-            eventId = "123",
+            eventId = "234657",
             fodselsnummer = fodselsnummer,
             grupperingsId = grupperingsid,
             aktiv = false,
@@ -76,8 +73,8 @@ class EventTest {
         val eventRepository = EventRepository(database)
         runBlocking {
             val inaktiveEventer = eventRepository.getInactiveEvents(beskjed1.fodselsnummer)
-            inaktiveEventer.size shouldBe 3
-            inaktiveEventer.all { it.toEventDTO().fodselsnummer == beskjed1.fodselsnummer } shouldBe true
+            inaktiveEventer.size shouldBeEqualTo 3
+            inaktiveEventer.map { it.toEventDTO().type }.toSet() shouldBeEqualTo setOf(EventType.BESKJED, EventType.OPPGAVE, EventType.INNBOKS)
         }
     }
 

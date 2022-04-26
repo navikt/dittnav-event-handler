@@ -59,7 +59,6 @@ class EventApiTest {
         response.status() shouldBe HttpStatusCode.OK
 
         val eventJson = ObjectMapper().readTree(response.content)[0]
-        eventJson["fodselsnummer"].asText() shouldBe fodselsnummer
         eventJson["grupperingsId"].asText() shouldBe grupperingsId
         eventJson["eventId"].asText() shouldBe eventId
         ZonedDateTime.parse(eventJson["eventTidspunkt"].asText()) shouldBe eventTidspunkt

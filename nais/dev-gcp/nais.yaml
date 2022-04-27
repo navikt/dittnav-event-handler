@@ -5,6 +5,8 @@ metadata:
     team: min-side
   name: dittnav-event-handler
   namespace: min-side
+  annotations:
+    config.alpha.linkerd.io/proxy-wait-before-exit-seconds: "10"
 spec:
   envFrom:
     - secret: dittnav-event-handler-secrets

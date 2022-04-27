@@ -8,6 +8,7 @@ import io.ktor.application.install
 import io.ktor.auth.authenticate
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
+import io.ktor.routing.route
 import io.ktor.routing.routing
 import io.ktor.serialization.json
 import io.ktor.util.pipeline.PipelineContext
@@ -65,23 +66,25 @@ fun Application.eventHandlerApi(
     installAuthenticatorsFunction()
 
     routing {
-        healthApi(healthService)
-        authenticate {
-            doneApi(doneEventService)
-            beskjedApi(beskjedEventService)
-            innboksApi(innboksEventService)
-            oppgaveApi(oppgaveEventService)
-            statusoppdateringApi(statusoppdateringEventService)
-            eventApi(eventRepository)
-        }
-        authenticate(AzureAuthenticator.name) {
-            doneSystemClientApi(doneEventService)
-            beskjedSystemClientApi(beskjedEventService)
-            innboksSystemClientApi(innboksEventService)
-            oppgaveSystemClientApi(oppgaveEventService)
-            statusoppdateringSystemClientApi(statusoppdateringEventService)
+        route("/dittnav-event-handler") {
+            healthApi(healthService)
+            authenticate {
+                doneApi(doneEventService)
+                beskjedApi(beskjedEventService)
+                innboksApi(innboksEventService)
+                oppgaveApi(oppgaveEventService)
+                statusoppdateringApi(statusoppdateringEventService)
+                eventApi(eventRepository)
+            }
+            authenticate(AzureAuthenticator.name) {
+                doneSystemClientApi(doneEventService)
+                beskjedSystemClientApi(beskjedEventService)
+                innboksSystemClientApi(innboksEventService)
+                oppgaveSystemClientApi(oppgaveEventService)
+                statusoppdateringSystemClientApi(statusoppdateringEventService)
 
-            statisticsSystemClientApi(eventStatisticsService)
+                statisticsSystemClientApi(eventStatisticsService)
+            }
         }
     }
     configureShutdownHook(database, doneProducer)

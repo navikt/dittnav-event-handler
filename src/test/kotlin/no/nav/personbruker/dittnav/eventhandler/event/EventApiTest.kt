@@ -53,7 +53,7 @@ class EventApiTest {
         val response = withTestApplication(
             mockEventHandlerApi(eventRepository = eventRepositoryMock)
         ) {
-            handleRequest(HttpMethod.Get, "/fetch/event/inaktive") {}
+            handleRequest(HttpMethod.Get, "dittnav-event-handler/fetch/event/inaktive") {}
         }.response
 
         response.status() shouldBe HttpStatusCode.OK

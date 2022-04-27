@@ -49,5 +49,5 @@ fun main() {
             database,
             doneProducer
         )
-    }
+    }.start(wait = true)
 }

@@ -36,7 +36,7 @@ fun main() {
 
     val healthService = HealthService(database)
 
-    embeddedServer(Netty) {
+    embeddedServer(Netty, port = 8080) {
         eventHandlerApi(
             healthService,
             beskjedEventService,

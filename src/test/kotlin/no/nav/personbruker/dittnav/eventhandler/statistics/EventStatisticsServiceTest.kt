@@ -1,6 +1,9 @@
 package no.nav.personbruker.dittnav.eventhandler.statistics
 
 import Beskjed
+import io.kotest.matchers.doubles.shouldBeGreaterThan
+import io.kotest.matchers.doubles.shouldBeGreaterThanOrEqual
+import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
@@ -15,9 +18,6 @@ import no.nav.personbruker.dittnav.eventhandler.oppgave.Oppgave
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveObjectMother
 import no.nav.personbruker.dittnav.eventhandler.oppgave.createOppgave
 import no.nav.personbruker.dittnav.eventhandler.oppgave.deleteOppgave
-import org.amshove.kluent.`should be equal to`
-import org.amshove.kluent.`should be greater or equal to`
-import org.amshove.kluent.`should be greater than`
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -33,7 +33,6 @@ class EventStatisticsServiceTest {
     private val fodselsnummer = "12345"
     private val fodselsnummer1 = "12345"
     private val fodselsnummer2 = "67890"
-    private val grupperingsid = "100${fodselsnummer}"
     private val systembruker = "x-dittnav"
 
     private val beskjed1 = BeskjedObjectMother.createBeskjed(fodselsnummer = fodselsnummer, synligFremTil = ZonedDateTime.now().plusHours(1), aktiv = true, systembruker = systembruker, tekst = "12")
@@ -69,41 +68,41 @@ class EventStatisticsServiceTest {
     @Test
     fun `Should run stats`() {
         runBlocking {
-            eventStatisticsService.getEventsStatisticsPerUser(EventType.BESKJED).max `should be equal to` 3
-            eventStatisticsService.getActiveEventsStatisticsPerUser(EventType.BESKJED).max `should be equal to` 2
-            eventStatisticsService.getActiveRateEventsStatisticsPerUser(EventType.BESKJED).min `should be greater than` 0.6
-            eventStatisticsService.getEventsStatisticsPerGroupId(EventType.BESKJED).max `should be equal to` 3
-            eventStatisticsService.getGroupIdsPerUser(EventType.BESKJED).max `should be equal to` 1
-            eventStatisticsService.getTextLength(EventType.BESKJED).min `should be equal to` 2
-            eventStatisticsService.getCountUsersWithEvents(EventType.BESKJED).count `should be equal to` 2
-            eventStatisticsService.getActiveEventCount(EventType.BESKJED).count `should be equal to` 3
+            eventStatisticsService.getEventsStatisticsPerUser(EventType.BESKJED).max shouldBe 3
+            eventStatisticsService.getActiveEventsStatisticsPerUser(EventType.BESKJED).max shouldBe 2
+            eventStatisticsService.getActiveRateEventsStatisticsPerUser(EventType.BESKJED).min shouldBeGreaterThan  0.6
+            eventStatisticsService.getEventsStatisticsPerGroupId(EventType.BESKJED).max shouldBe 3
+            eventStatisticsService.getGroupIdsPerUser(EventType.BESKJED).max shouldBe 1
+            eventStatisticsService.getTextLength(EventType.BESKJED).min shouldBe 2
+            eventStatisticsService.getCountUsersWithEvents(EventType.BESKJED).count shouldBe 2
+            eventStatisticsService.getActiveEventCount(EventType.BESKJED).count shouldBe 3
 
-            eventStatisticsService.getEventsStatisticsPerUser(EventType.OPPGAVE).max `should be equal to` 3
-            eventStatisticsService.getActiveEventsStatisticsPerUser(EventType.OPPGAVE).max `should be equal to` 2
-            eventStatisticsService.getActiveRateEventsStatisticsPerUser(EventType.OPPGAVE).min `should be greater than` 0.6
-            eventStatisticsService.getEventsStatisticsPerGroupId(EventType.OPPGAVE).max `should be equal to` 3
-            eventStatisticsService.getGroupIdsPerUser(EventType.OPPGAVE).max `should be equal to` 1
-            eventStatisticsService.getTextLength(EventType.OPPGAVE).min `should be equal to` 3
-            eventStatisticsService.getCountUsersWithEvents(EventType.OPPGAVE).count `should be equal to` 2
-            eventStatisticsService.getActiveEventCount(EventType.OPPGAVE).count `should be equal to` 3
+            eventStatisticsService.getEventsStatisticsPerUser(EventType.OPPGAVE).max shouldBe 3
+            eventStatisticsService.getActiveEventsStatisticsPerUser(EventType.OPPGAVE).max shouldBe 2
+            eventStatisticsService.getActiveRateEventsStatisticsPerUser(EventType.OPPGAVE).min shouldBeGreaterThan 0.6
+            eventStatisticsService.getEventsStatisticsPerGroupId(EventType.OPPGAVE).max shouldBe 3
+            eventStatisticsService.getGroupIdsPerUser(EventType.OPPGAVE).max shouldBe 1
+            eventStatisticsService.getTextLength(EventType.OPPGAVE).min shouldBe 3
+            eventStatisticsService.getCountUsersWithEvents(EventType.OPPGAVE).count shouldBe 2
+            eventStatisticsService.getActiveEventCount(EventType.OPPGAVE).count shouldBe 3
 
-            eventStatisticsService.getEventsStatisticsPerUser(EventType.INNBOKS).max `should be equal to` 2
-            eventStatisticsService.getActiveEventsStatisticsPerUser(EventType.INNBOKS).max `should be equal to` 2
-            eventStatisticsService.getActiveRateEventsStatisticsPerUser(EventType.INNBOKS).min `should be greater or equal to` 0.5
-            eventStatisticsService.getEventsStatisticsPerGroupId(EventType.INNBOKS).max `should be equal to` 2
-            eventStatisticsService.getGroupIdsPerUser(EventType.INNBOKS).max `should be equal to` 1
-            eventStatisticsService.getTextLength(EventType.INNBOKS).min `should be equal to` 2
-            eventStatisticsService.getCountUsersWithEvents(EventType.INNBOKS).count `should be equal to` 2
-            eventStatisticsService.getActiveEventCount(EventType.INNBOKS).count `should be equal to` 3
+            eventStatisticsService.getEventsStatisticsPerUser(EventType.INNBOKS).max shouldBe 2
+            eventStatisticsService.getActiveEventsStatisticsPerUser(EventType.INNBOKS).max shouldBe 2
+            eventStatisticsService.getActiveRateEventsStatisticsPerUser(EventType.INNBOKS).min shouldBeGreaterThanOrEqual 0.5
+            eventStatisticsService.getEventsStatisticsPerGroupId(EventType.INNBOKS).max shouldBe 2
+            eventStatisticsService.getGroupIdsPerUser(EventType.INNBOKS).max shouldBe 1
+            eventStatisticsService.getTextLength(EventType.INNBOKS).min shouldBe 2
+            eventStatisticsService.getCountUsersWithEvents(EventType.INNBOKS).count shouldBe 2
+            eventStatisticsService.getActiveEventCount(EventType.INNBOKS).count shouldBe 3
 
-            eventStatisticsService.getTotalEventsStatisticsPerUser().max `should be equal to` 8
-            eventStatisticsService.getTotalActiveEventsStatisticsPerUser().max `should be equal to` 6
-            eventStatisticsService.getTotalActiveRateEventsStatisticsPerUser().min `should be greater or equal to` 0.5
-            eventStatisticsService.getTotalEventsStatisticsPerGroupId().max `should be equal to` 8
-            eventStatisticsService.getTotalGroupIdsPerUser().max `should be equal to` 1
-            eventStatisticsService.getTotalTextLength().min `should be equal to` 2
-            eventStatisticsService.getTotalCountUsersWithEvents().count `should be equal to` 3
-            eventStatisticsService.getTotalActiveEventCount().count `should be equal to` 9
+            eventStatisticsService.getTotalEventsStatisticsPerUser().max shouldBe 8
+            eventStatisticsService.getTotalActiveEventsStatisticsPerUser().max shouldBe 6
+            eventStatisticsService.getTotalActiveRateEventsStatisticsPerUser().min shouldBeGreaterThanOrEqual 0.5
+            eventStatisticsService.getTotalEventsStatisticsPerGroupId().max shouldBe 8
+            eventStatisticsService.getTotalGroupIdsPerUser().max shouldBe 1
+            eventStatisticsService.getTotalTextLength().min shouldBe 2
+            eventStatisticsService.getTotalCountUsersWithEvents().count shouldBe 3
+            eventStatisticsService.getTotalActiveEventCount().count shouldBe 9
         }
     }
 

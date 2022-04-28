@@ -1,6 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.common.database
 
-import org.amshove.kluent.`should be equal to`
+import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import java.sql.Timestamp
 import java.time.LocalDateTime
@@ -15,7 +15,7 @@ internal class resultSetUtilKtTest {
 
         val resultat = convertIfUnlikelyDate(timestampFor1970)
 
-        resultat.year `should be equal to` 2020
+        resultat.year shouldBe 2020
     }
 
     @Test
@@ -25,7 +25,7 @@ internal class resultSetUtilKtTest {
 
         val resultat = convertIfUnlikelyDate(timestampIn2020)
 
-        resultat.year `should be equal to` 2020
+        resultat.year shouldBe 2020
     }
 
 }

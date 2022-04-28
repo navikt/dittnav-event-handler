@@ -1,6 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
-import org.amshove.kluent.`should contain`
+import io.kotest.matchers.string.shouldContain
 import org.junit.jupiter.api.Test
 
 class OppgaveTest {
@@ -9,9 +9,9 @@ class OppgaveTest {
     fun `skal returnere maskerte data fra toString-metoden`() {
         val oppgave = OppgaveObjectMother.createOppgave()
         val oppgaveAsString = oppgave.toString()
-        oppgaveAsString `should contain` "fodselsnummer=***"
-        oppgaveAsString `should contain` "tekst=***"
-        oppgaveAsString `should contain` "link=***"
-        oppgaveAsString `should contain` "systembruker=x-dittnav"
+        oppgaveAsString shouldContain "fodselsnummer=***"
+        oppgaveAsString shouldContain "tekst=***"
+        oppgaveAsString shouldContain "link=***"
+        oppgaveAsString shouldContain "systembruker=x-dittnav"
     }
 }

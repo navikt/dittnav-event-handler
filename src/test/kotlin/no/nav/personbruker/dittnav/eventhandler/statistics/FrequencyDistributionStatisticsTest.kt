@@ -1,6 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.statistics
 
 import Beskjed
+import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
@@ -12,7 +13,6 @@ import no.nav.personbruker.dittnav.eventhandler.innboks.createInnboks
 import no.nav.personbruker.dittnav.eventhandler.oppgave.Oppgave
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveObjectMother
 import no.nav.personbruker.dittnav.eventhandler.oppgave.createOppgave
-import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -55,8 +55,8 @@ class FrequencyDistributionStatisticsTest {
     fun `Frekvensfordeling av antall aktive beskjeder`() {
         runBlocking {
             val eventFrekvensFordeling = eventStatisticsService.getActiveEventsFrequencyDistribution(EventType.BESKJED)
-            eventFrekvensFordeling.eventFrequencies.size `should be equal to` 2
-            eventFrekvensFordeling.eventFrequencies.first() { it.antallEventer == 2 }.antallBrukere `should be equal to` 1
+            eventFrekvensFordeling.eventFrequencies.size shouldBe 2
+            eventFrekvensFordeling.eventFrequencies.first { it.antallEventer == 2 }.antallBrukere shouldBe 1
         }
     }
 
@@ -64,8 +64,8 @@ class FrequencyDistributionStatisticsTest {
     fun `Frekvensfordeling av antall aktive oppgaver`() {
         runBlocking {
             val eventFrekvensFordeling = eventStatisticsService.getActiveEventsFrequencyDistribution(EventType.OPPGAVE)
-            eventFrekvensFordeling.eventFrequencies.size `should be equal to` 2
-            eventFrekvensFordeling.eventFrequencies.first() { it.antallEventer == 1 }.antallBrukere `should be equal to` 3
+            eventFrekvensFordeling.eventFrequencies.size shouldBe 2
+            eventFrekvensFordeling.eventFrequencies.first { it.antallEventer == 1 }.antallBrukere shouldBe 3
         }
     }
 
@@ -73,8 +73,8 @@ class FrequencyDistributionStatisticsTest {
     fun `Frekvensfordeling av antall aktive innboks`() {
         runBlocking {
             val eventFrekvensFordeling = eventStatisticsService.getActiveEventsFrequencyDistribution(EventType.INNBOKS)
-            eventFrekvensFordeling.eventFrequencies.size `should be equal to` 1
-            eventFrekvensFordeling.eventFrequencies.first() { it.antallEventer == 1 }.antallBrukere `should be equal to` 2
+            eventFrekvensFordeling.eventFrequencies.size shouldBe 1
+            eventFrekvensFordeling.eventFrequencies.first { it.antallEventer == 1 }.antallBrukere shouldBe 2
         }
     }
 

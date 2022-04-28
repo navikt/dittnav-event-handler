@@ -1,6 +1,9 @@
 package no.nav.personbruker.dittnav.eventhandler.common
 
-import org.amshove.kluent.*
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
+import io.kotest.matchers.string.shouldHaveMinLength
+import io.kotest.matchers.string.shouldNotContain
 import org.junit.jupiter.api.Test
 
 internal class TokenXUserTest {
@@ -12,9 +15,9 @@ internal class TokenXUserTest {
 
         val innloggetbruker = TokenXUserObjectMother.createInnloggetBruker(expectedIdent, expectedInnloggingsnivaa)
 
-        innloggetbruker.ident `should be equal to` expectedIdent
-        innloggetbruker.loginLevel `should be equal to` expectedInnloggingsnivaa
-        innloggetbruker.jwt.token.`should not be null or empty`()
+        innloggetbruker.ident shouldBe expectedIdent
+        innloggetbruker.loginLevel shouldBe expectedInnloggingsnivaa
+        innloggetbruker.jwt.token shouldHaveMinLength 1
     }
 
     @Test
@@ -23,7 +26,7 @@ internal class TokenXUserTest {
 
         val generatedAuthHeader = innloggetBruker.createAuthenticationHeader()
 
-        generatedAuthHeader `should be equal to` "Bearer ${innloggetBruker.jwt.token}"
+        generatedAuthHeader shouldBe "Bearer ${innloggetBruker.jwt.token}"
     }
 
     @Test
@@ -32,9 +35,9 @@ internal class TokenXUserTest {
 
         val outputOfToString = innloggetBruker.toString()
 
-        outputOfToString `should contain`(innloggetBruker.loginLevel.toString())
-        outputOfToString `should not contain`(innloggetBruker.ident)
-        outputOfToString `should not contain`(innloggetBruker.jwt.token)
+        outputOfToString shouldContain innloggetBruker.loginLevel.toString()
+        outputOfToString shouldNotContain innloggetBruker.ident
+        outputOfToString shouldNotContain innloggetBruker.jwt.token
     }
 
 }

@@ -1,10 +1,10 @@
 package no.nav.personbruker.dittnav.eventhandler.statusoppdatering
 
+import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.TokenXUserObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
-import org.amshove.kluent.`should be empty`
-import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -36,7 +36,7 @@ class StatusoppdateringQueriesTest {
         runBlocking {
             database.dbQuery {
                 getAllGroupedStatusoppdateringEventsByIds(bruker, grupperingsid, appnavn)
-            }.size `should be equal to` 3
+            }.size shouldBe 3
         }
     }
 
@@ -47,7 +47,7 @@ class StatusoppdateringQueriesTest {
 
         runBlocking {
             database.dbQuery { createStatusoppdatering(listOf(statusoppdateringMedNyBruker)) }
-            database.dbQuery { getAllStatusoppdateringEvents() }.size `should be equal to` 5
+            database.dbQuery { getAllStatusoppdateringEvents() }.size shouldBe 5
         }
     }
 
@@ -59,7 +59,7 @@ class StatusoppdateringQueriesTest {
         runBlocking {
             database.dbQuery {
                 getAllGroupedStatusoppdateringEventsByIds(brukerSomIkkeFinnes, grupperingsid, appnavn)
-            }.`should be empty`()
+            }.shouldBeEmpty()
         }
     }
 
@@ -71,7 +71,7 @@ class StatusoppdateringQueriesTest {
         runBlocking {
             database.dbQuery {
                 getAllGroupedStatusoppdateringEventsByIds(fodselsnummerMangler, grupperingsid, appnavn)
-            }.`should be empty`()
+            }.shouldBeEmpty()
         }
     }
 
@@ -80,7 +80,7 @@ class StatusoppdateringQueriesTest {
         runBlocking {
             val statusoppdatering = database.dbQuery {
                 getAllGroupedStatusoppdateringEventsByIds(bruker, grupperingsid, appnavn) }.first()
-            statusoppdatering.produsent `should be equal to` appnavn
+            statusoppdatering.produsent shouldBe appnavn
         }
     }
 
@@ -90,7 +90,7 @@ class StatusoppdateringQueriesTest {
         runBlocking {
             database.dbQuery {
                 getAllGroupedStatusoppdateringEventsByIds(bruker, grupperingsid, noMatchProdusent)
-            }.`should be empty`()
+            }.shouldBeEmpty()
         }
     }
 
@@ -100,7 +100,7 @@ class StatusoppdateringQueriesTest {
         runBlocking {
             database.dbQuery {
                 getAllGroupedStatusoppdateringEventsByIds(bruker, noMatchGrupperingsid, appnavn)
-            }.`should be empty`()
+            }.shouldBeEmpty()
         }
     }
 
@@ -109,7 +109,7 @@ class StatusoppdateringQueriesTest {
         runBlocking {
             val groupedEventsBySystemuser = database.dbQuery { getAllGroupedStatusoppdateringEventsBySystemuser() }
 
-            groupedEventsBySystemuser.size `should be equal to` 2
+            groupedEventsBySystemuser.size shouldBe 2
         }
     }
 
@@ -118,7 +118,7 @@ class StatusoppdateringQueriesTest {
         runBlocking {
             val groupedEventsBySystemuser = database.dbQuery { getAllGroupedStatusoppdateringEventsByProducer() }
 
-            groupedEventsBySystemuser.size `should be equal to` 2
+            groupedEventsBySystemuser.size shouldBe 2
         }
     }
 

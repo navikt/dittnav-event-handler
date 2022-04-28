@@ -1,6 +1,8 @@
 package no.nav.personbruker.dittnav.eventhandler.done
 
 import Beskjed
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
@@ -9,9 +11,6 @@ import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.DuplicateEventException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.EventMarkedInactiveException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.NoEventsException
-import org.amshove.kluent.`should be equal to`
-import org.amshove.kluent.`should throw`
-import org.amshove.kluent.invoking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import java.time.ZonedDateTime
@@ -33,11 +32,11 @@ class DoneEventServiceTest {
     @Test
     fun `Kaster exception hvis listen er tom`() {
         val emptyListOfBeskjed = emptyList<Beskjed>()
-        invoking {
+        shouldThrow<NoEventsException> {
             runBlocking {
                 doneEventService.validBeskjed(emptyListOfBeskjed)
             }
-        } `should throw` NoEventsException::class
+        }
     }
 
     @Test
@@ -46,22 +45,22 @@ class DoneEventServiceTest {
             BeskjedObjectMother.createBeskjed(id = 1, eventId = "dummyEventId1", fodselsnummer = "dummmyFnr1"),
             BeskjedObjectMother.createBeskjed(id = 1, eventId = "dummyEventId1", fodselsnummer = "dummyFnr1")
         )
-        invoking {
+        shouldThrow<DuplicateEventException> {
             runBlocking {
                 doneEventService.validBeskjed(beskjedListDuplicate)
             }
-        } `should throw` DuplicateEventException::class
+        }
     }
 
     @Test
     fun `Kaster exception hvis gjeldende event allerede er markert done`() {
         val beskjedListDuplicate =
             listOf(BeskjedObjectMother.createBeskjed(id = 1, eventId = "dummyEventId1", fodselsnummer = "dummmyFnr1", aktiv = false))
-        invoking {
+        shouldThrow<EventMarkedInactiveException> {
             runBlocking {
                 doneEventService.validBeskjed(beskjedListDuplicate)
             }
-        } `should throw` EventMarkedInactiveException::class
+        }
     }
 
     @Test
@@ -74,7 +73,7 @@ class DoneEventServiceTest {
             doneEventService.getBeskjedFromCacheForUser(
                 fodselsnummer,
                 eventId
-            ).eventId `should be equal to` eventId
+            ).eventId shouldBe eventId
         }
     }
 }

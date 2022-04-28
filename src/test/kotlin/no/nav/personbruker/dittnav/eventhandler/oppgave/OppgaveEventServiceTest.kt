@@ -3,16 +3,14 @@ package no.nav.personbruker.dittnav.eventhandler.oppgave
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.brukernotifikasjon.schemas.builders.exception.FieldValidationException
 import no.nav.personbruker.dittnav.eventhandler.common.TokenXUserObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
-import org.amshove.kluent.`should be equal to`
-import org.amshove.kluent.`should contain`
-import org.amshove.kluent.`should throw`
-import org.amshove.kluent.invoking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -32,13 +30,13 @@ class OppgaveEventServiceTest {
     private val logger: Logger = LoggerFactory.getLogger(OppgaveEventService::class.java) as Logger
 
     @BeforeAll
-    fun `setup`() {
+    fun setup() {
         appender.start()
         logger.addAppender(appender)
     }
 
     @AfterAll
-    fun `teardown`() {
+    fun teardown() {
         logger.detachAppender(appender)
     }
 
@@ -55,67 +53,67 @@ class OppgaveEventServiceTest {
             }.returns(oppgaveEvents)
 
             val actualOppgaveEvents = oppgaveEventService.getAllGroupedEventsFromCacheForUser(innloggetbruker, grupperingsid, produsent)
-            actualOppgaveEvents.size `should be equal to` 2
+            actualOppgaveEvents.size shouldBe 2
         }
     }
 
     @Test
     fun `Kaster FieldValidationException hvis grupperingsid er null`() {
         val grupperingsidSomErNull = null
-        invoking {
+        shouldThrow<FieldValidationException> {
             runBlocking {
                 oppgaveEventService.getAllGroupedEventsFromCacheForUser(bruker, grupperingsidSomErNull, produsent)
             }
-        } `should throw` FieldValidationException::class
+        }
     }
 
     @Test
     fun `Kaster FieldValidationException hvis grupperingsid er tomt`() {
         val grupperingsidSomErTom = ""
-        invoking {
+        shouldThrow<FieldValidationException> {
             runBlocking {
                 oppgaveEventService.getAllGroupedEventsFromCacheForUser(bruker, grupperingsidSomErTom, produsent)
             }
-        } `should throw` FieldValidationException::class
+        }
     }
 
     @Test
     fun `Kaster FieldValidationException hvis grupperingsid er for lang`() {
         val grupperingsidForLang = "g".repeat(101)
-        invoking {
+        shouldThrow<FieldValidationException> {
             runBlocking {
                 oppgaveEventService.getAllGroupedEventsFromCacheForUser(bruker, grupperingsidForLang, produsent)
             }
-        } `should throw` FieldValidationException::class
+        }
     }
 
     @Test
     fun `Kaster FieldValidationException hvis produsent er null`() {
         val produsentSomErNull = null
-        invoking {
+        shouldThrow<FieldValidationException> {
             runBlocking {
                 oppgaveEventService.getAllGroupedEventsFromCacheForUser(bruker, grupperingsid, produsentSomErNull)
             }
-        } `should throw` FieldValidationException::class
+        }
     }
 
     @Test
     fun `Kaster FieldValidationException hvis produsent er tomt`() {
         val produsentSomErTom = ""
-        invoking {
+        shouldThrow<FieldValidationException> {
             runBlocking {
                 oppgaveEventService.getAllGroupedEventsFromCacheForUser(bruker, grupperingsid, produsentSomErTom)
             }
-        } `should throw` FieldValidationException::class
+        }
     }
 
     @Test
     fun `Kaster FieldValidationException hvis produsent er for lang`() {
         val produsentForLang = "p".repeat(101)
-        invoking {
+        shouldThrow<FieldValidationException> {
             runBlocking {
                 oppgaveEventService.getAllGroupedEventsFromCacheForUser(bruker, grupperingsid, produsentForLang)
             }
-        } `should throw` FieldValidationException::class
+        }
     }
 }

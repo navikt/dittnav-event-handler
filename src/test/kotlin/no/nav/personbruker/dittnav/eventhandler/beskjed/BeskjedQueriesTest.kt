@@ -1,11 +1,11 @@
 package no.nav.personbruker.dittnav.eventhandler.beskjed
 
 import Beskjed
+import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
 import no.nav.personbruker.dittnav.eventhandler.common.findCountFor
-import org.amshove.kluent.`should be empty`
-import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -81,7 +81,7 @@ class BeskjedQueriesTest {
     @Test
     fun `Finn alle cachede Beskjed-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getAllBeskjedForInnloggetBruker(fodselsnummer) }.size `should be equal to` 3
+            database.dbQuery { getAllBeskjedForInnloggetBruker(fodselsnummer) }.size shouldBe 3
         }
     }
 
@@ -91,7 +91,7 @@ class BeskjedQueriesTest {
             database.dbQuery {
                 val aktivBeskjedByUser = getAktivBeskjedForInnloggetBruker(fodselsnummer)
                 aktivBeskjedByUser
-            }.size `should be equal to` 2
+            }.size shouldBe 2
         }
     }
 
@@ -101,7 +101,7 @@ class BeskjedQueriesTest {
             database.dbQuery {
                 val inaktivBeskjedByUser = getInaktivBeskjedForInnloggetBruker(fodselsnummer)
                 inaktivBeskjedByUser
-            }.size `should be equal to` 1
+            }.size shouldBe 1
         }
     }
 
@@ -109,7 +109,7 @@ class BeskjedQueriesTest {
     fun `Returnerer tom liste hvis Beskjed-eventer for fodselsnummer ikke finnes`() {
         val brukerSomIkkeFinnes = "0"
         runBlocking {
-            database.dbQuery { getAktivBeskjedForInnloggetBruker(brukerSomIkkeFinnes) }.`should be empty`()
+            database.dbQuery { getAktivBeskjedForInnloggetBruker(brukerSomIkkeFinnes) }.shouldBeEmpty()
         }
     }
 
@@ -117,7 +117,7 @@ class BeskjedQueriesTest {
     fun `Returnerer tom liste hvis fodselsnummer er tomt`() {
         val fodselsnummerMangler = ""
         runBlocking {
-            database.dbQuery { getAktivBeskjedForInnloggetBruker(fodselsnummerMangler) }.`should be empty`()
+            database.dbQuery { getAktivBeskjedForInnloggetBruker(fodselsnummerMangler) }.shouldBeEmpty()
         }
     }
 
@@ -125,7 +125,7 @@ class BeskjedQueriesTest {
     fun `Returnerer lesbart navn for produsent som kan eksponeres for aktive eventer`() {
         runBlocking {
             val beskjed = database.dbQuery { getAktivBeskjedForInnloggetBruker(fodselsnummer) }.first()
-            beskjed.produsent `should be equal to` appnavn
+            beskjed.produsent shouldBe appnavn
         }
     }
 
@@ -133,7 +133,7 @@ class BeskjedQueriesTest {
     fun `Returnerer lesbart navn for produsent som kan eksponeres for inaktive eventer`() {
         runBlocking {
             val beskjed = database.dbQuery { getInaktivBeskjedForInnloggetBruker(fodselsnummer) }.first()
-            beskjed.produsent `should be equal to` appnavn
+            beskjed.produsent shouldBe appnavn
         }
     }
 
@@ -141,21 +141,21 @@ class BeskjedQueriesTest {
     fun `Returnerer lesbart navn for produsent som kan eksponeres for alle eventer`() {
         runBlocking {
             val beskjed = database.dbQuery { getAllBeskjedForInnloggetBruker(fodselsnummer) }.first()
-            beskjed.produsent `should be equal to` appnavn
+            beskjed.produsent shouldBe appnavn
         }
     }
 
     @Test
     fun `Finn alle cachede events som matcher fodselsnummer og eventId`() {
         runBlocking {
-            database.dbQuery { getBeskjedByIds(fodselsnummer, eventId) }.size `should be equal to` 1
+            database.dbQuery { getBeskjedByIds(fodselsnummer, eventId) }.size shouldBe 1
         }
     }
 
     @Test
     fun `Returnerer tom liste hvis Beskjed-eventer ikke stemmer med eventId`() {
         runBlocking {
-            database.dbQuery { getBeskjedByIds(fodselsnummer, "dummyEventId") }.`should be empty`()
+            database.dbQuery { getBeskjedByIds(fodselsnummer, "dummyEventId") }.shouldBeEmpty()
         }
     }
 
@@ -163,7 +163,7 @@ class BeskjedQueriesTest {
     fun `Returnerer tom liste hvis Beskjed-eventer ikke stemmer med fodselsnummer`() {
         val brukerSomIkkeFinnes = "000"
         runBlocking {
-            database.dbQuery { getBeskjedByIds(brukerSomIkkeFinnes, eventId) }.`should be empty`()
+            database.dbQuery { getBeskjedByIds(brukerSomIkkeFinnes, eventId) }.shouldBeEmpty()
         }
     }
 
@@ -171,7 +171,7 @@ class BeskjedQueriesTest {
     fun `Returnerer tom liste av Beskjed-eventer hvis fodselsnummer er tomt`() {
         val fodselsnummerMangler = ""
         runBlocking {
-            database.dbQuery { getBeskjedByIds(fodselsnummerMangler, eventId) }.`should be empty`()
+            database.dbQuery { getBeskjedByIds(fodselsnummerMangler, eventId) }.shouldBeEmpty()
         }
     }
 
@@ -180,7 +180,7 @@ class BeskjedQueriesTest {
         runBlocking {
             database.dbQuery {
                 getAllGroupedBeskjedEventsByIds(fodselsnummer, grupperingsid, appnavn)
-            }.size `should be equal to` 3
+            }.size shouldBe 3
         }
     }
 
@@ -190,7 +190,7 @@ class BeskjedQueriesTest {
         runBlocking {
             database.dbQuery {
                 getAllGroupedBeskjedEventsByIds(fodselsnummer, grupperingsid, noMatchProdusent)
-            }.`should be empty`()
+            }.shouldBeEmpty()
         }
     }
 
@@ -200,7 +200,7 @@ class BeskjedQueriesTest {
         runBlocking {
             database.dbQuery {
                 getAllGroupedBeskjedEventsByIds(fodselsnummer, noMatchGrupperingsid, appnavn)
-            }.`should be empty`()
+            }.shouldBeEmpty()
         }
     }
 
@@ -209,9 +209,9 @@ class BeskjedQueriesTest {
         runBlocking {
             val groupedEventsBySystemuser = database.dbQuery { getAllGroupedBeskjedEventsBySystemuser() }
 
-            groupedEventsBySystemuser.size `should be equal to` 2
-            groupedEventsBySystemuser[beskjed1.systembruker] `should be equal to` 3
-            groupedEventsBySystemuser[beskjed4.systembruker] `should be equal to` 1
+            groupedEventsBySystemuser.size shouldBe 2
+            groupedEventsBySystemuser[beskjed1.systembruker] shouldBe 3
+            groupedEventsBySystemuser[beskjed4.systembruker] shouldBe 1
         }
     }
 
@@ -220,9 +220,9 @@ class BeskjedQueriesTest {
         runBlocking {
             val groupedEventsBySystemuser = database.dbQuery { getAllGroupedBeskjedEventsByProducer() }
 
-            groupedEventsBySystemuser.size `should be equal to` 2
-            groupedEventsBySystemuser.findCountFor(beskjed1.namespace, beskjed1.appnavn) `should be equal to` 3
-            groupedEventsBySystemuser.findCountFor(beskjed4.namespace, beskjed4.appnavn) `should be equal to` 1
+            groupedEventsBySystemuser.size shouldBe 2
+            groupedEventsBySystemuser.findCountFor(beskjed1.namespace, beskjed1.appnavn) shouldBe 3
+            groupedEventsBySystemuser.findCountFor(beskjed4.namespace, beskjed4.appnavn) shouldBe 1
         }
     }
 

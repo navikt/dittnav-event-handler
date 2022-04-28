@@ -1,6 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
-import org.amshove.kluent.`should be equal to`
+import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
 internal class OppgaveTransformersTest {
@@ -9,15 +9,15 @@ internal class OppgaveTransformersTest {
     fun `skal transformere til DTO`() {
         val oppgave = OppgaveObjectMother.createOppgave()
         val oppgaveDTO = oppgave.toDTO()
-        oppgaveDTO.fodselsnummer `should be equal to` oppgave.fodselsnummer
-        oppgaveDTO.grupperingsId `should be equal to` oppgave.grupperingsId
-        oppgaveDTO.eventId `should be equal to` oppgave.eventId
-        oppgaveDTO.eventTidspunkt `should be equal to` oppgave.eventTidspunkt
-        oppgaveDTO.produsent `should be equal to` oppgave.appnavn
-        oppgaveDTO.sikkerhetsnivaa `should be equal to` oppgave.sikkerhetsnivaa
-        oppgaveDTO.sistOppdatert `should be equal to` oppgave.sistOppdatert
-        oppgaveDTO.tekst `should be equal to` oppgave.tekst
-        oppgaveDTO.link `should be equal to` oppgave.link
-        oppgaveDTO.aktiv `should be equal to` oppgave.aktiv
+        oppgaveDTO.fodselsnummer shouldBe oppgave.fodselsnummer
+        oppgaveDTO.grupperingsId shouldBe oppgave.grupperingsId
+        oppgaveDTO.eventId shouldBe oppgave.eventId
+        oppgaveDTO.eventTidspunkt shouldBe oppgave.eventTidspunkt
+        oppgaveDTO.produsent shouldBe oppgave.appnavn
+        oppgaveDTO.sikkerhetsnivaa shouldBe oppgave.sikkerhetsnivaa
+        oppgaveDTO.sistOppdatert shouldBe oppgave.sistOppdatert
+        oppgaveDTO.tekst shouldBe oppgave.tekst
+        oppgaveDTO.link shouldBe oppgave.link
+        oppgaveDTO.aktiv shouldBe oppgave.aktiv
     }
 }

@@ -54,7 +54,7 @@ class LocalPostgresDatabase private constructor() : Database {
             withTimeout(3000) {
                 while (true) {
                     try {
-                        val fileContent = this::class.java.getResource("/db/createTablesAndViews.sql").readText()
+                        val fileContent = this::class.java.getResource("/db/createTablesAndViews.sql")!!.readText()
                         dbQuery { prepareStatement(fileContent).execute() }
                         return@withTimeout
                     } catch (_: PSQLException) {

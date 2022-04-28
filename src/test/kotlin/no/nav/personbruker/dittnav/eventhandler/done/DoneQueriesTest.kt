@@ -1,5 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.done
 
+import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
@@ -12,7 +13,6 @@ import no.nav.personbruker.dittnav.eventhandler.innboks.deleteInnboks
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveObjectMother
 import no.nav.personbruker.dittnav.eventhandler.oppgave.createOppgave
 import no.nav.personbruker.dittnav.eventhandler.oppgave.deleteOppgave
-import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -52,9 +52,9 @@ internal class DoneQueriesTest {
         runBlocking {
             val groupedEventsBySystemuser = database.dbQuery { getAllGroupedDoneEventsBySystemuser() }
 
-            groupedEventsBySystemuser.size `should be equal to` 2
-            groupedEventsBySystemuser[done1.systembruker] `should be equal to` 1
-            groupedEventsBySystemuser[done2.systembruker] `should be equal to` 1
+            groupedEventsBySystemuser.size shouldBe 2
+            groupedEventsBySystemuser[done1.systembruker] shouldBe 1
+            groupedEventsBySystemuser[done2.systembruker] shouldBe 1
         }
     }
 
@@ -64,10 +64,10 @@ internal class DoneQueriesTest {
         runBlocking {
             val groupedEventsBySystemuser = database.dbQuery { countTotalNumberOfBrukernotifikasjonerByActiveStatus(aktiv = false) }
 
-            groupedEventsBySystemuser.size `should be equal to` 2
-            groupedEventsBySystemuser[inaktivBeskjed.systembruker] `should be equal to` 2
-            groupedEventsBySystemuser[inaktivOppgave.systembruker] `should be equal to` 2
-            groupedEventsBySystemuser[inaktivInnboks.systembruker] `should be equal to` 1
+            groupedEventsBySystemuser.size shouldBe 2
+            groupedEventsBySystemuser[inaktivBeskjed.systembruker] shouldBe 2
+            groupedEventsBySystemuser[inaktivOppgave.systembruker] shouldBe 2
+            groupedEventsBySystemuser[inaktivInnboks.systembruker] shouldBe 1
         }
         deleteInactiveBrukernotifikasjoner()
     }
@@ -79,10 +79,10 @@ internal class DoneQueriesTest {
         runBlocking {
             val groupedEventsBySystemuser = database.dbQuery { countTotalNumberPerProducerByActiveStatus(aktiv = false) }
 
-            groupedEventsBySystemuser.size `should be equal to` 2
-            groupedEventsBySystemuser.findCountFor(inaktivBeskjed.namespace, inaktivBeskjed.appnavn) `should be equal to` 2
-            groupedEventsBySystemuser.findCountFor(inaktivOppgave.namespace, inaktivOppgave.appnavn) `should be equal to` 2
-            groupedEventsBySystemuser.findCountFor(inaktivInnboks.namespace, inaktivInnboks.appnavn) `should be equal to` 1
+            groupedEventsBySystemuser.size shouldBe 2
+            groupedEventsBySystemuser.findCountFor(inaktivBeskjed.namespace, inaktivBeskjed.appnavn) shouldBe 2
+            groupedEventsBySystemuser.findCountFor(inaktivOppgave.namespace, inaktivOppgave.appnavn) shouldBe 2
+            groupedEventsBySystemuser.findCountFor(inaktivInnboks.namespace, inaktivInnboks.appnavn) shouldBe 1
         }
         deleteInactiveBrukernotifikasjoner()
     }

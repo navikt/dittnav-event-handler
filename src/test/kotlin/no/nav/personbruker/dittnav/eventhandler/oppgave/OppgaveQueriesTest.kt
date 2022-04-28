@@ -1,10 +1,10 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
+import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
 import no.nav.personbruker.dittnav.eventhandler.common.findCountFor
-import org.amshove.kluent.`should be empty`
-import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -73,21 +73,21 @@ class OppgaveQueriesTest {
     @Test
     fun `Finn alle cachede Oppgave-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getAllOppgaveForInnloggetBruker(fodselsnummer) }.size `should be equal to` 3
+            database.dbQuery { getAllOppgaveForInnloggetBruker(fodselsnummer) }.size shouldBe 3
         }
     }
 
     @Test
     fun `Finn kun aktive cachede Oppgave-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getAktivOppgaveForInnloggetBruker(fodselsnummer) }.size `should be equal to` 2
+            database.dbQuery { getAktivOppgaveForInnloggetBruker(fodselsnummer) }.size shouldBe 2
         }
     }
 
     @Test
     fun `Finn kun inaktive cachede Oppgave-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getInaktivOppgaveForInnloggetBruker(fodselsnummer) }.size `should be equal to` 1
+            database.dbQuery { getInaktivOppgaveForInnloggetBruker(fodselsnummer) }.size shouldBe 1
         }
     }
 
@@ -111,7 +111,7 @@ class OppgaveQueriesTest {
     fun `Returnerer lesbart navn for produsent som kan eksponeres for aktive eventer`() {
         runBlocking {
             val oppgave = database.dbQuery { getAktivOppgaveForInnloggetBruker(fodselsnummer) }.first()
-            oppgave.produsent `should be equal to` appnavn
+            oppgave.produsent shouldBe appnavn
         }
     }
 
@@ -119,7 +119,7 @@ class OppgaveQueriesTest {
     fun `Returnerer lesbart navn for produsent som kan eksponeres for inaktive eventer`() {
         runBlocking {
             val oppgave = database.dbQuery { getInaktivOppgaveForInnloggetBruker(fodselsnummer) }.first()
-            oppgave.produsent `should be equal to` appnavn
+            oppgave.produsent shouldBe appnavn
         }
     }
 
@@ -127,7 +127,7 @@ class OppgaveQueriesTest {
     fun `Returnerer lesbart navn for produsent som kan eksponeres for alle eventer`() {
         runBlocking {
             val oppgave = database.dbQuery { getAllOppgaveForInnloggetBruker(fodselsnummer) }.first()
-            oppgave.produsent `should be equal to` appnavn
+            oppgave.produsent shouldBe appnavn
         }
     }
 
@@ -136,7 +136,7 @@ class OppgaveQueriesTest {
         runBlocking {
             database.dbQuery {
                 getAllGroupedOppgaveEventsByIds(fodselsnummer, grupperingsid, appnavn)
-            }.size `should be equal to` 3
+            }.size shouldBe 3
         }
     }
 
@@ -146,7 +146,7 @@ class OppgaveQueriesTest {
         runBlocking {
             database.dbQuery {
                 getAllGroupedOppgaveEventsByIds(fodselsnummer, grupperingsid, noMatchProdusent)
-            }.`should be empty`()
+            }.shouldBeEmpty()
         }
     }
 
@@ -156,7 +156,7 @@ class OppgaveQueriesTest {
         runBlocking {
             database.dbQuery {
                 getAllGroupedOppgaveEventsByIds(fodselsnummer, noMatchGrupperingsid, appnavn)
-            }.`should be empty`()
+            }.shouldBeEmpty()
         }
     }
 
@@ -165,9 +165,9 @@ class OppgaveQueriesTest {
         runBlocking {
             val groupedEventsBySystemuser = database.dbQuery { getAllGroupedOppgaveEventsBySystemuser() }
 
-            groupedEventsBySystemuser.size `should be equal to` 2
-            groupedEventsBySystemuser[oppgave1.systembruker] `should be equal to` 3
-            groupedEventsBySystemuser[oppgave4.systembruker] `should be equal to` 1
+            groupedEventsBySystemuser.size shouldBe 2
+            groupedEventsBySystemuser[oppgave1.systembruker] shouldBe 3
+            groupedEventsBySystemuser[oppgave4.systembruker] shouldBe 1
         }
     }
 
@@ -177,9 +177,9 @@ class OppgaveQueriesTest {
         runBlocking {
             val groupedEventsBySystemuser = database.dbQuery { getAllGroupedOppgaveEventsByProducer() }
 
-            groupedEventsBySystemuser.size `should be equal to` 2
-            groupedEventsBySystemuser.findCountFor(oppgave1.namespace, oppgave1.appnavn) `should be equal to` 3
-            groupedEventsBySystemuser.findCountFor(oppgave4.namespace, oppgave4.appnavn) `should be equal to` 1
+            groupedEventsBySystemuser.size shouldBe 2
+            groupedEventsBySystemuser.findCountFor(oppgave1.namespace, oppgave1.appnavn) shouldBe 3
+            groupedEventsBySystemuser.findCountFor(oppgave4.namespace, oppgave4.appnavn) shouldBe 1
         }
     }
 

@@ -1,10 +1,10 @@
 package no.nav.personbruker.dittnav.eventhandler.innboks
 
+import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
 import no.nav.personbruker.dittnav.eventhandler.common.findCountFor
-import org.amshove.kluent.`should be empty`
-import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -74,24 +74,24 @@ class InnboksQueriesTest {
     @Test
     fun `Finn alle cachede Innboks-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getAllInnboksForInnloggetBruker(fodselsnummer1) }.size `should be equal to` 2
-            database.dbQuery { getAllInnboksForInnloggetBruker(fodselsnummer2) }.size `should be equal to` 2
+            database.dbQuery { getAllInnboksForInnloggetBruker(fodselsnummer1) }.size shouldBe 2
+            database.dbQuery { getAllInnboksForInnloggetBruker(fodselsnummer2) }.size shouldBe 2
         }
     }
 
     @Test
     fun `Finn kun aktive cachede Innboks-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getAktivInnboksForInnloggetBruker(fodselsnummer1) }.size `should be equal to` 2
-            database.dbQuery { getAktivInnboksForInnloggetBruker(fodselsnummer2) }.size `should be equal to` 1
+            database.dbQuery { getAktivInnboksForInnloggetBruker(fodselsnummer1) }.size shouldBe 2
+            database.dbQuery { getAktivInnboksForInnloggetBruker(fodselsnummer2) }.size shouldBe 1
         }
     }
 
     @Test
     fun `Finn kun inaktive cachede Innboks-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getInaktivInnboksForInnloggetBruker(fodselsnummer1) }.`should be empty`()
-            database.dbQuery { getInaktivInnboksForInnloggetBruker(fodselsnummer2) }.size `should be equal to` 1
+            database.dbQuery { getInaktivInnboksForInnloggetBruker(fodselsnummer1) }.shouldBeEmpty()
+            database.dbQuery { getInaktivInnboksForInnloggetBruker(fodselsnummer2) }.size shouldBe 1
         }
     }
 
@@ -99,7 +99,7 @@ class InnboksQueriesTest {
     fun `Returnerer tom liste hvis Innboks-eventer for fodselsnummer ikke finnes`() {
         val brukerUtenEventer = "0"
         runBlocking {
-            database.dbQuery { getAllInnboksForInnloggetBruker(brukerUtenEventer) }.size `should be equal to` 0
+            database.dbQuery { getAllInnboksForInnloggetBruker(brukerUtenEventer) }.size shouldBe 0
         }
     }
 
@@ -107,7 +107,7 @@ class InnboksQueriesTest {
     fun `Returnerer tom liste hvis fodselsnummer er tomt`() {
         val brukerUtenEventer = ""
         runBlocking {
-            database.dbQuery { getAllInnboksForInnloggetBruker(brukerUtenEventer) }.size `should be equal to` 0
+            database.dbQuery { getAllInnboksForInnloggetBruker(brukerUtenEventer) }.size shouldBe 0
         }
     }
 
@@ -115,7 +115,7 @@ class InnboksQueriesTest {
     fun `Returnerer lesbart navn for produsent som kan eksponeres for aktive eventer`() {
         runBlocking {
             val innboks = database.dbQuery { getAktivInnboksForInnloggetBruker(fodselsnummer1) }.first()
-            innboks.produsent `should be equal to` appnavn
+            innboks.produsent shouldBe appnavn
         }
     }
 
@@ -123,7 +123,7 @@ class InnboksQueriesTest {
     fun `Returnerer lesbart navn for produsent som kan eksponeres for inaktive eventer`() {
         runBlocking {
             val innboks = database.dbQuery { getInaktivInnboksForInnloggetBruker(fodselsnummer2) }.first()
-            innboks.produsent `should be equal to` appnavn
+            innboks.produsent shouldBe appnavn
         }
     }
 
@@ -131,7 +131,7 @@ class InnboksQueriesTest {
     fun `Returnerer lesbart navn for produsent som kan eksponeres for alle eventer`() {
         runBlocking {
             val innboks = database.dbQuery { getAllInnboksForInnloggetBruker(fodselsnummer1) }.first()
-            innboks.produsent `should be equal to` appnavn
+            innboks.produsent shouldBe appnavn
         }
     }
 
@@ -140,7 +140,7 @@ class InnboksQueriesTest {
         runBlocking {
             database.dbQuery {
                 getAllGroupedInnboksEventsByIds(fodselsnummer1, grupperingsid, appnavn)
-            }.size `should be equal to` 2
+            }.size shouldBe 2
         }
     }
 
@@ -150,7 +150,7 @@ class InnboksQueriesTest {
         runBlocking {
             database.dbQuery {
                 getAllGroupedInnboksEventsByIds(fodselsnummer1, grupperingsid, noMatchProdusent)
-            }.`should be empty`()
+            }.shouldBeEmpty()
         }
     }
 
@@ -160,7 +160,7 @@ class InnboksQueriesTest {
         runBlocking {
             database.dbQuery {
                 getAllGroupedInnboksEventsByIds(fodselsnummer1, noMatchGrupperingsid, appnavn)
-            }.`should be empty`()
+            }.shouldBeEmpty()
         }
     }
 
@@ -169,9 +169,9 @@ class InnboksQueriesTest {
         runBlocking {
             val groupedEventsBySystemuser = database.dbQuery { getAllGroupedInnboksEventsBySystemuser() }
 
-            groupedEventsBySystemuser.size `should be equal to` 2
-            groupedEventsBySystemuser[innboks1.systembruker] `should be equal to` 3
-            groupedEventsBySystemuser[innboks3.systembruker] `should be equal to` 1
+            groupedEventsBySystemuser.size shouldBe 2
+            groupedEventsBySystemuser[innboks1.systembruker] shouldBe 3
+            groupedEventsBySystemuser[innboks3.systembruker] shouldBe 1
         }
     }
 
@@ -180,9 +180,9 @@ class InnboksQueriesTest {
         runBlocking {
             val groupedEventsByProducer = database.dbQuery { getAllGroupedInnboksEventsByProducer() }
 
-            groupedEventsByProducer.size `should be equal to` 2
-            groupedEventsByProducer.findCountFor(innboks1.namespace, innboks1.appnavn) `should be equal to` 3
-            groupedEventsByProducer.findCountFor(innboks3.namespace, innboks3.appnavn) `should be equal to` 1
+            groupedEventsByProducer.size shouldBe 2
+            groupedEventsByProducer.findCountFor(innboks1.namespace, innboks1.appnavn) shouldBe 3
+            groupedEventsByProducer.findCountFor(innboks3.namespace, innboks3.appnavn) shouldBe 1
         }
     }
 

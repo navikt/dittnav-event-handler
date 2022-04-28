@@ -1,6 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.innboks
 
-import org.amshove.kluent.`should be equal to`
+import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
 internal class InnboksTransformersTest {
@@ -9,15 +9,15 @@ internal class InnboksTransformersTest {
     fun `skal transformere til DTO`() {
         val innboks = InnboksObjectMother.createInnboks()
         val innboksDTO = innboks.toDTO()
-        innboksDTO.fodselsnummer `should be equal to` innboks.fodselsnummer
-        innboksDTO.eventId `should be equal to` innboks.eventId
-        innboksDTO.aktiv `should be equal to` innboks.aktiv
-        innboksDTO.eventTidspunkt `should be equal to` innboks.eventTidspunkt
-        innboksDTO.grupperingsId `should be equal to` innboks.grupperingsId
-        innboksDTO.link `should be equal to` innboks.link
-        innboksDTO.produsent `should be equal to` innboks.appnavn
-        innboksDTO.sikkerhetsnivaa `should be equal to` innboks.sikkerhetsnivaa
-        innboksDTO.sistOppdatert `should be equal to` innboks.sistOppdatert
-        innboksDTO.tekst `should be equal to` innboks.tekst
+        innboksDTO.fodselsnummer shouldBe innboks.fodselsnummer
+        innboksDTO.eventId shouldBe innboks.eventId
+        innboksDTO.aktiv shouldBe innboks.aktiv
+        innboksDTO.eventTidspunkt shouldBe innboks.eventTidspunkt
+        innboksDTO.grupperingsId shouldBe innboks.grupperingsId
+        innboksDTO.link shouldBe innboks.link
+        innboksDTO.produsent shouldBe innboks.appnavn
+        innboksDTO.sikkerhetsnivaa shouldBe innboks.sikkerhetsnivaa
+        innboksDTO.sistOppdatert shouldBe innboks.sistOppdatert
+        innboksDTO.tekst shouldBe innboks.tekst
     }
 }

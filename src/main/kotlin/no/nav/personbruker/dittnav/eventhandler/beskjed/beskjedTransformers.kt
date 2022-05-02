@@ -3,7 +3,6 @@ package no.nav.personbruker.dittnav.eventhandler.beskjed
 import Beskjed
 
 fun Beskjed.toDTO() = BeskjedDTO(
-    uid = eventId,
     fodselsnummer = fodselsnummer,
     grupperingsId = grupperingsId,
     eventId = eventId,

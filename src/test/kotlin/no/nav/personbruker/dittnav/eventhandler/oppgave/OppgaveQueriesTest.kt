@@ -73,21 +73,21 @@ class OppgaveQueriesTest {
     @Test
     fun `Finn alle cachede Oppgave-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getAllOppgaveForInnloggetBruker(fodselsnummer) }.size shouldBe 3
+            database.dbQuery { getAllOppgaveForFodselsnummer(fodselsnummer) }.size shouldBe 3
         }
     }
 
     @Test
     fun `Finn kun aktive cachede Oppgave-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getAktivOppgaveForInnloggetBruker(fodselsnummer) }.size shouldBe 2
+            database.dbQuery { getAktivOppgaveForFodselsnummer(fodselsnummer) }.size shouldBe 2
         }
     }
 
     @Test
     fun `Finn kun inaktive cachede Oppgave-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getInaktivOppgaveForInnloggetBruker(fodselsnummer) }.size shouldBe 1
+            database.dbQuery { getInaktivOppgaveForFodselsnummer(fodselsnummer) }.size shouldBe 1
         }
     }
 
@@ -95,7 +95,7 @@ class OppgaveQueriesTest {
     fun `Returnerer tom liste hvis Oppgave-eventer for fodselsnummer ikke finnes`() {
         val brukerSomIkkeFinnes = "0"
         runBlocking {
-            database.dbQuery { getAktivOppgaveForInnloggetBruker(brukerSomIkkeFinnes) }.isEmpty()
+            database.dbQuery { getAktivOppgaveForFodselsnummer(brukerSomIkkeFinnes) }.isEmpty()
         }
     }
 
@@ -103,14 +103,14 @@ class OppgaveQueriesTest {
     fun `Returnerer tom liste hvis fodselsnummer er tomt`() {
         val fodselsnummerMangler = ""
         runBlocking {
-            database.dbQuery { getAktivOppgaveForInnloggetBruker(fodselsnummerMangler) }.isEmpty()
+            database.dbQuery { getAktivOppgaveForFodselsnummer(fodselsnummerMangler) }.isEmpty()
         }
     }
 
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for aktive eventer`() {
         runBlocking {
-            val oppgave = database.dbQuery { getAktivOppgaveForInnloggetBruker(fodselsnummer) }.first()
+            val oppgave = database.dbQuery { getAktivOppgaveForFodselsnummer(fodselsnummer) }.first()
             oppgave.produsent shouldBe appnavn
         }
     }
@@ -118,7 +118,7 @@ class OppgaveQueriesTest {
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for inaktive eventer`() {
         runBlocking {
-            val oppgave = database.dbQuery { getInaktivOppgaveForInnloggetBruker(fodselsnummer) }.first()
+            val oppgave = database.dbQuery { getInaktivOppgaveForFodselsnummer(fodselsnummer) }.first()
             oppgave.produsent shouldBe appnavn
         }
     }
@@ -126,7 +126,7 @@ class OppgaveQueriesTest {
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for alle eventer`() {
         runBlocking {
-            val oppgave = database.dbQuery { getAllOppgaveForInnloggetBruker(fodselsnummer) }.first()
+            val oppgave = database.dbQuery { getAllOppgaveForFodselsnummer(fodselsnummer) }.first()
             oppgave.produsent shouldBe appnavn
         }
     }

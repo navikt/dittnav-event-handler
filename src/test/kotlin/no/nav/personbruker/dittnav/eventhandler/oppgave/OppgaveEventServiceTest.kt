@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory
 class OppgaveEventServiceTest {
 
     private val database = mockk<Database>()
-    private val oppgaveEventService = OppgaveEventService(database)
+    private val oppgaveEventService = OppgaveEventService(database, false, 0)
     private val bruker = TokenXUserObjectMother.createInnloggetBruker("123")
     private val produsent = "dittnav"
     private val grupperingsid = "100${bruker.ident}"

@@ -15,7 +15,7 @@ fun Route.innboksApi(innboksEventService: InnboksEventService) {
 
     get("/fetch/innboks/aktive") {
         try {
-            val aktiveInnboksEvents = innboksEventService.getRecentActiveEventsForUser(innloggetBruker)
+            val aktiveInnboksEvents = innboksEventService.getActiveEventsForFodselsnummer(innloggetBruker.ident)
             call.respond(HttpStatusCode.OK, aktiveInnboksEvents)
         } catch (exception: Exception) {
             respondWithError(call, log, exception)
@@ -24,7 +24,7 @@ fun Route.innboksApi(innboksEventService: InnboksEventService) {
 
     get("/fetch/innboks/inaktive") {
         try {
-            val inaktiveInnboksEvents = innboksEventService.getRecentInactiveEventsForUser(innloggetBruker)
+            val inaktiveInnboksEvents = innboksEventService.getInactiveEventsForFodselsnummer(innloggetBruker.ident)
             call.respond(HttpStatusCode.OK, inaktiveInnboksEvents)
         } catch (exception: Exception) {
             respondWithError(call, log, exception)
@@ -33,7 +33,7 @@ fun Route.innboksApi(innboksEventService: InnboksEventService) {
 
     get("/fetch/innboks/all") {
         try {
-            val innboksEvents = innboksEventService.getAllRecentEventsForUser(innloggetBruker)
+            val innboksEvents = innboksEventService.getAllEventsForFodselsnummer(innloggetBruker.ident)
             call.respond(HttpStatusCode.OK, innboksEvents)
         } catch (exception: Exception) {
             respondWithError(call, log, exception)
@@ -70,7 +70,7 @@ fun Route.innboksSystemClientApi(innboksEventService: InnboksEventService) {
     get("/fetch/modia/innboks/aktive") {
         doIfValidRequest { userToFetchEventsFor ->
             try {
-                val aktiveInnboksEvents = innboksEventService.getRecentActiveEventsForUser(userToFetchEventsFor)
+                val aktiveInnboksEvents = innboksEventService.getActiveEventsForFodselsnummer(userToFetchEventsFor.fodselsnummer)
                 call.respond(HttpStatusCode.OK, aktiveInnboksEvents)
 
             } catch (exception: Exception) {
@@ -83,7 +83,7 @@ fun Route.innboksSystemClientApi(innboksEventService: InnboksEventService) {
     get("/fetch/modia/innboks/inaktive") {
         doIfValidRequest { userToFetchEventsFor ->
             try {
-                val inaktiveInnboksEvents = innboksEventService.getRecentInactiveEventsForUser(userToFetchEventsFor)
+                val inaktiveInnboksEvents = innboksEventService.getInactiveEventsForFodselsnummer(userToFetchEventsFor.fodselsnummer)
                 call.respond(HttpStatusCode.OK, inaktiveInnboksEvents)
 
             } catch (exception: Exception) {
@@ -95,7 +95,7 @@ fun Route.innboksSystemClientApi(innboksEventService: InnboksEventService) {
     get("/fetch/modia/innboks/all") {
         doIfValidRequest { userToFetchEventsFor ->
             try {
-                val innboksEvents = innboksEventService.getAllRecentEventsForUser(userToFetchEventsFor)
+                val innboksEvents = innboksEventService.getAllEventsForFodselsnummer(userToFetchEventsFor.fodselsnummer)
                 call.respond(HttpStatusCode.OK, innboksEvents)
 
             } catch (exception: Exception) {

@@ -11,13 +11,38 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-fun Connection.getInaktivOppgaveForInnloggetBruker(fodselsnummer: String): List<Oppgave> =
-        getOppgaveForInnloggetBruker(fodselsnummer, false)
+fun Connection.getInaktivOppgaveForFodselsnummer(fodselsnummer: String): List<Oppgave> =
+        getOppgaveForFodselsnummerByAktiv(fodselsnummer, false)
 
-fun Connection.getAktivOppgaveForInnloggetBruker(fodselsnummer: String): List<Oppgave> =
-        getOppgaveForInnloggetBruker(fodselsnummer, true)
+fun Connection.getAktivOppgaveForFodselsnummer(fodselsnummer: String): List<Oppgave> =
+        getOppgaveForFodselsnummerByAktiv(fodselsnummer, true)
 
-fun Connection.getAllOppgaveForInnloggetBruker(fodselsnummer: String): List<Oppgave> =
+private fun Connection.getOppgaveForFodselsnummerByAktiv(fodselsnummer: String, aktiv: Boolean): List<Oppgave> =
+    prepareStatement("""SELECT
+            |id,
+            |eventTidspunkt,
+            |fodselsnummer,
+            |eventId,
+            |grupperingsId,
+            |tekst,
+            |link,
+            |sikkerhetsnivaa,
+            |sistOppdatert,
+            |aktiv,
+            |systembruker,
+            |namespace,
+            |appnavn,
+            |forstBehandlet
+            |FROM oppgave WHERE fodselsnummer = ? AND aktiv = ?""".trimMargin())
+        .use {
+            it.setString(1, fodselsnummer)
+            it.setBoolean(2, aktiv)
+            it.executeQuery().mapList {
+                toOppgave()
+            }
+        }
+
+fun Connection.getAllOppgaveForFodselsnummer(fodselsnummer: String): List<Oppgave> =
         prepareStatement("""SELECT 
             |id,
             |eventTidspunkt,
@@ -89,31 +114,6 @@ private fun ResultSet.toOppgave(): Oppgave {
     )
 }
 
-private fun Connection.getOppgaveForInnloggetBruker(fodselsnummer: String, aktiv: Boolean): List<Oppgave> =
-        prepareStatement("""SELECT
-            |id,
-            |eventTidspunkt,
-            |fodselsnummer,
-            |eventId,
-            |grupperingsId,
-            |tekst,
-            |link,
-            |sikkerhetsnivaa,
-            |sistOppdatert,
-            |aktiv,
-            |systembruker,
-            |namespace,
-            |appnavn,
-            |forstBehandlet
-            |FROM oppgave WHERE fodselsnummer = ? AND aktiv = ?""".trimMargin())
-                .use {
-                    it.setString(1, fodselsnummer)
-                    it.setBoolean(2, aktiv)
-                    it.executeQuery().mapList {
-                        toOppgave()
-                    }
-                }
-
 fun Connection.getAllGroupedOppgaveEventsBySystemuser(): Map<String, Int> {
     return prepareStatement("SELECT systembruker, COUNT(*) FROM oppgave GROUP BY systembruker",
             ResultSet.TYPE_SCROLL_INSENSITIVE,
@@ -141,13 +141,13 @@ fun Connection.getAllGroupedOppgaveEventsByProducer(): List<EventCountForProduce
         }
 }
 
-fun Connection.getInaktivOppgaveForFodselsnummerByForstBehandlet(fodselsnummer: String, fromDate: LocalDate): List<Oppgave> =
-    getOppgaveForFodselsnummerByAktivAndForstbehandlet(fodselsnummer, false, fromDate)
+fun Connection.getRecentInaktivOppgaveForFodselsnummer(fodselsnummer: String, fromDate: LocalDate): List<Oppgave> =
+    getRecentOppgaveForFodselsnummerByAktiv(fodselsnummer, false, fromDate)
 
-fun Connection.getAktivOppgaveForFodselsnummerByForstBehandlet(fodselsnummer: String, fromDate: LocalDate): List<Oppgave> =
-    getOppgaveForFodselsnummerByAktivAndForstbehandlet(fodselsnummer, true, fromDate)
+fun Connection.getRecentAktivOppgaveForFodselsnummer(fodselsnummer: String, fromDate: LocalDate): List<Oppgave> =
+    getRecentOppgaveForFodselsnummerByAktiv(fodselsnummer, true, fromDate)
 
-private fun Connection.getOppgaveForFodselsnummerByAktivAndForstbehandlet(fodselsnummer: String, aktiv: Boolean, fromDate: LocalDate): List<Oppgave> =
+private fun Connection.getRecentOppgaveForFodselsnummerByAktiv(fodselsnummer: String, aktiv: Boolean, fromDate: LocalDate): List<Oppgave> =
     prepareStatement("""SELECT
             |id,
             |eventTidspunkt,
@@ -161,7 +161,8 @@ private fun Connection.getOppgaveForFodselsnummerByAktivAndForstbehandlet(fodsel
             |aktiv,
             |systembruker,
             |namespace,
-            |appnavn
+            |appnavn,
+            |forstBehandlet
             |FROM oppgave WHERE fodselsnummer = ? AND aktiv = ? AND forstBehandlet > ?""".trimMargin())
         .use {
             it.setString(1, fodselsnummer)
@@ -172,7 +173,7 @@ private fun Connection.getOppgaveForFodselsnummerByAktivAndForstbehandlet(fodsel
             }
         }
 
-fun Connection.getOppgaveForFodselsnummerByForstBehandlet(fodselsnummer: String, fromDate: LocalDate): List<Oppgave> =
+fun Connection.getAllRecentOppgaveForFodselsnummer(fodselsnummer: String, fromDate: LocalDate): List<Oppgave> =
     prepareStatement("""SELECT 
             |id,
             |eventTidspunkt,
@@ -186,7 +187,8 @@ fun Connection.getOppgaveForFodselsnummerByForstBehandlet(fodselsnummer: String,
             |aktiv,
             |systembruker,
             |namespace,
-            |appnavn
+            |appnavn,
+            |forstBehandlet
             |FROM oppgave WHERE fodselsnummer = ?
             |AND forstBehandlet > ?""".trimMargin())
         .use {

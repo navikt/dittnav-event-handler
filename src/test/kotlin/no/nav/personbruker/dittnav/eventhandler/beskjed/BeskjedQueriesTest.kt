@@ -81,7 +81,7 @@ class BeskjedQueriesTest {
     @Test
     fun `Finn alle cachede Beskjed-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getAllBeskjedForInnloggetBruker(fodselsnummer) }.size shouldBe 3
+            database.dbQuery { getAllBeskjedForFodselsnummer(fodselsnummer) }.size shouldBe 3
         }
     }
 
@@ -89,7 +89,7 @@ class BeskjedQueriesTest {
     fun `Finn kun aktive cachede Beskjed-eventer for fodselsnummer`() {
         runBlocking {
             database.dbQuery {
-                val aktivBeskjedByUser = getAktivBeskjedForInnloggetBruker(fodselsnummer)
+                val aktivBeskjedByUser = getAktivBeskjedForFodselsnummer(fodselsnummer)
                 aktivBeskjedByUser
             }.size shouldBe 2
         }
@@ -99,7 +99,7 @@ class BeskjedQueriesTest {
     fun `Finn kun inaktive cachede Beskjed-eventer for fodselsnummer`() {
         runBlocking {
             database.dbQuery {
-                val inaktivBeskjedByUser = getInaktivBeskjedForInnloggetBruker(fodselsnummer)
+                val inaktivBeskjedByUser = getInaktivBeskjedForFodselsnummer(fodselsnummer)
                 inaktivBeskjedByUser
             }.size shouldBe 1
         }
@@ -109,7 +109,7 @@ class BeskjedQueriesTest {
     fun `Returnerer tom liste hvis Beskjed-eventer for fodselsnummer ikke finnes`() {
         val brukerSomIkkeFinnes = "0"
         runBlocking {
-            database.dbQuery { getAktivBeskjedForInnloggetBruker(brukerSomIkkeFinnes) }.shouldBeEmpty()
+            database.dbQuery { getAktivBeskjedForFodselsnummer(brukerSomIkkeFinnes) }.shouldBeEmpty()
         }
     }
 
@@ -117,14 +117,14 @@ class BeskjedQueriesTest {
     fun `Returnerer tom liste hvis fodselsnummer er tomt`() {
         val fodselsnummerMangler = ""
         runBlocking {
-            database.dbQuery { getAktivBeskjedForInnloggetBruker(fodselsnummerMangler) }.shouldBeEmpty()
+            database.dbQuery { getAktivBeskjedForFodselsnummer(fodselsnummerMangler) }.shouldBeEmpty()
         }
     }
 
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for aktive eventer`() {
         runBlocking {
-            val beskjed = database.dbQuery { getAktivBeskjedForInnloggetBruker(fodselsnummer) }.first()
+            val beskjed = database.dbQuery { getAktivBeskjedForFodselsnummer(fodselsnummer) }.first()
             beskjed.produsent shouldBe appnavn
         }
     }
@@ -132,7 +132,7 @@ class BeskjedQueriesTest {
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for inaktive eventer`() {
         runBlocking {
-            val beskjed = database.dbQuery { getInaktivBeskjedForInnloggetBruker(fodselsnummer) }.first()
+            val beskjed = database.dbQuery { getInaktivBeskjedForFodselsnummer(fodselsnummer) }.first()
             beskjed.produsent shouldBe appnavn
         }
     }
@@ -140,7 +140,7 @@ class BeskjedQueriesTest {
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for alle eventer`() {
         runBlocking {
-            val beskjed = database.dbQuery { getAllBeskjedForInnloggetBruker(fodselsnummer) }.first()
+            val beskjed = database.dbQuery { getAllBeskjedForFodselsnummer(fodselsnummer) }.first()
             beskjed.produsent shouldBe appnavn
         }
     }

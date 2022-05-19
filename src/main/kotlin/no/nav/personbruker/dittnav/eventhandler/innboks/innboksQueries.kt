@@ -10,13 +10,38 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-fun Connection.getInaktivInnboksForInnloggetBruker(fodselsnummer: String): List<Innboks> =
-        getInnboksForInnloggetBruker(fodselsnummer, false)
+fun Connection.getInaktivInnboksForFodselsnummer(fodselsnummer: String): List<Innboks> =
+        getInnboksForFodselsnummerByAktiv(fodselsnummer, false)
 
-fun Connection.getAktivInnboksForInnloggetBruker(fodselsnummer: String): List<Innboks> =
-        getInnboksForInnloggetBruker(fodselsnummer, true)
+fun Connection.getAktivInnboksForFodselsnummer(fodselsnummer: String): List<Innboks> =
+        getInnboksForFodselsnummerByAktiv(fodselsnummer, true)
 
-fun Connection.getAllInnboksForInnloggetBruker(fodselsnummer: String): List<Innboks> =
+private fun Connection.getInnboksForFodselsnummerByAktiv(fodselsnummer: String, aktiv: Boolean): List<Innboks> =
+    prepareStatement("""SELECT
+            |id,
+            |eventTidspunkt,
+            |fodselsnummer,
+            |eventId,
+            |grupperingsId,
+            |tekst,
+            |link,
+            |sikkerhetsnivaa,
+            |sistOppdatert,
+            |aktiv,
+            |systembruker,
+            |namespace,
+            |appnavn,
+            |forstBehandlet
+            |FROM innboks WHERE fodselsnummer = ? AND aktiv = ?""".trimMargin())
+        .use {
+            it.setString(1, fodselsnummer)
+            it.setBoolean(2, aktiv)
+            it.executeQuery().mapList {
+                toInnboks()
+            }
+        }
+
+fun Connection.getAllInnboksForFodselsnummer(fodselsnummer: String): List<Innboks> =
         prepareStatement("""SELECT
             |id,
             |eventTidspunkt,
@@ -86,31 +111,6 @@ private fun ResultSet.toInnboks(): Innboks {
     )
 }
 
-private fun Connection.getInnboksForInnloggetBruker(fodselsnummer: String, aktiv: Boolean): List<Innboks> =
-        prepareStatement("""SELECT
-            |id,
-            |eventTidspunkt,
-            |fodselsnummer,
-            |eventId,
-            |grupperingsId,
-            |tekst,
-            |link,
-            |sikkerhetsnivaa,
-            |sistOppdatert,
-            |aktiv,
-            |systembruker,
-            |namespace,
-            |appnavn,
-            |forstBehandlet
-            |FROM innboks WHERE fodselsnummer = ? AND aktiv = ?""".trimMargin())
-                .use {
-                    it.setString(1, fodselsnummer)
-                    it.setBoolean(2, aktiv)
-                    it.executeQuery().mapList {
-                        toInnboks()
-                    }
-                }
-
 fun Connection.getAllGroupedInnboksEventsBySystemuser(): Map<String, Int> {
     return prepareStatement("SELECT systembruker, COUNT(*) FROM innboks GROUP BY systembruker",
             ResultSet.TYPE_SCROLL_INSENSITIVE,
@@ -138,13 +138,13 @@ fun Connection.getAllGroupedInnboksEventsByProducer(): List<EventCountForProduce
         }
 }
 
-fun Connection.getInaktivInnboksForFodselsnummerByForstBehandlet(fodselsnummer: String, fromDate: LocalDate): List<Innboks> =
-    getInnboksForFodselsnummerByAktivAndForstBehandlet(fodselsnummer, false, fromDate)
+fun Connection.getRecentInaktivInnboksForFodselsnummer(fodselsnummer: String, fromDate: LocalDate): List<Innboks> =
+    getRecentInnboksForFodselsnummerByAktiv(fodselsnummer, false, fromDate)
 
-fun Connection.getAktivInnboksForFodselsnummerByForstBehandlet(fodselsnummer: String, fromDate: LocalDate): List<Innboks> =
-    getInnboksForFodselsnummerByAktivAndForstBehandlet(fodselsnummer, true, fromDate)
+fun Connection.getRecentAktivInnboksForFodselsnummer(fodselsnummer: String, fromDate: LocalDate): List<Innboks> =
+    getRecentInnboksForFodselsnummerByAktiv(fodselsnummer, true, fromDate)
 
-private fun Connection.getInnboksForFodselsnummerByAktivAndForstBehandlet(fodselsnummer: String, aktiv: Boolean, fromDate: LocalDate): List<Innboks> =
+private fun Connection.getRecentInnboksForFodselsnummerByAktiv(fodselsnummer: String, aktiv: Boolean, fromDate: LocalDate): List<Innboks> =
     prepareStatement("""SELECT
             |id,
             |eventTidspunkt,
@@ -158,7 +158,8 @@ private fun Connection.getInnboksForFodselsnummerByAktivAndForstBehandlet(fodsel
             |aktiv,
             |systembruker,
             |namespace,
-            |appnavn
+            |appnavn,
+            |forstBehandlet
             |FROM innboks WHERE fodselsnummer = ? AND aktiv = ? AND forstBehandlet > ?""".trimMargin())
         .use {
             it.setString(1, fodselsnummer)
@@ -169,7 +170,7 @@ private fun Connection.getInnboksForFodselsnummerByAktivAndForstBehandlet(fodsel
             }
         }
 
-fun Connection.getInnboksForFodselsnummerByForstBehandlet(fodselsnummer: String, fromDate: LocalDate): List<Innboks> =
+fun Connection.getAllRecentInnboksForFodselsnummer(fodselsnummer: String, fromDate: LocalDate): List<Innboks> =
     prepareStatement("""SELECT
             |id,
             |eventTidspunkt,
@@ -183,7 +184,8 @@ fun Connection.getInnboksForFodselsnummerByForstBehandlet(fodselsnummer: String,
             |aktiv,
             |systembruker,
             |namespace,
-            |appnavn
+            |appnavn,
+            |forstBehandlet
             |FROM innboks WHERE fodselsnummer = ?
             |AND forstBehandlet > ?""".trimMargin())
         .use {

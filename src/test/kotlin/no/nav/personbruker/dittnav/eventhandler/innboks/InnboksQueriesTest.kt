@@ -74,24 +74,24 @@ class InnboksQueriesTest {
     @Test
     fun `Finn alle cachede Innboks-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getAllInnboksForInnloggetBruker(fodselsnummer1) }.size shouldBe 2
-            database.dbQuery { getAllInnboksForInnloggetBruker(fodselsnummer2) }.size shouldBe 2
+            database.dbQuery { getAllInnboksForFodselsnummer(fodselsnummer1) }.size shouldBe 2
+            database.dbQuery { getAllInnboksForFodselsnummer(fodselsnummer2) }.size shouldBe 2
         }
     }
 
     @Test
     fun `Finn kun aktive cachede Innboks-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getAktivInnboksForInnloggetBruker(fodselsnummer1) }.size shouldBe 2
-            database.dbQuery { getAktivInnboksForInnloggetBruker(fodselsnummer2) }.size shouldBe 1
+            database.dbQuery { getAktivInnboksForFodselsnummer(fodselsnummer1) }.size shouldBe 2
+            database.dbQuery { getAktivInnboksForFodselsnummer(fodselsnummer2) }.size shouldBe 1
         }
     }
 
     @Test
     fun `Finn kun inaktive cachede Innboks-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getInaktivInnboksForInnloggetBruker(fodselsnummer1) }.shouldBeEmpty()
-            database.dbQuery { getInaktivInnboksForInnloggetBruker(fodselsnummer2) }.size shouldBe 1
+            database.dbQuery { getInaktivInnboksForFodselsnummer(fodselsnummer1) }.shouldBeEmpty()
+            database.dbQuery { getInaktivInnboksForFodselsnummer(fodselsnummer2) }.size shouldBe 1
         }
     }
 
@@ -99,7 +99,7 @@ class InnboksQueriesTest {
     fun `Returnerer tom liste hvis Innboks-eventer for fodselsnummer ikke finnes`() {
         val brukerUtenEventer = "0"
         runBlocking {
-            database.dbQuery { getAllInnboksForInnloggetBruker(brukerUtenEventer) }.size shouldBe 0
+            database.dbQuery { getAllInnboksForFodselsnummer(brukerUtenEventer) }.size shouldBe 0
         }
     }
 
@@ -107,14 +107,14 @@ class InnboksQueriesTest {
     fun `Returnerer tom liste hvis fodselsnummer er tomt`() {
         val brukerUtenEventer = ""
         runBlocking {
-            database.dbQuery { getAllInnboksForInnloggetBruker(brukerUtenEventer) }.size shouldBe 0
+            database.dbQuery { getAllInnboksForFodselsnummer(brukerUtenEventer) }.size shouldBe 0
         }
     }
 
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for aktive eventer`() {
         runBlocking {
-            val innboks = database.dbQuery { getAktivInnboksForInnloggetBruker(fodselsnummer1) }.first()
+            val innboks = database.dbQuery { getAktivInnboksForFodselsnummer(fodselsnummer1) }.first()
             innboks.produsent shouldBe appnavn
         }
     }
@@ -122,7 +122,7 @@ class InnboksQueriesTest {
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for inaktive eventer`() {
         runBlocking {
-            val innboks = database.dbQuery { getInaktivInnboksForInnloggetBruker(fodselsnummer2) }.first()
+            val innboks = database.dbQuery { getInaktivInnboksForFodselsnummer(fodselsnummer2) }.first()
             innboks.produsent shouldBe appnavn
         }
     }
@@ -130,7 +130,7 @@ class InnboksQueriesTest {
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for alle eventer`() {
         runBlocking {
-            val innboks = database.dbQuery { getAllInnboksForInnloggetBruker(fodselsnummer1) }.first()
+            val innboks = database.dbQuery { getAllInnboksForFodselsnummer(fodselsnummer1) }.first()
             innboks.produsent shouldBe appnavn
         }
     }

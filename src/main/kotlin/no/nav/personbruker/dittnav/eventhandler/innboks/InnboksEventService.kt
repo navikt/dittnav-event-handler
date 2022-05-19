@@ -3,6 +3,7 @@ package no.nav.personbruker.dittnav.eventhandler.innboks
 import no.nav.brukernotifikasjon.schemas.builders.util.ValidationUtil.validateNonNullFieldMaxLength
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.modia.User
+import no.nav.personbruker.dittnav.eventhandler.common.oneYearAgo
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 import org.slf4j.LoggerFactory
@@ -22,12 +23,12 @@ class InnboksEventService(private val database: Database) {
             .map { innboks -> innboks.toDTO()}
     }
 
-    suspend fun getInctiveCachedEventsForUser(bruker: TokenXUser): List<InnboksDTO> {
+    suspend fun getInactiveCachedEventsForUser(bruker: TokenXUser): List<InnboksDTO> {
         return getEvents { getInaktivInnboksForInnloggetBruker(bruker.ident) }
             .map { innboks -> innboks.toDTO()}
     }
 
-    suspend fun getInctiveCachedEventsForUser(bruker: User): List<InnboksDTO> {
+    suspend fun getInactiveCachedEventsForUser(bruker: User): List<InnboksDTO> {
         return getEvents { getInaktivInnboksForInnloggetBruker(bruker.fodselsnummer) }
             .map { innboks -> innboks.toDTO()}
     }
@@ -39,6 +40,36 @@ class InnboksEventService(private val database: Database) {
 
     suspend fun getAllCachedEventsForUser(bruker: User): List<InnboksDTO> {
         return getEvents { getAllInnboksForInnloggetBruker(bruker.fodselsnummer) }
+            .map { innboks -> innboks.toDTO()}
+    }
+
+    suspend fun getRecentActiveEventsForUser(bruker: TokenXUser): List<InnboksDTO> {
+        return getEvents { getAktivInnboksForFodselsnummerByForstBehandlet(bruker.ident, oneYearAgo()) }
+            .map { innboks -> innboks.toDTO()}
+    }
+
+    suspend fun getRecentActiveEventsForUser(bruker: User): List<InnboksDTO> {
+        return getEvents { getAktivInnboksForFodselsnummerByForstBehandlet(bruker.fodselsnummer, oneYearAgo()) }
+            .map { innboks -> innboks.toDTO()}
+    }
+
+    suspend fun getRecentInactiveEventsForUser(bruker: TokenXUser): List<InnboksDTO> {
+        return getEvents { getInaktivInnboksForFodselsnummerByForstBehandlet(bruker.ident, oneYearAgo()) }
+            .map { innboks -> innboks.toDTO()}
+    }
+
+    suspend fun getRecentInactiveEventsForUser(bruker: User): List<InnboksDTO> {
+        return getEvents { getInaktivInnboksForFodselsnummerByForstBehandlet(bruker.fodselsnummer, oneYearAgo()) }
+            .map { innboks -> innboks.toDTO()}
+    }
+
+    suspend fun getAllRecentEventsForUser(bruker: TokenXUser): List<InnboksDTO> {
+        return getEvents { getInnboksForFodselsnummerByForstBehandlet(bruker.ident, oneYearAgo()) }
+            .map { innboks -> innboks.toDTO()}
+    }
+
+    suspend fun getAllRecentEventsForUser(bruker: User): List<InnboksDTO> {
+        return getEvents { getInnboksForFodselsnummerByForstBehandlet(bruker.fodselsnummer, oneYearAgo()) }
             .map { innboks -> innboks.toDTO()}
     }
 

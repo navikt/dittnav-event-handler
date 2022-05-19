@@ -5,6 +5,8 @@ import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import java.sql.Connection
 import java.sql.ResultSet
+import java.sql.Types
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
@@ -135,3 +137,59 @@ fun Connection.getAllGroupedInnboksEventsByProducer(): List<EventCountForProduce
             }
         }
 }
+
+fun Connection.getInaktivInnboksForFodselsnummerByForstBehandlet(fodselsnummer: String, fromDate: LocalDate): List<Innboks> =
+    getInnboksForFodselsnummerByAktivAndForstBehandlet(fodselsnummer, false, fromDate)
+
+fun Connection.getAktivInnboksForFodselsnummerByForstBehandlet(fodselsnummer: String, fromDate: LocalDate): List<Innboks> =
+    getInnboksForFodselsnummerByAktivAndForstBehandlet(fodselsnummer, true, fromDate)
+
+private fun Connection.getInnboksForFodselsnummerByAktivAndForstBehandlet(fodselsnummer: String, aktiv: Boolean, fromDate: LocalDate): List<Innboks> =
+    prepareStatement("""SELECT
+            |id,
+            |eventTidspunkt,
+            |fodselsnummer,
+            |eventId,
+            |grupperingsId,
+            |tekst,
+            |link,
+            |sikkerhetsnivaa,
+            |sistOppdatert,
+            |aktiv,
+            |systembruker,
+            |namespace,
+            |appnavn
+            |FROM innboks WHERE fodselsnummer = ? AND aktiv = ? AND forstBehandlet > ?""".trimMargin())
+        .use {
+            it.setString(1, fodselsnummer)
+            it.setBoolean(2, aktiv)
+            it.setObject(3, fromDate)
+            it.executeQuery().mapList {
+                toInnboks()
+            }
+        }
+
+fun Connection.getInnboksForFodselsnummerByForstBehandlet(fodselsnummer: String, fromDate: LocalDate): List<Innboks> =
+    prepareStatement("""SELECT
+            |id,
+            |eventTidspunkt,
+            |fodselsnummer,
+            |eventId,
+            |grupperingsId,
+            |tekst,
+            |link,
+            |sikkerhetsnivaa,
+            |sistOppdatert,
+            |aktiv,
+            |systembruker,
+            |namespace,
+            |appnavn
+            |FROM innboks WHERE fodselsnummer = ?
+            |AND forstBehandlet > ?""".trimMargin())
+        .use {
+            it.setString(1, fodselsnummer)
+            it.setObject(2, fromDate, Types.TIMESTAMP)
+            it.executeQuery().mapList {
+                toInnboks()
+            }
+        }

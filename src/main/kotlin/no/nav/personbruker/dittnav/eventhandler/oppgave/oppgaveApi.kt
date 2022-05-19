@@ -15,7 +15,7 @@ fun Route.oppgaveApi(oppgaveEventService: OppgaveEventService) {
 
     get("/fetch/oppgave/aktive") {
         try {
-            val aktiveOppgaveEvents = oppgaveEventService.getActiveCachedEventsForUser(innloggetBruker)
+            val aktiveOppgaveEvents = oppgaveEventService.getRecentActiveEventsForUser(innloggetBruker)
             call.respond(HttpStatusCode.OK, aktiveOppgaveEvents)
         } catch (exception: Exception) {
             respondWithError(call, log, exception)
@@ -24,7 +24,7 @@ fun Route.oppgaveApi(oppgaveEventService: OppgaveEventService) {
 
     get("/fetch/oppgave/inaktive") {
         try {
-            val inaktiveOppgaveEvents = oppgaveEventService.getInactiveCachedEventsForUser(innloggetBruker)
+            val inaktiveOppgaveEvents = oppgaveEventService.getRecentInactiveEventsForUser(innloggetBruker)
             call.respond(HttpStatusCode.OK, inaktiveOppgaveEvents)
         } catch (exception: Exception) {
             respondWithError(call, log, exception)
@@ -33,7 +33,7 @@ fun Route.oppgaveApi(oppgaveEventService: OppgaveEventService) {
 
     get("/fetch/oppgave/all") {
         try {
-            val oppgaveEvents = oppgaveEventService.getAllCachedEventsForUser(innloggetBruker)
+            val oppgaveEvents = oppgaveEventService.getAllRecentEventsForUser(innloggetBruker)
             call.respond(HttpStatusCode.OK, oppgaveEvents)
         } catch (exception: Exception) {
             respondWithError(call, log, exception)
@@ -70,7 +70,7 @@ fun Route.oppgaveSystemClientApi(oppgaveEventService: OppgaveEventService) {
     get("/fetch/modia/oppgave/aktive") {
         doIfValidRequest { userToFetchEventsFor ->
             try {
-                val aktiveOppgaveEvents = oppgaveEventService.getActiveCachedEventsForUser(userToFetchEventsFor)
+                val aktiveOppgaveEvents = oppgaveEventService.getRecentActiveEventsForUser(userToFetchEventsFor)
                 call.respond(HttpStatusCode.OK, aktiveOppgaveEvents)
 
             } catch (exception: Exception) {
@@ -82,7 +82,7 @@ fun Route.oppgaveSystemClientApi(oppgaveEventService: OppgaveEventService) {
     get("/fetch/modia/oppgave/inaktive") {
         doIfValidRequest { userToFetchEventsFor ->
             try {
-                val inaktiveOppgaveEvents = oppgaveEventService.getInactiveCachedEventsForUser(userToFetchEventsFor)
+                val inaktiveOppgaveEvents = oppgaveEventService.getRecentInactiveEventsForUser(userToFetchEventsFor)
                 call.respond(HttpStatusCode.OK, inaktiveOppgaveEvents)
             } catch (exception: Exception) {
                 respondWithError(call, log, exception)
@@ -93,7 +93,7 @@ fun Route.oppgaveSystemClientApi(oppgaveEventService: OppgaveEventService) {
     get("/fetch/modia/oppgave/all") {
         doIfValidRequest { userToFetchEventsFor ->
             try {
-                val oppgaveEvents = oppgaveEventService.getAllCachedEventsForUser(userToFetchEventsFor)
+                val oppgaveEvents = oppgaveEventService.getAllRecentEventsForUser(userToFetchEventsFor)
                 call.respond(HttpStatusCode.OK, oppgaveEvents)
 
             } catch (exception: Exception) {

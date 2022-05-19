@@ -7,6 +7,9 @@ import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import java.sql.Connection
 import java.sql.ResultSet
+import java.sql.Types
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
@@ -171,3 +174,62 @@ private fun Connection.getBeskjedForInnloggetBruker(fodselsnummer: String, aktiv
 private fun ResultSet.getNullableZonedDateTime(label: String): ZonedDateTime? {
     return getNullableUtcTimeStamp(label)?.let { timestamp -> ZonedDateTime.ofInstant(timestamp.toInstant(), ZoneId.of("Europe/Oslo")) }
 }
+
+fun Connection.getInaktivBeskjedForFodselsnummerByForstBehandlet(fodselsnummer: String, fromDate: LocalDate): List<Beskjed> =
+    getBeskjedForFodselsnummerByAktivAndForstBehandlet(fodselsnummer, false, fromDate)
+
+fun Connection.getAktivBeskjedForFodselsnummerByForstBehandlet(fodselsnummer: String, fromDate: LocalDate): List<Beskjed> =
+    getBeskjedForFodselsnummerByAktivAndForstBehandlet(fodselsnummer, true, fromDate)
+
+
+private fun Connection.getBeskjedForFodselsnummerByAktivAndForstBehandlet(fodselsnummer: String, aktiv: Boolean, fromDate: LocalDate): List<Beskjed> =
+        prepareStatement("""SELECT 
+            |id,
+            |eventTidspunkt,
+            |fodselsnummer,
+            |eventId, 
+            |grupperingsId,
+            |tekst,
+            |link,
+            |sikkerhetsnivaa,
+            |sistOppdatert,
+            |synligFremTil,
+            |aktiv,
+            |systembruker,
+            |namespace,
+            |appnavn
+            |FROM beskjed WHERE fodselsnummer = ? AND aktiv = ? AND forstBehandlet > ?""".trimMargin())
+                .use {
+                    it.setString(1, fodselsnummer)
+                    it.setBoolean(2, aktiv)
+                    it.setObject(3, fromDate, Types.TIMESTAMP)
+                    it.executeQuery().mapList {
+                        toBeskjed()
+                    }
+                }
+
+fun Connection.getBeskjedForFodselsnummerByForstBehandlet(fodselsnummer: String, fromDate: LocalDate): List<Beskjed> =
+    prepareStatement("""SELECT 
+            |id,
+            |eventTidspunkt,
+            |fodselsnummer,
+            |eventId, 
+            |grupperingsId,
+            |tekst,
+            |link,
+            |sikkerhetsnivaa,
+            |sistOppdatert,
+            |synligFremTil,
+            |aktiv,
+            |systembruker,
+            |namespace,
+            |appnavn
+            |FROM beskjed WHERE fodselsnummer = ?
+            |AND forstBehandlet > ?""".trimMargin())
+        .use {
+            it.setString(1, fodselsnummer)
+            it.setObject(2, fromDate, Types.TIMESTAMP)
+            it.executeQuery().mapList {
+                toBeskjed()
+            }
+        }

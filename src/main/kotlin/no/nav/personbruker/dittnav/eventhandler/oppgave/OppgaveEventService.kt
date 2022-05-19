@@ -3,6 +3,7 @@ package no.nav.personbruker.dittnav.eventhandler.oppgave
 import no.nav.brukernotifikasjon.schemas.builders.util.ValidationUtil.validateNonNullFieldMaxLength
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.modia.User
+import no.nav.personbruker.dittnav.eventhandler.common.oneYearAgo
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 import java.sql.Connection
@@ -36,6 +37,36 @@ class OppgaveEventService(private val database: Database) {
 
     suspend fun getAllCachedEventsForUser(bruker: User): List<OppgaveDTO> {
         return getEvents { getAllOppgaveForInnloggetBruker(bruker.fodselsnummer) }
+            .map { oppgave -> oppgave.toDTO() }
+    }
+
+    suspend fun getRecentActiveEventsForUser(bruker: TokenXUser): List<OppgaveDTO> {
+        return getEvents { getAktivOppgaveForFodselsnummerByForstBehandlet(bruker.ident, oneYearAgo()) }
+            .map { oppgave -> oppgave.toDTO() }
+    }
+
+    suspend fun getRecentActiveEventsForUser(bruker: User): List<OppgaveDTO> {
+        return getEvents { getAktivOppgaveForFodselsnummerByForstBehandlet(bruker.fodselsnummer, oneYearAgo()) }
+            .map { oppgave -> oppgave.toDTO() }
+    }
+
+    suspend fun getRecentInactiveEventsForUser(bruker: TokenXUser): List<OppgaveDTO> {
+        return getEvents { getInaktivOppgaveForFodselsnummerByForstBehandlet(bruker.ident, oneYearAgo()) }
+            .map { oppgave -> oppgave.toDTO() }
+    }
+
+    suspend fun getRecentInactiveEventsForUser(bruker: User): List<OppgaveDTO> {
+        return getEvents { getInaktivOppgaveForFodselsnummerByForstBehandlet(bruker.fodselsnummer, oneYearAgo()) }
+            .map { oppgave -> oppgave.toDTO() }
+    }
+
+    suspend fun getAllRecentEventsForUser(bruker: TokenXUser): List<OppgaveDTO> {
+        return getEvents { getOppgaveForFodselsnummerByForstBehandlet(bruker.ident, oneYearAgo()) }
+            .map { oppgave -> oppgave.toDTO() }
+    }
+
+    suspend fun getAllRecentEventsForUser(bruker: User): List<OppgaveDTO> {
+        return getEvents { getOppgaveForFodselsnummerByForstBehandlet(bruker.fodselsnummer, oneYearAgo()) }
             .map { oppgave -> oppgave.toDTO() }
     }
 

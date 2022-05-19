@@ -4,9 +4,11 @@ import Beskjed
 import no.nav.brukernotifikasjon.schemas.builders.util.ValidationUtil.validateNonNullFieldMaxLength
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.modia.User
+import no.nav.personbruker.dittnav.eventhandler.common.oneYearAgo
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 import java.sql.Connection
+import java.time.LocalDate
 
 class BeskjedEventService(private val database: Database) {
 
@@ -37,6 +39,36 @@ class BeskjedEventService(private val database: Database) {
 
     suspend fun getAllCachedEventsForUser(bruker: User): List<BeskjedDTO> {
         return getEvents { getAllBeskjedForInnloggetBruker(bruker.fodselsnummer) }
+            .map { beskjed -> beskjed.toDTO() }
+    }
+
+    suspend fun getRecentActiveCachedEventsForUser(bruker: TokenXUser): List<BeskjedDTO> {
+        return getEvents { getAktivBeskjedForFodselsnummerByForstBehandlet(bruker.ident, oneYearAgo()) }
+                .map { beskjed -> beskjed.toDTO()}
+    }
+
+    suspend fun getRecentActiveCachedEventsForUser(bruker: User): List<BeskjedDTO> {
+        return getEvents { getAktivBeskjedForFodselsnummerByForstBehandlet(bruker.fodselsnummer, oneYearAgo()) }
+            .map { beskjed -> beskjed.toDTO()}
+    }
+
+    suspend fun getRecentInactiveCachedEventsForUser(bruker: TokenXUser): List<BeskjedDTO> {
+        return getEvents { getInaktivBeskjedForFodselsnummerByForstBehandlet(bruker.ident, oneYearAgo()) }
+            .map { beskjed -> beskjed.toDTO()}
+    }
+
+    suspend fun getRecentInactiveCachedEventsForUser(bruker: User): List<BeskjedDTO> {
+        return getEvents { getInaktivBeskjedForFodselsnummerByForstBehandlet(bruker.fodselsnummer, oneYearAgo()) }
+            .map { beskjed -> beskjed.toDTO()}
+    }
+
+    suspend fun getAllRecentCachedEventsForUser(bruker: TokenXUser): List<BeskjedDTO> {
+        return getEvents { getBeskjedForFodselsnummerByForstBehandlet(bruker.ident, oneYearAgo()) }
+            .map { beskjed -> beskjed.toDTO() }
+    }
+
+    suspend fun getAllRecentCachedEventsForUser(bruker: User): List<BeskjedDTO> {
+        return getEvents { getBeskjedForFodselsnummerByForstBehandlet(bruker.fodselsnummer, oneYearAgo()) }
             .map { beskjed -> beskjed.toDTO() }
     }
 

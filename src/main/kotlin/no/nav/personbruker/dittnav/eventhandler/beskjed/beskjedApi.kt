@@ -15,7 +15,7 @@ fun Route.beskjedApi(beskjedEventService: BeskjedEventService) {
 
     get("/fetch/beskjed/aktive") {
         try {
-            val aktiveBeskjedEventsDTO = beskjedEventService.getActiveCachedEventsForUser(innloggetBruker)
+            val aktiveBeskjedEventsDTO = beskjedEventService.getRecentActiveCachedEventsForUser(innloggetBruker)
             call.respond(HttpStatusCode.OK, aktiveBeskjedEventsDTO)
         } catch (exception: Exception) {
             respondWithError(call, log, exception)
@@ -24,7 +24,7 @@ fun Route.beskjedApi(beskjedEventService: BeskjedEventService) {
 
     get("/fetch/beskjed/inaktive") {
         try {
-            val inaktiveBeskjedEvents = beskjedEventService.getInactiveCachedEventsForUser(innloggetBruker)
+            val inaktiveBeskjedEvents = beskjedEventService.getRecentInactiveCachedEventsForUser(innloggetBruker)
             call.respond(HttpStatusCode.OK, inaktiveBeskjedEvents)
         } catch (exception: Exception) {
             respondWithError(call, log, exception)
@@ -33,7 +33,7 @@ fun Route.beskjedApi(beskjedEventService: BeskjedEventService) {
 
     get("/fetch/beskjed/all") {
         try {
-            val beskjedEvents = beskjedEventService.getAllCachedEventsForUser(innloggetBruker)
+            val beskjedEvents = beskjedEventService.getAllRecentCachedEventsForUser(innloggetBruker)
             call.respond(HttpStatusCode.OK, beskjedEvents)
         } catch (exception: Exception) {
             respondWithError(call, log, exception)
@@ -70,7 +70,7 @@ fun Route.beskjedSystemClientApi(beskjedEventService: BeskjedEventService) {
     get("/fetch/modia/beskjed/aktive") {
         doIfValidRequest { userToFetchEventsFor ->
             try {
-                val aktiveBeskjedEvents = beskjedEventService.getActiveCachedEventsForUser(userToFetchEventsFor)
+                val aktiveBeskjedEvents = beskjedEventService.getRecentActiveCachedEventsForUser(userToFetchEventsFor)
                 call.respond(HttpStatusCode.OK, aktiveBeskjedEvents)
 
             } catch (exception: Exception) {
@@ -82,7 +82,7 @@ fun Route.beskjedSystemClientApi(beskjedEventService: BeskjedEventService) {
     get("/fetch/modia/beskjed/inaktive") {
         doIfValidRequest { userToFetchEventsFor ->
             try {
-                val inaktiveBeskjedEvents = beskjedEventService.getInactiveCachedEventsForUser(userToFetchEventsFor)
+                val inaktiveBeskjedEvents = beskjedEventService.getRecentInactiveCachedEventsForUser(userToFetchEventsFor)
                 call.respond(HttpStatusCode.OK, inaktiveBeskjedEvents)
 
             } catch (exception: Exception) {
@@ -94,7 +94,7 @@ fun Route.beskjedSystemClientApi(beskjedEventService: BeskjedEventService) {
     get("/fetch/modia/beskjed/all") {
         doIfValidRequest { userToFetchEventsFor ->
             try {
-                val beskjedEvents = beskjedEventService.getAllCachedEventsForUser(userToFetchEventsFor)
+                val beskjedEvents = beskjedEventService.getAllRecentCachedEventsForUser(userToFetchEventsFor)
                 call.respond(HttpStatusCode.OK, beskjedEvents)
 
             } catch (exception: Exception) {

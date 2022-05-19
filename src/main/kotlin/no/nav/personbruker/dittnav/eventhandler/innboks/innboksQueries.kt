@@ -28,7 +28,8 @@ fun Connection.getAllInnboksForInnloggetBruker(fodselsnummer: String): List<Innb
             |aktiv,
             |systembruker,
             |namespace,
-            |appnavn
+            |appnavn,
+            |forstBehandlet
             |FROM innboks WHERE fodselsnummer = ?""".trimMargin())
                 .use {
                     it.setString(1, fodselsnummer)
@@ -51,7 +52,8 @@ fun Connection.getAllGroupedInnboksEventsByIds(fodselsnummer: String, gruppering
             |aktiv,
             |systembruker,
             |namespace,
-            |appnavn
+            |appnavn,
+            |forstBehandlet
             |FROM innboks WHERE fodselsnummer = ? AND grupperingsid = ? AND appnavn = ?""".trimMargin())
                 .use {
                     it.setString(1, fodselsnummer)
@@ -77,7 +79,8 @@ private fun ResultSet.toInnboks(): Innboks {
             link = getString("link"),
             sikkerhetsnivaa = getInt("sikkerhetsnivaa"),
             sistOppdatert = ZonedDateTime.ofInstant(getUtcTimeStamp("sistOppdatert").toInstant(), ZoneId.of("Europe/Oslo")),
-            aktiv = getBoolean("aktiv")
+            aktiv = getBoolean("aktiv"),
+            forstBehandlet = ZonedDateTime.ofInstant(getUtcTimeStamp("forstBehandlet").toInstant(), ZoneId.of("Europe/Oslo"))
     )
 }
 
@@ -95,7 +98,8 @@ private fun Connection.getInnboksForInnloggetBruker(fodselsnummer: String, aktiv
             |aktiv,
             |systembruker,
             |namespace,
-            |appnavn
+            |appnavn,
+            |forstBehandlet
             |FROM innboks WHERE fodselsnummer = ? AND aktiv = ?""".trimMargin())
                 .use {
                     it.setString(1, fodselsnummer)

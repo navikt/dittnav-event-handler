@@ -19,5 +19,6 @@ internal class BeskjedTransformersTest {
         beskjedDTO.tekst shouldBe beskjed.tekst
         beskjedDTO.link shouldBe beskjed.link
         beskjedDTO.aktiv shouldBe beskjed.aktiv
+        beskjedDTO.forstBehandlet shouldBe beskjed.forstBehandlet
     }
 }

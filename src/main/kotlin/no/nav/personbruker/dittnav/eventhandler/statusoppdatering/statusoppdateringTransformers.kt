@@ -11,5 +11,6 @@ fun Statusoppdatering.toDTO() = StatusoppdateringDTO(
     sistOppdatert = sistOppdatert,
     statusGlobal = statusGlobal,
     statusIntern = statusIntern,
-    sakstema = sakstema
+    sakstema = sakstema,
+    forstBehandlet = forstBehandlet
 )

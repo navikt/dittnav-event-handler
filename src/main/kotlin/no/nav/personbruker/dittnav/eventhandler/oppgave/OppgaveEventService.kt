@@ -46,14 +46,9 @@ class OppgaveEventService(private val database: Database) {
             .map { oppgave -> oppgave.toDTO() }
     }
 
-    suspend fun getAllGroupedEventsBySystemuserFromCache(): Map<String, Int> {
-        return database.queryWithExceptionTranslation { getAllGroupedOppgaveEventsBySystemuser() }
-    }
-
     suspend fun getAllGroupedEventsByProducerFromCache(): List<EventCountForProducer> {
         return database.queryWithExceptionTranslation { getAllGroupedOppgaveEventsByProducer() }
     }
-
 
     private suspend fun getEvents(operationToExecute: Connection.() -> List<Oppgave>): List<Oppgave> {
         val events = database.queryWithExceptionTranslation {

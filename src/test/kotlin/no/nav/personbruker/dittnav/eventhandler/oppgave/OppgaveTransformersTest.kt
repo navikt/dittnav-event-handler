@@ -19,5 +19,6 @@ internal class OppgaveTransformersTest {
         oppgaveDTO.tekst shouldBe oppgave.tekst
         oppgaveDTO.link shouldBe oppgave.link
         oppgaveDTO.aktiv shouldBe oppgave.aktiv
+        oppgaveDTO.forstBehandlet shouldBe oppgave.forstBehandlet
     }
 }

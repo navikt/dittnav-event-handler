@@ -39,7 +39,11 @@ class EventRepository(private val database: Database) {
                     tekst = getString("tekst"),
                     link = getString("link"),
                     aktiv = getBoolean("aktiv"),
-                    type = EventType.fromOriginalType(getString("type"))
+                    type = EventType.fromOriginalType(getString("type")),
+                    forstBehandlet = ZonedDateTime.ofInstant(
+                        getUtcTimeStamp("forstBehandlet").toInstant(),
+                        ZoneId.of("Europe/Oslo")
+                    )
                 )
             }
         }
@@ -58,6 +62,7 @@ class EventRepository(private val database: Database) {
                 sikkerhetsnivaa,
                 sistOppdatert,
                 aktiv,
+                forstBehandlet,
                 '$table' as type 
             FROM $table
             WHERE fodselsnummer = ?

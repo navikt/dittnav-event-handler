@@ -4,8 +4,8 @@ import java.sql.Connection
 import java.sql.Types
 
 fun Connection.createOppgave(oppgaver: List<Oppgave>) =
-        prepareStatement("""INSERT INTO oppgave(id, systembruker, eventTidspunkt, fodselsnummer, eventId, grupperingsId, tekst, link, sikkerhetsnivaa, sistOppdatert, aktiv, namespace, appnavn)
-            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""")
+        prepareStatement("""INSERT INTO oppgave(id, systembruker, eventTidspunkt, fodselsnummer, eventId, grupperingsId, tekst, link, sikkerhetsnivaa, sistOppdatert, aktiv, namespace, appnavn, forstBehandlet)
+            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""")
                 .use {
                     oppgaver.forEach { oppgave ->
                         run {
@@ -22,6 +22,7 @@ fun Connection.createOppgave(oppgaver: List<Oppgave>) =
                             it.setBoolean(11, oppgave.aktiv)
                             it.setString(12, oppgave.namespace)
                             it.setString(13, oppgave.appnavn)
+                            it.setObject(14, oppgave.sistOppdatert.toLocalDateTime(), Types.TIMESTAMP)
                             it.addBatch()
                         }
                     }
@@ -39,7 +40,3 @@ fun Connection.deleteOppgave(oppgaver: List<Oppgave>) =
                     }
                     it.executeBatch()
                 }
-
-fun Connection.deleteAllOppgave() =
-        prepareStatement("""DELETE FROM OPPGAVE""")
-                .use { it.execute() }

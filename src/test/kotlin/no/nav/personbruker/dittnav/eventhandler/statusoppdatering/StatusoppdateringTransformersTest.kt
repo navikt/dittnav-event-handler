@@ -4,7 +4,6 @@ import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
 internal class StatusoppdateringTransformersTest {
-
     @Test
     fun `skal transformere til DTO`() {
         val statusoppdatering = StatusoppdateringObjectMother.createStatusoppdateringWithFodselsnummer(id = 1, fodselsnummer = "12345678901")
@@ -20,5 +19,6 @@ internal class StatusoppdateringTransformersTest {
         statusoppdateringDTO.statusIntern shouldBe statusoppdatering.statusIntern
         statusoppdateringDTO.sikkerhetsnivaa shouldBe statusoppdatering.sikkerhetsnivaa
         statusoppdateringDTO.sistOppdatert shouldBe statusoppdatering.sistOppdatert
+        statusoppdateringDTO.forstBehandlet shouldBe statusoppdatering.forstBehandlet
     }
 }

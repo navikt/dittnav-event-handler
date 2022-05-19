@@ -15,6 +15,7 @@ object InnboksObjectMother {
     val defaultAppnavn = "test-app"
     val defaultProdusent = "$defaultSystembruker-produsent"
     val defaultEventTidspunkt = ZonedDateTime.now(ZoneId.of("Europe/Oslo"))
+    val defaultForstBehandlet = ZonedDateTime.now(ZoneId.of("Europe/Oslo"))
     val defaultGrupperingsId = "100$defaultFodselsnummer"
     val defaultTekst = "Dette er innboks melding til brukeren"
     val defaultLink = "https://nav.no/systemX/$defaultFodselsnummer"
@@ -32,6 +33,7 @@ object InnboksObjectMother {
         appnavn: String = defaultAppnavn,
         produsent: String = defaultProdusent,
         eventTidspunkt: ZonedDateTime = defaultEventTidspunkt,
+        forstBehandlet: ZonedDateTime = defaultForstBehandlet,
         grupperingsId: String = defaultGrupperingsId,
         tekst: String = defaultTekst,
         link: String = defaultLink,
@@ -45,6 +47,7 @@ object InnboksObjectMother {
             namespace = namespace,
             appnavn = appnavn,
             eventTidspunkt = eventTidspunkt,
+            forstBehandlet = forstBehandlet,
             fodselsnummer = fodselsnummer,
             eventId = eventId,
             grupperingsId = grupperingsId,

@@ -17,6 +17,7 @@ create table if not exists beskjed
   uid             varchar(100),
   namespace       varchar(100),
   appnavn         varchar(100),
+  forstbehandlet  timestamp,
   constraint beskjedeventidprodusent
   unique (eventid, systembruker)
 );
@@ -39,6 +40,7 @@ create table if not exists oppgave
   synligfremtil   timestamp,
   namespace       varchar(100),
   appnavn         varchar(100),
+  forstbehandlet  timestamp,
   constraint oppgaveeventidprodusent
   unique (eventid, systembruker)
 );
@@ -60,6 +62,7 @@ create table if not exists innboks
   aktiv           boolean,
   namespace       varchar(100),
   appnavn         varchar(100),
+  forstbehandlet  timestamp,
   constraint innbokseventidprodusent
   unique (eventid, systembruker)
 );
@@ -72,6 +75,7 @@ create table if not exists done (
     grupperingsId   varchar(100),
     namespace       varchar(100),
     appnavn         varchar(100),
+    forstbehandlet  timestamp,
     constraint doneeventidprodusent
     unique (eventid, systembruker)
 );
@@ -103,6 +107,7 @@ CREATE TABLE IF NOT EXISTS statusoppdatering (
     sakstema varchar(100),
     namespace varchar(100),
     appnavn varchar(100),
+    forstbehandlet timestamp,
     constraint statusoppdateringeventidprodusent
     unique (eventid, systembruker)
 );

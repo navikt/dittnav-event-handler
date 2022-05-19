@@ -7,7 +7,6 @@ import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 import java.sql.Connection
 
 class StatusoppdateringEventService(private val database: Database) {
-
     suspend fun getAllGroupedEventsFromCacheForUser(bruker: TokenXUser, grupperingsid: String?, appnavn: String?): List<StatusoppdateringDTO> {
         val grupperingsId = validateNonNullFieldMaxLength(grupperingsid, "grupperingsid", 100)
         val app = validateNonNullFieldMaxLength(appnavn, "appnavn", 100)
@@ -22,7 +21,6 @@ class StatusoppdateringEventService(private val database: Database) {
     suspend fun getAllGroupedEventsByProducerFromCache(): List<EventCountForProducer> {
         return database.queryWithExceptionTranslation { getAllGroupedStatusoppdateringEventsByProducer() }
     }
-
 
     private suspend fun getEvents(operationToExecute: Connection.() -> List<Statusoppdatering>): List<Statusoppdatering> {
         val events = database.queryWithExceptionTranslation {

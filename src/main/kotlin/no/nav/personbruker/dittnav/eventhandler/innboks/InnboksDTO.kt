@@ -10,6 +10,7 @@ import java.time.ZonedDateTime
 data class InnboksDTO(
     val produsent: String,
     val eventTidspunkt: ZonedDateTime,
+    val forstBehandlet: ZonedDateTime,
     val fodselsnummer: String,
     val eventId: String,
     val grupperingsId: String,

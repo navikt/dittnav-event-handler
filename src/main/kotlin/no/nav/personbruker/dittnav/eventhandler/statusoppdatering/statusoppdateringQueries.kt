@@ -24,7 +24,8 @@ fun Connection.getAllGroupedStatusoppdateringEventsByIds(bruker: TokenXUser, gru
             |sakstema,
             |systembruker,
             |namespace,
-            |appnavn
+            |appnavn,
+            |forstBehandlet
             |FROM statusoppdatering WHERE fodselsnummer = ? AND grupperingsid = ? AND appnavn = ?""".trimMargin())
                 .use {
                     it.setString(1, bruker.ident)
@@ -51,7 +52,8 @@ fun ResultSet.toStatusoppdatering(): Statusoppdatering {
             statusIntern = getString("statusIntern"),
             sakstema = getString("sakstema"),
             namespace = getString("namespace"),
-            appnavn = getString("appnavn")
+            appnavn = getString("appnavn"),
+            forstBehandlet = ZonedDateTime.ofInstant(getUtcTimeStamp("forstBehandlet").toInstant(), ZoneId.of("Europe/Oslo"))
     )
 }
 

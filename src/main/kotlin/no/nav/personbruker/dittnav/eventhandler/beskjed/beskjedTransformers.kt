@@ -12,5 +12,6 @@ fun Beskjed.toDTO() = BeskjedDTO(
     sistOppdatert = sistOppdatert,
     tekst = tekst,
     link = link,
-    aktiv = aktiv
+    aktiv = aktiv,
+    forstBehandlet = forstBehandlet
 )

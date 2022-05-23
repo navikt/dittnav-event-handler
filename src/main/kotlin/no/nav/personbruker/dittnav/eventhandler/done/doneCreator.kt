@@ -2,7 +2,6 @@ package no.nav.personbruker.dittnav.eventhandler.done
 
 import no.nav.brukernotifikasjon.schemas.input.DoneInput
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
-import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
 fun createDoneEvent(sistOppdatert: ZonedDateTime = ZonedDateTime.now()): DoneInput {

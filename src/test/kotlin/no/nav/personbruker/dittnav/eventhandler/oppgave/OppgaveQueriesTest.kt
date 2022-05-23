@@ -1,6 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
 import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
@@ -9,6 +10,8 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import java.time.LocalDate
+import java.time.ZonedDateTime
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class OppgaveQueriesTest {
@@ -28,7 +31,8 @@ class OppgaveQueriesTest {
         aktiv = true,
         systembruker = systembruker,
         namespace = namespace,
-        appnavn = appnavn
+        appnavn = appnavn,
+        forstBehandlet = ZonedDateTime.now()
     )
     private val oppgave2 = OppgaveObjectMother.createOppgave(
         id = 2,
@@ -38,7 +42,8 @@ class OppgaveQueriesTest {
         aktiv = true,
         systembruker = systembruker,
         namespace = namespace,
-        appnavn = appnavn
+        appnavn = appnavn,
+        forstBehandlet = ZonedDateTime.now().minusDays(5)
     )
     private val oppgave3 = OppgaveObjectMother.createOppgave(
         id = 3,
@@ -48,7 +53,8 @@ class OppgaveQueriesTest {
         aktiv = false,
         systembruker = systembruker,
         namespace = namespace,
-        appnavn = appnavn
+        appnavn = appnavn,
+        forstBehandlet = ZonedDateTime.now().minusDays(15)
     )
     private val oppgave4 = OppgaveObjectMother.createOppgave(
         id = 4,
@@ -57,7 +63,8 @@ class OppgaveQueriesTest {
         aktiv = true,
         systembruker = "x-dittnav-2",
         namespace = namespace,
-        appnavn = "x-dittnav"
+        appnavn = "x-dittnav",
+        forstBehandlet = ZonedDateTime.now().minusDays(25)
     )
 
     @BeforeAll
@@ -182,6 +189,43 @@ class OppgaveQueriesTest {
             groupedEventsBySystemuser.findCountFor(oppgave4.namespace, oppgave4.appnavn) shouldBe 1
         }
     }
+
+
+    @Test
+    fun `Returnerer kun eventer der forstBehandlet er nyere enn bestemt dato for aktive eventer`() {
+        runBlocking {
+            val recentEventsForFnr = database.dbQuery {
+                getRecentAktivOppgaveForFodselsnummer(fodselsnummer, LocalDate.now().minusDays(10))
+            }
+
+            recentEventsForFnr.size shouldBe 2
+            recentEventsForFnr.map { it.id } shouldContainAll listOf(1, 2)
+        }
+    }
+
+    @Test
+    fun `Returnerer kun eventer der forstBehandlet er nyere enn bestemt dato for inaktive eventer`() {
+        runBlocking {
+            val recentEventsForFnr = database.dbQuery {
+                getRecentInaktivOppgaveForFodselsnummer(fodselsnummer, LocalDate.now().minusDays(10))
+            }
+
+            recentEventsForFnr.size shouldBe 0
+        }
+    }
+
+    @Test
+    fun `Returnerer kun eventer der forstBehandlet er nyere enn bestemt dato for alle eventer`() {
+        runBlocking {
+            val recentEventsForFnr = database.dbQuery {
+                getAllRecentOppgaveForFodselsnummer(fodselsnummer, LocalDate.now().minusDays(20))
+            }
+
+            recentEventsForFnr.size shouldBe 3
+            recentEventsForFnr.map { it.id } shouldContainAll listOf(1,2,3)
+        }
+    }
+
 
     private fun createOppgave(oppgaver: List<Oppgave>) {
         runBlocking {

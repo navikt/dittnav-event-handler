@@ -1,6 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler
 
-import io.ktor.application.Application
+import io.ktor.application.*
 import io.mockk.mockk
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database

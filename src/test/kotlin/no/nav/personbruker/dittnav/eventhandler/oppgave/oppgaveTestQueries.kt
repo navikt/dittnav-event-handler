@@ -22,7 +22,7 @@ fun Connection.createOppgave(oppgaver: List<Oppgave>) =
                             it.setBoolean(11, oppgave.aktiv)
                             it.setString(12, oppgave.namespace)
                             it.setString(13, oppgave.appnavn)
-                            it.setObject(14, oppgave.sistOppdatert.toLocalDateTime(), Types.TIMESTAMP)
+                            it.setObject(14, oppgave.forstBehandlet.toLocalDateTime(), Types.TIMESTAMP)
                             it.addBatch()
                         }
                     }

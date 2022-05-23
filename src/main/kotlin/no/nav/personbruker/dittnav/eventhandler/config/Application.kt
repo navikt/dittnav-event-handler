@@ -1,7 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.config
 
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
 import no.nav.brukernotifikasjon.schemas.input.DoneInput
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService

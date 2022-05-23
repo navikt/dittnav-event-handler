@@ -2,16 +2,13 @@ package no.nav.personbruker.dittnav.eventhandler.event
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.matchers.shouldBe
-import io.ktor.http.HttpMethod
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.testing.handleRequest
-import io.ktor.server.testing.withTestApplication
+import io.ktor.http.*
+import io.ktor.server.testing.*
 import io.mockk.coEvery
 import io.mockk.mockk
 import no.nav.personbruker.dittnav.eventhandler.mockEventHandlerApi
 import org.junit.jupiter.api.Test
 import java.time.ZoneId
-import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
 class EventApiTest {

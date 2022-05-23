@@ -1,8 +1,8 @@
 package no.nav.personbruker.dittnav.eventhandler.common.health
 
-import io.ktor.application.ApplicationCall
-import io.ktor.html.respondHtml
-import io.ktor.http.HttpStatusCode
+import io.ktor.application.*
+import io.ktor.html.*
+import io.ktor.http.*
 import kotlinx.coroutines.coroutineScope
 import kotlinx.html.*
 

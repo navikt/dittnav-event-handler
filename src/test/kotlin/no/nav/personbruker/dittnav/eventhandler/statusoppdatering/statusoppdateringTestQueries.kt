@@ -4,10 +4,9 @@ import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
 import java.sql.Connection
 import java.sql.Types
 
-
 fun Connection.createStatusoppdatering(statusoppdateringer: List<Statusoppdatering>) =
-        prepareStatement("""INSERT INTO statusoppdatering(id, systembruker, eventId, eventTidspunkt, fodselsnummer, grupperingsId, link, sikkerhetsnivaa, sistOppdatert, statusGlobal, statusIntern, sakstema, namespace, appnavn)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""")
+        prepareStatement("""INSERT INTO statusoppdatering(id, systembruker, eventId, eventTidspunkt, fodselsnummer, grupperingsId, link, sikkerhetsnivaa, sistOppdatert, statusGlobal, statusIntern, sakstema, namespace, appnavn, forstBehandlet)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""")
                 .use {
                     statusoppdateringer.forEach { statusoppdatering ->
                         run {
@@ -25,6 +24,7 @@ fun Connection.createStatusoppdatering(statusoppdateringer: List<Statusoppdateri
                             it.setString(12, statusoppdatering.sakstema)
                             it.setString(13, statusoppdatering.namespace)
                             it.setString(14, statusoppdatering.appnavn)
+                            it.setObject(15, statusoppdatering.forstBehandlet.toLocalDateTime(), Types.TIMESTAMP)
                             it.addBatch()
                         }
                     }
@@ -58,7 +58,8 @@ fun Connection.getAllStatusoppdateringEvents(): List<Statusoppdatering> =
             |sakstema,
             |systembruker,
             |namespace,
-            |appnavn
+            |appnavn,
+            |forstBehandlet
             |FROM statusoppdatering""".trimMargin())
                 .use {
                     it.executeQuery().mapList {

@@ -10,6 +10,7 @@ class Statusoppdatering(
         val appnavn: String,
         val eventId: String,
         val eventTidspunkt: ZonedDateTime,
+        val forstBehandlet: ZonedDateTime,
         val fodselsnummer: String,
         val grupperingsId: String,
         val link: String,
@@ -27,6 +28,7 @@ class Statusoppdatering(
                 "appnavn=$appnavn, " +
                 "eventId=$eventId, " +
                 "eventTidspunkt=$eventTidspunkt, " +
+                "forstBehandlet=$forstBehandlet, " +
                 "fodselsnummer=***, " +
                 "grupperingsId=$grupperingsId, " +
                 "link=***, " +

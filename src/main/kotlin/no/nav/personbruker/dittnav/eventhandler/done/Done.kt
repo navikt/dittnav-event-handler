@@ -9,7 +9,8 @@ data class Done(
         val appnavn: String,
         val fodselsnummer: String,
         val grupperingsId: String,
-        val eventTidspunkt: ZonedDateTime
+        val eventTidspunkt: ZonedDateTime,
+        val forstBehandlet: ZonedDateTime
 ) {
     override fun toString(): String {
         return "Done(" +
@@ -19,6 +20,7 @@ data class Done(
                 "appnavn=$appnavn, " +
                 "fodselsnummer=***, " +
                 "grupperingsId=$grupperingsId, " +
-                "eventTidspunkt=$eventTidspunkt"
+                "eventTidspunkt=$eventTidspunkt" +
+                "forstBehandlet=$forstBehandlet"
     }
 }

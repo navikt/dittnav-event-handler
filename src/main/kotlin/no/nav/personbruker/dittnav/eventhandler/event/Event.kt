@@ -18,7 +18,8 @@ data class EventDTO(
         val tekst: String,
         val link: String,
         val aktiv: Boolean,
-        val type: EventType
+        val type: EventType,
+        val forstBehandlet: ZonedDateTime
 )
 
 class Event(
@@ -32,7 +33,8 @@ class Event(
         private val tekst: String,
         private val link: String,
         private val aktiv: Boolean,
-        private val type: EventType
+        private val type: EventType,
+        private val forstBehandlet: ZonedDateTime
 ) {
     fun toEventDTO(): EventDTO {
         return EventDTO(
@@ -45,7 +47,8 @@ class Event(
                 tekst = tekst,
                 link = link,
                 aktiv = aktiv,
-                type = type
+                type = type,
+                forstBehandlet = forstBehandlet
         )
     }
 }

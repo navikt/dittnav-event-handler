@@ -10,5 +10,6 @@ fun Innboks.toDTO() = InnboksDTO(
     link = link,
     sikkerhetsnivaa = sikkerhetsnivaa,
     sistOppdatert = sistOppdatert,
-    aktiv = aktiv
+    aktiv = aktiv,
+    forstBehandlet = forstBehandlet
 )

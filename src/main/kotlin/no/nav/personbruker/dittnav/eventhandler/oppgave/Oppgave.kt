@@ -8,6 +8,7 @@ data class Oppgave(
         val grupperingsId: String,
         val eventId: String,
         val eventTidspunkt: ZonedDateTime,
+        val forstBehandlet: ZonedDateTime,
         val produsent: String,
         val systembruker: String,
         val namespace: String,
@@ -25,6 +26,7 @@ data class Oppgave(
                 "grupperingsId=$grupperingsId, " +
                 "eventId=$eventId, " +
                 "eventTidspunkt=$eventTidspunkt, " +
+                "forstBehandlet=$forstBehandlet, " +
                 "produsent=$produsent, " +
                 "systembruker=$systembruker, " +
                 "namespace=$namespace, " +

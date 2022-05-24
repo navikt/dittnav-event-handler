@@ -11,6 +11,7 @@ import io.mockk.mockk
 import no.nav.personbruker.dittnav.eventhandler.mockEventHandlerApi
 import org.junit.jupiter.api.Test
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
 class EventApiTest {
@@ -21,6 +22,7 @@ class EventApiTest {
         val grupperingsId = "123"
         val eventId = "456"
         val eventTidspunkt = ZonedDateTime.of(2020, 1, 1, 1, 1, 1, 1, ZoneId.of("Europe/Oslo"))
+        val forstBehandlet = ZonedDateTime.of(2020, 1, 1, 1, 1, 1, 1, ZoneId.of("Europe/Oslo"))
         val produsent = "produsent"
         val sikkerhetsnivaa = 4
         val sistOppdatert = ZonedDateTime.of(2020, 1, 1, 1, 1, 1, 1, ZoneId.of("Europe/Oslo"))
@@ -45,7 +47,8 @@ class EventApiTest {
                     tekst = tekst,
                     link = link,
                     aktiv = aktiv,
-                    type = type
+                    type = type,
+                    forstBehandlet = forstBehandlet
                 )
             )
         )
@@ -68,5 +71,6 @@ class EventApiTest {
         eventJson["tekst"].asText() shouldBe tekst
         eventJson["link"].asText() shouldBe link
         eventJson["aktiv"].asBoolean() shouldBe aktiv
+        ZonedDateTime.parse(eventJson["forstBehandlet"].asText()) shouldBe forstBehandlet
     }
 }

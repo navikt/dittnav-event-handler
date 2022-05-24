@@ -4,7 +4,7 @@ import java.time.ZonedDateTime
 
 object DoneObjectMother {
 
-    fun createDone(systembruker: String, eventTidspunkt: ZonedDateTime, fodselsnummer: String, eventId: String, grupperingsId: String): Done {
+    fun createDone(systembruker: String, eventTidspunkt: ZonedDateTime, fodselsnummer: String, eventId: String, grupperingsId: String, forstBehandlet: ZonedDateTime): Done {
         return Done(
                 systembruker = systembruker,
                 eventTidspunkt = eventTidspunkt,
@@ -12,6 +12,7 @@ object DoneObjectMother {
                 eventId = eventId,
                 grupperingsId = grupperingsId,
                 namespace = "dummyNamespace",
-                appnavn = "dummyAppnavn")
+                appnavn = "dummyAppnavn",
+                forstBehandlet = forstBehandlet)
     }
 }

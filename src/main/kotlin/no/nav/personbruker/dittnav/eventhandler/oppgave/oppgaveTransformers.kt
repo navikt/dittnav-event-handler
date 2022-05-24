@@ -10,5 +10,6 @@ fun Oppgave.toDTO() = OppgaveDTO(
     sistOppdatert = sistOppdatert,
     tekst = tekst,
     link = link,
-    aktiv = aktiv
+    aktiv = aktiv,
+    forstBehandlet = forstBehandlet
 )

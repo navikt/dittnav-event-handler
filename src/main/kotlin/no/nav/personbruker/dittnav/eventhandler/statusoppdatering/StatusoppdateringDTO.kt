@@ -11,6 +11,7 @@ data class StatusoppdateringDTO(
     val produsent: String,
     val eventId: String,
     val eventTidspunkt: ZonedDateTime,
+    val forstBehandlet: ZonedDateTime,
     val fodselsnummer: String,
     val grupperingsId: String,
     val link: String,

@@ -19,5 +19,6 @@ internal class InnboksTransformersTest {
         innboksDTO.sikkerhetsnivaa shouldBe innboks.sikkerhetsnivaa
         innboksDTO.sistOppdatert shouldBe innboks.sistOppdatert
         innboksDTO.tekst shouldBe innboks.tekst
+        innboksDTO.forstBehandlet shouldBe innboks.forstBehandlet
     }
 }

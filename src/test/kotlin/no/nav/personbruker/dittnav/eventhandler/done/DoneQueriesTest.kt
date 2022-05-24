@@ -29,10 +29,11 @@ internal class DoneQueriesTest {
     private val namespace = "localhost"
     private val appnavn = "dittnav"
     private val grupperingsId = "xxx"
-    private val utcDateTime = ZonedDateTime.now(ZoneOffset.UTC)
+    private val eventTidspunkt = ZonedDateTime.now(ZoneOffset.UTC)
+    private val forstBehandlet = ZonedDateTime.now(ZoneOffset.UTC)
 
-    private val done1 = DoneObjectMother.createDone(systembruker = "x-dittnav", utcDateTime, fodselsnummer, "1", grupperingsId)
-    private val done2 = DoneObjectMother.createDone(systembruker = "y-dittnav", utcDateTime, fodselsnummer, "2", grupperingsId)
+    private val done1 = DoneObjectMother.createDone(systembruker = "x-dittnav", eventTidspunkt, fodselsnummer, "1", grupperingsId, forstBehandlet)
+    private val done2 = DoneObjectMother.createDone(systembruker = "y-dittnav", eventTidspunkt, fodselsnummer, "2", grupperingsId, forstBehandlet)
     private val inaktivBeskjed = BeskjedObjectMother.createBeskjed(id = 1, eventId = "123", fodselsnummer = "00", synligFremTil = ZonedDateTime.now().plusHours(1), aktiv = false, systembruker = systembruker, namespace = namespace, appnavn = appnavn)
     private val inaktivOppgave = OppgaveObjectMother.createOppgave(id = 1, eventId = "123", fodselsnummer = "01", aktiv = false, systembruker = systembruker, namespace = namespace, appnavn = appnavn)
     private val inaktivInnboks = InnboksObjectMother.createInnboks(id = 1, eventId = "123", fodselsnummer = "02", aktiv = false, systembruker = "x-dittnav-2", namespace = namespace, appnavn = "dittnav-2")

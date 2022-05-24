@@ -28,6 +28,7 @@ object StatusoppdateringObjectMother {
                 systembruker = systembruker,
                 eventId = eventId,
                 eventTidspunkt = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
+                forstBehandlet = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
                 fodselsnummer = fodselsnummer,
                 grupperingsId = "100$fodselsnummer",
                 link = "https://nav.no/systemX/$fodselsnummer",
@@ -41,25 +42,6 @@ object StatusoppdateringObjectMother {
                 appnavn = appnavn)
     }
 
-    fun createStatusoppdateringWithSystembruker(id: Int, systembruker: String): Statusoppdatering {
-        return Statusoppdatering(
-                id = id,
-                fodselsnummer = "112233",
-                grupperingsId = "100",
-                eventId = "123",
-                eventTidspunkt = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
-                produsent = "",
-                systembruker = systembruker,
-                sikkerhetsnivaa = 4,
-                sistOppdatert = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
-                link = "https://nav.no/systemX",
-                statusGlobal = dummyStatusGlobal,
-                statusIntern = dummyStatusIntern,
-                sakstema = dummySakstema,
-                namespace = dummyNamespace,
-                appnavn = dummyAppnavn)
-    }
-
     fun createStatusoppdateringWithFodselsnummer(id: Int, fodselsnummer: String): Statusoppdatering {
         return Statusoppdatering(
                 id = id,
@@ -67,6 +49,7 @@ object StatusoppdateringObjectMother {
                 grupperingsId = "100",
                 eventId = "123",
                 eventTidspunkt = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
+                forstBehandlet = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
                 produsent = "dittnav",
                 systembruker = "x-dittnav",
                 sikkerhetsnivaa = 4,

@@ -29,7 +29,8 @@ fun Connection.getAllOppgaveForInnloggetBruker(fodselsnummer: String): List<Oppg
             |aktiv,
             |systembruker,
             |namespace,
-            |appnavn
+            |appnavn,
+            |forstBehandlet
             |FROM oppgave WHERE fodselsnummer = ?""".trimMargin())
                 .use {
                     it.setString(1, fodselsnummer)
@@ -52,7 +53,8 @@ fun Connection.getAllGroupedOppgaveEventsByIds(fodselsnummer: String, gruppering
             |aktiv,
             |systembruker,
             |namespace,
-            |appnavn
+            |appnavn,
+            |forstBehandlet
             |FROM oppgave WHERE fodselsnummer = ? AND grupperingsid = ? AND appnavn = ?""".trimMargin())
                 .use {
                     it.setString(1, fodselsnummer)
@@ -80,7 +82,8 @@ private fun ResultSet.toOppgave(): Oppgave {
             link = getString("link"),
             sikkerhetsnivaa = getInt("sikkerhetsnivaa"),
             sistOppdatert = ZonedDateTime.ofInstant(getUtcTimeStamp("sistOppdatert").toInstant(), ZoneId.of("Europe/Oslo")),
-            aktiv = getBoolean("aktiv")
+            aktiv = getBoolean("aktiv"),
+            forstBehandlet = ZonedDateTime.ofInstant(getUtcTimeStamp("forstBehandlet").toInstant(), ZoneId.of("Europe/Oslo"))
     )
 }
 
@@ -98,7 +101,8 @@ private fun Connection.getOppgaveForInnloggetBruker(fodselsnummer: String, aktiv
             |aktiv,
             |systembruker,
             |namespace,
-            |appnavn
+            |appnavn,
+            |forstBehandlet
             |FROM oppgave WHERE fodselsnummer = ? AND aktiv = ?""".trimMargin())
                 .use {
                     it.setString(1, fodselsnummer)

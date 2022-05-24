@@ -1,6 +1,5 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
-import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
@@ -16,6 +15,7 @@ object OppgaveObjectMother {
     val defaultAppnavn = "test-app"
     val defaultProdusent = "$defaultSystembruker-produsent"
     val defaultEventTidspunkt = ZonedDateTime.now(ZoneId.of("Europe/Oslo"))
+    val defaultForstBehandlet = ZonedDateTime.now(ZoneId.of("Europe/Oslo"))
     val defaultGrupperingsId = "100$defaultFodselsnummer"
     val defaultTekst = "Dette er oppgave til brukeren"
     val defaultLink = "https://nav.no/systemX/$defaultFodselsnummer"
@@ -32,6 +32,7 @@ object OppgaveObjectMother {
         appnavn: String = defaultAppnavn,
         grupperingsId: String = defaultGrupperingsId,
         eventTidspunkt: ZonedDateTime = defaultEventTidspunkt,
+        forstBehandlet: ZonedDateTime = defaultForstBehandlet,
         produsent: String = defaultProdusent,
         sistOppdatert: ZonedDateTime = defaultSistOppdatert,
         tekst: String = defaultTekst,
@@ -44,6 +45,7 @@ object OppgaveObjectMother {
             grupperingsId = grupperingsId,
             eventId = eventId,
             eventTidspunkt = eventTidspunkt,
+            forstBehandlet = forstBehandlet,
             produsent = produsent,
             systembruker = systembruker,
             namespace = namespace,

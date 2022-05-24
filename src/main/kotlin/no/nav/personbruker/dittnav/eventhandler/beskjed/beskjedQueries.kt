@@ -31,7 +31,8 @@ fun Connection.getAllBeskjedForInnloggetBruker(fodselsnummer: String): List<Besk
             |aktiv,
             |systembruker,
             |namespace,
-            |appnavn
+            |appnavn,
+            |forstBehandlet
             |FROM beskjed WHERE fodselsnummer = ?""".trimMargin())
                 .use {
                     it.setString(1, fodselsnummer)
@@ -55,7 +56,8 @@ fun Connection.getBeskjedByIds(fodselsnummer: String, eventId: String): List<Bes
             |aktiv,
             |systembruker,
             |namespace,
-            |appnavn
+            |appnavn,
+            |forstBehandlet
             |FROM beskjed WHERE fodselsnummer = ? AND eventId = ?""".trimMargin())
                 .use {
                     it.setString(1, fodselsnummer)
@@ -80,7 +82,8 @@ fun Connection.getAllGroupedBeskjedEventsByIds(fodselsnummer: String, gruppering
             |aktiv,
             |systembruker,
             |namespace,
-            |appnavn
+            |appnavn,
+            |forstBehandlet
             |FROM beskjed WHERE fodselsnummer = ? AND grupperingsId = ? AND appnavn = ?""".trimMargin())
                 .use {
                     it.setString(1, fodselsnummer)
@@ -134,7 +137,8 @@ fun ResultSet.toBeskjed(): Beskjed {
             synligFremTil = getNullableZonedDateTime("synligFremTil"),
             tekst = getString("tekst"),
             link = getString("link"),
-            aktiv = getBoolean("aktiv")
+            aktiv = getBoolean("aktiv"),
+            forstBehandlet = ZonedDateTime.ofInstant(getUtcTimeStamp("forstBehandlet").toInstant(), ZoneId.of("Europe/Oslo")),
     )
 }
 
@@ -153,7 +157,8 @@ private fun Connection.getBeskjedForInnloggetBruker(fodselsnummer: String, aktiv
             |aktiv,
             |systembruker,
             |namespace,
-            |appnavn
+            |appnavn,
+            |forstBehandlet
             |FROM beskjed WHERE fodselsnummer = ? AND aktiv = ?""".trimMargin())
                 .use {
                     it.setString(1, fodselsnummer)

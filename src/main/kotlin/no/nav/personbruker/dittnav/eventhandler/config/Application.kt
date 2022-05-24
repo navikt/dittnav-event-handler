@@ -1,7 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.config
 
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
 import no.nav.brukernotifikasjon.schemas.input.DoneInput
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService
@@ -21,14 +21,14 @@ fun main() {
 
     val environment = Environment()
 
-    val kafkaProducerDone = KafkaProducerWrapper(environment.doneInputTopicName ,KafkaProducer<NokkelInput, DoneInput>(Kafka.producerProps(environment)))
+    val kafkaProducerDone = KafkaProducerWrapper(environment.doneInputTopicName, KafkaProducer<NokkelInput, DoneInput>(Kafka.producerProps(environment)))
     val doneProducer = DoneProducer(kafkaProducerDone)
 
     val database: Database = PostgresDatabase(environment)
 
-    val beskjedEventService = BeskjedEventService(database)
-    val oppgaveEventService = OppgaveEventService(database)
-    val innboksEventService = InnboksEventService(database)
+    val beskjedEventService = BeskjedEventService(database, environment.filterOldEvents, environment.filterThresholdDays)
+    val oppgaveEventService = OppgaveEventService(database, environment.filterOldEvents, environment.filterThresholdDays)
+    val innboksEventService = InnboksEventService(database, environment.filterOldEvents, environment.filterThresholdDays)
     val doneEventService = DoneEventService(database, doneProducer)
     val statusoppdateringEventService = StatusoppdateringEventService(database)
     val eventStatisticsService = EventStatisticsService(database)

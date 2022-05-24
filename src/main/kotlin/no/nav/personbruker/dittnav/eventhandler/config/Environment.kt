@@ -1,5 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.config
 
+import no.nav.personbruker.dittnav.common.util.config.BooleanEnvVar.getEnvVarAsBoolean
+import no.nav.personbruker.dittnav.common.util.config.IntEnvVar.getEnvVarAsInt
 import no.nav.personbruker.dittnav.common.util.config.StringEnvVar.getEnvVar
 import no.nav.personbruker.dittnav.eventhandler.config.ConfigUtil.isCurrentlyRunningOnNais
 
@@ -13,7 +15,9 @@ data class Environment(val kafkaBrokers: String = getEnvVar("KAFKA_BROKERS"),
                        val dbPort: String = getEnvVar("DB_EVENTHANDLER_PORT"),
                        val dbUrl: String = getDbUrl(dbHost, dbPort, dbName),
                        val doneInputTopicName: String = getEnvVar("OPEN_INPUT_DONE_TOPIC"),
-                       val securityConfig: SecurityConfig = SecurityConfig(isCurrentlyRunningOnNais())
+                       val securityConfig: SecurityConfig = SecurityConfig(isCurrentlyRunningOnNais()),
+                       val filterOldEvents: Boolean = getEnvVarAsBoolean("FILTER_OLD_EVENTS"),
+                       val filterThresholdDays: Int = getEnvVarAsInt("FILTER_THRESHOLD_DAYS")
 )
 
 fun getDbUrl(host: String, port: String, name: String): String {

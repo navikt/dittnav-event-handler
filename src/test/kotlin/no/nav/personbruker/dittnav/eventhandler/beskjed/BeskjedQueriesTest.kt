@@ -2,6 +2,7 @@ package no.nav.personbruker.dittnav.eventhandler.beskjed
 
 import Beskjed
 import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import java.time.LocalDate
 import java.time.ZonedDateTime
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -30,6 +32,7 @@ class BeskjedQueriesTest {
         fodselsnummer = fodselsnummer,
         grupperingsId = grupperingsid,
         synligFremTil = ZonedDateTime.now().plusHours(1),
+        forstBehandlet = ZonedDateTime.now(),
         aktiv = true,
         systembruker = systembruker,
         namespace = namespace,
@@ -41,6 +44,7 @@ class BeskjedQueriesTest {
         fodselsnummer = fodselsnummer,
         grupperingsId = grupperingsid,
         synligFremTil = ZonedDateTime.now().plusHours(1),
+        forstBehandlet = ZonedDateTime.now().minusDays(5),
         aktiv = true,
         systembruker = systembruker,
         namespace = namespace,
@@ -52,6 +56,7 @@ class BeskjedQueriesTest {
         fodselsnummer = fodselsnummer,
         grupperingsId = grupperingsid,
         synligFremTil = ZonedDateTime.now().plusHours(1),
+        forstBehandlet = ZonedDateTime.now().minusDays(15),
         aktiv = false,
         systembruker = systembruker,
         namespace = namespace,
@@ -62,6 +67,7 @@ class BeskjedQueriesTest {
         eventId = "789",
         fodselsnummer = "54321",
         synligFremTil = ZonedDateTime.now().plusHours(1),
+        forstBehandlet = ZonedDateTime.now().minusDays(25),
         aktiv = true,
         systembruker = "x-dittnav-2",
         namespace = namespace,
@@ -81,7 +87,7 @@ class BeskjedQueriesTest {
     @Test
     fun `Finn alle cachede Beskjed-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getAllBeskjedForInnloggetBruker(fodselsnummer) }.size shouldBe 3
+            database.dbQuery { getAllBeskjedForFodselsnummer(fodselsnummer) }.size shouldBe 3
         }
     }
 
@@ -89,7 +95,7 @@ class BeskjedQueriesTest {
     fun `Finn kun aktive cachede Beskjed-eventer for fodselsnummer`() {
         runBlocking {
             database.dbQuery {
-                val aktivBeskjedByUser = getAktivBeskjedForInnloggetBruker(fodselsnummer)
+                val aktivBeskjedByUser = getAktivBeskjedForFodselsnummer(fodselsnummer)
                 aktivBeskjedByUser
             }.size shouldBe 2
         }
@@ -99,7 +105,7 @@ class BeskjedQueriesTest {
     fun `Finn kun inaktive cachede Beskjed-eventer for fodselsnummer`() {
         runBlocking {
             database.dbQuery {
-                val inaktivBeskjedByUser = getInaktivBeskjedForInnloggetBruker(fodselsnummer)
+                val inaktivBeskjedByUser = getInaktivBeskjedForFodselsnummer(fodselsnummer)
                 inaktivBeskjedByUser
             }.size shouldBe 1
         }
@@ -109,7 +115,7 @@ class BeskjedQueriesTest {
     fun `Returnerer tom liste hvis Beskjed-eventer for fodselsnummer ikke finnes`() {
         val brukerSomIkkeFinnes = "0"
         runBlocking {
-            database.dbQuery { getAktivBeskjedForInnloggetBruker(brukerSomIkkeFinnes) }.shouldBeEmpty()
+            database.dbQuery { getAktivBeskjedForFodselsnummer(brukerSomIkkeFinnes) }.shouldBeEmpty()
         }
     }
 
@@ -117,14 +123,14 @@ class BeskjedQueriesTest {
     fun `Returnerer tom liste hvis fodselsnummer er tomt`() {
         val fodselsnummerMangler = ""
         runBlocking {
-            database.dbQuery { getAktivBeskjedForInnloggetBruker(fodselsnummerMangler) }.shouldBeEmpty()
+            database.dbQuery { getAktivBeskjedForFodselsnummer(fodselsnummerMangler) }.shouldBeEmpty()
         }
     }
 
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for aktive eventer`() {
         runBlocking {
-            val beskjed = database.dbQuery { getAktivBeskjedForInnloggetBruker(fodselsnummer) }.first()
+            val beskjed = database.dbQuery { getAktivBeskjedForFodselsnummer(fodselsnummer) }.first()
             beskjed.produsent shouldBe appnavn
         }
     }
@@ -132,7 +138,7 @@ class BeskjedQueriesTest {
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for inaktive eventer`() {
         runBlocking {
-            val beskjed = database.dbQuery { getInaktivBeskjedForInnloggetBruker(fodselsnummer) }.first()
+            val beskjed = database.dbQuery { getInaktivBeskjedForFodselsnummer(fodselsnummer) }.first()
             beskjed.produsent shouldBe appnavn
         }
     }
@@ -140,7 +146,7 @@ class BeskjedQueriesTest {
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for alle eventer`() {
         runBlocking {
-            val beskjed = database.dbQuery { getAllBeskjedForInnloggetBruker(fodselsnummer) }.first()
+            val beskjed = database.dbQuery { getAllBeskjedForFodselsnummer(fodselsnummer) }.first()
             beskjed.produsent shouldBe appnavn
         }
     }
@@ -223,6 +229,41 @@ class BeskjedQueriesTest {
             groupedEventsBySystemuser.size shouldBe 2
             groupedEventsBySystemuser.findCountFor(beskjed1.namespace, beskjed1.appnavn) shouldBe 3
             groupedEventsBySystemuser.findCountFor(beskjed4.namespace, beskjed4.appnavn) shouldBe 1
+        }
+    }
+
+    @Test
+    fun `Returnerer kun eventer der forstBehandlet er nyere enn bestemt dato for aktive eventer`() {
+        runBlocking {
+            val recentEventsForFnr = database.dbQuery {
+                getRecentAktivBeskjedForFodselsnummer(fodselsnummer, LocalDate.now().minusDays(10))
+            }
+
+            recentEventsForFnr.size shouldBe 2
+            recentEventsForFnr.map { it.id } shouldContainAll listOf(1, 2)
+        }
+    }
+
+    @Test
+    fun `Returnerer kun eventer der forstBehandlet er nyere enn bestemt dato for inaktive eventer`() {
+        runBlocking {
+            val recentEventsForFnr = database.dbQuery {
+                getRecentInaktivBeskjedForFodselsnummer(fodselsnummer, LocalDate.now().minusDays(10))
+            }
+
+            recentEventsForFnr.size shouldBe 0
+        }
+    }
+
+    @Test
+    fun `Returnerer kun eventer der forstBehandlet er nyere enn bestemt dato for alle eventer`() {
+        runBlocking {
+            val recentEventsForFnr = database.dbQuery {
+                getAllRecentBeskjedForFodselsnummer(fodselsnummer, LocalDate.now().minusDays(20))
+            }
+
+            recentEventsForFnr.size shouldBe 3
+            recentEventsForFnr.map { it.id } shouldContainAll listOf(1,2,3)
         }
     }
 

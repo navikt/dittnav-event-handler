@@ -10,8 +10,8 @@ import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.Duplicat
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.EventMarkedInactiveException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.NoEventsException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.respondWithError
-import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
+import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import org.slf4j.LoggerFactory
 
 fun Route.doneApi(doneEventService: DoneEventService) {

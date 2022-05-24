@@ -1,6 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.innboks
 
 import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
@@ -9,6 +10,8 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import java.time.LocalDate
+import java.time.ZonedDateTime
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class InnboksQueriesTest {
@@ -49,7 +52,8 @@ class InnboksQueriesTest {
         aktiv = true,
         systembruker = "x-dittnav-2",
         namespace = namespace,
-        appnavn = "dittnav-2"
+        appnavn = "dittnav-2",
+        forstBehandlet = ZonedDateTime.now().minusDays(5),
     )
     private val innboks4 = InnboksObjectMother.createInnboks(
         id = 4,
@@ -58,7 +62,8 @@ class InnboksQueriesTest {
         aktiv = false,
         systembruker = systembruker,
         namespace = namespace,
-        appnavn = appnavn
+        appnavn = appnavn,
+        forstBehandlet = ZonedDateTime.now().minusDays(15),
     )
 
     @BeforeAll
@@ -74,24 +79,24 @@ class InnboksQueriesTest {
     @Test
     fun `Finn alle cachede Innboks-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getAllInnboksForInnloggetBruker(fodselsnummer1) }.size shouldBe 2
-            database.dbQuery { getAllInnboksForInnloggetBruker(fodselsnummer2) }.size shouldBe 2
+            database.dbQuery { getAllInnboksForFodselsnummer(fodselsnummer1) }.size shouldBe 2
+            database.dbQuery { getAllInnboksForFodselsnummer(fodselsnummer2) }.size shouldBe 2
         }
     }
 
     @Test
     fun `Finn kun aktive cachede Innboks-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getAktivInnboksForInnloggetBruker(fodselsnummer1) }.size shouldBe 2
-            database.dbQuery { getAktivInnboksForInnloggetBruker(fodselsnummer2) }.size shouldBe 1
+            database.dbQuery { getAktivInnboksForFodselsnummer(fodselsnummer1) }.size shouldBe 2
+            database.dbQuery { getAktivInnboksForFodselsnummer(fodselsnummer2) }.size shouldBe 1
         }
     }
 
     @Test
     fun `Finn kun inaktive cachede Innboks-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getInaktivInnboksForInnloggetBruker(fodselsnummer1) }.shouldBeEmpty()
-            database.dbQuery { getInaktivInnboksForInnloggetBruker(fodselsnummer2) }.size shouldBe 1
+            database.dbQuery { getInaktivInnboksForFodselsnummer(fodselsnummer1) }.shouldBeEmpty()
+            database.dbQuery { getInaktivInnboksForFodselsnummer(fodselsnummer2) }.size shouldBe 1
         }
     }
 
@@ -99,7 +104,7 @@ class InnboksQueriesTest {
     fun `Returnerer tom liste hvis Innboks-eventer for fodselsnummer ikke finnes`() {
         val brukerUtenEventer = "0"
         runBlocking {
-            database.dbQuery { getAllInnboksForInnloggetBruker(brukerUtenEventer) }.size shouldBe 0
+            database.dbQuery { getAllInnboksForFodselsnummer(brukerUtenEventer) }.size shouldBe 0
         }
     }
 
@@ -107,14 +112,14 @@ class InnboksQueriesTest {
     fun `Returnerer tom liste hvis fodselsnummer er tomt`() {
         val brukerUtenEventer = ""
         runBlocking {
-            database.dbQuery { getAllInnboksForInnloggetBruker(brukerUtenEventer) }.size shouldBe 0
+            database.dbQuery { getAllInnboksForFodselsnummer(brukerUtenEventer) }.size shouldBe 0
         }
     }
 
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for aktive eventer`() {
         runBlocking {
-            val innboks = database.dbQuery { getAktivInnboksForInnloggetBruker(fodselsnummer1) }.first()
+            val innboks = database.dbQuery { getAktivInnboksForFodselsnummer(fodselsnummer1) }.first()
             innboks.produsent shouldBe appnavn
         }
     }
@@ -122,7 +127,7 @@ class InnboksQueriesTest {
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for inaktive eventer`() {
         runBlocking {
-            val innboks = database.dbQuery { getInaktivInnboksForInnloggetBruker(fodselsnummer2) }.first()
+            val innboks = database.dbQuery { getInaktivInnboksForFodselsnummer(fodselsnummer2) }.first()
             innboks.produsent shouldBe appnavn
         }
     }
@@ -130,7 +135,7 @@ class InnboksQueriesTest {
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for alle eventer`() {
         runBlocking {
-            val innboks = database.dbQuery { getAllInnboksForInnloggetBruker(fodselsnummer1) }.first()
+            val innboks = database.dbQuery { getAllInnboksForFodselsnummer(fodselsnummer1) }.first()
             innboks.produsent shouldBe appnavn
         }
     }
@@ -183,6 +188,42 @@ class InnboksQueriesTest {
             groupedEventsByProducer.size shouldBe 2
             groupedEventsByProducer.findCountFor(innboks1.namespace, innboks1.appnavn) shouldBe 3
             groupedEventsByProducer.findCountFor(innboks3.namespace, innboks3.appnavn) shouldBe 1
+        }
+    }
+
+
+    @Test
+    fun `Returnerer kun eventer der forstBehandlet er nyere enn bestemt dato for aktive eventer`() {
+        runBlocking {
+            val recentEventsForFnr = database.dbQuery {
+                getRecentAktivInnboksForFodselsnummer(fodselsnummer2, LocalDate.now().minusDays(10))
+            }
+
+            recentEventsForFnr.size shouldBe 1
+            recentEventsForFnr.map { it.id } shouldContainAll listOf(3)
+        }
+    }
+
+    @Test
+    fun `Returnerer kun eventer der forstBehandlet er nyere enn bestemt dato for inaktive eventer`() {
+        runBlocking {
+            val recentEventsForFnr = database.dbQuery {
+                getRecentInaktivInnboksForFodselsnummer(fodselsnummer2, LocalDate.now().minusDays(10))
+            }
+
+            recentEventsForFnr.size shouldBe 0
+        }
+    }
+
+    @Test
+    fun `Returnerer kun eventer der forstBehandlet er nyere enn bestemt dato for alle eventer`() {
+        runBlocking {
+            val recentEventsForFnr = database.dbQuery {
+                getAllRecentInnboksForFodselsnummer(fodselsnummer2, LocalDate.now().minusDays(20))
+            }
+
+            recentEventsForFnr.size shouldBe 2
+            recentEventsForFnr.map { it.id } shouldContainAll listOf(3, 4)
         }
     }
 

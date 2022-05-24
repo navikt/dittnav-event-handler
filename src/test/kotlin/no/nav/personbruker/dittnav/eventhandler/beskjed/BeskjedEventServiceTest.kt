@@ -23,7 +23,7 @@ import java.time.ZonedDateTime
 class BeskjedEventServiceTest {
 
     private val database = mockk<Database>()
-    private val beskjedEventService = BeskjedEventService(database)
+    private val beskjedEventService = BeskjedEventService(database, false, 0)
     private val bruker = TokenXUserObjectMother.createInnloggetBruker("123")
     private val produsent = "dittnav"
     private val grupperingsid = "100${bruker.ident}"
@@ -50,7 +50,7 @@ class BeskjedEventServiceTest {
                 database.queryWithExceptionTranslation<List<Beskjed>>(any())
             }.returns(beskjedList)
 
-            val actualBeskjeds = beskjedEventService.getAllCachedEventsForUser(bruker)
+            val actualBeskjeds = beskjedEventService.getActiveEventsForFodselsnummer(bruker.ident)
             actualBeskjeds.size shouldBe beskjedList.size
         }
     }

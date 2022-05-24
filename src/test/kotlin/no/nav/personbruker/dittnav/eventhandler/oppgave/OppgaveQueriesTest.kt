@@ -1,6 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
 import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
@@ -9,6 +10,8 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import java.time.LocalDate
+import java.time.ZonedDateTime
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class OppgaveQueriesTest {
@@ -28,7 +31,8 @@ class OppgaveQueriesTest {
         aktiv = true,
         systembruker = systembruker,
         namespace = namespace,
-        appnavn = appnavn
+        appnavn = appnavn,
+        forstBehandlet = ZonedDateTime.now()
     )
     private val oppgave2 = OppgaveObjectMother.createOppgave(
         id = 2,
@@ -38,7 +42,8 @@ class OppgaveQueriesTest {
         aktiv = true,
         systembruker = systembruker,
         namespace = namespace,
-        appnavn = appnavn
+        appnavn = appnavn,
+        forstBehandlet = ZonedDateTime.now().minusDays(5)
     )
     private val oppgave3 = OppgaveObjectMother.createOppgave(
         id = 3,
@@ -48,7 +53,8 @@ class OppgaveQueriesTest {
         aktiv = false,
         systembruker = systembruker,
         namespace = namespace,
-        appnavn = appnavn
+        appnavn = appnavn,
+        forstBehandlet = ZonedDateTime.now().minusDays(15)
     )
     private val oppgave4 = OppgaveObjectMother.createOppgave(
         id = 4,
@@ -57,7 +63,8 @@ class OppgaveQueriesTest {
         aktiv = true,
         systembruker = "x-dittnav-2",
         namespace = namespace,
-        appnavn = "x-dittnav"
+        appnavn = "x-dittnav",
+        forstBehandlet = ZonedDateTime.now().minusDays(25)
     )
 
     @BeforeAll
@@ -73,21 +80,21 @@ class OppgaveQueriesTest {
     @Test
     fun `Finn alle cachede Oppgave-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getAllOppgaveForInnloggetBruker(fodselsnummer) }.size shouldBe 3
+            database.dbQuery { getAllOppgaveForFodselsnummer(fodselsnummer) }.size shouldBe 3
         }
     }
 
     @Test
     fun `Finn kun aktive cachede Oppgave-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getAktivOppgaveForInnloggetBruker(fodselsnummer) }.size shouldBe 2
+            database.dbQuery { getAktivOppgaveForFodselsnummer(fodselsnummer) }.size shouldBe 2
         }
     }
 
     @Test
     fun `Finn kun inaktive cachede Oppgave-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getInaktivOppgaveForInnloggetBruker(fodselsnummer) }.size shouldBe 1
+            database.dbQuery { getInaktivOppgaveForFodselsnummer(fodselsnummer) }.size shouldBe 1
         }
     }
 
@@ -95,7 +102,7 @@ class OppgaveQueriesTest {
     fun `Returnerer tom liste hvis Oppgave-eventer for fodselsnummer ikke finnes`() {
         val brukerSomIkkeFinnes = "0"
         runBlocking {
-            database.dbQuery { getAktivOppgaveForInnloggetBruker(brukerSomIkkeFinnes) }.isEmpty()
+            database.dbQuery { getAktivOppgaveForFodselsnummer(brukerSomIkkeFinnes) }.isEmpty()
         }
     }
 
@@ -103,14 +110,14 @@ class OppgaveQueriesTest {
     fun `Returnerer tom liste hvis fodselsnummer er tomt`() {
         val fodselsnummerMangler = ""
         runBlocking {
-            database.dbQuery { getAktivOppgaveForInnloggetBruker(fodselsnummerMangler) }.isEmpty()
+            database.dbQuery { getAktivOppgaveForFodselsnummer(fodselsnummerMangler) }.isEmpty()
         }
     }
 
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for aktive eventer`() {
         runBlocking {
-            val oppgave = database.dbQuery { getAktivOppgaveForInnloggetBruker(fodselsnummer) }.first()
+            val oppgave = database.dbQuery { getAktivOppgaveForFodselsnummer(fodselsnummer) }.first()
             oppgave.produsent shouldBe appnavn
         }
     }
@@ -118,7 +125,7 @@ class OppgaveQueriesTest {
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for inaktive eventer`() {
         runBlocking {
-            val oppgave = database.dbQuery { getInaktivOppgaveForInnloggetBruker(fodselsnummer) }.first()
+            val oppgave = database.dbQuery { getInaktivOppgaveForFodselsnummer(fodselsnummer) }.first()
             oppgave.produsent shouldBe appnavn
         }
     }
@@ -126,7 +133,7 @@ class OppgaveQueriesTest {
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for alle eventer`() {
         runBlocking {
-            val oppgave = database.dbQuery { getAllOppgaveForInnloggetBruker(fodselsnummer) }.first()
+            val oppgave = database.dbQuery { getAllOppgaveForFodselsnummer(fodselsnummer) }.first()
             oppgave.produsent shouldBe appnavn
         }
     }
@@ -182,6 +189,43 @@ class OppgaveQueriesTest {
             groupedEventsBySystemuser.findCountFor(oppgave4.namespace, oppgave4.appnavn) shouldBe 1
         }
     }
+
+
+    @Test
+    fun `Returnerer kun eventer der forstBehandlet er nyere enn bestemt dato for aktive eventer`() {
+        runBlocking {
+            val recentEventsForFnr = database.dbQuery {
+                getRecentAktivOppgaveForFodselsnummer(fodselsnummer, LocalDate.now().minusDays(10))
+            }
+
+            recentEventsForFnr.size shouldBe 2
+            recentEventsForFnr.map { it.id } shouldContainAll listOf(1, 2)
+        }
+    }
+
+    @Test
+    fun `Returnerer kun eventer der forstBehandlet er nyere enn bestemt dato for inaktive eventer`() {
+        runBlocking {
+            val recentEventsForFnr = database.dbQuery {
+                getRecentInaktivOppgaveForFodselsnummer(fodselsnummer, LocalDate.now().minusDays(10))
+            }
+
+            recentEventsForFnr.size shouldBe 0
+        }
+    }
+
+    @Test
+    fun `Returnerer kun eventer der forstBehandlet er nyere enn bestemt dato for alle eventer`() {
+        runBlocking {
+            val recentEventsForFnr = database.dbQuery {
+                getAllRecentOppgaveForFodselsnummer(fodselsnummer, LocalDate.now().minusDays(20))
+            }
+
+            recentEventsForFnr.size shouldBe 3
+            recentEventsForFnr.map { it.id } shouldContainAll listOf(1,2,3)
+        }
+    }
+
 
     private fun createOppgave(oppgaver: List<Oppgave>) {
         runBlocking {

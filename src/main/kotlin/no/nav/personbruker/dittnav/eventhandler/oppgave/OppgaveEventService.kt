@@ -2,41 +2,43 @@ package no.nav.personbruker.dittnav.eventhandler.oppgave
 
 import no.nav.brukernotifikasjon.schemas.builders.util.ValidationUtil.validateNonNullFieldMaxLength
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
-import no.nav.personbruker.dittnav.eventhandler.common.modia.User
+import no.nav.personbruker.dittnav.eventhandler.common.daysAgo
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 import java.sql.Connection
 
-class OppgaveEventService(private val database: Database) {
+class OppgaveEventService(private val database: Database,
+                          private val filterOldEvents: Boolean,
+                          private val filterThresholdDays: Int) {
 
-    suspend fun getActiveCachedEventsForUser(bruker: TokenXUser): List<OppgaveDTO> {
-        return getEvents { getAktivOppgaveForInnloggetBruker(bruker.ident) }
-            .map { oppgave -> oppgave.toDTO() }
+    suspend fun getActiveEventsForFodselsnummer(fodselsnummer: String): List<OppgaveDTO> {
+        return getEvents {
+            if (filterOldEvents) {
+                getRecentAktivOppgaveForFodselsnummer(fodselsnummer, daysAgo(filterThresholdDays))
+            } else {
+                getAktivOppgaveForFodselsnummer(fodselsnummer)
+            }
+        }.map { oppgave -> oppgave.toDTO() }
     }
 
-    suspend fun getActiveCachedEventsForUser(bruker: User): List<OppgaveDTO> {
-        return getEvents { getAktivOppgaveForInnloggetBruker(bruker.fodselsnummer) }
-            .map { oppgave -> oppgave.toDTO() }
+    suspend fun getInactiveEventsForFodselsnummer(fodselsnummer: String): List<OppgaveDTO> {
+        return getEvents {
+            if (filterOldEvents) {
+                getRecentInaktivOppgaveForFodselsnummer(fodselsnummer, daysAgo(filterThresholdDays))
+            } else {
+                getInaktivOppgaveForFodselsnummer(fodselsnummer)
+            }
+        }.map { oppgave -> oppgave.toDTO() }
     }
 
-    suspend fun getInactiveCachedEventsForUser(bruker: TokenXUser): List<OppgaveDTO> {
-        return getEvents { getInaktivOppgaveForInnloggetBruker(bruker.ident) }
-            .map { oppgave -> oppgave.toDTO() }
-    }
-
-    suspend fun getInactiveCachedEventsForUser(bruker: User): List<OppgaveDTO> {
-        return getEvents { getInaktivOppgaveForInnloggetBruker(bruker.fodselsnummer) }
-            .map { oppgave -> oppgave.toDTO() }
-    }
-
-    suspend fun getAllCachedEventsForUser(bruker: TokenXUser): List<OppgaveDTO> {
-        return getEvents { getAllOppgaveForInnloggetBruker(bruker.ident) }
-            .map { oppgave -> oppgave.toDTO() }
-    }
-
-    suspend fun getAllCachedEventsForUser(bruker: User): List<OppgaveDTO> {
-        return getEvents { getAllOppgaveForInnloggetBruker(bruker.fodselsnummer) }
-            .map { oppgave -> oppgave.toDTO() }
+    suspend fun getAllEventsForFodselsnummer(fodselsnummer: String): List<OppgaveDTO> {
+        return getEvents {
+            if (filterOldEvents) {
+                getAllRecentOppgaveForFodselsnummer(fodselsnummer, daysAgo(filterThresholdDays))
+            } else {
+                getAllOppgaveForFodselsnummer(fodselsnummer)
+            }
+        }.map { oppgave -> oppgave.toDTO() }
     }
 
     suspend fun getAllGroupedEventsFromCacheForUser(bruker: TokenXUser, grupperingsid: String?, appnavn: String?): List<OppgaveDTO> {

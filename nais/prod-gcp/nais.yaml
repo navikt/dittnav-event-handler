@@ -47,10 +47,17 @@ spec:
             users:
               - name: eventhandler
         name: brukernotifikasjon-cache
-        diskSize: 100
-        diskType: SSD
-        tier: db-custom-4-24576
         type: POSTGRES_11
+        tier: db-custom-4-24576
+        diskType: SSD
+        highAvailability: true
+        diskSize: 100
+        diskAutoresize: true
+        autoBackupTime: "03:00"
+        maintenanceWindow:
+          day: 1
+          hour: 4
+        cascadingDelete: false
   kafka:
     pool: nav-prod
   tokenx:

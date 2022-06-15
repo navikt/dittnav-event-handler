@@ -3,7 +3,6 @@ package no.nav.personbruker.dittnav.eventhandler.statusoppdatering
 fun Statusoppdatering.toDTO() = StatusoppdateringDTO(
     produsent = appnavn,
     eventId = eventId,
-    eventTidspunkt = eventTidspunkt,
     fodselsnummer = fodselsnummer,
     grupperingsId = grupperingsId,
     link = link,

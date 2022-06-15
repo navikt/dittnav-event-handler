@@ -12,7 +12,6 @@ internal class InnboksTransformersTest {
         innboksDTO.fodselsnummer shouldBe innboks.fodselsnummer
         innboksDTO.eventId shouldBe innboks.eventId
         innboksDTO.aktiv shouldBe innboks.aktiv
-        innboksDTO.eventTidspunkt shouldBe innboks.eventTidspunkt
         innboksDTO.grupperingsId shouldBe innboks.grupperingsId
         innboksDTO.link shouldBe innboks.link
         innboksDTO.produsent shouldBe innboks.appnavn

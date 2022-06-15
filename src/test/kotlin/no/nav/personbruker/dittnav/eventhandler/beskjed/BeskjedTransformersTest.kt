@@ -12,7 +12,6 @@ internal class BeskjedTransformersTest {
         beskjedDTO.fodselsnummer shouldBe beskjed.fodselsnummer
         beskjedDTO.grupperingsId shouldBe beskjed.grupperingsId
         beskjedDTO.eventId shouldBe beskjed.eventId
-        beskjedDTO.eventTidspunkt shouldBe beskjed.eventTidspunkt
         beskjedDTO.produsent shouldBe beskjed.appnavn
         beskjedDTO.sikkerhetsnivaa shouldBe beskjed.sikkerhetsnivaa
         beskjedDTO.sistOppdatert shouldBe beskjed.sistOppdatert

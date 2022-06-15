@@ -64,19 +64,12 @@ spec:
     inbound:
       rules:
         - application: dittnav-api
-        - application: dittnav-api
-          namespace: personbruker
-          cluster: dev-sbs
         - application: internal-periodic-metrics-reporter
         - application: dittnav-nightly-usage-statistics-reporter
         - application: tms-event-test-producer
-          namespace: min-side
         - application: dittnav-eventer-modia
           namespace: personbruker
           cluster: dev-fss
-        - application: salesforce
-          namespace: teamcrm
-          cluster: dev-external
         - application: tms-event-api
     outbound:
       external:

@@ -72,9 +72,6 @@ spec:
         - application: internal-periodic-metrics-reporter
         - application: dittnav-nightly-usage-statistics-reporter
         - application: tms-event-test-producer
-        - application: dittnav-api
-          namespace: personbruker
-          cluster: prod-sbs
         - application: dittnav-eventer-modia
           namespace: personbruker
           cluster: prod-fss

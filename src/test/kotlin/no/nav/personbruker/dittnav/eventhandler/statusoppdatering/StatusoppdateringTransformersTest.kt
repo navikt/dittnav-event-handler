@@ -9,7 +9,6 @@ internal class StatusoppdateringTransformersTest {
         val statusoppdatering = StatusoppdateringObjectMother.createStatusoppdateringWithFodselsnummer(id = 1, fodselsnummer = "12345678901")
         val statusoppdateringDTO = statusoppdatering.toDTO()
         statusoppdateringDTO.eventId shouldBe statusoppdatering.eventId
-        statusoppdateringDTO.eventTidspunkt shouldBe statusoppdatering.eventTidspunkt
         statusoppdateringDTO.fodselsnummer shouldBe statusoppdatering.fodselsnummer
         statusoppdateringDTO.grupperingsId shouldBe statusoppdatering.grupperingsId
         statusoppdateringDTO.link shouldBe statusoppdatering.link

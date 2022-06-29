@@ -71,6 +71,7 @@ spec:
           namespace: personbruker
           cluster: dev-fss
         - application: tms-event-api
+        - application: tms-varselbjelle-api
     outbound:
       external:
         - host: kafka-schema-registry.nais-q.adeo.no

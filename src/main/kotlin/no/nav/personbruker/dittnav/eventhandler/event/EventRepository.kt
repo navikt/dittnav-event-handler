@@ -9,13 +9,21 @@ import java.time.ZonedDateTime
 class EventRepository(private val database: Database) {
 
     suspend fun getInactiveEvents(fodselsnummer: String): List<Event> {
+        return getEvents(fodselsnummer, false)
+    }
+
+    suspend fun getActiveEvents(fodselsnummer: String): List<Event> {
+        return getEvents(fodselsnummer, true)
+    }
+
+    private suspend fun getEvents(fodselsnummer: String, active: Boolean): List<Event> {
         return database.queryWithExceptionTranslation {
             prepareStatement("""
-                ${eventQuery("beskjed")}
+                ${eventQuery("beskjed", active)}
                 UNION ALL
-                ${eventQuery("oppgave")}
+                ${eventQuery("oppgave", active)}
                 UNION ALL 
-                ${eventQuery("innboks")}
+                ${eventQuery("innboks", active)}
             """.trimIndent()
             ).also {
                 it.setString(1, fodselsnummer)
@@ -49,7 +57,7 @@ class EventRepository(private val database: Database) {
         }
     }
 
-    private fun eventQuery(table: String): String {
+    private fun eventQuery(table: String, active: Boolean): String {
         return """
             SELECT
                 eventTidspunkt,
@@ -66,7 +74,7 @@ class EventRepository(private val database: Database) {
                 '$table' as type 
             FROM $table
             WHERE fodselsnummer = ?
-            AND aktiv = false
+            AND aktiv = $active
         """
     }
 }

@@ -13,40 +13,42 @@ import java.time.ZonedDateTime
 
 class EventApiTest {
 
-    @Test
-    fun `eventer-apiet skal returnere event på riktig format`() {
-        val fodselsnummer = "12354"
-        val grupperingsId = "123"
-        val eventId = "456"
-        val eventTidspunkt = ZonedDateTime.of(2020, 1, 1, 1, 1, 1, 1, ZoneId.of("Europe/Oslo"))
-        val forstBehandlet = ZonedDateTime.of(2020, 1, 1, 1, 1, 1, 1, ZoneId.of("Europe/Oslo"))
-        val produsent = "produsent"
-        val sikkerhetsnivaa = 4
-        val sistOppdatert = ZonedDateTime.of(2020, 1, 1, 1, 1, 1, 1, ZoneId.of("Europe/Oslo"))
-        val tekst = "tekst"
-        val link = "link"
-        val aktiv = true
-        val type = EventType.BESKJED
+    private val fodselsnummer = "12354"
+    private val grupperingsId = "123"
+    private val eventId = "456"
+    private val eventTidspunkt = ZonedDateTime.of(2020, 1, 1, 1, 1, 1, 1, ZoneId.of("Europe/Oslo"))
+    private val forstBehandlet = ZonedDateTime.of(2020, 1, 1, 1, 1, 1, 1, ZoneId.of("Europe/Oslo"))
+    private val produsent = "produsent"
+    private val sikkerhetsnivaa = 4
+    private val sistOppdatert = ZonedDateTime.of(2020, 1, 1, 1, 1, 1, 1, ZoneId.of("Europe/Oslo"))
+    private val tekst = "tekst"
+    private val link = "link"
+    private val aktiv = false
+    private val type = EventType.BESKJED
 
+    private val event = Event(
+        fodselsnummer = fodselsnummer,
+        grupperingsId = grupperingsId,
+        eventId = eventId,
+        eventTidspunkt = eventTidspunkt,
+        produsent = produsent,
+        sikkerhetsnivaa = sikkerhetsnivaa,
+        sistOppdatert = sistOppdatert,
+        tekst = tekst,
+        link = link,
+        aktiv = aktiv,
+        type = type,
+        forstBehandlet = forstBehandlet
+    )
+
+    @Test
+    fun `eventer-apiet skal returnere inaktive eventer`() {
         val eventRepositoryMock: EventRepository = mockk()
         coEvery {
             eventRepositoryMock.getInactiveEvents(any())
         }.returns(
             listOf(
-                Event(
-                    fodselsnummer = fodselsnummer,
-                    grupperingsId = grupperingsId,
-                    eventId = eventId,
-                    eventTidspunkt = eventTidspunkt,
-                    produsent = produsent,
-                    sikkerhetsnivaa = sikkerhetsnivaa,
-                    sistOppdatert = sistOppdatert,
-                    tekst = tekst,
-                    link = link,
-                    aktiv = aktiv,
-                    type = type,
-                    forstBehandlet = forstBehandlet
-                )
+                event
             )
         )
 
@@ -69,5 +71,28 @@ class EventApiTest {
         eventJson["link"].asText() shouldBe link
         eventJson["aktiv"].asBoolean() shouldBe aktiv
         ZonedDateTime.parse(eventJson["forstBehandlet"].asText()) shouldBe forstBehandlet
+    }
+
+    @Test
+    fun `eventer-apiet skal returnere aktive eventer`() {
+        val eventRepositoryMock: EventRepository = mockk()
+        coEvery {
+            eventRepositoryMock.getActiveEvents(any())
+        }.returns(
+            listOf(
+                event
+            )
+        )
+
+        val response = withTestApplication(
+            mockEventHandlerApi(eventRepository = eventRepositoryMock)
+        ) {
+            handleRequest(HttpMethod.Get, "dittnav-event-handler/fetch/event/aktive") {}
+        }.response
+
+        response.status() shouldBe HttpStatusCode.OK
+
+        val eventJson = ObjectMapper().readTree(response.content)[0]
+        eventJson["eventId"].asText() shouldBe eventId
     }
 }

@@ -21,4 +21,14 @@ fun Route.eventApi(eventRepository: EventRepository) {
             respondWithError(call, log, exception)
         }
     }
+
+    get("/fetch/event/aktive") {
+        try {
+            val inactiveEventDTOs = eventRepository.getActiveEvents(innloggetBruker.ident)
+                .map { event -> event.toEventDTO() }
+            call.respond(HttpStatusCode.OK, inactiveEventDTOs)
+        } catch (exception: Exception) {
+            respondWithError(call, log, exception)
+        }
+    }
 }

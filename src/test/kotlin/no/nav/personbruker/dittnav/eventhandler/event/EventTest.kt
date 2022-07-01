@@ -36,6 +36,16 @@ class EventTest {
         }
     }
 
+    @Test
+    fun `hente alle aktive eventer for bruker`() {
+        val eventRepository = EventRepository(database)
+        runBlocking {
+            val inaktiveEventer = eventRepository.getActiveEvents(fodselsnummer)
+            inaktiveEventer.size shouldBe 6
+            inaktiveEventer.map { it.toEventDTO().type }.toSet() shouldBe setOf(EventType.BESKJED, EventType.OPPGAVE, EventType.INNBOKS)
+        }
+    }
+
     private fun createBeskjeder(antallAktive: Int, antallInaktive: Int) {
         val beskjeder = (1..antallAktive).map {
             BeskjedObjectMother.createBeskjed(

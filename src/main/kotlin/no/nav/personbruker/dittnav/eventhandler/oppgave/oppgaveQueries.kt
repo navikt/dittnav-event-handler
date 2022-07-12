@@ -1,8 +1,11 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
 import no.nav.personbruker.dittnav.eventhandler.common.database.convertIfUnlikelyDate
+import no.nav.personbruker.dittnav.eventhandler.common.database.getListFromSeparatedString
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfo
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import java.sql.Connection
 import java.sql.ResultSet
@@ -11,6 +14,15 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
+private val baseSelectQuery = """
+    SELECT 
+        oppgave.*,
+        dok_status.status as doknotifikasjon_status,
+        dok_status.kanaler as doknotifikasjon_kanaler
+    FROM oppgave
+        LEFT JOIN DOKNOTIFIKASJON_STATUS_OPPGAVE as dok_status on oppgave.eventId = dok_status.eventId
+""".trimMargin()
+
 fun Connection.getInaktivOppgaveForFodselsnummer(fodselsnummer: String): List<Oppgave> =
         getOppgaveForFodselsnummerByAktiv(fodselsnummer, false)
 
@@ -18,22 +30,7 @@ fun Connection.getAktivOppgaveForFodselsnummer(fodselsnummer: String): List<Oppg
         getOppgaveForFodselsnummerByAktiv(fodselsnummer, true)
 
 private fun Connection.getOppgaveForFodselsnummerByAktiv(fodselsnummer: String, aktiv: Boolean): List<Oppgave> =
-    prepareStatement("""SELECT
-            |id,
-            |eventTidspunkt,
-            |fodselsnummer,
-            |eventId,
-            |grupperingsId,
-            |tekst,
-            |link,
-            |sikkerhetsnivaa,
-            |sistOppdatert,
-            |aktiv,
-            |systembruker,
-            |namespace,
-            |appnavn,
-            |forstBehandlet
-            |FROM oppgave WHERE fodselsnummer = ? AND aktiv = ?""".trimMargin())
+    prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ? AND aktiv = ?""".trimMargin())
         .use {
             it.setString(1, fodselsnummer)
             it.setBoolean(2, aktiv)
@@ -43,22 +40,7 @@ private fun Connection.getOppgaveForFodselsnummerByAktiv(fodselsnummer: String, 
         }
 
 fun Connection.getAllOppgaveForFodselsnummer(fodselsnummer: String): List<Oppgave> =
-        prepareStatement("""SELECT 
-            |id,
-            |eventTidspunkt,
-            |fodselsnummer,
-            |eventId,
-            |grupperingsId,
-            |tekst,
-            |link,
-            |sikkerhetsnivaa,
-            |sistOppdatert,
-            |aktiv,
-            |systembruker,
-            |namespace,
-            |appnavn,
-            |forstBehandlet
-            |FROM oppgave WHERE fodselsnummer = ?""".trimMargin())
+        prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ?""".trimMargin())
                 .use {
                     it.setString(1, fodselsnummer)
                     it.executeQuery().mapList {
@@ -67,22 +49,7 @@ fun Connection.getAllOppgaveForFodselsnummer(fodselsnummer: String): List<Oppgav
                 }
 
 fun Connection.getAllGroupedOppgaveEventsByIds(fodselsnummer: String, grupperingsid: String, appnavn: String): List<Oppgave> =
-        prepareStatement("""SELECT
-            |id,
-            |eventTidspunkt,
-            |fodselsnummer,
-            |eventId,
-            |grupperingsId,
-            |tekst,
-            |link,
-            |sikkerhetsnivaa,
-            |sistOppdatert,
-            |aktiv,
-            |systembruker,
-            |namespace,
-            |appnavn,
-            |forstBehandlet
-            |FROM oppgave WHERE fodselsnummer = ? AND grupperingsid = ? AND appnavn = ?""".trimMargin())
+        prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ? AND grupperingsid = ? AND appnavn = ?""".trimMargin())
                 .use {
                     it.setString(1, fodselsnummer)
                     it.setString(2, grupperingsid)
@@ -96,21 +63,33 @@ private fun ResultSet.toOppgave(): Oppgave {
     val rawEventTidspunkt = getUtcTimeStamp("eventTidspunkt")
     val verifiedEventTidspunkt = convertIfUnlikelyDate(rawEventTidspunkt)
     return Oppgave(
-            id = getInt("id"),
-            produsent = getString("appnavn") ?: "",
-            systembruker = getString("systembruker"),
-            namespace = getString("namespace"),
-            appnavn = getString("appnavn"),
-            eventTidspunkt = verifiedEventTidspunkt,
-            fodselsnummer = getString("fodselsnummer"),
-            eventId = getString("eventId"),
-            grupperingsId = getString("grupperingsId"),
-            tekst = getString("tekst"),
-            link = getString("link"),
-            sikkerhetsnivaa = getInt("sikkerhetsnivaa"),
-            sistOppdatert = ZonedDateTime.ofInstant(getUtcTimeStamp("sistOppdatert").toInstant(), ZoneId.of("Europe/Oslo")),
-            aktiv = getBoolean("aktiv"),
-            forstBehandlet = ZonedDateTime.ofInstant(getUtcTimeStamp("forstBehandlet").toInstant(), ZoneId.of("Europe/Oslo"))
+        id = getInt("id"),
+        produsent = getString("appnavn") ?: "",
+        systembruker = getString("systembruker"),
+        namespace = getString("namespace"),
+        appnavn = getString("appnavn"),
+        eventTidspunkt = verifiedEventTidspunkt,
+        fodselsnummer = getString("fodselsnummer"),
+        eventId = getString("eventId"),
+        grupperingsId = getString("grupperingsId"),
+        tekst = getString("tekst"),
+        link = getString("link"),
+        sikkerhetsnivaa = getInt("sikkerhetsnivaa"),
+        sistOppdatert = ZonedDateTime.ofInstant(getUtcTimeStamp("sistOppdatert").toInstant(), ZoneId.of("Europe/Oslo")),
+        aktiv = getBoolean("aktiv"),
+        forstBehandlet = ZonedDateTime.ofInstant(getUtcTimeStamp("forstBehandlet").toInstant(), ZoneId.of("Europe/Oslo")),
+        eksternVarslingInfo = toEksternVarslingInfo()
+    )
+}
+
+private fun ResultSet.toEksternVarslingInfo(): EksternVarslingInfo {
+    val eksternVarslingSendt = getString("doknotifikasjon_status") == EksternVarslingStatus.OVERSENDT.name
+
+    return EksternVarslingInfo(
+        bestilt = getBoolean("eksternVarsling"),
+        prefererteKanaler = getListFromSeparatedString("prefererteKanaler"),
+        sendt = eksternVarslingSendt,
+        sendteKanaler = getListFromSeparatedString("doknotifikasjon_kanaler")
     )
 }
 
@@ -148,22 +127,7 @@ fun Connection.getRecentAktivOppgaveForFodselsnummer(fodselsnummer: String, from
     getRecentOppgaveForFodselsnummerByAktiv(fodselsnummer, true, fromDate)
 
 private fun Connection.getRecentOppgaveForFodselsnummerByAktiv(fodselsnummer: String, aktiv: Boolean, fromDate: LocalDate): List<Oppgave> =
-    prepareStatement("""SELECT
-            |id,
-            |eventTidspunkt,
-            |fodselsnummer,
-            |eventId,
-            |grupperingsId,
-            |tekst,
-            |link,
-            |sikkerhetsnivaa,
-            |sistOppdatert,
-            |aktiv,
-            |systembruker,
-            |namespace,
-            |appnavn,
-            |forstBehandlet
-            |FROM oppgave WHERE fodselsnummer = ? AND aktiv = ? AND forstBehandlet > ?""".trimMargin())
+    prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ? AND aktiv = ? AND forstBehandlet > ?""".trimMargin())
         .use {
             it.setString(1, fodselsnummer)
             it.setBoolean(2, aktiv)
@@ -174,22 +138,7 @@ private fun Connection.getRecentOppgaveForFodselsnummerByAktiv(fodselsnummer: St
         }
 
 fun Connection.getAllRecentOppgaveForFodselsnummer(fodselsnummer: String, fromDate: LocalDate): List<Oppgave> =
-    prepareStatement("""SELECT 
-            |id,
-            |eventTidspunkt,
-            |fodselsnummer,
-            |eventId,
-            |grupperingsId,
-            |tekst,
-            |link,
-            |sikkerhetsnivaa,
-            |sistOppdatert,
-            |aktiv,
-            |systembruker,
-            |namespace,
-            |appnavn,
-            |forstBehandlet
-            |FROM oppgave WHERE fodselsnummer = ?
+    prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ?
             |AND forstBehandlet > ?""".trimMargin())
         .use {
             it.setString(1, fodselsnummer)

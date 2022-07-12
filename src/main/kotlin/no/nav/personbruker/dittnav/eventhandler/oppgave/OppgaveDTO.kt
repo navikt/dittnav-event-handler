@@ -17,6 +17,8 @@ data class OppgaveDTO(
     val sistOppdatert: ZonedDateTime,
     val tekst: String,
     val link: String,
-    val aktiv: Boolean
+    val aktiv: Boolean,
+    val eksternVarslingSendt: Boolean,
+    val eksternVarslingkanaler: List<String>
 )
 

@@ -1,11 +1,14 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
 import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
 import no.nav.personbruker.dittnav.eventhandler.common.findCountFor
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.*
+import no.nav.personbruker.dittnav.eventhandler.oppgave.getAktivOppgaveForFodselsnummer
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -32,8 +35,21 @@ class OppgaveQueriesTest {
         systembruker = systembruker,
         namespace = namespace,
         appnavn = appnavn,
-        forstBehandlet = ZonedDateTime.now()
+        forstBehandlet = ZonedDateTime.now(),
+        eksternVarslingInfo = EksternVarslingInfoObjectMother.createEskternVarslingInfo(
+            bestilt = true,
+            prefererteKanaler = listOf("SMS", "EPOST")
+        )
     )
+
+    val doknotStatusForOppgave1 = DoknotifikasjonStatusDto(
+        eventId = oppgave1.eventId,
+        status = EksternVarslingStatus.OVERSENDT.name,
+        melding = "melding",
+        distribusjonsId = 123L,
+        kanaler = "SMS"
+    )
+
     private val oppgave2 = OppgaveObjectMother.createOppgave(
         id = 2,
         eventId = "345",
@@ -43,8 +59,21 @@ class OppgaveQueriesTest {
         systembruker = systembruker,
         namespace = namespace,
         appnavn = appnavn,
-        forstBehandlet = ZonedDateTime.now().minusDays(5)
+        forstBehandlet = ZonedDateTime.now().minusDays(5),
+        eksternVarslingInfo = EksternVarslingInfoObjectMother.createEskternVarslingInfo(
+            bestilt = true,
+            prefererteKanaler = listOf("SMS", "EPOST")
+        )
     )
+
+    val doknotStatusForOppgave2 = DoknotifikasjonStatusDto(
+        eventId = oppgave2.eventId,
+        status = EksternVarslingStatus.FEILET.name,
+        melding = "feilet",
+        distribusjonsId = null,
+        kanaler = ""
+    )
+
     private val oppgave3 = OppgaveObjectMother.createOppgave(
         id = 3,
         eventId = "567",
@@ -70,10 +99,12 @@ class OppgaveQueriesTest {
     @BeforeAll
     fun `populer test-data`() {
         createOppgave(listOf(oppgave1, oppgave2, oppgave3, oppgave4))
+        createDoknotStatuses(listOf(doknotStatusForOppgave1, doknotStatusForOppgave2))
     }
 
     @AfterAll
     fun `slett Oppgave-eventer fra tabellen`() {
+        deleteAllDoknotStatusOppgave()
         deleteOppgave(listOf(oppgave1, oppgave2, oppgave3, oppgave4))
     }
 
@@ -227,6 +258,54 @@ class OppgaveQueriesTest {
     }
 
 
+    @Test
+    fun `Returnerer riktig info om ekstern varsling dersom status er mottat og oversendt`() = runBlocking {
+        val oppgave = database.dbQuery {
+            getAktivOppgaveForFodselsnummer(oppgave1.fodselsnummer)
+        }.filter {
+            it.eventId == oppgave1.eventId
+        }.first()
+
+        val eksternVarslingInfo = oppgave.eksternVarslingInfo
+
+        eksternVarslingInfo.bestilt shouldBe oppgave1.eksternVarslingInfo.bestilt
+        eksternVarslingInfo.prefererteKanaler shouldContainAll  oppgave1.eksternVarslingInfo.prefererteKanaler
+        eksternVarslingInfo.sendt shouldBe true
+        eksternVarslingInfo.sendteKanaler shouldContain doknotStatusForOppgave1.kanaler
+    }
+
+    @Test
+    fun `Returnerer riktig info om ekstern varsling dersom status er mottat og feilet`() = runBlocking {
+        val oppgave = database.dbQuery {
+            getAktivOppgaveForFodselsnummer(oppgave2.fodselsnummer)
+        }.filter {
+            it.eventId == oppgave2.eventId
+        }.first()
+
+        val eksternVarslingInfo = oppgave.eksternVarslingInfo
+
+        eksternVarslingInfo.bestilt shouldBe oppgave2.eksternVarslingInfo.bestilt
+        eksternVarslingInfo.prefererteKanaler shouldContainAll  oppgave2.eksternVarslingInfo.prefererteKanaler
+        eksternVarslingInfo.sendt shouldBe false
+        eksternVarslingInfo.sendteKanaler.isEmpty() shouldBe true
+    }
+
+    @Test
+    fun `Returnerer riktig info om ekstern varsling dersom status ikke er mottatt`() = runBlocking {
+        val oppgave = database.dbQuery {
+            getInaktivOppgaveForFodselsnummer(oppgave3.fodselsnummer)
+        }.filter {
+            it.eventId == oppgave3.eventId
+        }.first()
+
+        val eksternVarslingInfo = oppgave.eksternVarslingInfo
+
+        eksternVarslingInfo.bestilt shouldBe oppgave3.eksternVarslingInfo.bestilt
+        eksternVarslingInfo.prefererteKanaler shouldContainAll  oppgave3.eksternVarslingInfo.prefererteKanaler
+        eksternVarslingInfo.sendt shouldBe false
+        eksternVarslingInfo.sendteKanaler.isEmpty() shouldBe true
+    }
+
     private fun createOppgave(oppgaver: List<Oppgave>) {
         runBlocking {
             database.dbQuery { createOppgave(oppgaver) }
@@ -236,6 +315,20 @@ class OppgaveQueriesTest {
     private fun deleteOppgave(oppgaver: List<Oppgave>) {
         runBlocking {
             database.dbQuery { deleteOppgave(oppgaver) }
+        }
+    }
+
+    private fun createDoknotStatuses(statuses: List<DoknotifikasjonStatusDto>) = runBlocking {
+        database.dbQuery {
+            statuses.forEach { status ->
+                createDoknotStatusOppgave(status)
+            }
+        }
+    }
+
+    private fun deleteAllDoknotStatusOppgave() = runBlocking {
+        database.dbQuery {
+            deleteDoknotStatusOppgave()
         }
     }
 }

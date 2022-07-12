@@ -1,7 +1,10 @@
 package no.nav.personbruker.dittnav.eventhandler.innboks
 
+import no.nav.personbruker.dittnav.eventhandler.common.database.getListFromSeparatedString
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfo
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import java.sql.Connection
 import java.sql.ResultSet
@@ -10,6 +13,15 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
+private val baseSelectQuery = """
+    SELECT 
+        innboks.*,
+        dok_status.status as doknotifikasjon_status,
+        dok_status.kanaler as doknotifikasjon_kanaler
+    FROM innboks
+        LEFT JOIN DOKNOTIFIKASJON_STATUS_INNBOKS as dok_status on innboks.eventId = dok_status.eventId
+""".trimMargin()
+
 fun Connection.getInaktivInnboksForFodselsnummer(fodselsnummer: String): List<Innboks> =
         getInnboksForFodselsnummerByAktiv(fodselsnummer, false)
 
@@ -17,22 +29,7 @@ fun Connection.getAktivInnboksForFodselsnummer(fodselsnummer: String): List<Innb
         getInnboksForFodselsnummerByAktiv(fodselsnummer, true)
 
 private fun Connection.getInnboksForFodselsnummerByAktiv(fodselsnummer: String, aktiv: Boolean): List<Innboks> =
-    prepareStatement("""SELECT
-            |id,
-            |eventTidspunkt,
-            |fodselsnummer,
-            |eventId,
-            |grupperingsId,
-            |tekst,
-            |link,
-            |sikkerhetsnivaa,
-            |sistOppdatert,
-            |aktiv,
-            |systembruker,
-            |namespace,
-            |appnavn,
-            |forstBehandlet
-            |FROM innboks WHERE fodselsnummer = ? AND aktiv = ?""".trimMargin())
+    prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ? AND aktiv = ?""".trimMargin())
         .use {
             it.setString(1, fodselsnummer)
             it.setBoolean(2, aktiv)
@@ -42,22 +39,7 @@ private fun Connection.getInnboksForFodselsnummerByAktiv(fodselsnummer: String, 
         }
 
 fun Connection.getAllInnboksForFodselsnummer(fodselsnummer: String): List<Innboks> =
-        prepareStatement("""SELECT
-            |id,
-            |eventTidspunkt,
-            |fodselsnummer,
-            |eventId,
-            |grupperingsId,
-            |tekst,
-            |link,
-            |sikkerhetsnivaa,
-            |sistOppdatert,
-            |aktiv,
-            |systembruker,
-            |namespace,
-            |appnavn,
-            |forstBehandlet
-            |FROM innboks WHERE fodselsnummer = ?""".trimMargin())
+        prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ?""".trimMargin())
                 .use {
                     it.setString(1, fodselsnummer)
                     it.executeQuery().mapList {
@@ -66,22 +48,7 @@ fun Connection.getAllInnboksForFodselsnummer(fodselsnummer: String): List<Innbok
                 }
 
 fun Connection.getAllGroupedInnboksEventsByIds(fodselsnummer: String, grupperingsid: String, appnavn: String): List<Innboks> =
-        prepareStatement("""SELECT
-            |id,
-            |eventTidspunkt,
-            |fodselsnummer,
-            |eventId,
-            |grupperingsId,
-            |tekst,
-            |link,
-            |sikkerhetsnivaa,
-            |sistOppdatert,
-            |aktiv,
-            |systembruker,
-            |namespace,
-            |appnavn,
-            |forstBehandlet
-            |FROM innboks WHERE fodselsnummer = ? AND grupperingsid = ? AND appnavn = ?""".trimMargin())
+        prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ? AND grupperingsid = ? AND appnavn = ?""".trimMargin())
                 .use {
                     it.setString(1, fodselsnummer)
                     it.setString(2, grupperingsid)
@@ -93,21 +60,33 @@ fun Connection.getAllGroupedInnboksEventsByIds(fodselsnummer: String, gruppering
 
 private fun ResultSet.toInnboks(): Innboks {
     return Innboks(
-            id = getInt("id"),
-            produsent = getString("appnavn") ?: "",
-            systembruker = getString("systembruker"),
-            namespace = getString("namespace"),
-            appnavn = getString("appnavn"),
-            eventTidspunkt = ZonedDateTime.ofInstant(getUtcTimeStamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),
-            fodselsnummer = getString("fodselsnummer"),
-            eventId = getString("eventId"),
-            grupperingsId = getString("grupperingsId"),
-            tekst = getString("tekst"),
-            link = getString("link"),
-            sikkerhetsnivaa = getInt("sikkerhetsnivaa"),
-            sistOppdatert = ZonedDateTime.ofInstant(getUtcTimeStamp("sistOppdatert").toInstant(), ZoneId.of("Europe/Oslo")),
-            aktiv = getBoolean("aktiv"),
-            forstBehandlet = ZonedDateTime.ofInstant(getUtcTimeStamp("forstBehandlet").toInstant(), ZoneId.of("Europe/Oslo"))
+        id = getInt("id"),
+        produsent = getString("appnavn") ?: "",
+        systembruker = getString("systembruker"),
+        namespace = getString("namespace"),
+        appnavn = getString("appnavn"),
+        eventTidspunkt = ZonedDateTime.ofInstant(getUtcTimeStamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),
+        fodselsnummer = getString("fodselsnummer"),
+        eventId = getString("eventId"),
+        grupperingsId = getString("grupperingsId"),
+        tekst = getString("tekst"),
+        link = getString("link"),
+        sikkerhetsnivaa = getInt("sikkerhetsnivaa"),
+        sistOppdatert = ZonedDateTime.ofInstant(getUtcTimeStamp("sistOppdatert").toInstant(), ZoneId.of("Europe/Oslo")),
+        aktiv = getBoolean("aktiv"),
+        forstBehandlet = ZonedDateTime.ofInstant(getUtcTimeStamp("forstBehandlet").toInstant(), ZoneId.of("Europe/Oslo")),
+        eksternVarslingInfo = toEksternVarslingInfo()
+    )
+}
+
+private fun ResultSet.toEksternVarslingInfo(): EksternVarslingInfo {
+    val eksternVarslingSendt = getString("doknotifikasjon_status") == EksternVarslingStatus.OVERSENDT.name
+
+    return EksternVarslingInfo(
+        bestilt = getBoolean("eksternVarsling"),
+        prefererteKanaler = getListFromSeparatedString("prefererteKanaler"),
+        sendt = eksternVarslingSendt,
+        sendteKanaler = getListFromSeparatedString("doknotifikasjon_kanaler")
     )
 }
 
@@ -145,22 +124,7 @@ fun Connection.getRecentAktivInnboksForFodselsnummer(fodselsnummer: String, from
     getRecentInnboksForFodselsnummerByAktiv(fodselsnummer, true, fromDate)
 
 private fun Connection.getRecentInnboksForFodselsnummerByAktiv(fodselsnummer: String, aktiv: Boolean, fromDate: LocalDate): List<Innboks> =
-    prepareStatement("""SELECT
-            |id,
-            |eventTidspunkt,
-            |fodselsnummer,
-            |eventId,
-            |grupperingsId,
-            |tekst,
-            |link,
-            |sikkerhetsnivaa,
-            |sistOppdatert,
-            |aktiv,
-            |systembruker,
-            |namespace,
-            |appnavn,
-            |forstBehandlet
-            |FROM innboks WHERE fodselsnummer = ? AND aktiv = ? AND forstBehandlet > ?""".trimMargin())
+    prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ? AND aktiv = ? AND forstBehandlet > ?""".trimMargin())
         .use {
             it.setString(1, fodselsnummer)
             it.setBoolean(2, aktiv)
@@ -171,22 +135,7 @@ private fun Connection.getRecentInnboksForFodselsnummerByAktiv(fodselsnummer: St
         }
 
 fun Connection.getAllRecentInnboksForFodselsnummer(fodselsnummer: String, fromDate: LocalDate): List<Innboks> =
-    prepareStatement("""SELECT
-            |id,
-            |eventTidspunkt,
-            |fodselsnummer,
-            |eventId,
-            |grupperingsId,
-            |tekst,
-            |link,
-            |sikkerhetsnivaa,
-            |sistOppdatert,
-            |aktiv,
-            |systembruker,
-            |namespace,
-            |appnavn,
-            |forstBehandlet
-            |FROM innboks WHERE fodselsnummer = ?
+    prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ?
             |AND forstBehandlet > ?""".trimMargin())
         .use {
             it.setString(1, fodselsnummer)

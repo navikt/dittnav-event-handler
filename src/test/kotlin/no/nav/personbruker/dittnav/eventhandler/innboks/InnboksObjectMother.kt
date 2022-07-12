@@ -1,5 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.innboks
 
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfo
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
@@ -21,6 +22,12 @@ object InnboksObjectMother {
     val defaultLink = "https://nav.no/systemX/$defaultFodselsnummer"
     val defaultSistOppdatert = ZonedDateTime.now(ZoneId.of("Europe/Oslo"))
     val defaultSikkerhetsnivaa = 4
+    val defaultEksternVarslinginfo = EksternVarslingInfo(
+        bestilt = false,
+        prefererteKanaler = emptyList(),
+        sendt = false,
+        sendteKanaler = emptyList()
+    )
 
 
     fun createInnboks(
@@ -38,7 +45,8 @@ object InnboksObjectMother {
         tekst: String = defaultTekst,
         link: String = defaultLink,
         sistOppdatert: ZonedDateTime = defaultSistOppdatert,
-        sikkerhetsnivaa: Int = defaultSikkerhetsnivaa
+        sikkerhetsnivaa: Int = defaultSikkerhetsnivaa,
+        eksternVarslingInfo: EksternVarslingInfo = defaultEksternVarslinginfo
     ): Innboks {
         return Innboks(
             id = id,
@@ -55,7 +63,8 @@ object InnboksObjectMother {
             link = link,
             sistOppdatert = sistOppdatert,
             sikkerhetsnivaa = sikkerhetsnivaa,
-            aktiv = aktiv
+            aktiv = aktiv,
+            eksternVarslingInfo = eksternVarslingInfo
         )
     }
 }

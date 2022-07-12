@@ -42,3 +42,12 @@ fun ResultSet.getUtcTimeStamp(label: String): Timestamp = getTimestamp(label, Ca
 
 fun ResultSet.getNullableUtcTimeStamp(label: String): Timestamp? = getTimestamp(label, Calendar.getInstance())
 
+fun ResultSet.getListFromSeparatedString(columnLabel: String, separator: String = ","): List<String> {
+    val stringValue = getString(columnLabel)
+    return if(stringValue.isNullOrEmpty()) {
+        emptyList()
+    }
+    else {
+        stringValue.split(separator)
+    }
+}

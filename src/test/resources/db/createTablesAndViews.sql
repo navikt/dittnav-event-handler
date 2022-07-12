@@ -1,46 +1,48 @@
 create table if not exists beskjed
 (
-  id serial not null
-    constraint beskjed_pkey
-    primary key,
-  systembruker    varchar(100),
-  eventtidspunkt  timestamp,
-  fodselsnummer   varchar(50),
-  eventid         varchar(50),
-  grupperingsid   varchar(100),
-  tekst           varchar(500),
-  link            varchar(200),
-  sikkerhetsnivaa integer,
-  sistoppdatert   timestamp,
-  aktiv           boolean,
-  synligfremtil   timestamp,
-  uid             varchar(100),
-  namespace       varchar(100),
-  appnavn         varchar(100),
-  forstbehandlet  timestamp,
-  constraint beskjedeventidprodusent
-  unique (eventid, systembruker)
+    id serial not null
+        constraint beskjed_pkey primary key,
+    systembruker        varchar(100),
+    eventtidspunkt      timestamp,
+    fodselsnummer       varchar(50),
+    eventid             varchar(50) unique,
+    grupperingsid       varchar(100),
+    tekst               varchar(500),
+    link                varchar(200),
+    sikkerhetsnivaa     integer,
+    sistoppdatert       timestamp,
+    aktiv               boolean,
+    synligfremtil       timestamp,
+    uid                 varchar(100),
+    namespace           varchar(100),
+    appnavn             varchar(100),
+    forstbehandlet      timestamp,
+    eksternVarsling     boolean,
+    prefererteKanaler   varchar(100),
+    constraint beskjedeventidprodusent
+    unique (eventid, systembruker)
 );
 
 create table if not exists oppgave
 (
-  id serial not null
-    constraint oppgave_pkey
-    primary key,
-  systembruker    varchar(100),
-  eventtidspunkt  timestamp,
-  fodselsnummer   varchar(50),
-  eventid         varchar(50),
-  grupperingsid   varchar(100),
-  tekst           varchar(500),
-  link            varchar(200),
-  sikkerhetsnivaa integer,
-  sistoppdatert   timestamp,
-  aktiv           boolean,
-  synligfremtil   timestamp,
-  namespace       varchar(100),
-  appnavn         varchar(100),
-  forstbehandlet  timestamp,
+    id serial not null
+        constraint oppgave_pkey primary key,
+    systembruker        varchar(100),
+    eventtidspunkt      timestamp,
+    fodselsnummer       varchar(50),
+    eventid             varchar(50) unique,
+    grupperingsid       varchar(100),
+    tekst               varchar(500),
+    link                varchar(200),
+    sikkerhetsnivaa     integer,
+    sistoppdatert       timestamp,
+    aktiv               boolean,
+    synligfremtil       timestamp,
+    namespace           varchar(100),
+    appnavn             varchar(100),
+    forstbehandlet      timestamp,
+    eksternVarsling     boolean,
+    prefererteKanaler   varchar(100),
   constraint oppgaveeventidprodusent
   unique (eventid, systembruker)
 );
@@ -48,12 +50,11 @@ create table if not exists oppgave
 create table if not exists innboks
 (
   id serial not null
-    constraint innboks_pkey
-    primary key,
+    constraint innboks_pkey primary key,
   systembruker    varchar(100),
   eventtidspunkt  timestamp,
   fodselsnummer   varchar(50),
-  eventid         varchar(50),
+  eventid         varchar(50) unique,
   grupperingsid   varchar(100),
   tekst           varchar(500),
   link            varchar(200),
@@ -63,6 +64,8 @@ create table if not exists innboks
   namespace       varchar(100),
   appnavn         varchar(100),
   forstbehandlet  timestamp,
+  eksternVarsling     boolean,
+  prefererteKanaler   varchar(100),
   constraint innbokseventidprodusent
   unique (eventid, systembruker)
 );
@@ -110,4 +113,37 @@ CREATE TABLE IF NOT EXISTS statusoppdatering (
     forstbehandlet timestamp,
     constraint statusoppdateringeventidprodusent
     unique (eventid, systembruker)
+);
+
+CREATE TABLE doknotifikasjon_status_beskjed (
+    eventId                 VARCHAR(50) UNIQUE,
+    status                  TEXT,
+    melding                 TEXT,
+    distribusjonsId         BIGINT,
+    tidspunkt               TIMESTAMP WITHOUT TIME ZONE,
+    kanaler                 TEXT,
+    antall_oppdateringer    SMALLINT,
+    constraint fk_dokstatus_beskjed_eventid FOREIGN KEY(eventId) REFERENCES beskjed(eventId)
+);
+
+CREATE TABLE doknotifikasjon_status_oppgave (
+    eventId                 VARCHAR(50) UNIQUE,
+    status                  TEXT,
+    melding                 TEXT,
+    distribusjonsId         BIGINT,
+    tidspunkt               TIMESTAMP WITHOUT TIME ZONE,
+    kanaler                 TEXT,
+    antall_oppdateringer    SMALLINT,
+    constraint fk_dokstatus_oppgave_eventid FOREIGN KEY(eventId) REFERENCES oppgave(eventId)
+);
+
+CREATE TABLE doknotifikasjon_status_innboks (
+    eventId                 VARCHAR(50) UNIQUE,
+    status                  TEXT,
+    melding                 TEXT,
+    distribusjonsId         BIGINT,
+    tidspunkt               TIMESTAMP WITHOUT TIME ZONE,
+    kanaler                 TEXT,
+    antall_oppdateringer    SMALLINT,
+    constraint fk_dokstatus_innboks_eventid FOREIGN KEY(eventId) REFERENCES innboks(eventId)
 );

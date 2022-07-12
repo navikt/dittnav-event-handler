@@ -10,5 +10,7 @@ fun Innboks.toDTO() = InnboksDTO(
     sikkerhetsnivaa = sikkerhetsnivaa,
     sistOppdatert = sistOppdatert,
     aktiv = aktiv,
-    forstBehandlet = forstBehandlet
+    forstBehandlet = forstBehandlet,
+    eksternVarslingSendt = eksternVarslingInfo.sendt,
+    eksternVarslingkanaler = eksternVarslingInfo.sendteKanaler
 )

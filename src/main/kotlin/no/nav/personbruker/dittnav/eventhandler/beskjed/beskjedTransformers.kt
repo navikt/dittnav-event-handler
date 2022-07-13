@@ -14,5 +14,5 @@ fun Beskjed.toDTO() = BeskjedDTO(
     aktiv = aktiv,
     forstBehandlet = forstBehandlet,
     eksternVarslingSendt = eksternVarslingInfo.sendt,
-    eksternVarslingkanaler = eksternVarslingInfo.sendteKanaler
+    eksternVarslingKanaler = eksternVarslingInfo.sendteKanaler
 )

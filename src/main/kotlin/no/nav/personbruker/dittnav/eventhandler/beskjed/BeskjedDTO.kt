@@ -19,5 +19,5 @@ data class BeskjedDTO(
     val link: String,
     val aktiv: Boolean,
     val eksternVarslingSendt: Boolean,
-    val eksternVarslingkanaler: List<String>
+    val eksternVarslingKanaler: List<String>
 )

@@ -12,5 +12,5 @@ fun Innboks.toDTO() = InnboksDTO(
     aktiv = aktiv,
     forstBehandlet = forstBehandlet,
     eksternVarslingSendt = eksternVarslingInfo.sendt,
-    eksternVarslingkanaler = eksternVarslingInfo.sendteKanaler
+    eksternVarslingKanaler = eksternVarslingInfo.sendteKanaler
 )

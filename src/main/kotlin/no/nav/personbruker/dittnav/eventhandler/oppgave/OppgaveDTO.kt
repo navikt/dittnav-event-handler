@@ -19,6 +19,6 @@ data class OppgaveDTO(
     val link: String,
     val aktiv: Boolean,
     val eksternVarslingSendt: Boolean,
-    val eksternVarslingkanaler: List<String>
+    val eksternVarslingKanaler: List<String>
 )
 

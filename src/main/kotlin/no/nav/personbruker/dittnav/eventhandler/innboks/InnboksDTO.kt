@@ -19,5 +19,5 @@ data class InnboksDTO(
     val sistOppdatert: ZonedDateTime,
     val aktiv: Boolean,
     val eksternVarslingSendt: Boolean,
-    val eksternVarslingkanaler: List<String>
+    val eksternVarslingKanaler: List<String>
 )

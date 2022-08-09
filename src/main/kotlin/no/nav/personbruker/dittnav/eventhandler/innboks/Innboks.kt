@@ -1,5 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.innboks
 
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfo
 import java.time.ZonedDateTime
 
 data class Innboks(
@@ -17,7 +18,8 @@ data class Innboks(
         val link: String,
         val sikkerhetsnivaa: Int,
         val sistOppdatert: ZonedDateTime,
-        val aktiv: Boolean
+        val aktiv: Boolean,
+        val eksternVarslingInfo: EksternVarslingInfo
 ) {
     override fun toString(): String {
         return "Innboks(" +

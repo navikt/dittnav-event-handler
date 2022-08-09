@@ -2,15 +2,15 @@ package no.nav.personbruker.dittnav.eventhandler.beskjed
 
 import Beskjed
 import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
 import no.nav.personbruker.dittnav.eventhandler.common.findCountFor
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.*
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus.OVERSENDT
+import org.junit.jupiter.api.*
 import java.time.LocalDate
 import java.time.ZonedDateTime
 
@@ -36,8 +36,21 @@ class BeskjedQueriesTest {
         aktiv = true,
         systembruker = systembruker,
         namespace = namespace,
-        appnavn = appnavn
+        appnavn = appnavn,
+        eksternVarslingInfo = EksternVarslingInfoObjectMother.createEskternVarslingInfo(
+            bestilt = true,
+            prefererteKanaler = listOf("SMS", "EPOST")
+        )
     )
+
+    val doknotStatusForBeskjed1 = DoknotifikasjonStatusDto(
+        eventId = beskjed1.eventId,
+        status = OVERSENDT.name,
+        melding = "melding",
+        distribusjonsId = 123L,
+        kanaler = "SMS"
+    )
+
     private val beskjed2 = BeskjedObjectMother.createBeskjed(
         id = 2,
         eventId = eventId,
@@ -48,8 +61,21 @@ class BeskjedQueriesTest {
         aktiv = true,
         systembruker = systembruker,
         namespace = namespace,
-        appnavn = appnavn
+        appnavn = appnavn,
+        eksternVarslingInfo = EksternVarslingInfoObjectMother.createEskternVarslingInfo(
+            bestilt = true,
+            prefererteKanaler = listOf("SMS", "EPOST")
+        )
     )
+
+    val doknotStatusForBeskjed2 = DoknotifikasjonStatusDto(
+        eventId = beskjed2.eventId,
+        status = EksternVarslingStatus.FEILET.name,
+        melding = "feilet",
+        distribusjonsId = null,
+        kanaler = ""
+    )
+
     private val beskjed3 = BeskjedObjectMother.createBeskjed(
         id = 3,
         eventId = "567",
@@ -77,10 +103,12 @@ class BeskjedQueriesTest {
     @BeforeAll
     fun `populer testdata`() {
         createBeskjed(listOf(beskjed1, beskjed2, beskjed3, beskjed4))
+        createDoknotStatuses(listOf(doknotStatusForBeskjed1, doknotStatusForBeskjed2))
     }
 
     @AfterAll
     fun `slett testdata`() {
+        deleteAllDoknotStatusBeskjed()
         deleteBeskjed(listOf(beskjed1, beskjed2, beskjed3, beskjed4))
     }
 
@@ -267,6 +295,48 @@ class BeskjedQueriesTest {
         }
     }
 
+    @Test
+    fun `Returnerer riktig info om ekstern varsling dersom status er mottat og oversendt`() = runBlocking {
+        val beskjed = database.dbQuery {
+            getBeskjedByIds(beskjed1.fodselsnummer, beskjed1.eventId)
+        }.first()
+
+        val eksternVarslingInfo = beskjed.eksternVarslingInfo
+
+        eksternVarslingInfo.bestilt shouldBe beskjed1.eksternVarslingInfo.bestilt
+        eksternVarslingInfo.prefererteKanaler shouldContainAll  beskjed1.eksternVarslingInfo.prefererteKanaler
+        eksternVarslingInfo.sendt shouldBe true
+        eksternVarslingInfo.sendteKanaler shouldContain doknotStatusForBeskjed1.kanaler
+    }
+
+    @Test
+    fun `Returnerer riktig info om ekstern varsling dersom status er mottat og feilet`() = runBlocking {
+        val beskjed = database.dbQuery {
+            getBeskjedByIds(beskjed2.fodselsnummer, beskjed2.eventId)
+        }.first()
+
+        val eksternVarslingInfo = beskjed.eksternVarslingInfo
+
+        eksternVarslingInfo.bestilt shouldBe beskjed2.eksternVarslingInfo.bestilt
+        eksternVarslingInfo.prefererteKanaler shouldContainAll  beskjed2.eksternVarslingInfo.prefererteKanaler
+        eksternVarslingInfo.sendt shouldBe false
+        eksternVarslingInfo.sendteKanaler.isEmpty() shouldBe true
+    }
+
+    @Test
+    fun `Returnerer riktig info om ekstern varsling dersom status ikke er mottatt`() = runBlocking {
+        val beskjed = database.dbQuery {
+            getBeskjedByIds(beskjed3.fodselsnummer, beskjed3.eventId)
+        }.first()
+
+        val eksternVarslingInfo = beskjed.eksternVarslingInfo
+
+        eksternVarslingInfo.bestilt shouldBe beskjed3.eksternVarslingInfo.bestilt
+        eksternVarslingInfo.prefererteKanaler shouldContainAll  beskjed3.eksternVarslingInfo.prefererteKanaler
+        eksternVarslingInfo.sendt shouldBe false
+        eksternVarslingInfo.sendteKanaler.isEmpty() shouldBe true
+    }
+
     private fun createBeskjed(beskjeder: List<Beskjed>) {
         runBlocking {
             database.dbQuery { createBeskjed(beskjeder) }
@@ -276,6 +346,20 @@ class BeskjedQueriesTest {
     private fun deleteBeskjed(beskjeder: List<Beskjed>) {
         runBlocking {
             database.dbQuery { deleteBeskjed(beskjeder) }
+        }
+    }
+
+    private fun createDoknotStatuses(statuses: List<DoknotifikasjonStatusDto>) = runBlocking {
+        database.dbQuery {
+            statuses.forEach { status ->
+                createDoknotStatusBeskjed(status)
+            }
+        }
+    }
+
+    private fun deleteAllDoknotStatusBeskjed() = runBlocking {
+        database.dbQuery {
+            deleteDoknotStatusBeskjed()
         }
     }
 }

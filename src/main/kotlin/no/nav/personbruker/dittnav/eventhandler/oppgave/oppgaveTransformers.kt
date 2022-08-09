@@ -10,5 +10,7 @@ fun Oppgave.toDTO() = OppgaveDTO(
     tekst = tekst,
     link = link,
     aktiv = aktiv,
-    forstBehandlet = forstBehandlet
+    forstBehandlet = forstBehandlet,
+    eksternVarslingSendt = eksternVarslingInfo.sendt,
+    eksternVarslingKanaler = eksternVarslingInfo.sendteKanaler
 )

@@ -4,8 +4,8 @@ import java.sql.Connection
 import java.sql.Types
 
 fun Connection.createInnboks(innbokser: List<Innboks>) =
-        prepareStatement("""INSERT INTO innboks(id, systembruker, eventTidspunkt, fodselsnummer, eventId, grupperingsId, tekst, link, sikkerhetsnivaa, sistOppdatert, aktiv, namespace, appnavn, forstBehandlet)
-            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""")
+        prepareStatement("""INSERT INTO innboks(id, systembruker, eventTidspunkt, fodselsnummer, eventId, grupperingsId, tekst, link, sikkerhetsnivaa, sistOppdatert, aktiv, namespace, appnavn, forstBehandlet, eksternVarsling, prefererteKanaler)
+            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""")
                 .use {
                     innbokser.forEach { innboks ->
                         run {
@@ -23,6 +23,8 @@ fun Connection.createInnboks(innbokser: List<Innboks>) =
                             it.setString(12, innboks.namespace)
                             it.setString(13, innboks.appnavn)
                             it.setObject(14, innboks.forstBehandlet.toLocalDateTime(), Types.TIMESTAMP)
+                            it.setObject(15, innboks.eksternVarslingInfo.bestilt)
+                            it.setObject(16, innboks.eksternVarslingInfo.prefererteKanaler.joinToString(","))
                             it.addBatch()
                         }
                     }

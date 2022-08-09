@@ -5,8 +5,8 @@ import java.sql.Connection
 import java.sql.Types
 
 fun Connection.createBeskjed(beskjeder: List<Beskjed>) =
-        prepareStatement("""INSERT INTO beskjed(id, systembruker, eventTidspunkt, fodselsnummer, eventId, grupperingsId, tekst, link, sikkerhetsnivaa, sistOppdatert, aktiv, synligFremTil, namespace, appnavn, forstBehandlet)
-            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""")
+        prepareStatement("""INSERT INTO beskjed(id, systembruker, eventTidspunkt, fodselsnummer, eventId, grupperingsId, tekst, link, sikkerhetsnivaa, sistOppdatert, aktiv, synligFremTil, namespace, appnavn, forstBehandlet, eksternVarsling, prefererteKanaler)
+            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""")
                 .use {
                     beskjeder.forEach { beskjed ->
                         run {
@@ -25,6 +25,8 @@ fun Connection.createBeskjed(beskjeder: List<Beskjed>) =
                             it.setString(13, beskjed.namespace)
                             it.setString(14, beskjed.appnavn)
                             it.setObject(15, beskjed.forstBehandlet.toLocalDateTime(), Types.TIMESTAMP)
+                            it.setBoolean(16, beskjed.eksternVarslingInfo.bestilt)
+                            it.setString(17, beskjed.eksternVarslingInfo.prefererteKanaler.joinToString(","))
                             it.addBatch()
                         }
                     }

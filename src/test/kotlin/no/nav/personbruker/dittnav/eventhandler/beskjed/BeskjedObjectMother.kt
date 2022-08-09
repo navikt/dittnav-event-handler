@@ -1,6 +1,9 @@
 package no.nav.personbruker.dittnav.eventhandler.beskjed
 
 import Beskjed
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfo
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfoObjectMother
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfoObjectMother.createEskternVarslingInfo
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
@@ -23,6 +26,7 @@ object BeskjedObjectMother {
     val defaultLink = "https://nav.no/systemX/$defaultFodselsnummer"
     val defaultSistOppdatert = ZonedDateTime.now(ZoneId.of("Europe/Oslo"))
     val defaultSikkerhetsnivaa = 4
+    val defaultEksternVarslinginfo = createEskternVarslingInfo()
 
     fun createBeskjed(
         id: Int = ++idIncrementor,
@@ -40,7 +44,8 @@ object BeskjedObjectMother {
         tekst: String = defaultTekst,
         link: String = defaultLink,
         sistOppdatert: ZonedDateTime = defaultSistOppdatert,
-        sikkerhetsnivaa: Int = defaultSikkerhetsnivaa
+        sikkerhetsnivaa: Int = defaultSikkerhetsnivaa,
+        eksternVarslingInfo: EksternVarslingInfo = defaultEksternVarslinginfo
     ): Beskjed {
         return Beskjed(
             id = id,
@@ -58,7 +63,8 @@ object BeskjedObjectMother {
             sistOppdatert = sistOppdatert,
             synligFremTil = synligFremTil,
             sikkerhetsnivaa = sikkerhetsnivaa,
-            aktiv = aktiv
+            aktiv = aktiv,
+            eksternVarslingInfo = eksternVarslingInfo
         )
     }
 }

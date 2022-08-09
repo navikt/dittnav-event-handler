@@ -1,5 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfo
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
@@ -21,6 +22,12 @@ object OppgaveObjectMother {
     val defaultLink = "https://nav.no/systemX/$defaultFodselsnummer"
     val defaultSistOppdatert = ZonedDateTime.now(ZoneId.of("Europe/Oslo"))
     val defaultSikkerhetsnivaa = 4
+    val defaultEksternVarslinginfo = EksternVarslingInfo(
+        bestilt = false,
+        prefererteKanaler = emptyList(),
+        sendt = false,
+        sendteKanaler = emptyList()
+    )
 
     fun createOppgave(
         id: Int = ++idIncrementor,
@@ -37,7 +44,8 @@ object OppgaveObjectMother {
         sistOppdatert: ZonedDateTime = defaultSistOppdatert,
         tekst: String = defaultTekst,
         link: String = defaultLink,
-        sikkerhetsnivaa: Int = defaultSikkerhetsnivaa
+        sikkerhetsnivaa: Int = defaultSikkerhetsnivaa,
+        eksternVarslingInfo: EksternVarslingInfo = defaultEksternVarslinginfo
     ): Oppgave {
         return Oppgave(
             id = id,
@@ -54,7 +62,8 @@ object OppgaveObjectMother {
             sistOppdatert = sistOppdatert,
             tekst = tekst,
             link = link,
-            aktiv = aktiv
+            aktiv = aktiv,
+            eksternVarslingInfo = eksternVarslingInfo
         )
     }
 }

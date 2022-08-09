@@ -1,3 +1,4 @@
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfo
 import java.time.ZonedDateTime
 
 data class Beskjed(
@@ -16,7 +17,8 @@ data class Beskjed(
         val synligFremTil: ZonedDateTime?,
         val tekst: String,
         val link: String,
-        val aktiv: Boolean
+        val aktiv: Boolean,
+        val eksternVarslingInfo: EksternVarslingInfo
 ) {
     override fun toString(): String {
         return "Beskjed(" +

@@ -93,28 +93,6 @@ CREATE OR REPLACE VIEW brukernotifikasjon_view as
   SELECT innboks.eventid, innboks.systembruker, 'innboks' :: text AS type, innboks.fodselsnummer, innboks.aktiv
   FROM innboks;
 
-CREATE TABLE IF NOT EXISTS statusoppdatering (
-    id serial not null
-    constraint statusoppdatering_pkey
-    primary key,
-    systembruker varchar(100),
-    eventtidspunkt timestamp,
-    fodselsnummer varchar(50),
-    eventid varchar(50),
-    grupperingsid varchar(100),
-    link varchar(200),
-    sikkerhetsnivaa integer,
-    sistoppdatert timestamp,
-    statusglobal varchar(100),
-    statusintern varchar(100),
-    sakstema varchar(100),
-    namespace varchar(100),
-    appnavn varchar(100),
-    forstbehandlet timestamp,
-    constraint statusoppdateringeventidprodusent
-    unique (eventid, systembruker)
-);
-
 CREATE TABLE doknotifikasjon_status_beskjed (
     eventId                 VARCHAR(50) UNIQUE,
     status                  TEXT,

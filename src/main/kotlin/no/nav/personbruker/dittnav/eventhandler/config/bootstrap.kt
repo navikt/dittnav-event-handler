@@ -1,11 +1,17 @@
 package no.nav.personbruker.dittnav.eventhandler.config
 
-import io.ktor.application.*
-import io.ktor.auth.*
-import io.ktor.features.*
-import io.ktor.routing.*
-import io.ktor.serialization.*
-import io.ktor.util.pipeline.*
+import io.ktor.application.Application
+import io.ktor.application.ApplicationCall
+import io.ktor.application.ApplicationStopPreparing
+import io.ktor.application.call
+import io.ktor.application.install
+import io.ktor.auth.authenticate
+import io.ktor.features.ContentNegotiation
+import io.ktor.features.DefaultHeaders
+import io.ktor.routing.route
+import io.ktor.routing.routing
+import io.ktor.serialization.json
+import io.ktor.util.pipeline.PipelineContext
 import io.prometheus.client.hotspot.DefaultExports
 import no.nav.personbruker.dittnav.common.util.config.StringEnvVar
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService
@@ -28,9 +34,6 @@ import no.nav.personbruker.dittnav.eventhandler.oppgave.oppgaveApi
 import no.nav.personbruker.dittnav.eventhandler.oppgave.oppgaveSystemClientApi
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventStatisticsService
 import no.nav.personbruker.dittnav.eventhandler.statistics.statisticsSystemClientApi
-import no.nav.personbruker.dittnav.eventhandler.statusoppdatering.StatusoppdateringEventService
-import no.nav.personbruker.dittnav.eventhandler.statusoppdatering.statusoppdateringApi
-import no.nav.personbruker.dittnav.eventhandler.statusoppdatering.statusoppdateringSystemClientApi
 import no.nav.tms.token.support.authentication.installer.installAuthenticators
 import no.nav.tms.token.support.azure.validation.AzureAuthenticator
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
@@ -42,7 +45,6 @@ fun Application.eventHandlerApi(
     oppgaveEventService: OppgaveEventService,
     innboksEventService: InnboksEventService,
     doneEventService: DoneEventService,
-    statusoppdateringEventService: StatusoppdateringEventService,
     eventRepository: EventRepository,
     eventStatisticsService: EventStatisticsService,
     database: Database,
@@ -67,7 +69,6 @@ fun Application.eventHandlerApi(
                 beskjedApi(beskjedEventService)
                 innboksApi(innboksEventService)
                 oppgaveApi(oppgaveEventService)
-                statusoppdateringApi(statusoppdateringEventService)
                 eventApi(eventRepository)
             }
             authenticate(AzureAuthenticator.name) {
@@ -75,7 +76,6 @@ fun Application.eventHandlerApi(
                 beskjedSystemClientApi(beskjedEventService)
                 innboksSystemClientApi(innboksEventService)
                 oppgaveSystemClientApi(oppgaveEventService)
-                statusoppdateringSystemClientApi(statusoppdateringEventService)
 
                 statisticsSystemClientApi(eventStatisticsService)
             }

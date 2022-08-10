@@ -22,7 +22,6 @@ class LocalPostgresDatabase private constructor() : Database {
                     prepareStatement("delete from beskjed").execute()
                     prepareStatement("delete from oppgave").execute()
                     prepareStatement("delete from innboks").execute()
-                    prepareStatement("delete from statusoppdatering").execute()
                     prepareStatement("delete from done").execute()
                 }
             }

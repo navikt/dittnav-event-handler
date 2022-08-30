@@ -7,37 +7,23 @@ import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 import java.sql.Connection
 
-class OppgaveEventService(private val database: Database,
-                          private val filterOldEvents: Boolean,
-                          private val filterThresholdDays: Int) {
+class OppgaveEventService(private val database: Database) {
 
     suspend fun getActiveEventsForFodselsnummer(fodselsnummer: String): List<OppgaveDTO> {
         return getEvents {
-            if (filterOldEvents) {
-                getRecentAktivOppgaveForFodselsnummer(fodselsnummer, daysAgo(filterThresholdDays))
-            } else {
-                getAktivOppgaveForFodselsnummer(fodselsnummer)
-            }
+            getAktivOppgaveForFodselsnummer(fodselsnummer)
         }.map { oppgave -> oppgave.toDTO() }
     }
 
     suspend fun getInactiveEventsForFodselsnummer(fodselsnummer: String): List<OppgaveDTO> {
         return getEvents {
-            if (filterOldEvents) {
-                getRecentInaktivOppgaveForFodselsnummer(fodselsnummer, daysAgo(filterThresholdDays))
-            } else {
-                getInaktivOppgaveForFodselsnummer(fodselsnummer)
-            }
+            getInaktivOppgaveForFodselsnummer(fodselsnummer)
         }.map { oppgave -> oppgave.toDTO() }
     }
 
     suspend fun getAllEventsForFodselsnummer(fodselsnummer: String): List<OppgaveDTO> {
         return getEvents {
-            if (filterOldEvents) {
-                getAllRecentOppgaveForFodselsnummer(fodselsnummer, daysAgo(filterThresholdDays))
-            } else {
-                getAllOppgaveForFodselsnummer(fodselsnummer)
-            }
+            getAllOppgaveForFodselsnummer(fodselsnummer)
         }.map { oppgave -> oppgave.toDTO() }
     }
 

@@ -23,7 +23,7 @@ import java.time.ZonedDateTime
 class BeskjedEventServiceTest {
 
     private val database = mockk<Database>()
-    private val beskjedEventService = BeskjedEventService(database, false, 0)
+    private val beskjedEventService = BeskjedEventService(database)
     private val bruker = TokenXUserObjectMother.createInnloggetBruker("123")
     private val produsent = "dittnav"
     private val grupperingsid = "100${bruker.ident}"

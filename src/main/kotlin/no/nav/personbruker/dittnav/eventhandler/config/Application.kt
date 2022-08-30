@@ -25,9 +25,9 @@ fun main() {
 
     val database: Database = PostgresDatabase(environment)
 
-    val beskjedEventService = BeskjedEventService(database, environment.filterOldEvents, environment.filterThresholdDays)
-    val oppgaveEventService = OppgaveEventService(database, environment.filterOldEvents, environment.filterThresholdDays)
-    val innboksEventService = InnboksEventService(database, environment.filterOldEvents, environment.filterThresholdDays)
+    val beskjedEventService = BeskjedEventService(database)
+    val oppgaveEventService = OppgaveEventService(database)
+    val innboksEventService = InnboksEventService(database)
     val doneEventService = DoneEventService(database, doneProducer)
     val eventStatisticsService = EventStatisticsService(database)
     val eventRepository = EventRepository(database)

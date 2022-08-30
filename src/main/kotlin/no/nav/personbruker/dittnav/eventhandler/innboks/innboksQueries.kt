@@ -8,8 +8,6 @@ import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingS
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import java.sql.Connection
 import java.sql.ResultSet
-import java.sql.Types
-import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
@@ -116,31 +114,3 @@ fun Connection.getAllGroupedInnboksEventsByProducer(): List<EventCountForProduce
             }
         }
 }
-
-fun Connection.getRecentInaktivInnboksForFodselsnummer(fodselsnummer: String, fromDate: LocalDate): List<Innboks> =
-    getRecentInnboksForFodselsnummerByAktiv(fodselsnummer, false, fromDate)
-
-fun Connection.getRecentAktivInnboksForFodselsnummer(fodselsnummer: String, fromDate: LocalDate): List<Innboks> =
-    getRecentInnboksForFodselsnummerByAktiv(fodselsnummer, true, fromDate)
-
-private fun Connection.getRecentInnboksForFodselsnummerByAktiv(fodselsnummer: String, aktiv: Boolean, fromDate: LocalDate): List<Innboks> =
-    prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ? AND aktiv = ? AND forstBehandlet > ?""".trimMargin())
-        .use {
-            it.setString(1, fodselsnummer)
-            it.setBoolean(2, aktiv)
-            it.setObject(3, fromDate)
-            it.executeQuery().mapList {
-                toInnboks()
-            }
-        }
-
-fun Connection.getAllRecentInnboksForFodselsnummer(fodselsnummer: String, fromDate: LocalDate): List<Innboks> =
-    prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ?
-            |AND forstBehandlet > ?""".trimMargin())
-        .use {
-            it.setString(1, fodselsnummer)
-            it.setObject(2, fromDate, Types.TIMESTAMP)
-            it.executeQuery().mapList {
-                toInnboks()
-            }
-        }

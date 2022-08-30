@@ -8,39 +8,23 @@ import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 import org.slf4j.LoggerFactory
 import java.sql.Connection
 
-class InnboksEventService(private val database: Database,
-                          private val filterOldEvents: Boolean,
-                          private val filterThresholdDays: Int) {
-
-    private val log = LoggerFactory.getLogger(InnboksEventService::class.java)
+class InnboksEventService(private val database: Database) {
 
     suspend fun getActiveEventsForFodselsnummer(fodselsnummer: String): List<InnboksDTO> {
         return getEvents {
-            if (filterOldEvents) {
-                getRecentAktivInnboksForFodselsnummer(fodselsnummer, daysAgo(filterThresholdDays))
-            } else {
-                getAktivInnboksForFodselsnummer(fodselsnummer)
-            }
+            getAktivInnboksForFodselsnummer(fodselsnummer)
         }.map { innboks -> innboks.toDTO() }
     }
 
     suspend fun getInactiveEventsForFodselsnummer(fodselsnummer: String): List<InnboksDTO> {
         return getEvents {
-            if (filterOldEvents) {
-                getRecentInaktivInnboksForFodselsnummer(fodselsnummer, daysAgo(filterThresholdDays))
-            } else {
-                getInaktivInnboksForFodselsnummer(fodselsnummer)
-            }
+            getInaktivInnboksForFodselsnummer(fodselsnummer)
         }.map { innboks -> innboks.toDTO() }
     }
 
     suspend fun getAllEventsForFodselsnummer(fodselsnummer: String): List<InnboksDTO> {
         return getEvents {
-            if (filterOldEvents) {
-                getAllRecentInnboksForFodselsnummer(fodselsnummer, daysAgo(filterThresholdDays))
-            } else {
-                getAllInnboksForFodselsnummer(fodselsnummer)
-            }
+            getAllInnboksForFodselsnummer(fodselsnummer)
         }.map { innboks -> innboks.toDTO() }
     }
 

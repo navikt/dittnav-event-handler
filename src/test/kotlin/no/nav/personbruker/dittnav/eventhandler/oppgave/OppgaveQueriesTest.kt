@@ -221,43 +221,6 @@ class OppgaveQueriesTest {
         }
     }
 
-
-    @Test
-    fun `Returnerer kun eventer der forstBehandlet er nyere enn bestemt dato for aktive eventer`() {
-        runBlocking {
-            val recentEventsForFnr = database.dbQuery {
-                getRecentAktivOppgaveForFodselsnummer(fodselsnummer, LocalDate.now().minusDays(10))
-            }
-
-            recentEventsForFnr.size shouldBe 2
-            recentEventsForFnr.map { it.id } shouldContainAll listOf(1, 2)
-        }
-    }
-
-    @Test
-    fun `Returnerer kun eventer der forstBehandlet er nyere enn bestemt dato for inaktive eventer`() {
-        runBlocking {
-            val recentEventsForFnr = database.dbQuery {
-                getRecentInaktivOppgaveForFodselsnummer(fodselsnummer, LocalDate.now().minusDays(10))
-            }
-
-            recentEventsForFnr.size shouldBe 0
-        }
-    }
-
-    @Test
-    fun `Returnerer kun eventer der forstBehandlet er nyere enn bestemt dato for alle eventer`() {
-        runBlocking {
-            val recentEventsForFnr = database.dbQuery {
-                getAllRecentOppgaveForFodselsnummer(fodselsnummer, LocalDate.now().minusDays(20))
-            }
-
-            recentEventsForFnr.size shouldBe 3
-            recentEventsForFnr.map { it.id } shouldContainAll listOf(1,2,3)
-        }
-    }
-
-
     @Test
     fun `Returnerer riktig info om ekstern varsling dersom status er mottat og oversendt`() = runBlocking {
         val oppgave = database.dbQuery {

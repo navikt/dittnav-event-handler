@@ -261,41 +261,6 @@ class BeskjedQueriesTest {
     }
 
     @Test
-    fun `Returnerer kun eventer der forstBehandlet er nyere enn bestemt dato for aktive eventer`() {
-        runBlocking {
-            val recentEventsForFnr = database.dbQuery {
-                getRecentAktivBeskjedForFodselsnummer(fodselsnummer, LocalDate.now().minusDays(10))
-            }
-
-            recentEventsForFnr.size shouldBe 2
-            recentEventsForFnr.map { it.id } shouldContainAll listOf(1, 2)
-        }
-    }
-
-    @Test
-    fun `Returnerer kun eventer der forstBehandlet er nyere enn bestemt dato for inaktive eventer`() {
-        runBlocking {
-            val recentEventsForFnr = database.dbQuery {
-                getRecentInaktivBeskjedForFodselsnummer(fodselsnummer, LocalDate.now().minusDays(10))
-            }
-
-            recentEventsForFnr.size shouldBe 0
-        }
-    }
-
-    @Test
-    fun `Returnerer kun eventer der forstBehandlet er nyere enn bestemt dato for alle eventer`() {
-        runBlocking {
-            val recentEventsForFnr = database.dbQuery {
-                getAllRecentBeskjedForFodselsnummer(fodselsnummer, LocalDate.now().minusDays(20))
-            }
-
-            recentEventsForFnr.size shouldBe 3
-            recentEventsForFnr.map { it.id } shouldContainAll listOf(1,2,3)
-        }
-    }
-
-    @Test
     fun `Returnerer riktig info om ekstern varsling dersom status er mottat og oversendt`() = runBlocking {
         val beskjed = database.dbQuery {
             getBeskjedByIds(beskjed1.fodselsnummer, beskjed1.eventId)

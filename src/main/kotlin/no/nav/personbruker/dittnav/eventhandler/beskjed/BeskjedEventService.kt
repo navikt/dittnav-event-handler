@@ -8,37 +8,23 @@ import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 import java.sql.Connection
 
-class BeskjedEventService(private val database: Database,
-                          private val filterOldEvents: Boolean,
-                          private val filterThresholdDays: Int) {
+class BeskjedEventService(private val database: Database) {
 
     suspend fun getActiveEventsForFodselsnummer(fodselsnummer: String): List<BeskjedDTO> {
         return getEvents {
-            if (filterOldEvents) {
-                getRecentAktivBeskjedForFodselsnummer(fodselsnummer, daysAgo(filterThresholdDays))
-            } else {
-                getAktivBeskjedForFodselsnummer(fodselsnummer)
-            }
+            getAktivBeskjedForFodselsnummer(fodselsnummer)
         }.map { beskjed -> beskjed.toDTO() }
     }
 
     suspend fun getInactiveEventsForFodselsnummer(fodselsnummer: String): List<BeskjedDTO> {
         return getEvents {
-            if (filterOldEvents) {
-                getRecentInaktivBeskjedForFodselsnummer(fodselsnummer, daysAgo(filterThresholdDays))
-            } else {
-                getInaktivBeskjedForFodselsnummer(fodselsnummer)
-            }
+            getInaktivBeskjedForFodselsnummer(fodselsnummer)
         }.map { beskjed -> beskjed.toDTO() }
     }
 
     suspend fun getAllEventsForFodselsnummer(fodselsnummer: String): List<BeskjedDTO> {
         return getEvents {
-            if (filterOldEvents) {
-                getAllRecentBeskjedForFodselsnummer(fodselsnummer, daysAgo(filterThresholdDays))
-            } else {
-                getAllBeskjedForFodselsnummer(fodselsnummer)
-            }
+            getAllBeskjedForFodselsnummer(fodselsnummer)
         }.map { beskjed -> beskjed.toDTO() }
     }
 

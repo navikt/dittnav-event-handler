@@ -119,31 +119,3 @@ fun Connection.getAllGroupedOppgaveEventsByProducer(): List<EventCountForProduce
             }
         }
 }
-
-fun Connection.getRecentInaktivOppgaveForFodselsnummer(fodselsnummer: String, fromDate: LocalDate): List<Oppgave> =
-    getRecentOppgaveForFodselsnummerByAktiv(fodselsnummer, false, fromDate)
-
-fun Connection.getRecentAktivOppgaveForFodselsnummer(fodselsnummer: String, fromDate: LocalDate): List<Oppgave> =
-    getRecentOppgaveForFodselsnummerByAktiv(fodselsnummer, true, fromDate)
-
-private fun Connection.getRecentOppgaveForFodselsnummerByAktiv(fodselsnummer: String, aktiv: Boolean, fromDate: LocalDate): List<Oppgave> =
-    prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ? AND aktiv = ? AND forstBehandlet > ?""".trimMargin())
-        .use {
-            it.setString(1, fodselsnummer)
-            it.setBoolean(2, aktiv)
-            it.setObject(3, fromDate, Types.TIMESTAMP)
-            it.executeQuery().mapList {
-                toOppgave()
-            }
-        }
-
-fun Connection.getAllRecentOppgaveForFodselsnummer(fodselsnummer: String, fromDate: LocalDate): List<Oppgave> =
-    prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ?
-            |AND forstBehandlet > ?""".trimMargin())
-        .use {
-            it.setString(1, fodselsnummer)
-            it.setObject(2, fromDate, Types.TIMESTAMP)
-            it.executeQuery().mapList {
-                toOppgave()
-            }
-        }

@@ -10,8 +10,6 @@ import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingS
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import java.sql.Connection
 import java.sql.ResultSet
-import java.sql.Types
-import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
@@ -133,32 +131,3 @@ private fun ResultSet.toEksternVarslingInfo(): EksternVarslingInfo {
 private fun ResultSet.getNullableZonedDateTime(label: String): ZonedDateTime? {
     return getNullableUtcTimeStamp(label)?.let { timestamp -> ZonedDateTime.ofInstant(timestamp.toInstant(), ZoneId.of("Europe/Oslo")) }
 }
-
-fun Connection.getRecentInaktivBeskjedForFodselsnummer(fodselsnummer: String, fromDate: LocalDate): List<Beskjed> =
-    getRecentBeskjedForFodselsnummerByAktiv(fodselsnummer, false, fromDate)
-
-fun Connection.getRecentAktivBeskjedForFodselsnummer(fodselsnummer: String, fromDate: LocalDate): List<Beskjed> =
-    getRecentBeskjedForFodselsnummerByAktiv(fodselsnummer, true, fromDate)
-
-
-private fun Connection.getRecentBeskjedForFodselsnummerByAktiv(fodselsnummer: String, aktiv: Boolean, fromDate: LocalDate): List<Beskjed> =
-        prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ? AND aktiv = ? AND forstBehandlet > ?""".trimMargin())
-                .use {
-                    it.setString(1, fodselsnummer)
-                    it.setBoolean(2, aktiv)
-                    it.setObject(3, fromDate, Types.TIMESTAMP)
-                    it.executeQuery().mapList {
-                        toBeskjed()
-                    }
-                }
-
-fun Connection.getAllRecentBeskjedForFodselsnummer(fodselsnummer: String, fromDate: LocalDate): List<Beskjed> =
-    prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ?
-            |AND forstBehandlet > ?""".trimMargin())
-        .use {
-            it.setString(1, fodselsnummer)
-            it.setObject(2, fromDate, Types.TIMESTAMP)
-            it.executeQuery().mapList {
-                toBeskjed()
-            }
-        }

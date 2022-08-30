@@ -15,9 +15,7 @@ data class Environment(val kafkaBrokers: String = getEnvVar("KAFKA_BROKERS"),
                        val dbPort: String = getEnvVar("DB_EVENTHANDLER_PORT"),
                        val dbUrl: String = getDbUrl(dbHost, dbPort, dbName),
                        val doneInputTopicName: String = getEnvVar("OPEN_INPUT_DONE_TOPIC"),
-                       val securityConfig: SecurityConfig = SecurityConfig(isCurrentlyRunningOnNais()),
-                       val filterOldEvents: Boolean = getEnvVarAsBoolean("FILTER_OLD_EVENTS"),
-                       val filterThresholdDays: Int = getEnvVarAsInt("FILTER_THRESHOLD_DAYS")
+                       val securityConfig: SecurityConfig = SecurityConfig(isCurrentlyRunningOnNais())
 )
 
 fun getDbUrl(host: String, port: String, name: String): String {

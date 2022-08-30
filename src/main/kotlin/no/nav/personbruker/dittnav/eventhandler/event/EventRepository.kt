@@ -10,22 +10,22 @@ import java.time.ZonedDateTime
 
 class EventRepository(private val database: Database) {
 
-    suspend fun getInactiveEvents(fodselsnummer: String, filterThresholdDays: Int = 365): List<Event> {
-        return getEvents(fodselsnummer, false, filterThresholdDays)
+    suspend fun getInactiveEvents(fodselsnummer: String): List<Event> {
+        return getEvents(fodselsnummer, false)
     }
 
-    suspend fun getActiveEvents(fodselsnummer: String, filterThresholdDays: Int = 365): List<Event> {
-        return getEvents(fodselsnummer, true, filterThresholdDays)
+    suspend fun getActiveEvents(fodselsnummer: String): List<Event> {
+        return getEvents(fodselsnummer, true)
     }
 
-    private suspend fun getEvents(fodselsnummer: String, active: Boolean, filterThresholdDays: Int): List<Event> {
+    private suspend fun getEvents(fodselsnummer: String, active: Boolean): List<Event> {
         return database.queryWithExceptionTranslation {
             prepareStatement("""
-                ${eventQuery("beskjed", active, filterThresholdDays)}
+                ${eventQuery("beskjed", active)}
                 UNION ALL
-                ${eventQuery("oppgave", active, filterThresholdDays)}
+                ${eventQuery("oppgave", active)}
                 UNION ALL 
-                ${eventQuery("innboks", active, filterThresholdDays)}
+                ${eventQuery("innboks", active)}
             """.trimIndent()
             ).also {
                 it.setString(1, fodselsnummer)
@@ -35,7 +35,7 @@ class EventRepository(private val database: Database) {
         }
     }
 
-    private fun eventQuery(table: String, active: Boolean, filterThresholdDays: Int): String {
+    private fun eventQuery(table: String, active: Boolean): String {
         return """
             SELECT
                 eventTidspunkt,
@@ -52,7 +52,6 @@ class EventRepository(private val database: Database) {
                 '$table' as type 
             FROM $table
             WHERE fodselsnummer = ?
-            AND forstBehandlet > '${daysAgo(filterThresholdDays)}'
             AND aktiv = $active
         """
     }

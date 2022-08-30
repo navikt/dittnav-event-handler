@@ -2,7 +2,6 @@ package no.nav.personbruker.dittnav.eventhandler.beskjed
 
 import Beskjed
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfo
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfoObjectMother
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfoObjectMother.createEskternVarslingInfo
 import java.time.ZoneId
 import java.time.ZonedDateTime

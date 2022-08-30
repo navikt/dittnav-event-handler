@@ -21,10 +21,10 @@ private val baseSelectQuery = """
 """.trimMargin()
 
 fun Connection.getInaktivInnboksForFodselsnummer(fodselsnummer: String): List<Innboks> =
-        getInnboksForFodselsnummerByAktiv(fodselsnummer, false)
+    getInnboksForFodselsnummerByAktiv(fodselsnummer, false)
 
 fun Connection.getAktivInnboksForFodselsnummer(fodselsnummer: String): List<Innboks> =
-        getInnboksForFodselsnummerByAktiv(fodselsnummer, true)
+    getInnboksForFodselsnummerByAktiv(fodselsnummer, true)
 
 private fun Connection.getInnboksForFodselsnummerByAktiv(fodselsnummer: String, aktiv: Boolean): List<Innboks> =
     prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ? AND aktiv = ?""".trimMargin())
@@ -37,24 +37,24 @@ private fun Connection.getInnboksForFodselsnummerByAktiv(fodselsnummer: String, 
         }
 
 fun Connection.getAllInnboksForFodselsnummer(fodselsnummer: String): List<Innboks> =
-        prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ?""".trimMargin())
-                .use {
-                    it.setString(1, fodselsnummer)
-                    it.executeQuery().mapList {
-                        toInnboks()
-                    }
-                }
+    prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ?""".trimMargin())
+        .use {
+            it.setString(1, fodselsnummer)
+            it.executeQuery().mapList {
+                toInnboks()
+            }
+        }
 
 fun Connection.getAllGroupedInnboksEventsByIds(fodselsnummer: String, grupperingsid: String, appnavn: String): List<Innboks> =
-        prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ? AND grupperingsid = ? AND appnavn = ?""".trimMargin())
-                .use {
-                    it.setString(1, fodselsnummer)
-                    it.setString(2, grupperingsid)
-                    it.setString(3, appnavn)
-                    it.executeQuery().mapList {
-                        toInnboks()
-                    }
-                }
+    prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ? AND grupperingsid = ? AND appnavn = ?""".trimMargin())
+        .use {
+            it.setString(1, fodselsnummer)
+            it.setString(2, grupperingsid)
+            it.setString(3, appnavn)
+            it.executeQuery().mapList {
+                toInnboks()
+            }
+        }
 
 private fun ResultSet.toInnboks(): Innboks {
     return Innboks(
@@ -89,17 +89,19 @@ private fun ResultSet.toEksternVarslingInfo(): EksternVarslingInfo {
 }
 
 fun Connection.getAllGroupedInnboksEventsBySystemuser(): Map<String, Int> {
-    return prepareStatement("SELECT systembruker, COUNT(*) FROM innboks GROUP BY systembruker",
-            ResultSet.TYPE_SCROLL_INSENSITIVE,
-            ResultSet.CONCUR_READ_ONLY)
-            .use { statement ->
-                val resultSet = statement.executeQuery()
-                mutableMapOf<String, Int>().apply {
-                    while (resultSet.next()) {
-                        put(resultSet.getString(1), resultSet.getInt(2))
-                    }
+    return prepareStatement(
+        "SELECT systembruker, COUNT(*) FROM innboks GROUP BY systembruker",
+        ResultSet.TYPE_SCROLL_INSENSITIVE,
+        ResultSet.CONCUR_READ_ONLY
+    )
+        .use { statement ->
+            val resultSet = statement.executeQuery()
+            mutableMapOf<String, Int>().apply {
+                while (resultSet.next()) {
+                    put(resultSet.getString(1), resultSet.getInt(2))
                 }
             }
+        }
 }
 
 fun Connection.getAllGroupedInnboksEventsByProducer(): List<EventCountForProducer> {

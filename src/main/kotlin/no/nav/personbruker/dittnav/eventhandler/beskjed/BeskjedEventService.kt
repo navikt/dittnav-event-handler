@@ -3,7 +3,6 @@ package no.nav.personbruker.dittnav.eventhandler.beskjed
 import Beskjed
 import no.nav.brukernotifikasjon.schemas.builders.util.ValidationUtil.validateNonNullFieldMaxLength
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
-import no.nav.personbruker.dittnav.eventhandler.common.daysAgo
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 import java.sql.Connection
@@ -32,7 +31,7 @@ class BeskjedEventService(private val database: Database) {
         val grupperingsId = validateNonNullFieldMaxLength(grupperingsid, "grupperingsid", 100)
         val app = validateNonNullFieldMaxLength(appnavn, "appnavn", 100)
         return getEvents { getAllGroupedBeskjedEventsByIds(bruker.ident, grupperingsId, app) }
-                .map { beskjed -> beskjed.toDTO() }
+            .map { beskjed -> beskjed.toDTO() }
     }
 
     suspend fun getAllGroupedEventsByProducerFromCache(): List<EventCountForProducer> {

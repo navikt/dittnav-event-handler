@@ -8,11 +8,11 @@ import java.time.ZonedDateTime
 import java.util.*
 
 fun <T> ResultSet.mapList(result: ResultSet.() -> T): List<T> =
-        mutableListOf<T>().apply {
-            while (next()) {
-                add(result())
-            }
+    mutableListOf<T>().apply {
+        while (next()) {
+            add(result())
         }
+    }
 
 fun <T> ResultSet.mapSingleResult(resultMapper: ResultSet.() -> T): T =
     if (next()) {
@@ -44,10 +44,9 @@ fun ResultSet.getNullableUtcTimeStamp(label: String): Timestamp? = getTimestamp(
 
 fun ResultSet.getListFromSeparatedString(columnLabel: String, separator: String = ","): List<String> {
     val stringValue = getString(columnLabel)
-    return if(stringValue.isNullOrEmpty()) {
+    return if (stringValue.isNullOrEmpty()) {
         emptyList()
-    }
-    else {
+    } else {
         stringValue.split(separator)
     }
 }

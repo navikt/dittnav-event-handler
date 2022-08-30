@@ -17,7 +17,6 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import java.time.LocalDate
 import java.time.ZonedDateTime
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -30,7 +29,7 @@ class InnboksQueriesTest {
     private val systembruker = "x-dittnav"
     private val namespace = "localhost"
     private val appnavn = "dittnav"
-    private val grupperingsid = "100${fodselsnummer1}"
+    private val grupperingsid = "100$fodselsnummer1"
 
     private val innboks1 = InnboksObjectMother.createInnboks(
         id = 1,
@@ -237,7 +236,7 @@ class InnboksQueriesTest {
         val eksternVarslingInfo = innboks.eksternVarslingInfo
 
         eksternVarslingInfo.bestilt shouldBe innboks1.eksternVarslingInfo.bestilt
-        eksternVarslingInfo.prefererteKanaler shouldContainAll  innboks1.eksternVarslingInfo.prefererteKanaler
+        eksternVarslingInfo.prefererteKanaler shouldContainAll innboks1.eksternVarslingInfo.prefererteKanaler
         eksternVarslingInfo.sendt shouldBe true
         eksternVarslingInfo.sendteKanaler shouldContain doknotStatusForInnboks1.kanaler
     }
@@ -253,7 +252,7 @@ class InnboksQueriesTest {
         val eksternVarslingInfo = innboks.eksternVarslingInfo
 
         eksternVarslingInfo.bestilt shouldBe innboks2.eksternVarslingInfo.bestilt
-        eksternVarslingInfo.prefererteKanaler shouldContainAll  innboks2.eksternVarslingInfo.prefererteKanaler
+        eksternVarslingInfo.prefererteKanaler shouldContainAll innboks2.eksternVarslingInfo.prefererteKanaler
         eksternVarslingInfo.sendt shouldBe false
         eksternVarslingInfo.sendteKanaler.isEmpty() shouldBe true
     }
@@ -269,7 +268,7 @@ class InnboksQueriesTest {
         val eksternVarslingInfo = innboks.eksternVarslingInfo
 
         eksternVarslingInfo.bestilt shouldBe innboks3.eksternVarslingInfo.bestilt
-        eksternVarslingInfo.prefererteKanaler shouldContainAll  innboks3.eksternVarslingInfo.prefererteKanaler
+        eksternVarslingInfo.prefererteKanaler shouldContainAll innboks3.eksternVarslingInfo.prefererteKanaler
         eksternVarslingInfo.sendt shouldBe false
         eksternVarslingInfo.sendteKanaler.isEmpty() shouldBe true
     }

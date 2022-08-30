@@ -29,7 +29,6 @@ object InnboksObjectMother {
         sendteKanaler = emptyList()
     )
 
-
     fun createInnboks(
         id: Int = ++idIncrementor,
         eventId: String = (++eventIdIncrementor).toString(),

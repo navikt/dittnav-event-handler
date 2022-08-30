@@ -11,7 +11,6 @@ import no.nav.personbruker.dittnav.eventhandler.common.findCountFor
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.*
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus.OVERSENDT
 import org.junit.jupiter.api.*
-import java.time.LocalDate
 import java.time.ZonedDateTime
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -21,7 +20,7 @@ class BeskjedQueriesTest {
 
     private val fodselsnummer = "12345"
     private val eventId = "124"
-    private val grupperingsid = "100${fodselsnummer}"
+    private val grupperingsid = "100$fodselsnummer"
     private val systembruker = "x-dittnav"
     private val namespace = "localhost"
     private val appnavn = "dittnav"
@@ -269,7 +268,7 @@ class BeskjedQueriesTest {
         val eksternVarslingInfo = beskjed.eksternVarslingInfo
 
         eksternVarslingInfo.bestilt shouldBe beskjed1.eksternVarslingInfo.bestilt
-        eksternVarslingInfo.prefererteKanaler shouldContainAll  beskjed1.eksternVarslingInfo.prefererteKanaler
+        eksternVarslingInfo.prefererteKanaler shouldContainAll beskjed1.eksternVarslingInfo.prefererteKanaler
         eksternVarslingInfo.sendt shouldBe true
         eksternVarslingInfo.sendteKanaler shouldContain doknotStatusForBeskjed1.kanaler
     }
@@ -283,7 +282,7 @@ class BeskjedQueriesTest {
         val eksternVarslingInfo = beskjed.eksternVarslingInfo
 
         eksternVarslingInfo.bestilt shouldBe beskjed2.eksternVarslingInfo.bestilt
-        eksternVarslingInfo.prefererteKanaler shouldContainAll  beskjed2.eksternVarslingInfo.prefererteKanaler
+        eksternVarslingInfo.prefererteKanaler shouldContainAll beskjed2.eksternVarslingInfo.prefererteKanaler
         eksternVarslingInfo.sendt shouldBe false
         eksternVarslingInfo.sendteKanaler.isEmpty() shouldBe true
     }
@@ -297,7 +296,7 @@ class BeskjedQueriesTest {
         val eksternVarslingInfo = beskjed.eksternVarslingInfo
 
         eksternVarslingInfo.bestilt shouldBe beskjed3.eksternVarslingInfo.bestilt
-        eksternVarslingInfo.prefererteKanaler shouldContainAll  beskjed3.eksternVarslingInfo.prefererteKanaler
+        eksternVarslingInfo.prefererteKanaler shouldContainAll beskjed3.eksternVarslingInfo.prefererteKanaler
         eksternVarslingInfo.sendt shouldBe false
         eksternVarslingInfo.sendteKanaler.isEmpty() shouldBe true
     }

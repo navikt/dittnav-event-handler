@@ -27,5 +27,4 @@ internal class resultSetUtilKtTest {
 
         resultat.year shouldBe 2020
     }
-
 }

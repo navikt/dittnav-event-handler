@@ -3,7 +3,7 @@ package no.nav.personbruker.dittnav.eventhandler.statistics
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class DecimalMeasurement (
+data class DecimalMeasurement(
     val min: Double,
     val max: Double,
     val avg: Double,

@@ -20,13 +20,14 @@ class EventRepository(private val database: Database) {
 
     private suspend fun getEvents(fodselsnummer: String, active: Boolean, filterThresholdDays: Int): List<Event> {
         return database.queryWithExceptionTranslation {
-            prepareStatement("""
+            prepareStatement(
+                """
                 ${eventQuery("beskjed", active, filterThresholdDays)}
                 UNION ALL
                 ${eventQuery("oppgave", active, filterThresholdDays)}
                 UNION ALL 
                 ${eventQuery("innboks", active, filterThresholdDays)}
-            """.trimIndent()
+                """.trimIndent()
             ).also {
                 it.setString(1, fodselsnummer)
                 it.setString(2, fodselsnummer)

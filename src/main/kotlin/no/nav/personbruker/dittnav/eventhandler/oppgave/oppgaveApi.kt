@@ -43,9 +43,11 @@ fun Route.oppgaveApi(oppgaveEventService: OppgaveEventService) {
     get("/fetch/oppgave/grouped") {
         try {
             val oppgaveEvents =
-                    oppgaveEventService.getAllGroupedEventsFromCacheForUser(innloggetBruker,
-                            call.request.queryParameters["grupperingsid"],
-                            call.request.queryParameters["produsent"])
+                oppgaveEventService.getAllGroupedEventsFromCacheForUser(
+                    innloggetBruker,
+                    call.request.queryParameters["grupperingsid"],
+                    call.request.queryParameters["produsent"]
+                )
             call.respond(HttpStatusCode.OK, oppgaveEvents)
         } catch (exception: Exception) {
             respondWithError(call, log, exception)
@@ -72,7 +74,6 @@ fun Route.oppgaveSystemClientApi(oppgaveEventService: OppgaveEventService) {
             try {
                 val aktiveOppgaveEvents = oppgaveEventService.getActiveEventsForFodselsnummer(userToFetchEventsFor.fodselsnummer)
                 call.respond(HttpStatusCode.OK, aktiveOppgaveEvents)
-
             } catch (exception: Exception) {
                 respondWithError(call, log, exception)
             }
@@ -95,7 +96,6 @@ fun Route.oppgaveSystemClientApi(oppgaveEventService: OppgaveEventService) {
             try {
                 val oppgaveEvents = oppgaveEventService.getAllEventsForFodselsnummer(userToFetchEventsFor.fodselsnummer)
                 call.respond(HttpStatusCode.OK, oppgaveEvents)
-
             } catch (exception: Exception) {
                 respondWithError(call, log, exception)
             }

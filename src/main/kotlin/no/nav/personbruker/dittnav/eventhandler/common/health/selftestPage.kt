@@ -11,13 +11,14 @@ suspend fun ApplicationCall.buildSelftestPage(healthService: HealthService) = co
     val healthChecks = healthService.getHealthChecks()
     val hasFailedChecks = healthChecks.any { healthStatus -> Status.ERROR == healthStatus.status }
 
-    respondHtml(status =
-    if (hasFailedChecks) {
-        HttpStatusCode.ServiceUnavailable
-    } else {
-        HttpStatusCode.OK
-    })
-    {
+    respondHtml(
+        status =
+        if (hasFailedChecks) {
+            HttpStatusCode.ServiceUnavailable
+        } else {
+            HttpStatusCode.OK
+        }
+    ) {
         head {
             title { +"Selftest dittnav-event-handler" }
         }

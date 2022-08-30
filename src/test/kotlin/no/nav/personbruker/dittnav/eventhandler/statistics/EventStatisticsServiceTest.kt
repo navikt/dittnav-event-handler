@@ -64,13 +64,12 @@ class EventStatisticsServiceTest {
         deleteOppgave(listOf(oppgave1, oppgave2, oppgave3, oppgave4))
     }
 
-
     @Test
     fun `Should run stats`() {
         runBlocking {
             eventStatisticsService.getEventsStatisticsPerUser(EventType.BESKJED).max shouldBe 3
             eventStatisticsService.getActiveEventsStatisticsPerUser(EventType.BESKJED).max shouldBe 2
-            eventStatisticsService.getActiveRateEventsStatisticsPerUser(EventType.BESKJED).min shouldBeGreaterThan  0.6
+            eventStatisticsService.getActiveRateEventsStatisticsPerUser(EventType.BESKJED).min shouldBeGreaterThan 0.6
             eventStatisticsService.getEventsStatisticsPerGroupId(EventType.BESKJED).max shouldBe 3
             eventStatisticsService.getGroupIdsPerUser(EventType.BESKJED).max shouldBe 1
             eventStatisticsService.getTextLength(EventType.BESKJED).min shouldBe 2

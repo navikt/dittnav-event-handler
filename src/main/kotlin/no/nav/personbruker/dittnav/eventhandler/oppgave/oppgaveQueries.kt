@@ -9,8 +9,6 @@ import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingS
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import java.sql.Connection
 import java.sql.ResultSet
-import java.sql.Types
-import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
@@ -24,10 +22,10 @@ private val baseSelectQuery = """
 """.trimMargin()
 
 fun Connection.getInaktivOppgaveForFodselsnummer(fodselsnummer: String): List<Oppgave> =
-        getOppgaveForFodselsnummerByAktiv(fodselsnummer, false)
+    getOppgaveForFodselsnummerByAktiv(fodselsnummer, false)
 
 fun Connection.getAktivOppgaveForFodselsnummer(fodselsnummer: String): List<Oppgave> =
-        getOppgaveForFodselsnummerByAktiv(fodselsnummer, true)
+    getOppgaveForFodselsnummerByAktiv(fodselsnummer, true)
 
 private fun Connection.getOppgaveForFodselsnummerByAktiv(fodselsnummer: String, aktiv: Boolean): List<Oppgave> =
     prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ? AND aktiv = ?""".trimMargin())
@@ -40,24 +38,24 @@ private fun Connection.getOppgaveForFodselsnummerByAktiv(fodselsnummer: String, 
         }
 
 fun Connection.getAllOppgaveForFodselsnummer(fodselsnummer: String): List<Oppgave> =
-        prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ?""".trimMargin())
-                .use {
-                    it.setString(1, fodselsnummer)
-                    it.executeQuery().mapList {
-                        toOppgave()
-                    }
-                }
+    prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ?""".trimMargin())
+        .use {
+            it.setString(1, fodselsnummer)
+            it.executeQuery().mapList {
+                toOppgave()
+            }
+        }
 
 fun Connection.getAllGroupedOppgaveEventsByIds(fodselsnummer: String, grupperingsid: String, appnavn: String): List<Oppgave> =
-        prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ? AND grupperingsid = ? AND appnavn = ?""".trimMargin())
-                .use {
-                    it.setString(1, fodselsnummer)
-                    it.setString(2, grupperingsid)
-                    it.setString(3, appnavn)
-                    it.executeQuery().mapList {
-                        toOppgave()
-                    }
-                }
+    prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ? AND grupperingsid = ? AND appnavn = ?""".trimMargin())
+        .use {
+            it.setString(1, fodselsnummer)
+            it.setString(2, grupperingsid)
+            it.setString(3, appnavn)
+            it.executeQuery().mapList {
+                toOppgave()
+            }
+        }
 
 private fun ResultSet.toOppgave(): Oppgave {
     val rawEventTidspunkt = getUtcTimeStamp("eventTidspunkt")
@@ -94,17 +92,19 @@ private fun ResultSet.toEksternVarslingInfo(): EksternVarslingInfo {
 }
 
 fun Connection.getAllGroupedOppgaveEventsBySystemuser(): Map<String, Int> {
-    return prepareStatement("SELECT systembruker, COUNT(*) FROM oppgave GROUP BY systembruker",
-            ResultSet.TYPE_SCROLL_INSENSITIVE,
-            ResultSet.CONCUR_READ_ONLY)
-            .use { statement ->
-                val resultSet = statement.executeQuery()
-                mutableMapOf<String, Int>().apply {
-                    while (resultSet.next()) {
-                        put(resultSet.getString(1), resultSet.getInt(2))
-                    }
+    return prepareStatement(
+        "SELECT systembruker, COUNT(*) FROM oppgave GROUP BY systembruker",
+        ResultSet.TYPE_SCROLL_INSENSITIVE,
+        ResultSet.CONCUR_READ_ONLY
+    )
+        .use { statement ->
+            val resultSet = statement.executeQuery()
+            mutableMapOf<String, Int>().apply {
+                while (resultSet.next()) {
+                    put(resultSet.getString(1), resultSet.getInt(2))
                 }
             }
+        }
 }
 
 fun Connection.getAllGroupedOppgaveEventsByProducer(): List<EventCountForProducer> {

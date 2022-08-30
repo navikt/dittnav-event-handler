@@ -34,7 +34,7 @@ fun mockEventHandlerApi(
                 staticUserPid = "123"
                 staticSecurityLevel = SecurityLevel.LEVEL_4
             }
-            installAzureAuthMock {  }
+            installAzureAuthMock { }
         }
     }
 ): Application.() -> Unit {

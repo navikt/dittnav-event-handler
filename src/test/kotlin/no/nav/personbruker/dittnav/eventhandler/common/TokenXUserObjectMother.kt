@@ -28,15 +28,14 @@ object TokenXUserObjectMother {
         return createInnloggetBruker(ident, innloggingsnivaa, inTwoMinutes)
     }
 
-    fun createInnloggetBruker(ident: String, innloggingsnivaa : Int, tokenUtlopstidspunkt: ZonedDateTime): TokenXUser {
+    fun createInnloggetBruker(ident: String, innloggingsnivaa: Int, tokenUtlopstidspunkt: ZonedDateTime): TokenXUser {
         val jws = Jwts.builder()
-                .setSubject(ident)
-                .addClaims(mutableMapOf(Pair("acr", "Level$innloggingsnivaa")) as Map<String, Any>?)
-                .setExpiration(Date.from(tokenUtlopstidspunkt.toInstant()))
-                .signWith(key).compact()
+            .setSubject(ident)
+            .addClaims(mutableMapOf(Pair("acr", "Level$innloggingsnivaa")) as Map<String, Any>?)
+            .setExpiration(Date.from(tokenUtlopstidspunkt.toInstant()))
+            .signWith(key).compact()
         val token = JWT.decode(jws)
         val expirationTime = token.expiresAt.toInstant()
         return TokenXUser(ident, innloggingsnivaa, expirationTime, token)
     }
-
 }

@@ -24,25 +24,21 @@ fun Route.doneApi(doneEventService: DoneEventService) {
                 doneEventService.markEventAsDone(innloggetBruker, doneDto)
                 val msg = "Done-event er produsert. EventID: ${doneDto.eventId}."
                 DoneResponse(msg, HttpStatusCode.OK)
-
             } catch (e: EventMarkedInactiveException) {
                 val msg =
                     "Det ble ikke produsert et done-event fordi eventet allerede er markert inaktivt. EventId: ${doneDto.eventId}."
                 log.info(msg, e)
                 DoneResponse(msg, HttpStatusCode.OK)
-
             } catch (e: NoEventsException) {
                 val msg =
                     "Det ble ikke produsert et done-event fordi vi fant ikke eventet i cachen. EventId: ${doneDto.eventId}."
                 log.warn(msg, e)
                 DoneResponse(msg, HttpStatusCode.NotFound)
-
             } catch (e: DuplicateEventException) {
                 val msg =
                     "Det ble ikke produsert done-event fordi det finnes duplikat av event. EventId: ${doneDto.eventId}."
                 log.error(msg, e)
                 DoneResponse(msg, HttpStatusCode.InternalServerError)
-
             } catch (e: Exception) {
                 val msg = "Done-event ble ikke produsert. EventID: ${doneDto.eventId}."
                 log.error(msg, e)

@@ -18,7 +18,7 @@ class DoneEventService(private val database: Database, private val doneProducer:
 
     suspend fun getBeskjedFromCacheForUser(fodselsnummer: String, eventId: String): Beskjed {
         val result: List<Beskjed> = database.queryWithExceptionTranslation {
-             getBeskjedByIds(fodselsnummer, eventId)
+            getBeskjedByIds(fodselsnummer, eventId)
         }
         return validBeskjed(result)
     }

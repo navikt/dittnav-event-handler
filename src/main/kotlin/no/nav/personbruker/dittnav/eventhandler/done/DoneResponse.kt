@@ -8,6 +8,6 @@ import no.nav.personbruker.dittnav.eventhandler.common.serializer.HttpStatusCode
 
 @Serializable
 data class DoneResponse(
-        val message: String,
-        val httpStatus: HttpStatusCode
+    val message: String,
+    val httpStatus: HttpStatusCode
 )

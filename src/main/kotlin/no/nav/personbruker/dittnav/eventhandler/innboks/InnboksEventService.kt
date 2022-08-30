@@ -2,10 +2,8 @@ package no.nav.personbruker.dittnav.eventhandler.innboks
 
 import no.nav.brukernotifikasjon.schemas.builders.util.ValidationUtil.validateNonNullFieldMaxLength
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
-import no.nav.personbruker.dittnav.eventhandler.common.daysAgo
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
-import org.slf4j.LoggerFactory
 import java.sql.Connection
 
 class InnboksEventService(private val database: Database) {
@@ -32,7 +30,7 @@ class InnboksEventService(private val database: Database) {
         val grupperingsId = validateNonNullFieldMaxLength(grupperingsid, "grupperingsid", 100)
         val app = validateNonNullFieldMaxLength(appnavn, "appnavn", 100)
         return getEvents { getAllGroupedInnboksEventsByIds(bruker.ident, grupperingsId, app) }
-            .map { innboks -> innboks.toDTO()}
+            .map { innboks -> innboks.toDTO() }
     }
 
     suspend fun getAllGroupedEventsByProducerFromCache(): List<EventCountForProducer> {

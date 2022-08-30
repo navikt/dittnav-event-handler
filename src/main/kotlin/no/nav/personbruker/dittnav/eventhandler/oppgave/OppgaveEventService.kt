@@ -2,7 +2,6 @@ package no.nav.personbruker.dittnav.eventhandler.oppgave
 
 import no.nav.brukernotifikasjon.schemas.builders.util.ValidationUtil.validateNonNullFieldMaxLength
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
-import no.nav.personbruker.dittnav.eventhandler.common.daysAgo
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 import java.sql.Connection

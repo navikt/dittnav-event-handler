@@ -23,10 +23,10 @@ private val baseSelectQuery = """
 """.trimMargin()
 
 fun Connection.getInaktivBeskjedForFodselsnummer(fodselsnummer: String): List<Beskjed> =
-        getBeskjedForFodselsnummerByAktiv(fodselsnummer, false)
+    getBeskjedForFodselsnummerByAktiv(fodselsnummer, false)
 
 fun Connection.getAktivBeskjedForFodselsnummer(fodselsnummer: String): List<Beskjed> =
-        getBeskjedForFodselsnummerByAktiv(fodselsnummer, true)
+    getBeskjedForFodselsnummerByAktiv(fodselsnummer, true)
 
 private fun Connection.getBeskjedForFodselsnummerByAktiv(fodselsnummer: String, aktiv: Boolean): List<Beskjed> =
     prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ? AND aktiv = ?""".trimMargin())
@@ -40,59 +40,61 @@ private fun Connection.getBeskjedForFodselsnummerByAktiv(fodselsnummer: String, 
 
 fun Connection.getAllBeskjedForFodselsnummer(fodselsnummer: String): List<Beskjed> =
     prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ?""".trimMargin())
-                .use {
-                    it.setString(1, fodselsnummer)
-                    it.executeQuery().mapList {
-                        toBeskjed()
-                    }
-                }
+        .use {
+            it.setString(1, fodselsnummer)
+            it.executeQuery().mapList {
+                toBeskjed()
+            }
+        }
 
 fun Connection.getBeskjedByIds(fodselsnummer: String, eventId: String): List<Beskjed> =
-        prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ? AND beskjed.eventId = ?""".trimMargin())
-                .use {
-                    it.setString(1, fodselsnummer)
-                    it.setString(2, eventId)
-                    it.executeQuery().mapList {
-                        toBeskjed()
-                    }
-                }
+    prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ? AND beskjed.eventId = ?""".trimMargin())
+        .use {
+            it.setString(1, fodselsnummer)
+            it.setString(2, eventId)
+            it.executeQuery().mapList {
+                toBeskjed()
+            }
+        }
 
 fun Connection.getAllGroupedBeskjedEventsByIds(fodselsnummer: String, grupperingsid: String, appnavn: String): List<Beskjed> =
-        prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ? AND grupperingsId = ? AND appnavn = ?""".trimMargin())
-                .use {
-                    it.setString(1, fodselsnummer)
-                    it.setString(2, grupperingsid)
-                    it.setString(3, appnavn)
-                    it.executeQuery().mapList {
-                        toBeskjed()
-                    }
-                }
+    prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ? AND grupperingsId = ? AND appnavn = ?""".trimMargin())
+        .use {
+            it.setString(1, fodselsnummer)
+            it.setString(2, grupperingsid)
+            it.setString(3, appnavn)
+            it.executeQuery().mapList {
+                toBeskjed()
+            }
+        }
 
 fun Connection.getAllGroupedBeskjedEventsBySystemuser(): Map<String, Int> {
-    return prepareStatement("SELECT systembruker, COUNT(*) FROM beskjed GROUP BY systembruker",
-            ResultSet.TYPE_SCROLL_INSENSITIVE,
-            ResultSet.CONCUR_READ_ONLY)
-            .use { statement ->
-                val resultSet = statement.executeQuery()
-                mutableMapOf<String, Int>().apply {
-                    while (resultSet.next()) {
-                        put(resultSet.getString(1), resultSet.getInt(2))
-                    }
+    return prepareStatement(
+        "SELECT systembruker, COUNT(*) FROM beskjed GROUP BY systembruker",
+        ResultSet.TYPE_SCROLL_INSENSITIVE,
+        ResultSet.CONCUR_READ_ONLY
+    )
+        .use { statement ->
+            val resultSet = statement.executeQuery()
+            mutableMapOf<String, Int>().apply {
+                while (resultSet.next()) {
+                    put(resultSet.getString(1), resultSet.getInt(2))
                 }
             }
+        }
 }
 
 fun Connection.getAllGroupedBeskjedEventsByProducer(): List<EventCountForProducer> {
     return prepareStatement("SELECT namespace, appnavn, COUNT(*) FROM beskjed GROUP BY namespace, appnavn")
-            .use { statement ->
-                statement.executeQuery().mapList {
-                    EventCountForProducer(
-                        namespace = getString(1),
-                        appName = getString(2),
-                        count = getInt(3),
-                    )
-                }
+        .use { statement ->
+            statement.executeQuery().mapList {
+                EventCountForProducer(
+                    namespace = getString(1),
+                    appName = getString(2),
+                    count = getInt(3),
+                )
             }
+        }
 }
 
 fun ResultSet.toBeskjed(): Beskjed {

@@ -13,9 +13,9 @@ object EksternVarslingInfoObjectMother {
         sendt: Boolean = defaultSendt,
         sendteKanaler: List<String> = defaultSendteKanaler
     ) = EksternVarslingInfo(
-            bestilt = bestilt,
-            prefererteKanaler = prefererteKanaler,
-            sendt = sendt,
-            sendteKanaler = sendteKanaler
-        )
+        bestilt = bestilt,
+        prefererteKanaler = prefererteKanaler,
+        sendt = sendt,
+        sendteKanaler = sendteKanaler
+    )
 }

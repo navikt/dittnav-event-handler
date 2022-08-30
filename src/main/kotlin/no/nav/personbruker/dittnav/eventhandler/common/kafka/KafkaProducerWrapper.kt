@@ -6,8 +6,9 @@ import org.apache.kafka.clients.producer.ProducerRecord
 import org.slf4j.LoggerFactory
 
 class KafkaProducerWrapper<T>(
-        val topicName: String,
-        val kafkaProducer: KafkaProducer<NokkelInput, T>) {
+    val topicName: String,
+    val kafkaProducer: KafkaProducer<NokkelInput, T>
+) {
 
     private val log = LoggerFactory.getLogger(KafkaProducerWrapper::class.java)
 

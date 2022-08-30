@@ -8,5 +8,4 @@ enum class EventType(val eventType: String) {
     companion object {
         fun fromOriginalType(value: String) = valueOf(value.uppercase())
     }
-
 }

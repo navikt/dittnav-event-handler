@@ -54,7 +54,7 @@ class EventTest {
         aktiveEventer.map { it.toEventDTO().type }.toSet() shouldBe alleEventTyper
     }
 
-    private fun createBeskjeder(antallAktive: Int, antallInaktive: Int, forstBehandlet:ZonedDateTime) {
+    private fun createBeskjeder(antallAktive: Int, antallInaktive: Int, forstBehandlet: ZonedDateTime) {
         val beskjeder = (1..antallAktive).map {
             BeskjedObjectMother.createBeskjed(
                 fodselsnummer = fodselsnummer,
@@ -74,7 +74,7 @@ class EventTest {
         }
     }
 
-    private fun createOppgaver(antallAktive: Int, antallInaktive: Int, forstBehandlet:ZonedDateTime) {
+    private fun createOppgaver(antallAktive: Int, antallInaktive: Int, forstBehandlet: ZonedDateTime) {
         val oppgaver = (1..antallAktive).map {
             OppgaveObjectMother.createOppgave(
                 fodselsnummer = fodselsnummer,
@@ -94,7 +94,7 @@ class EventTest {
         }
     }
 
-    private fun createInnboks(antallAktive: Int, antallInaktive: Int, forstBehandlet:ZonedDateTime) {
+    private fun createInnboks(antallAktive: Int, antallInaktive: Int, forstBehandlet: ZonedDateTime) {
         val innboks = (1..antallAktive).map {
             InnboksObjectMother.createInnboks(
                 fodselsnummer = fodselsnummer,
@@ -114,4 +114,3 @@ class EventTest {
         }
     }
 }
-

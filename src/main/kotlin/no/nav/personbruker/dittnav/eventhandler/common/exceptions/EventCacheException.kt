@@ -15,5 +15,4 @@ open class EventCacheException(message: String, cause: Throwable?) : Exception(m
             false -> super.toString()
         }
     }
-
 }

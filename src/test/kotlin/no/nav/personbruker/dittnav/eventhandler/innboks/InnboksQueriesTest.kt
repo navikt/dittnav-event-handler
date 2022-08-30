@@ -226,42 +226,6 @@ class InnboksQueriesTest {
         }
     }
 
-
-    @Test
-    fun `Returnerer kun eventer der forstBehandlet er nyere enn bestemt dato for aktive eventer`() {
-        runBlocking {
-            val recentEventsForFnr = database.dbQuery {
-                getRecentAktivInnboksForFodselsnummer(fodselsnummer2, LocalDate.now().minusDays(10))
-            }
-
-            recentEventsForFnr.size shouldBe 1
-            recentEventsForFnr.map { it.id } shouldContainAll listOf(3)
-        }
-    }
-
-    @Test
-    fun `Returnerer kun eventer der forstBehandlet er nyere enn bestemt dato for inaktive eventer`() {
-        runBlocking {
-            val recentEventsForFnr = database.dbQuery {
-                getRecentInaktivInnboksForFodselsnummer(fodselsnummer2, LocalDate.now().minusDays(10))
-            }
-
-            recentEventsForFnr.size shouldBe 0
-        }
-    }
-
-    @Test
-    fun `Returnerer kun eventer der forstBehandlet er nyere enn bestemt dato for alle eventer`() {
-        runBlocking {
-            val recentEventsForFnr = database.dbQuery {
-                getAllRecentInnboksForFodselsnummer(fodselsnummer2, LocalDate.now().minusDays(20))
-            }
-
-            recentEventsForFnr.size shouldBe 2
-            recentEventsForFnr.map { it.id } shouldContainAll listOf(3, 4)
-        }
-    }
-
     @Test
     fun `Returnerer riktig info om ekstern varsling dersom status er mottat og oversendt`() = runBlocking {
         val innboks = database.dbQuery {

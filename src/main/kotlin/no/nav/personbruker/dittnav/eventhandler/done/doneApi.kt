@@ -6,10 +6,13 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.util.pipeline.*
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.DuplicateEventException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.EventMarkedInactiveException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.NoEventsException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.respondWithError
+import no.nav.personbruker.dittnav.eventhandler.common.serializer.HttpStatusCodeSerializer
 import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import org.slf4j.LoggerFactory
@@ -103,3 +106,10 @@ suspend inline fun <reified T : Any> PipelineContext<Unit, ApplicationCall>.resp
     val message = handler.invoke(postParametersDto)
     call.respond(message.httpStatus, message)
 }
+
+@Serializable(with = HttpStatusCodeSerializer::class)
+data class DoneResponse(
+    val message: String,
+    val httpStatus: HttpStatusCode
+)
+

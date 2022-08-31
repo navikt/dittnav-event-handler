@@ -8,6 +8,7 @@ import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.EventMar
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.NoEventsException
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
+import java.lang.IllegalArgumentException
 
 class DoneEventService(private val database: Database, private val doneProducer: DoneProducer) {
 

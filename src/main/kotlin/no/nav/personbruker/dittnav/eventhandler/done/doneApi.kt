@@ -20,7 +20,7 @@ fun Route.doneApi(doneEventService: DoneEventService) {
     val log = LoggerFactory.getLogger(DoneEventService::class.java)
 
     post("/produce/done") {
-        withEventId<String> { eventId ->
+        val eventId = call.parameters["eventId"]
             if (eventId == null) {
                 call.respond( HttpStatusCode.BadRequest,"eventid parameter mangler",)
             } else {
@@ -50,7 +50,6 @@ fun Route.doneApi(doneEventService: DoneEventService) {
                 }
             }
         }
-    }
 }
 
 fun Route.doneSystemClientApi(doneEventService: DoneEventService) {
@@ -102,16 +101,3 @@ private fun List<EventCountForProducer>.transformToMap(): Map<Pair<String, Strin
         (it.namespace to it.appName) to it.count
     }.toMap()
 }
-
-suspend inline fun <reified T : Any> PipelineContext<Unit, ApplicationCall>.withEventId(handler: (String?) -> Unit) {
-    val eventId = call.parameters["eventId"]
-    handler.invoke(eventId)
-}
-
-@Serializable
-data class DoneResponse(
-    val message: String,
-    @Serializable(with = HttpStatusCodeSerializer::class)
-    val httpStatus: HttpStatusCode
-)
-

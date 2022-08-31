@@ -2,19 +2,20 @@ package no.nav.personbruker.dittnav.eventhandler.done
 
 import Beskjed
 import no.nav.personbruker.dittnav.eventhandler.beskjed.getBeskjedByIds
+import no.nav.personbruker.dittnav.eventhandler.beskjed.setBeskjedInaktiv
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.DuplicateEventException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.EventMarkedInactiveException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.NoEventsException
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
-import java.lang.IllegalArgumentException
 
 class DoneEventService(private val database: Database, private val doneProducer: DoneProducer) {
 
-    suspend fun markEventAsDone(innloggetBruker: TokenXUser, eventId: String) {
-        val beskjedEvent = getBeskjedFromCacheForUser(innloggetBruker.ident, eventId)
-        doneProducer.produceDoneEventForSuppliedEventId(innloggetBruker.ident, eventId, beskjedEvent)
+    suspend fun markEventAsInaktiv(innloggetBruker: TokenXUser, eventId: String) {
+        database.queryWithExceptionTranslation {
+            setBeskjedInaktiv(innloggetBruker.ident, eventId)
+        }
     }
 
     suspend fun getBeskjedFromCacheForUser(fodselsnummer: String, eventId: String): Beskjed {

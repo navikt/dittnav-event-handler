@@ -133,3 +133,11 @@ private fun ResultSet.toEksternVarslingInfo(): EksternVarslingInfo {
 private fun ResultSet.getNullableZonedDateTime(label: String): ZonedDateTime? {
     return getNullableUtcTimeStamp(label)?.let { timestamp -> ZonedDateTime.ofInstant(timestamp.toInstant(), ZoneId.of("Europe/Oslo")) }
 }
+
+fun Connection.setBeskjedInaktiv(fodselsnummer: String, eventId: String):Int =
+    prepareStatement("""UPDATE beskjed  SET aktive=false WHERE fodselsnummer = ? AND eventId = ?""".trimMargin())
+        .use {
+            it.setString(1, fodselsnummer)
+            it.setString(2, eventId)
+            it.executeUpdate()
+        }

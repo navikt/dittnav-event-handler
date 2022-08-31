@@ -7,7 +7,6 @@ import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.health.HealthService
 import no.nav.personbruker.dittnav.eventhandler.config.eventHandlerApi
 import no.nav.personbruker.dittnav.eventhandler.done.DoneEventService
-import no.nav.personbruker.dittnav.eventhandler.done.DoneProducer
 import no.nav.personbruker.dittnav.eventhandler.event.EventRepository
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksEventService
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveEventService
@@ -24,7 +23,6 @@ fun mockEventHandlerApi(
     eventRepository: EventRepository = mockk(relaxed = true),
     eventStatisticsService: EventStatisticsService = mockk(relaxed = true),
     database: Database = mockk(relaxed = true),
-    doneProducer: DoneProducer = mockk(relaxed = true),
     installAuthenticatorsFunction: Application.() -> Unit = {
         installMockedAuthenticators {
             installTokenXAuthMock {
@@ -48,7 +46,6 @@ fun mockEventHandlerApi(
             eventRepository = eventRepository,
             eventStatisticsService = eventStatisticsService,
             database = database,
-            doneProducer = doneProducer,
             installAuthenticatorsFunction = installAuthenticatorsFunction
         )
     }

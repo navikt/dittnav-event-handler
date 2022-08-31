@@ -1,7 +1,5 @@
 package no.nav.personbruker.dittnav.eventhandler.done
 
-
-import kotlinx.serialization.Serializable
 import java.time.ZonedDateTime
 
 data class Done(
@@ -26,9 +24,3 @@ data class Done(
             "forstBehandlet=$forstBehandlet"
     }
 }
-
-
-@Serializable
-data class DoneDTO(
-    val eventId: String
-)

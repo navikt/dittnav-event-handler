@@ -21,7 +21,6 @@ import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.health.HealthService
 import no.nav.personbruker.dittnav.eventhandler.common.health.healthApi
 import no.nav.personbruker.dittnav.eventhandler.done.DoneEventService
-import no.nav.personbruker.dittnav.eventhandler.done.DoneProducer
 import no.nav.personbruker.dittnav.eventhandler.done.doneApi
 import no.nav.personbruker.dittnav.eventhandler.done.doneSystemClientApi
 import no.nav.personbruker.dittnav.eventhandler.event.EventRepository
@@ -48,7 +47,6 @@ fun Application.eventHandlerApi(
     eventRepository: EventRepository,
     eventStatisticsService: EventStatisticsService,
     database: Database,
-    doneProducer: DoneProducer,
     installAuthenticatorsFunction: Application.() -> Unit = installAuth()
 ) {
 
@@ -81,7 +79,7 @@ fun Application.eventHandlerApi(
             }
         }
     }
-    configureShutdownHook(database, doneProducer)
+    configureShutdownHook(database)
 }
 
 private fun installAuth(): Application.() -> Unit = {
@@ -95,10 +93,9 @@ private fun installAuth(): Application.() -> Unit = {
     }
 }
 
-private fun Application.configureShutdownHook(database: Database, doneProducer: DoneProducer) {
+private fun Application.configureShutdownHook(database: Database) {
     environment.monitor.subscribe(ApplicationStopPreparing) {
         closeTheDatabaseConectionPool(database)
-        doneProducer.flushAndClose()
     }
 }
 

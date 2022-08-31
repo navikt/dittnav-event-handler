@@ -22,10 +22,7 @@ class DoneApiTest {
         override val dataSource: HikariDataSource
             get() = hikariDataSource
     }
-    private val doneEventService = DoneEventService(
-        database = database,
-        doneProducer = mockk(relaxed = true)
-    )
+    private val doneEventService = DoneEventService(database = database)
 
     @Test
     fun `inaktiverer varsel og returnerer 200`() {
@@ -34,7 +31,7 @@ class DoneApiTest {
         } returns connection
 
         coEvery {
-            connection.setBeskjedInaktiv(any(),"123")
+            connection.setBeskjedInaktiv(any(), "123")
         } returns 1
 
         withTestApplication(
@@ -55,7 +52,7 @@ class DoneApiTest {
         } returns connection
 
         coEvery {
-            connection.setBeskjedInaktiv(any(),"123")
+            connection.setBeskjedInaktiv(any(), "123")
         } returns 0
 
         withTestApplication(

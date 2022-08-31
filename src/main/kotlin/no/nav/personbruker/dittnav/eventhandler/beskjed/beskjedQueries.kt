@@ -135,7 +135,7 @@ private fun ResultSet.getNullableZonedDateTime(label: String): ZonedDateTime? {
 }
 
 fun Connection.setBeskjedInaktiv(fodselsnummer: String, eventId: String):Int =
-    prepareStatement("""UPDATE beskjed  SET aktive=false WHERE fodselsnummer = ? AND eventId = ?""".trimMargin())
+    prepareStatement("""UPDATE beskjed  SET aktiv=false WHERE fodselsnummer = ? AND eventId = ?""".trimMargin())
         .use {
             it.setString(1, fodselsnummer)
             it.setString(2, eventId)

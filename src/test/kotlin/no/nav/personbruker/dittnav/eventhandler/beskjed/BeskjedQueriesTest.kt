@@ -110,7 +110,6 @@ class BeskjedQueriesTest {
         deleteAllDoknotStatusBeskjed()
         deleteBeskjed(listOf(beskjed1, beskjed2, beskjed3, beskjed4))
     }
-
     @Test
     fun `Finn alle cachede Beskjed-eventer for fodselsnummer`() {
         runBlocking {
@@ -125,6 +124,18 @@ class BeskjedQueriesTest {
                 val aktivBeskjedByUser = getAktivBeskjedForFodselsnummer(fodselsnummer)
                 aktivBeskjedByUser
             }.size shouldBe 2
+        }
+    }
+
+    @Test
+    fun `deaktiverer beskjeder`(){
+        runBlocking {
+
+            database.dbQuery { setBeskjedInaktiv(fodselsnummer,beskjed1.eventId) } shouldBe 1
+            database.dbQuery { setBeskjedInaktiv(fodselsnummer,beskjed1.eventId) } shouldBe 1
+            database.dbQuery { setBeskjedInaktiv("12345678910",beskjed1.eventId) } shouldBe 0
+            database.dbQuery { setBeskjedInaktiv(fodselsnummer,"8879") } shouldBe 0
+            database.dbQuery { getAktivBeskjedForFodselsnummer(fodselsnummer) }.size shouldBe 1
         }
     }
 

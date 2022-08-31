@@ -2,12 +2,10 @@ package no.nav.personbruker.dittnav.eventhandler.done
 
 import io.ktor.application.*
 import io.ktor.http.*
-import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.util.pipeline.*
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.UseSerializers
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.DuplicateEventException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.EventMarkedInactiveException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.kafka.NoEventsException
@@ -22,30 +20,34 @@ fun Route.doneApi(doneEventService: DoneEventService) {
     val log = LoggerFactory.getLogger(DoneEventService::class.java)
 
     post("/produce/done") {
-        respondForParameterType<DoneDTO> { doneDto ->
-            try {
-                doneEventService.markEventAsDone(innloggetBruker, doneDto)
-                val msg = "Done-event er produsert. EventID: ${doneDto.eventId}."
-                DoneResponse(msg, HttpStatusCode.OK)
-            } catch (e: EventMarkedInactiveException) {
-                val msg =
-                    "Det ble ikke produsert et done-event fordi eventet allerede er markert inaktivt. EventId: ${doneDto.eventId}."
-                log.info(msg, e)
-                DoneResponse(msg, HttpStatusCode.OK)
-            } catch (e: NoEventsException) {
-                val msg =
-                    "Det ble ikke produsert et done-event fordi vi fant ikke eventet i cachen. EventId: ${doneDto.eventId}."
-                log.warn(msg, e)
-                DoneResponse(msg, HttpStatusCode.NotFound)
-            } catch (e: DuplicateEventException) {
-                val msg =
-                    "Det ble ikke produsert done-event fordi det finnes duplikat av event. EventId: ${doneDto.eventId}."
-                log.error(msg, e)
-                DoneResponse(msg, HttpStatusCode.InternalServerError)
-            } catch (e: Exception) {
-                val msg = "Done-event ble ikke produsert. EventID: ${doneDto.eventId}."
-                log.error(msg, e)
-                DoneResponse(msg, HttpStatusCode.InternalServerError)
+        withEventId<String> { eventId ->
+            if (eventId == null) {
+                call.respond( HttpStatusCode.BadRequest,"eventid parameter mangler",)
+            } else {
+                try {
+                    doneEventService.markEventAsDone(innloggetBruker, eventId)
+                    val msg = "Done-event er produsert. EventID: ${eventId}."
+                    call.respond(HttpStatusCode.OK, msg)
+                } catch (e: EventMarkedInactiveException) {
+                    val msg =
+                        "Det ble ikke produsert et done-event fordi eventet allerede er markert inaktivt. EventId: ${eventId}."
+                    log.info(msg, e)
+                    call.respond(HttpStatusCode.OK, msg)
+                } catch (e: NoEventsException) {
+                    val msg =
+                        "Det ble ikke produsert et done-event fordi vi fant ikke eventet i cachen. EventId: ${eventId}."
+                    log.warn(msg, e)
+                    call.respond(HttpStatusCode.NotFound,msg)
+                } catch (e: DuplicateEventException) {
+                    val msg =
+                        "Det ble ikke produsert done-event fordi det finnes duplikat av event. EventId: ${eventId}."
+                    log.error(msg, e)
+                    call.respond(HttpStatusCode.InternalServerError, msg)
+                } catch (e: Exception) {
+                    val msg = "Done-event ble ikke produsert. EventID: ${eventId}."
+                    log.error(msg, e)
+                    call.respond(HttpStatusCode.InternalServerError, msg)
+                }
             }
         }
     }
@@ -101,15 +103,15 @@ private fun List<EventCountForProducer>.transformToMap(): Map<Pair<String, Strin
     }.toMap()
 }
 
-suspend inline fun <reified T : Any> PipelineContext<Unit, ApplicationCall>.respondForParameterType(handler: (T) -> DoneResponse) {
-    val postParametersDto: T = call.receive()
-    val message = handler.invoke(postParametersDto)
-    call.respond(message.httpStatus, message)
+suspend inline fun <reified T : Any> PipelineContext<Unit, ApplicationCall>.withEventId(handler: (String?) -> Unit) {
+    val eventId = call.parameters["eventId"]
+    handler.invoke(eventId)
 }
 
-@Serializable(with = HttpStatusCodeSerializer::class)
+@Serializable
 data class DoneResponse(
     val message: String,
+    @Serializable(with = HttpStatusCodeSerializer::class)
     val httpStatus: HttpStatusCode
 )
 

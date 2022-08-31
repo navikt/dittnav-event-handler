@@ -11,9 +11,9 @@ import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 
 class DoneEventService(private val database: Database, private val doneProducer: DoneProducer) {
 
-    suspend fun markEventAsDone(innloggetBruker: TokenXUser, doneDTODto: DoneDTO) {
-        val beskjedEvent = getBeskjedFromCacheForUser(innloggetBruker.ident, doneDTODto.eventId)
-        doneProducer.produceDoneEventForSuppliedEventId(innloggetBruker.ident, doneDTODto.eventId, beskjedEvent)
+    suspend fun markEventAsDone(innloggetBruker: TokenXUser, eventId: String) {
+        val beskjedEvent = getBeskjedFromCacheForUser(innloggetBruker.ident, eventId)
+        doneProducer.produceDoneEventForSuppliedEventId(innloggetBruker.ident, eventId, beskjedEvent)
     }
 
     suspend fun getBeskjedFromCacheForUser(fodselsnummer: String, eventId: String): Beskjed {

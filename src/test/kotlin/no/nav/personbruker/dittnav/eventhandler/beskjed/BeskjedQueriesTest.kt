@@ -128,13 +128,13 @@ class BeskjedQueriesTest {
     }
 
     @Test
-    fun `deaktiverer beskjeder`(){
+    fun `deaktiverer beskjeder`() {
         runBlocking {
 
-            database.dbQuery { setBeskjedInaktiv(fodselsnummer,beskjed1.eventId) } shouldBe 1
-            database.dbQuery { setBeskjedInaktiv(fodselsnummer,beskjed1.eventId) } shouldBe 1
-            database.dbQuery { setBeskjedInaktiv("12345678910",beskjed1.eventId) } shouldBe 0
-            database.dbQuery { setBeskjedInaktiv(fodselsnummer,"8879") } shouldBe 0
+            database.dbQuery { setBeskjedInaktiv(fodselsnummer, beskjed1.eventId) } shouldBe 1
+            database.dbQuery { setBeskjedInaktiv(fodselsnummer, beskjed1.eventId) } shouldBe 1
+            database.dbQuery { setBeskjedInaktiv("12345678910", beskjed1.eventId) } shouldBe 0
+            database.dbQuery { setBeskjedInaktiv(fodselsnummer, "8879") } shouldBe 0
             database.dbQuery { getAktivBeskjedForFodselsnummer(fodselsnummer) }.size shouldBe 1
         }
     }

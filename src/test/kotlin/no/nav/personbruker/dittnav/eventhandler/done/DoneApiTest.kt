@@ -1,11 +1,11 @@
 package no.nav.personbruker.dittnav.eventhandler.done
 
-import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.handleRequest
+import io.ktor.server.testing.setBody
 import io.ktor.server.testing.withTestApplication
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -18,6 +18,7 @@ import java.sql.Connection
 class DoneApiTest {
     private val connection: Connection = mockk(relaxed = true)
     val hikariDataSource = mockk<HikariDataSource>(relaxed = true)
+    private val doneEndpoint = "/dittnav-event-handler/produce/done"
     private val database = object : Database {
         override val dataSource: HikariDataSource
             get() = hikariDataSource
@@ -39,9 +40,13 @@ class DoneApiTest {
                 doneEventService = doneEventService
             )
         ) {
-            handleRequest(HttpMethod.Post, "/dittnav-event-handler/produce/done?eventId=123").also {
-                it.response.status() shouldBe HttpStatusCode.OK
-            }
+            val response = handleRequest {
+                method = HttpMethod.Post
+                uri = doneEndpoint
+                addHeader("Content-Type", "application/json")
+                setBody("""{"eventId": "123"}""")
+            }.response
+            response.status() shouldBe HttpStatusCode.OK
         }
     }
 
@@ -60,11 +65,14 @@ class DoneApiTest {
                 doneEventService = doneEventService
             )
         ) {
-            handleRequest(HttpMethod.Post, "/dittnav-event-handler/produce/done?eventId=123").also {
-                it.response.status() shouldBe HttpStatusCode.OK
-            }
+            val response = handleRequest {
+                method = HttpMethod.Post
+                uri = doneEndpoint
+                addHeader("Content-Type", "application/json")
+                setBody("""{"eventId": "123"}""")
+            }.response
+            response.status() shouldBe HttpStatusCode.OK
         }
-
     }
 
     @Test
@@ -74,8 +82,13 @@ class DoneApiTest {
                 doneEventService = doneEventService
             )
         ) {
-            handleRequest(HttpMethod.Post, "/dittnav-event-handler/produce/done")
-        }.response.status() shouldBe HttpStatusCode.BadRequest
-
+            handleRequest {
+                method = HttpMethod.Post
+                uri = doneEndpoint
+                addHeader("Content-Type", "application/json")
+                setBody("""{"ikkeEventIdIhvertfall": "123"}""")
+            }.response.status() shouldBe HttpStatusCode.BadRequest
+            handleRequest(HttpMethod.Post, doneEndpoint).response.status() shouldBe HttpStatusCode.BadRequest
+        }
     }
 }

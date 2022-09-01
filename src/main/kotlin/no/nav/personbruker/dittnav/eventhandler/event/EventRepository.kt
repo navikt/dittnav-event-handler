@@ -3,7 +3,6 @@ package no.nav.personbruker.dittnav.eventhandler.event
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
-import no.nav.personbruker.dittnav.eventhandler.common.daysAgo
 import java.sql.ResultSet
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -20,13 +19,14 @@ class EventRepository(private val database: Database) {
 
     private suspend fun getEvents(fodselsnummer: String, active: Boolean): List<Event> {
         return database.queryWithExceptionTranslation {
-            prepareStatement("""
+            prepareStatement(
+                """
                 ${eventQuery("beskjed", active)}
                 UNION ALL
                 ${eventQuery("oppgave", active)}
                 UNION ALL 
                 ${eventQuery("innboks", active)}
-            """.trimIndent()
+                """.trimIndent()
             ).also {
                 it.setString(1, fodselsnummer)
                 it.setString(2, fodselsnummer)

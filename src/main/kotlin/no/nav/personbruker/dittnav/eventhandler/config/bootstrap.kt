@@ -13,6 +13,7 @@ import io.ktor.routing.routing
 import io.ktor.serialization.json
 import io.ktor.util.pipeline.PipelineContext
 import io.prometheus.client.hotspot.DefaultExports
+import kotlinx.serialization.json.Json
 import no.nav.personbruker.dittnav.common.util.config.StringEnvVar
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService
 import no.nav.personbruker.dittnav.eventhandler.beskjed.beskjedApi
@@ -52,9 +53,8 @@ fun Application.eventHandlerApi(
 
     DefaultExports.initialize()
     install(DefaultHeaders)
-
     install(ContentNegotiation) {
-        json()
+        json(Json { ignoreUnknownKeys = true })
     }
 
     installAuthenticatorsFunction()

@@ -2,8 +2,10 @@ package no.nav.personbruker.dittnav.eventhandler.done
 
 import io.ktor.application.*
 import io.ktor.http.*
+import io.ktor.request.receiveOrNull
 import io.ktor.response.*
 import io.ktor.routing.*
+import kotlinx.serialization.json.JsonObject
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.respondWithError
 import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
@@ -14,13 +16,14 @@ fun Route.doneApi(doneEventService: DoneEventService) {
     val log = LoggerFactory.getLogger(DoneEventService::class.java)
 
     post("/produce/done") {
-        call.parameters["eventId"]?.let { eventId ->
+        call.receiveEventIdOrNull()?.let { eventId ->
             doneEventService.markEventAsInaktiv(innloggetBruker, eventId)
             call.respond(HttpStatusCode.OK)
         } ?: call.respond(HttpStatusCode.BadRequest, "eventid parameter mangler")
-
     }
 }
+
+private suspend fun ApplicationCall.receiveEventIdOrNull(): String? = receiveOrNull<JsonObject>()?.get("eventId")?.toString()
 
 fun Route.doneSystemClientApi(doneEventService: DoneEventService) {
 

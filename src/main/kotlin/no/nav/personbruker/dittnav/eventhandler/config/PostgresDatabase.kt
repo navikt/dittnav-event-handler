@@ -38,7 +38,6 @@ class PostgresDatabase(env: Environment) : Database {
             config.validationTimeout = 500
             config.idleTimeout = 30000
             config.isAutoCommit = false
-            config.isReadOnly = true
             config.transactionIsolation = "TRANSACTION_REPEATABLE_READ"
             config.username = env.dbUser
             config.password = env.dbPassword

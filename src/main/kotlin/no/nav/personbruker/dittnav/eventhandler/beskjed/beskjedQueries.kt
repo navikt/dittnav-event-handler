@@ -5,14 +5,17 @@ import no.nav.personbruker.dittnav.eventhandler.common.database.getListFromSepar
 import no.nav.personbruker.dittnav.eventhandler.common.database.getNullableUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
+import no.nav.personbruker.dittnav.eventhandler.done.DoneEventService
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfo
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
+import org.slf4j.LoggerFactory
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
+val log = LoggerFactory.getLogger(DoneEventService::class.java)
 private val baseSelectQuery = """
     SELECT 
         beskjed.*,
@@ -57,7 +60,11 @@ fun Connection.getBeskjedByIds(fodselsnummer: String, eventId: String): List<Bes
             }
         }
 
-fun Connection.getAllGroupedBeskjedEventsByIds(fodselsnummer: String, grupperingsid: String, appnavn: String): List<Beskjed> =
+fun Connection.getAllGroupedBeskjedEventsByIds(
+    fodselsnummer: String,
+    grupperingsid: String,
+    appnavn: String
+): List<Beskjed> =
     prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ? AND grupperingsId = ? AND appnavn = ?""".trimMargin())
         .use {
             it.setString(1, fodselsnummer)
@@ -103,7 +110,10 @@ fun ResultSet.toBeskjed(): Beskjed {
         fodselsnummer = getString("fodselsnummer"),
         grupperingsId = getString("grupperingsId"),
         eventId = getString("eventId"),
-        eventTidspunkt = ZonedDateTime.ofInstant(getUtcTimeStamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),
+        eventTidspunkt = ZonedDateTime.ofInstant(
+            getUtcTimeStamp("eventTidspunkt").toInstant(),
+            ZoneId.of("Europe/Oslo")
+        ),
         produsent = getString("appnavn") ?: "",
         systembruker = getString("systembruker"),
         namespace = getString("namespace"),
@@ -114,7 +124,10 @@ fun ResultSet.toBeskjed(): Beskjed {
         tekst = getString("tekst"),
         link = getString("link"),
         aktiv = getBoolean("aktiv"),
-        forstBehandlet = ZonedDateTime.ofInstant(getUtcTimeStamp("forstBehandlet").toInstant(), ZoneId.of("Europe/Oslo")),
+        forstBehandlet = ZonedDateTime.ofInstant(
+            getUtcTimeStamp("forstBehandlet").toInstant(),
+            ZoneId.of("Europe/Oslo")
+        ),
         eksternVarslingInfo = toEksternVarslingInfo()
     )
 }
@@ -131,13 +144,20 @@ private fun ResultSet.toEksternVarslingInfo(): EksternVarslingInfo {
 }
 
 private fun ResultSet.getNullableZonedDateTime(label: String): ZonedDateTime? {
-    return getNullableUtcTimeStamp(label)?.let { timestamp -> ZonedDateTime.ofInstant(timestamp.toInstant(), ZoneId.of("Europe/Oslo")) }
+    return getNullableUtcTimeStamp(label)?.let { timestamp ->
+        ZonedDateTime.ofInstant(
+            timestamp.toInstant(),
+            ZoneId.of("Europe/Oslo")
+        )
+    }
 }
 
-fun Connection.setBeskjedInaktiv(fodselsnummer: String, eventId: String): Int =
-    prepareStatement("""UPDATE beskjed  SET aktiv=false WHERE fodselsnummer = ? AND eventId = ?""".trimMargin())
+fun Connection.setBeskjedInaktiv(fodselsnummer: String, eventId: String): Int {
+    log.info("Setter $eventId til inaktiv i db")
+    return prepareStatement("""UPDATE beskjed  SET aktiv=FALSE WHERE fodselsnummer = ? AND eventId = ?""".trimMargin())
         .use {
             it.setString(1, fodselsnummer)
             it.setString(2, eventId)
             it.executeUpdate()
         }
+}

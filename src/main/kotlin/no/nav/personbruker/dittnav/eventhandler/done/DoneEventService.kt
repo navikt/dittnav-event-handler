@@ -11,9 +11,9 @@ class DoneEventService(private val database: Database) {
     suspend fun markEventAsInaktiv(innloggetBruker: TokenXUser, eventId: String) {
         log.info("Forsøker å inaktivere $eventId")
         database.queryWithExceptionTranslation {
-            setBeskjedInaktiv(innloggetBruker.ident, eventId).also {
-                log.info("Satte $it beskjeder til inaktiv")
-            }
+            setBeskjedInaktiv(innloggetBruker.ident, eventId)
+        }.also {
+            log.info("Satte $it beskjeder til inaktiv")
         }
     }
 

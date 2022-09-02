@@ -17,6 +17,7 @@ fun Route.doneApi(doneEventService: DoneEventService) {
 
     post("/produce/done") {
         call.receiveEventIdOrNull()?.let { eventId ->
+            log.info("produce/done for beskjed med eventId $eventId")
             doneEventService.markEventAsInaktiv(innloggetBruker, eventId)
             call.respond(HttpStatusCode.OK)
         } ?: call.respond(HttpStatusCode.BadRequest, "eventid parameter mangler")

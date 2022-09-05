@@ -2,10 +2,10 @@ package no.nav.personbruker.dittnav.eventhandler.done
 
 import io.ktor.application.*
 import io.ktor.http.*
-import io.ktor.request.receiveOrNull
+import io.ktor.request.receive
 import io.ktor.response.*
 import io.ktor.routing.*
-import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.Serializable
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.respondWithError
 import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
@@ -13,18 +13,19 @@ import org.slf4j.LoggerFactory
 
 fun Route.doneApi(doneEventService: DoneEventService) {
 
-    val log = LoggerFactory.getLogger(DoneEventService::class.java)
-
     post("/produce/done") {
-        call.receiveEventIdOrNull()?.let { eventId ->
-            log.info("produce/done for beskjed med eventId $eventId")
-            doneEventService.markEventAsInaktiv(innloggetBruker, eventId)
+        call.receiveEventIdOrNull()?.let { body ->
+            doneEventService.markEventAsInaktiv(innloggetBruker, body.eventId)
             call.respond(HttpStatusCode.OK)
         } ?: call.respond(HttpStatusCode.BadRequest, "eventid parameter mangler")
     }
 }
 
-private suspend fun ApplicationCall.receiveEventIdOrNull(): String? = receiveOrNull<JsonObject>()?.get("eventId")?.toString()
+private suspend fun ApplicationCall.receiveEventIdOrNull(): EventIdBody? = try {
+    receive()
+} catch (ex: Exception) {
+    null
+}
 
 fun Route.doneSystemClientApi(doneEventService: DoneEventService) {
 
@@ -75,3 +76,6 @@ private fun List<EventCountForProducer>.transformToMap(): Map<Pair<String, Strin
         (it.namespace to it.appName) to it.count
     }.toMap()
 }
+
+@Serializable
+data class EventIdBody(val eventId: String)

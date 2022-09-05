@@ -48,7 +48,8 @@ fun Application.eventHandlerApi(
     eventRepository: EventRepository,
     eventStatisticsService: EventStatisticsService,
     database: Database,
-    installAuthenticatorsFunction: Application.() -> Unit = installAuth()
+    installAuthenticatorsFunction: Application.() -> Unit = installAuth(),
+    installShutdownHook: (database: Database) -> Unit = { configureShutdownHook(database) }
 ) {
 
     DefaultExports.initialize()
@@ -79,7 +80,7 @@ fun Application.eventHandlerApi(
             }
         }
     }
-    configureShutdownHook(database)
+    installShutdownHook(database)
 }
 
 private fun installAuth(): Application.() -> Unit = {

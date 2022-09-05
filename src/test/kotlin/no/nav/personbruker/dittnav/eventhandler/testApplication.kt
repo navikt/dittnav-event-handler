@@ -46,7 +46,8 @@ fun mockEventHandlerApi(
             eventRepository = eventRepository,
             eventStatisticsService = eventStatisticsService,
             database = database,
-            installAuthenticatorsFunction = installAuthenticatorsFunction
+            installAuthenticatorsFunction = installAuthenticatorsFunction,
+            installShutdownHook = {}
         )
     }
 }

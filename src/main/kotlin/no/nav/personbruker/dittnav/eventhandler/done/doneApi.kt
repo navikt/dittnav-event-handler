@@ -14,8 +14,8 @@ import org.slf4j.LoggerFactory
 fun Route.doneApi(doneEventService: DoneEventService) {
 
     post("/produce/done") {
-        call.receiveEventIdOrNull()?.let { body ->
-            doneEventService.markEventAsInaktiv(innloggetBruker, body.eventId)
+        call.receive<EventIdBody>().eventId?.let { eventId ->
+            doneEventService.markEventAsInaktiv(innloggetBruker, eventId)
             call.respond(HttpStatusCode.OK)
         } ?: call.respond(HttpStatusCode.BadRequest, "eventid parameter mangler")
     }
@@ -78,4 +78,4 @@ private fun List<EventCountForProducer>.transformToMap(): Map<Pair<String, Strin
 }
 
 @Serializable
-data class EventIdBody(val eventId: String)
+data class EventIdBody(val eventId: String?=null)

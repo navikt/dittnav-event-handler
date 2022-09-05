@@ -1,5 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.done
 
+import no.nav.personbruker.dittnav.eventhandler.beskjed.getBeskjedByIds
 import no.nav.personbruker.dittnav.eventhandler.beskjed.setBeskjedInaktiv
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
@@ -9,11 +10,8 @@ import org.slf4j.LoggerFactory
 class DoneEventService(private val database: Database) {
     val log = LoggerFactory.getLogger(DoneEventService::class.java)
     suspend fun markEventAsInaktiv(innloggetBruker: TokenXUser, eventId: String) {
-        log.info("Forsøker å inaktivere $eventId")
-        database.queryWithExceptionTranslation {
-            setBeskjedInaktiv(innloggetBruker.ident, eventId)
-        }.also {
-            log.info("Satte $it beskjeder til inaktiv")
+        database.dbQuery {
+            setBeskjedInaktiv(fodselsnummer = innloggetBruker.ident, eventId = eventId)
         }
     }
 

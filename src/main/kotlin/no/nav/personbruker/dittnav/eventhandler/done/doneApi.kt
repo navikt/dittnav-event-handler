@@ -1,17 +1,24 @@
 package no.nav.personbruker.dittnav.eventhandler.done
 
 import io.ktor.application.*
+import io.ktor.features.StatusPages
 import io.ktor.http.*
 import io.ktor.request.receive
 import io.ktor.response.*
 import io.ktor.routing.*
 import kotlinx.serialization.Serializable
+import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedNotFoundException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.respondWithError
 import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import org.slf4j.LoggerFactory
 
 fun Route.doneApi(doneEventService: DoneEventService) {
+    install(StatusPages){
+        exception<BeskjedNotFoundException> { cause ->
+            call.respond(status = HttpStatusCode.BadRequest, message = cause.message.toString())
+        }
+    }
 
     post("/produce/done") {
         call.receive<EventIdBody>().eventId?.let { eventId ->
@@ -19,12 +26,6 @@ fun Route.doneApi(doneEventService: DoneEventService) {
             call.respond(HttpStatusCode.OK)
         } ?: call.respond(HttpStatusCode.BadRequest, "eventid parameter mangler")
     }
-}
-
-private suspend fun ApplicationCall.receiveEventIdOrNull(): EventIdBody? = try {
-    receive()
-} catch (ex: Exception) {
-    null
 }
 
 fun Route.doneSystemClientApi(doneEventService: DoneEventService) {

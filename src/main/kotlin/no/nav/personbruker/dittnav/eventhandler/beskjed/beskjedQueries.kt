@@ -153,7 +153,9 @@ private fun ResultSet.getNullableZonedDateTime(label: String): ZonedDateTime? {
 }
 
 fun Connection.setBeskjedInaktiv(fodselsnummer: String, eventId: String): Int {
-    log.info("Setter $eventId til inaktiv i db")
+    if (getBeskjedByIds(fodselsnummer, eventId).isEmpty()) {
+        throw BeskjedNotFoundException(eventId)
+    }
     return prepareStatement("""UPDATE beskjed  SET aktiv=FALSE WHERE fodselsnummer = ? AND eventId = ?""".trimMargin())
         .use {
             it.setString(1, fodselsnummer)
@@ -161,3 +163,5 @@ fun Connection.setBeskjedInaktiv(fodselsnummer: String, eventId: String): Int {
             it.executeUpdate()
         }
 }
+
+class BeskjedNotFoundException(val eventid: String) : IllegalArgumentException("beskjed med eventId $eventid ikke funnet")

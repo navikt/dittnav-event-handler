@@ -14,6 +14,7 @@ import no.nav.personbruker.dittnav.eventhandler.statistics.EventStatisticsServic
 import no.nav.tms.token.support.authentication.installer.mock.installMockedAuthenticators
 import no.nav.tms.token.support.tokenx.validation.mock.SecurityLevel
 
+val apiTestfnr = "12345678910"
 fun mockEventHandlerApi(
     healthService: HealthService = mockk(relaxed = true),
     beskjedEventService: BeskjedEventService = mockk(relaxed = true),
@@ -29,7 +30,7 @@ fun mockEventHandlerApi(
                 setAsDefault = true
 
                 alwaysAuthenticated = true
-                staticUserPid = "123"
+                staticUserPid = apiTestfnr
                 staticSecurityLevel = SecurityLevel.LEVEL_4
             }
             installAzureAuthMock { }

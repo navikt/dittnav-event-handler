@@ -8,12 +8,10 @@ import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
 import no.nav.personbruker.dittnav.eventhandler.common.findCountFor
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.*
-import no.nav.personbruker.dittnav.eventhandler.oppgave.getAktivOppgaveForFodselsnummer
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import java.time.LocalDate
 import java.time.ZonedDateTime
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -24,7 +22,7 @@ class OppgaveQueriesTest {
     private val systembruker = "x-dittnav"
     private val namespace = "localhost"
     private val appnavn = "dittnav"
-    private val grupperingsid = "100${fodselsnummer}"
+    private val grupperingsid = "100$fodselsnummer"
 
     private val oppgave1 = OppgaveObjectMother.createOppgave(
         id = 1,
@@ -209,7 +207,6 @@ class OppgaveQueriesTest {
         }
     }
 
-
     @Test
     fun `Returnerer en liste av alle grupperte Oppgave-eventer basert paa produsent`() {
         runBlocking {
@@ -232,7 +229,7 @@ class OppgaveQueriesTest {
         val eksternVarslingInfo = oppgave.eksternVarslingInfo
 
         eksternVarslingInfo.bestilt shouldBe oppgave1.eksternVarslingInfo.bestilt
-        eksternVarslingInfo.prefererteKanaler shouldContainAll  oppgave1.eksternVarslingInfo.prefererteKanaler
+        eksternVarslingInfo.prefererteKanaler shouldContainAll oppgave1.eksternVarslingInfo.prefererteKanaler
         eksternVarslingInfo.sendt shouldBe true
         eksternVarslingInfo.sendteKanaler shouldContain doknotStatusForOppgave1.kanaler
     }
@@ -248,7 +245,7 @@ class OppgaveQueriesTest {
         val eksternVarslingInfo = oppgave.eksternVarslingInfo
 
         eksternVarslingInfo.bestilt shouldBe oppgave2.eksternVarslingInfo.bestilt
-        eksternVarslingInfo.prefererteKanaler shouldContainAll  oppgave2.eksternVarslingInfo.prefererteKanaler
+        eksternVarslingInfo.prefererteKanaler shouldContainAll oppgave2.eksternVarslingInfo.prefererteKanaler
         eksternVarslingInfo.sendt shouldBe false
         eksternVarslingInfo.sendteKanaler.isEmpty() shouldBe true
     }
@@ -264,7 +261,7 @@ class OppgaveQueriesTest {
         val eksternVarslingInfo = oppgave.eksternVarslingInfo
 
         eksternVarslingInfo.bestilt shouldBe oppgave3.eksternVarslingInfo.bestilt
-        eksternVarslingInfo.prefererteKanaler shouldContainAll  oppgave3.eksternVarslingInfo.prefererteKanaler
+        eksternVarslingInfo.prefererteKanaler shouldContainAll oppgave3.eksternVarslingInfo.prefererteKanaler
         eksternVarslingInfo.sendt shouldBe false
         eksternVarslingInfo.sendteKanaler.isEmpty() shouldBe true
     }

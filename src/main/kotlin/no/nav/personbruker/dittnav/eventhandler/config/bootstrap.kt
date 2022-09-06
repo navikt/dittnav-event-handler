@@ -13,6 +13,7 @@ import io.ktor.routing.routing
 import io.ktor.serialization.json
 import io.ktor.util.pipeline.PipelineContext
 import io.prometheus.client.hotspot.DefaultExports
+import kotlinx.serialization.json.Json
 import no.nav.personbruker.dittnav.common.util.config.StringEnvVar
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService
 import no.nav.personbruker.dittnav.eventhandler.beskjed.beskjedApi
@@ -21,7 +22,6 @@ import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.health.HealthService
 import no.nav.personbruker.dittnav.eventhandler.common.health.healthApi
 import no.nav.personbruker.dittnav.eventhandler.done.DoneEventService
-import no.nav.personbruker.dittnav.eventhandler.done.DoneProducer
 import no.nav.personbruker.dittnav.eventhandler.done.doneApi
 import no.nav.personbruker.dittnav.eventhandler.done.doneSystemClientApi
 import no.nav.personbruker.dittnav.eventhandler.event.EventRepository
@@ -48,15 +48,14 @@ fun Application.eventHandlerApi(
     eventRepository: EventRepository,
     eventStatisticsService: EventStatisticsService,
     database: Database,
-    doneProducer: DoneProducer,
-    installAuthenticatorsFunction: Application.() -> Unit = installAuth()
+    installAuthenticatorsFunction: Application.() -> Unit = installAuth(),
+    installShutdownHook: (database: Database) -> Unit = { configureShutdownHook(database) }
 ) {
 
     DefaultExports.initialize()
     install(DefaultHeaders)
-
     install(ContentNegotiation) {
-        json()
+        json(Json { ignoreUnknownKeys = true })
     }
 
     installAuthenticatorsFunction()
@@ -81,7 +80,7 @@ fun Application.eventHandlerApi(
             }
         }
     }
-    configureShutdownHook(database, doneProducer)
+    installShutdownHook(database)
 }
 
 private fun installAuth(): Application.() -> Unit = {
@@ -95,10 +94,9 @@ private fun installAuth(): Application.() -> Unit = {
     }
 }
 
-private fun Application.configureShutdownHook(database: Database, doneProducer: DoneProducer) {
+private fun Application.configureShutdownHook(database: Database) {
     environment.monitor.subscribe(ApplicationStopPreparing) {
         closeTheDatabaseConectionPool(database)
-        doneProducer.flushAndClose()
     }
 }
 

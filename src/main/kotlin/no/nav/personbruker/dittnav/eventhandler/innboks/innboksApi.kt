@@ -43,9 +43,11 @@ fun Route.innboksApi(innboksEventService: InnboksEventService) {
     get("/fetch/innboks/grouped") {
         try {
             val innboksEvents =
-                    innboksEventService.getAllGroupedEventsFromCacheForUser(innloggetBruker,
-                            call.request.queryParameters["grupperingsid"],
-                            call.request.queryParameters["produsent"])
+                innboksEventService.getAllGroupedEventsFromCacheForUser(
+                    innloggetBruker,
+                    call.request.queryParameters["grupperingsid"],
+                    call.request.queryParameters["produsent"]
+                )
             call.respond(HttpStatusCode.OK, innboksEvents)
         } catch (exception: Exception) {
             respondWithError(call, log, exception)
@@ -72,20 +74,17 @@ fun Route.innboksSystemClientApi(innboksEventService: InnboksEventService) {
             try {
                 val aktiveInnboksEvents = innboksEventService.getActiveEventsForFodselsnummer(userToFetchEventsFor.fodselsnummer)
                 call.respond(HttpStatusCode.OK, aktiveInnboksEvents)
-
             } catch (exception: Exception) {
                 respondWithError(call, log, exception)
             }
         }
     }
 
-
     get("/fetch/modia/innboks/inaktive") {
         doIfValidRequest { userToFetchEventsFor ->
             try {
                 val inaktiveInnboksEvents = innboksEventService.getInactiveEventsForFodselsnummer(userToFetchEventsFor.fodselsnummer)
                 call.respond(HttpStatusCode.OK, inaktiveInnboksEvents)
-
             } catch (exception: Exception) {
                 respondWithError(call, log, exception)
             }
@@ -97,7 +96,6 @@ fun Route.innboksSystemClientApi(innboksEventService: InnboksEventService) {
             try {
                 val innboksEvents = innboksEventService.getAllEventsForFodselsnummer(userToFetchEventsFor.fodselsnummer)
                 call.respond(HttpStatusCode.OK, innboksEvents)
-
             } catch (exception: Exception) {
                 respondWithError(call, log, exception)
             }

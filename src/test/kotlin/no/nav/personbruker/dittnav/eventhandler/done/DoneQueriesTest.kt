@@ -73,7 +73,6 @@ internal class DoneQueriesTest {
         deleteInactiveBrukernotifikasjoner()
     }
 
-
     @Test
     fun `Returnerer en liste av alle grupperte inaktive brukernotifikasjoner basert paa produsent`() {
         createInactiveBrukernotifikasjoner()
@@ -100,7 +99,7 @@ internal class DoneQueriesTest {
         }
     }
 
-    private fun  createInactiveBrukernotifikasjoner() {
+    private fun createInactiveBrukernotifikasjoner() {
         runBlocking {
             database.dbQuery {
                 createBeskjed(listOf(inaktivBeskjed))

@@ -7,7 +7,6 @@ import no.nav.personbruker.dittnav.eventhandler.statistics.IntegerMeasurement
 import java.sql.Connection
 import java.sql.ResultSet
 
-
 private fun singleTableQueryString(type: EventType) = """
     select
         min(aggregate.events) as minEvents,

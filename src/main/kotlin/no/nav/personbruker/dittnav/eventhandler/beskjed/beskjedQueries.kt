@@ -5,14 +5,17 @@ import no.nav.personbruker.dittnav.eventhandler.common.database.getListFromSepar
 import no.nav.personbruker.dittnav.eventhandler.common.database.getNullableUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
+import no.nav.personbruker.dittnav.eventhandler.done.DoneEventService
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfo
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
+import org.slf4j.LoggerFactory
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
+val log = LoggerFactory.getLogger(DoneEventService::class.java)
 private val baseSelectQuery = """
     SELECT 
         beskjed.*,
@@ -23,10 +26,10 @@ private val baseSelectQuery = """
 """.trimMargin()
 
 fun Connection.getInaktivBeskjedForFodselsnummer(fodselsnummer: String): List<Beskjed> =
-        getBeskjedForFodselsnummerByAktiv(fodselsnummer, false)
+    getBeskjedForFodselsnummerByAktiv(fodselsnummer, false)
 
 fun Connection.getAktivBeskjedForFodselsnummer(fodselsnummer: String): List<Beskjed> =
-        getBeskjedForFodselsnummerByAktiv(fodselsnummer, true)
+    getBeskjedForFodselsnummerByAktiv(fodselsnummer, true)
 
 private fun Connection.getBeskjedForFodselsnummerByAktiv(fodselsnummer: String, aktiv: Boolean): List<Beskjed> =
     prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ? AND aktiv = ?""".trimMargin())
@@ -40,59 +43,65 @@ private fun Connection.getBeskjedForFodselsnummerByAktiv(fodselsnummer: String, 
 
 fun Connection.getAllBeskjedForFodselsnummer(fodselsnummer: String): List<Beskjed> =
     prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ?""".trimMargin())
-                .use {
-                    it.setString(1, fodselsnummer)
-                    it.executeQuery().mapList {
-                        toBeskjed()
-                    }
-                }
+        .use {
+            it.setString(1, fodselsnummer)
+            it.executeQuery().mapList {
+                toBeskjed()
+            }
+        }
 
 fun Connection.getBeskjedByIds(fodselsnummer: String, eventId: String): List<Beskjed> =
-        prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ? AND beskjed.eventId = ?""".trimMargin())
-                .use {
-                    it.setString(1, fodselsnummer)
-                    it.setString(2, eventId)
-                    it.executeQuery().mapList {
-                        toBeskjed()
-                    }
-                }
+    prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ? AND beskjed.eventId = ?""".trimMargin())
+        .use {
+            it.setString(1, fodselsnummer)
+            it.setString(2, eventId)
+            it.executeQuery().mapList {
+                toBeskjed()
+            }
+        }
 
-fun Connection.getAllGroupedBeskjedEventsByIds(fodselsnummer: String, grupperingsid: String, appnavn: String): List<Beskjed> =
-        prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ? AND grupperingsId = ? AND appnavn = ?""".trimMargin())
-                .use {
-                    it.setString(1, fodselsnummer)
-                    it.setString(2, grupperingsid)
-                    it.setString(3, appnavn)
-                    it.executeQuery().mapList {
-                        toBeskjed()
-                    }
-                }
+fun Connection.getAllGroupedBeskjedEventsByIds(
+    fodselsnummer: String,
+    grupperingsid: String,
+    appnavn: String
+): List<Beskjed> =
+    prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ? AND grupperingsId = ? AND appnavn = ?""".trimMargin())
+        .use {
+            it.setString(1, fodselsnummer)
+            it.setString(2, grupperingsid)
+            it.setString(3, appnavn)
+            it.executeQuery().mapList {
+                toBeskjed()
+            }
+        }
 
 fun Connection.getAllGroupedBeskjedEventsBySystemuser(): Map<String, Int> {
-    return prepareStatement("SELECT systembruker, COUNT(*) FROM beskjed GROUP BY systembruker",
-            ResultSet.TYPE_SCROLL_INSENSITIVE,
-            ResultSet.CONCUR_READ_ONLY)
-            .use { statement ->
-                val resultSet = statement.executeQuery()
-                mutableMapOf<String, Int>().apply {
-                    while (resultSet.next()) {
-                        put(resultSet.getString(1), resultSet.getInt(2))
-                    }
+    return prepareStatement(
+        "SELECT systembruker, COUNT(*) FROM beskjed GROUP BY systembruker",
+        ResultSet.TYPE_SCROLL_INSENSITIVE,
+        ResultSet.CONCUR_READ_ONLY
+    )
+        .use { statement ->
+            val resultSet = statement.executeQuery()
+            mutableMapOf<String, Int>().apply {
+                while (resultSet.next()) {
+                    put(resultSet.getString(1), resultSet.getInt(2))
                 }
             }
+        }
 }
 
 fun Connection.getAllGroupedBeskjedEventsByProducer(): List<EventCountForProducer> {
     return prepareStatement("SELECT namespace, appnavn, COUNT(*) FROM beskjed GROUP BY namespace, appnavn")
-            .use { statement ->
-                statement.executeQuery().mapList {
-                    EventCountForProducer(
-                        namespace = getString(1),
-                        appName = getString(2),
-                        count = getInt(3),
-                    )
-                }
+        .use { statement ->
+            statement.executeQuery().mapList {
+                EventCountForProducer(
+                    namespace = getString(1),
+                    appName = getString(2),
+                    count = getInt(3),
+                )
             }
+        }
 }
 
 fun ResultSet.toBeskjed(): Beskjed {
@@ -101,7 +110,10 @@ fun ResultSet.toBeskjed(): Beskjed {
         fodselsnummer = getString("fodselsnummer"),
         grupperingsId = getString("grupperingsId"),
         eventId = getString("eventId"),
-        eventTidspunkt = ZonedDateTime.ofInstant(getUtcTimeStamp("eventTidspunkt").toInstant(), ZoneId.of("Europe/Oslo")),
+        eventTidspunkt = ZonedDateTime.ofInstant(
+            getUtcTimeStamp("eventTidspunkt").toInstant(),
+            ZoneId.of("Europe/Oslo")
+        ),
         produsent = getString("appnavn") ?: "",
         systembruker = getString("systembruker"),
         namespace = getString("namespace"),
@@ -112,7 +124,10 @@ fun ResultSet.toBeskjed(): Beskjed {
         tekst = getString("tekst"),
         link = getString("link"),
         aktiv = getBoolean("aktiv"),
-        forstBehandlet = ZonedDateTime.ofInstant(getUtcTimeStamp("forstBehandlet").toInstant(), ZoneId.of("Europe/Oslo")),
+        forstBehandlet = ZonedDateTime.ofInstant(
+            getUtcTimeStamp("forstBehandlet").toInstant(),
+            ZoneId.of("Europe/Oslo")
+        ),
         eksternVarslingInfo = toEksternVarslingInfo()
     )
 }
@@ -129,5 +144,24 @@ private fun ResultSet.toEksternVarslingInfo(): EksternVarslingInfo {
 }
 
 private fun ResultSet.getNullableZonedDateTime(label: String): ZonedDateTime? {
-    return getNullableUtcTimeStamp(label)?.let { timestamp -> ZonedDateTime.ofInstant(timestamp.toInstant(), ZoneId.of("Europe/Oslo")) }
+    return getNullableUtcTimeStamp(label)?.let { timestamp ->
+        ZonedDateTime.ofInstant(
+            timestamp.toInstant(),
+            ZoneId.of("Europe/Oslo")
+        )
+    }
 }
+
+fun Connection.setBeskjedInaktiv(fodselsnummer: String, eventId: String): Int {
+    if (getBeskjedByIds(fodselsnummer, eventId).isEmpty()) {
+        throw BeskjedNotFoundException(eventId)
+    }
+    return prepareStatement("""UPDATE beskjed  SET aktiv=FALSE WHERE fodselsnummer = ? AND eventId = ?""".trimMargin())
+        .use {
+            it.setString(1, fodselsnummer)
+            it.setString(2, eventId)
+            it.executeUpdate()
+        }
+}
+
+class BeskjedNotFoundException(val eventid: String) : IllegalArgumentException("beskjed med eventId $eventid ikke funnet")

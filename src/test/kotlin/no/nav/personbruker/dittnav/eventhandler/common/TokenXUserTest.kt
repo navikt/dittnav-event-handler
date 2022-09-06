@@ -39,5 +39,4 @@ internal class TokenXUserTest {
         outputOfToString shouldNotContain innloggetBruker.ident
         outputOfToString shouldNotContain innloggetBruker.jwt.token
     }
-
 }

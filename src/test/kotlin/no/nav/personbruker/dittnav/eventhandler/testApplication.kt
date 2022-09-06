@@ -7,7 +7,6 @@ import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.health.HealthService
 import no.nav.personbruker.dittnav.eventhandler.config.eventHandlerApi
 import no.nav.personbruker.dittnav.eventhandler.done.DoneEventService
-import no.nav.personbruker.dittnav.eventhandler.done.DoneProducer
 import no.nav.personbruker.dittnav.eventhandler.event.EventRepository
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksEventService
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveEventService
@@ -15,6 +14,7 @@ import no.nav.personbruker.dittnav.eventhandler.statistics.EventStatisticsServic
 import no.nav.tms.token.support.authentication.installer.mock.installMockedAuthenticators
 import no.nav.tms.token.support.tokenx.validation.mock.SecurityLevel
 
+val apiTestfnr = "12345678910"
 fun mockEventHandlerApi(
     healthService: HealthService = mockk(relaxed = true),
     beskjedEventService: BeskjedEventService = mockk(relaxed = true),
@@ -24,17 +24,16 @@ fun mockEventHandlerApi(
     eventRepository: EventRepository = mockk(relaxed = true),
     eventStatisticsService: EventStatisticsService = mockk(relaxed = true),
     database: Database = mockk(relaxed = true),
-    doneProducer: DoneProducer = mockk(relaxed = true),
     installAuthenticatorsFunction: Application.() -> Unit = {
         installMockedAuthenticators {
             installTokenXAuthMock {
                 setAsDefault = true
 
                 alwaysAuthenticated = true
-                staticUserPid = "123"
+                staticUserPid = apiTestfnr
                 staticSecurityLevel = SecurityLevel.LEVEL_4
             }
-            installAzureAuthMock {  }
+            installAzureAuthMock { }
         }
     }
 ): Application.() -> Unit {
@@ -48,8 +47,8 @@ fun mockEventHandlerApi(
             eventRepository = eventRepository,
             eventStatisticsService = eventStatisticsService,
             database = database,
-            doneProducer = doneProducer,
-            installAuthenticatorsFunction = installAuthenticatorsFunction
+            installAuthenticatorsFunction = installAuthenticatorsFunction,
+            installShutdownHook = {}
         )
     }
 }

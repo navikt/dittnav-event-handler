@@ -15,7 +15,7 @@ fun Route.eventApi(eventRepository: EventRepository) {
     get("/fetch/event/inaktive") {
         try {
             val inactiveEventDTOs = eventRepository.getInactiveEvents(innloggetBruker.ident)
-                    .map { event -> event.toEventDTO() }
+                .map { event -> event.toEventDTO() }
             call.respond(HttpStatusCode.OK, inactiveEventDTOs)
         } catch (exception: Exception) {
             respondWithError(call, log, exception)

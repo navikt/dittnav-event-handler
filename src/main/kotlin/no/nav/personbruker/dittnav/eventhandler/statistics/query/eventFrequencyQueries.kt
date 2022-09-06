@@ -17,7 +17,7 @@ fun Connection.getActiveEventsFrequencyDistribution(table: String): EventFrequen
         ) as sub
         group by antallEventer
         order by antallEventer;
-    """.trimIndent()
+        """.trimIndent()
     )
 
     return EventFrequencyDistribution(

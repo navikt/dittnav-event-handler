@@ -43,9 +43,11 @@ fun Route.beskjedApi(beskjedEventService: BeskjedEventService) {
     get("/fetch/beskjed/grouped") {
         try {
             val beskjedEvents =
-                    beskjedEventService.getAllGroupedEventsFromCacheForUser(innloggetBruker,
-                            call.request.queryParameters["grupperingsid"],
-                            call.request.queryParameters["produsent"])
+                beskjedEventService.getAllGroupedEventsFromCacheForUser(
+                    innloggetBruker,
+                    call.request.queryParameters["grupperingsid"],
+                    call.request.queryParameters["produsent"]
+                )
             call.respond(HttpStatusCode.OK, beskjedEvents)
         } catch (exception: Exception) {
             respondWithError(call, log, exception)
@@ -72,7 +74,6 @@ fun Route.beskjedSystemClientApi(beskjedEventService: BeskjedEventService) {
             try {
                 val aktiveBeskjedEvents = beskjedEventService.getActiveEventsForFodselsnummer(userToFetchEventsFor.fodselsnummer)
                 call.respond(HttpStatusCode.OK, aktiveBeskjedEvents)
-
             } catch (exception: Exception) {
                 respondWithError(call, log, exception)
             }
@@ -84,7 +85,6 @@ fun Route.beskjedSystemClientApi(beskjedEventService: BeskjedEventService) {
             try {
                 val inaktiveBeskjedEvents = beskjedEventService.getInactiveEventsForFodselsnummer(userToFetchEventsFor.fodselsnummer)
                 call.respond(HttpStatusCode.OK, inaktiveBeskjedEvents)
-
             } catch (exception: Exception) {
                 respondWithError(call, log, exception)
             }
@@ -96,7 +96,6 @@ fun Route.beskjedSystemClientApi(beskjedEventService: BeskjedEventService) {
             try {
                 val beskjedEvents = beskjedEventService.getAllEventsForFodselsnummer(userToFetchEventsFor.fodselsnummer)
                 call.respond(HttpStatusCode.OK, beskjedEvents)
-
             } catch (exception: Exception) {
                 respondWithError(call, log, exception)
             }

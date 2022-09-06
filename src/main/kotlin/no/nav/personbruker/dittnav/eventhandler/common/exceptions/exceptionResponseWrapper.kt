@@ -9,7 +9,7 @@ import no.nav.personbruker.dittnav.eventhandler.common.exceptions.database.Unret
 import org.slf4j.Logger
 
 suspend fun respondWithError(call: ApplicationCall, log: Logger, exception: Exception) {
-    when(exception) {
+    when (exception) {
         is EventCacheException -> {
             call.respond(HttpStatusCode.ServiceUnavailable)
             log.warn("Klarte ikke hente eventer fra cache. Returnerer feilkode til frontend. {}", exception.toString(), exception)

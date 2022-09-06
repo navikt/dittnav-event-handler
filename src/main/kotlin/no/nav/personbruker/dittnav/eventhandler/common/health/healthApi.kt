@@ -42,5 +42,5 @@ fun Route.healthApi(healthService: HealthService, collectorRegistry: CollectorRe
 
 private fun isReady(healthService: HealthService): Boolean {
     // utvid eventuelt med logikk for å inkludere helsesjekker som skal påvirke om appen er ready eller ikke.
-    return true;
+    return true
 }

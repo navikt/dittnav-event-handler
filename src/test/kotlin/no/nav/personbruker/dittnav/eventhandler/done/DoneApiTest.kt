@@ -1,9 +1,17 @@
 package no.nav.personbruker.dittnav.eventhandler.done
 
 import io.kotest.matchers.shouldBe
+import io.ktor.client.request.get
+import io.ktor.client.request.header
+import io.ktor.client.request.request
+import io.ktor.client.request.setBody
+import io.ktor.client.request.url
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.request.header
 import io.ktor.server.testing.setBody
+import io.ktor.server.testing.testApplication
 import io.ktor.server.testing.withTestApplication
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.apiTestfnr
@@ -58,73 +66,69 @@ class DoneApiTest {
     @Test
     fun `inaktiverer varsel og returnerer 200`() {
 
-        withTestApplication(
+        testApplication {
             mockEventHandlerApi(
                 doneEventService = doneEventService,
                 database = database
             )
-        ) {
-            val response = handleRequest {
+            val response = client.request {
+                url(doneEndpoint)
                 method = HttpMethod.Post
-                uri = doneEndpoint
-                addHeader("Content-Type", "application/json")
+                header("Content-Type", "application/json")
                 setBody("""{"eventId": "${aktivBeskjed.eventId}"}""")
-            }.response
-            response.status() shouldBe HttpStatusCode.OK
+            }
+            response.status shouldBe HttpStatusCode.OK
         }
     }
 
     @Test
     fun `200 for allerede inaktiverte varsel`() {
-        withTestApplication(
+        testApplication {
             mockEventHandlerApi(
                 doneEventService = doneEventService
             )
-        ) {
-            val response = handleRequest {
+            val response = client.request{
                 method = HttpMethod.Post
-                uri = doneEndpoint
-                addHeader("Content-Type", "application/json")
+                url(doneEndpoint)
+                header("Content-Type", "application/json")
                 setBody("""{"eventId": "${inaktivBeskjed.eventId}"}""")
-            }.response
-            response.status() shouldBe HttpStatusCode.OK
+            }
+            response.status shouldBe HttpStatusCode.OK
         }
     }
 
     @Test
     fun `400 for varsel som ikke finnes`() {
-        withTestApplication(
+        testApplication {
             mockEventHandlerApi(
                 doneEventService = doneEventService
             )
-        ) {
-            val response = handleRequest {
+            val response = client.request {
                 method = HttpMethod.Post
-                uri = doneEndpoint
-                addHeader("Content-Type", "application/json")
+                url(doneEndpoint)
+                header("Content-Type", "application/json")
                 setBody("""{"eventId": "12311111111"}""")
-            }.response
-            response.status() shouldBe HttpStatusCode.BadRequest
-            response.content shouldBe "beskjed med eventId 12311111111 ikke funnet"
+            }
+            response.status shouldBe HttpStatusCode.BadRequest
+            response.bodyAsText() shouldBe "beskjed med eventId 12311111111 ikke funnet"
 
         }
     }
 
     @Test
     fun `400 når eventId mangler`() {
-        withTestApplication(
+        testApplication{
             mockEventHandlerApi(
                 doneEventService = doneEventService
             )
-        ) {
-            val result = handleRequest {
+            val result = client.request {
                 method = HttpMethod.Post
-                uri = doneEndpoint
-                addHeader("Content-Type", "application/json")
+                url(doneEndpoint)
+                header("Content-Type", "application/json")
                 setBody("""{"event": "12398634581111"}""")
-            }.response
-            result.status() shouldBe HttpStatusCode.BadRequest
-            result.content shouldBe "eventid parameter mangler"
+            }
+            result.status shouldBe HttpStatusCode.BadRequest
+            result.bodyAsText() shouldBe "eventid parameter mangler"
         }
     }
 }

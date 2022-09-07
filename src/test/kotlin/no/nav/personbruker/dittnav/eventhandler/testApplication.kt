@@ -1,6 +1,8 @@
 package no.nav.personbruker.dittnav.eventhandler
 
-import io.ktor.application.Application
+
+import io.ktor.server.application.Application
+import io.ktor.server.testing.TestApplicationBuilder
 import io.mockk.mockk
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
@@ -15,7 +17,7 @@ import no.nav.tms.token.support.authentication.installer.mock.installMockedAuthe
 import no.nav.tms.token.support.tokenx.validation.mock.SecurityLevel
 
 val apiTestfnr = "12345678910"
-fun mockEventHandlerApi(
+fun TestApplicationBuilder.mockEventHandlerApi(
     healthService: HealthService = mockk(relaxed = true),
     beskjedEventService: BeskjedEventService = mockk(relaxed = true),
     oppgaveEventService: OppgaveEventService = mockk(relaxed = true),
@@ -36,8 +38,8 @@ fun mockEventHandlerApi(
             installAzureAuthMock { }
         }
     }
-): Application.() -> Unit {
-    return fun Application.() {
+) {
+    application {
         eventHandlerApi(
             healthService = healthService,
             beskjedEventService = beskjedEventService,

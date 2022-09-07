@@ -2,6 +2,8 @@ package no.nav.personbruker.dittnav.eventhandler.event
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.matchers.shouldBe
+import io.ktor.client.request.get
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import io.mockk.coEvery
@@ -52,25 +54,24 @@ class EventApiTest {
             )
         )
 
-        val response = withTestApplication(
+        testApplication {
             mockEventHandlerApi(eventRepository = eventRepositoryMock)
-        ) {
-            handleRequest(HttpMethod.Get, "dittnav-event-handler/fetch/event/inaktive") {}
-        }.response
+            val response = client.get("dittnav-event-handler/fetch/event/inaktive")
 
-        response.status() shouldBe HttpStatusCode.OK
+            response.status shouldBe HttpStatusCode.OK
 
-        val eventJson = ObjectMapper().readTree(response.content)[0]
-        eventJson["grupperingsId"].asText() shouldBe grupperingsId
-        eventJson["eventId"].asText() shouldBe eventId
-        ZonedDateTime.parse(eventJson["eventTidspunkt"].asText()) shouldBe eventTidspunkt
-        eventJson["produsent"].asText() shouldBe produsent
-        eventJson["sikkerhetsnivaa"].asInt() shouldBe sikkerhetsnivaa
-        ZonedDateTime.parse(eventJson["sistOppdatert"].asText()) shouldBe sistOppdatert
-        eventJson["tekst"].asText() shouldBe tekst
-        eventJson["link"].asText() shouldBe link
-        eventJson["aktiv"].asBoolean() shouldBe aktiv
-        ZonedDateTime.parse(eventJson["forstBehandlet"].asText()) shouldBe forstBehandlet
+            val eventJson = ObjectMapper().readTree(response.bodyAsText())[0]
+            eventJson["grupperingsId"].asText() shouldBe grupperingsId
+            eventJson["eventId"].asText() shouldBe eventId
+            ZonedDateTime.parse(eventJson["eventTidspunkt"].asText()) shouldBe eventTidspunkt
+            eventJson["produsent"].asText() shouldBe produsent
+            eventJson["sikkerhetsnivaa"].asInt() shouldBe sikkerhetsnivaa
+            ZonedDateTime.parse(eventJson["sistOppdatert"].asText()) shouldBe sistOppdatert
+            eventJson["tekst"].asText() shouldBe tekst
+            eventJson["link"].asText() shouldBe link
+            eventJson["aktiv"].asBoolean() shouldBe aktiv
+            ZonedDateTime.parse(eventJson["forstBehandlet"].asText()) shouldBe forstBehandlet
+        }
     }
 
     @Test
@@ -83,16 +84,12 @@ class EventApiTest {
                 event
             )
         )
-
-        val response = withTestApplication(
+        testApplication {
             mockEventHandlerApi(eventRepository = eventRepositoryMock)
-        ) {
-            handleRequest(HttpMethod.Get, "dittnav-event-handler/fetch/event/aktive") {}
-        }.response
-
-        response.status() shouldBe HttpStatusCode.OK
-
-        val eventJson = ObjectMapper().readTree(response.content)[0]
-        eventJson["eventId"].asText() shouldBe eventId
+            val response = client.get("dittnav-event-handler/fetch/event/aktive")
+            response.status shouldBe HttpStatusCode.OK
+            val eventJson = ObjectMapper().readTree(response.bodyAsText())[0]
+            eventJson["eventId"].asText() shouldBe eventId
+        }
     }
 }

@@ -1,6 +1,11 @@
 package no.nav.personbruker.dittnav.eventhandler
 
 
+import Beskjed
+import com.fasterxml.jackson.databind.JsonNode
+import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.comparables.shouldBeEqualComparingTo
+import io.kotest.matchers.shouldBe
 import io.ktor.server.application.Application
 import io.ktor.server.testing.TestApplicationBuilder
 import io.mockk.mockk
@@ -15,8 +20,10 @@ import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveEventService
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventStatisticsService
 import no.nav.tms.token.support.authentication.installer.mock.installMockedAuthenticators
 import no.nav.tms.token.support.tokenx.validation.mock.SecurityLevel
+import org.junit.jupiter.api.Assertions.assertEquals
+import java.time.ZonedDateTime
 
-val apiTestfnr = "12345678910"
+const val apiTestfnr = "12345678910"
 fun TestApplicationBuilder.mockEventHandlerApi(
     healthService: HealthService = mockk(relaxed = true),
     beskjedEventService: BeskjedEventService = mockk(relaxed = true),
@@ -54,3 +61,60 @@ fun TestApplicationBuilder.mockEventHandlerApi(
         )
     }
 }
+
+internal class ComparableVarsel(
+    val eventId: String,
+    private val fodselsnummer: String,
+    private val grupperingsId: String,
+    private val forstBehandlet: ZonedDateTime,
+    private val produsent: String,
+    private val sikkerhetsnivaa: Int,
+    private val sistOppdatert: ZonedDateTime,
+    private val tekst: String,
+    private val link: String,
+    private val aktiv: Boolean,
+    private val eksternVarslingSendt: Boolean,
+    private val eksternVarslingKanaler: List<String>
+) {
+    companion object {
+
+        private fun Beskjed.toCompparableVarsel() = ComparableVarsel(
+            fodselsnummer = this.fodselsnummer,
+            grupperingsId = this.grupperingsId,
+            eventId = this.eventId,
+            forstBehandlet = this.forstBehandlet,
+            produsent = this.appnavn,
+            sikkerhetsnivaa = this.sikkerhetsnivaa,
+            sistOppdatert = this.sistOppdatert,
+            tekst = this.tekst,
+            link = this.link,
+            aktiv = this.aktiv,
+            eksternVarslingSendt = eksternVarslingInfo.sendt,
+            eksternVarslingKanaler = eksternVarslingInfo.sendteKanaler
+        )
+    }
+
+    private fun assertResultEquals(result: ComparableVarsel) {
+        assertEquals(fodselsnummer, result.fodselsnummer, "fodselsnummer")
+        assertEquals(grupperingsId, result.grupperingsId, "grupperingsid")
+        assertEquals(eventId, result.eventId, "eventId")
+        assertEquals(forstBehandlet, result.forstBehandlet, "forstBehandlet")
+        assertEquals(produsent, result.produsent, "produsent")
+        assertEquals(sikkerhetsnivaa, result.sikkerhetsnivaa, "sikkerhetsnivaa")
+        assertEquals(sistOppdatert, result.sistOppdatert, "sistOppdatert")
+        assertEquals(tekst, result.tekst, "tekst")
+        assertEquals(link, result.link, "tekst")
+        assertEquals(aktiv, result.aktiv)
+        assertEquals(eksternVarslingSendt,result.eksternVarslingSendt, "eksternVarslingSendt")
+        assertEquals(eksternVarslingKanaler,result.eksternVarslingKanaler, "eksternVarslingKanaler")
+
+    }
+
+    infix fun shouldEqual(expected: Beskjed) {
+        this.assertResultEquals(expected.toCompparableVarsel())
+    }
+}
+
+internal fun JsonNode.asZonedDateTime(): ZonedDateTime = ZonedDateTime.parse(this.asText()).minusHours(2)
+
+

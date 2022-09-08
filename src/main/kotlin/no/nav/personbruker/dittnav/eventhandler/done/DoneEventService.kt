@@ -1,6 +1,5 @@
 package no.nav.personbruker.dittnav.eventhandler.done
 
-import no.nav.personbruker.dittnav.eventhandler.beskjed.getBeskjedByIds
 import no.nav.personbruker.dittnav.eventhandler.beskjed.setBeskjedInaktiv
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer

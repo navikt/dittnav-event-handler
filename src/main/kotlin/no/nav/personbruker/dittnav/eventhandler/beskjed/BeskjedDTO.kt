@@ -1,6 +1,7 @@
 @file:UseSerializers(ZonedDateTimeSerializer::class)
 package no.nav.personbruker.dittnav.eventhandler.beskjed
 
+import Beskjed
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import no.nav.personbruker.dittnav.eventhandler.common.serializer.ZonedDateTimeSerializer
@@ -21,3 +22,19 @@ data class BeskjedDTO(
     val eksternVarslingSendt: Boolean,
     val eksternVarslingKanaler: List<String>
 )
+
+fun Beskjed.toDTO() = BeskjedDTO(
+    fodselsnummer = fodselsnummer,
+    grupperingsId = grupperingsId,
+    eventId = eventId,
+    produsent = appnavn,
+    sikkerhetsnivaa = sikkerhetsnivaa,
+    sistOppdatert = sistOppdatert,
+    tekst = tekst,
+    link = link,
+    aktiv = aktiv,
+    forstBehandlet = forstBehandlet,
+    eksternVarslingSendt = eksternVarslingInfo.sendt,
+    eksternVarslingKanaler = eksternVarslingInfo.sendteKanaler
+)
+

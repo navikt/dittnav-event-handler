@@ -55,8 +55,8 @@ dependencies {
     implementation(Ktor2.TmsTokenSupport.azureExchange)
     implementation(Ktor2.TmsTokenSupport.azureValidation)
     implementation(Ktor2.kotlinX)
-    implementation("io.ktor:ktor-server-auth-jwt:2.1.1")
-    implementation("io.ktor:ktor-server-html-builder:2.1.1")
+    implementation(Ktor2.Server.authJwt)
+    implementation(Ktor2.Server.htmlDsl)
 
     testImplementation(Jjwt.api)
     testImplementation(Junit.api)

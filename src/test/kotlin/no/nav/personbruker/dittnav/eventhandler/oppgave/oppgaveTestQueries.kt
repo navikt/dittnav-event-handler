@@ -1,5 +1,10 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
+import kotlinx.coroutines.runBlocking
+import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.DoknotifikasjonTestStatus
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.createDoknotStatusOppgave
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.deleteDoknotStatusOppgave
 import java.sql.Connection
 import java.sql.Types
 
@@ -44,3 +49,29 @@ fun Connection.deleteOppgave(oppgaver: List<Oppgave>) =
             }
             it.executeBatch()
         }
+
+internal fun LocalPostgresDatabase.createOppgave(oppgaver: List<Oppgave>) {
+    runBlocking {
+        dbQuery { createOppgave(oppgaver) }
+    }
+}
+
+internal fun LocalPostgresDatabase.deleteOppgave(oppgaver: List<Oppgave>) {
+    runBlocking {
+        dbQuery { deleteOppgave(oppgaver) }
+    }
+}
+
+internal fun LocalPostgresDatabase.createDoknotStatuses(statuses: List<DoknotifikasjonTestStatus>) = runBlocking {
+    dbQuery {
+        statuses.forEach { status ->
+            createDoknotStatusOppgave(status)
+        }
+    }
+}
+
+internal fun LocalPostgresDatabase.deleteAllDoknotStatusOppgave() = runBlocking {
+    dbQuery {
+        deleteDoknotStatusOppgave()
+    }
+}

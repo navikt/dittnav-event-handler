@@ -9,20 +9,10 @@ object OppgaveObjectMother {
     private var idIncrementor = 0
     private var eventIdIncrementor = 0
 
-    val defaultFodselsnummer = "123456789"
-    val defaultAktiv = true
-    val defaultSystembruker = "x-dittnav"
-    val defaultNamespace = "min-side"
-    val defaultAppnavn = "test-app"
-    val defaultProdusent = "$defaultSystembruker-produsent"
-    val defaultEventTidspunkt = ZonedDateTime.now(ZoneId.of("Europe/Oslo"))
-    val defaultForstBehandlet = ZonedDateTime.now(ZoneId.of("Europe/Oslo"))
-    val defaultGrupperingsId = "100$defaultFodselsnummer"
-    val defaultTekst = "Dette er oppgave til brukeren"
-    val defaultLink = "https://nav.no/systemX/$defaultFodselsnummer"
-    val defaultSistOppdatert = ZonedDateTime.now(ZoneId.of("Europe/Oslo"))
-    val defaultSikkerhetsnivaa = 4
-    val defaultEksternVarslinginfo = EksternVarslingInfo(
+    private const val defaultFodselsnummer = "123456789"
+    private const val defaultSystembruker = "x-dittnav"
+
+    private val defaultEksternVarslinginfo = EksternVarslingInfo(
         bestilt = false,
         prefererteKanaler = emptyList(),
         sendt = false,
@@ -33,18 +23,18 @@ object OppgaveObjectMother {
         id: Int = ++idIncrementor,
         eventId: String = (++eventIdIncrementor).toString(),
         fodselsnummer: String = defaultFodselsnummer,
-        aktiv: Boolean = defaultAktiv,
+        aktiv: Boolean = true,
         systembruker: String = defaultSystembruker,
-        namespace: String = defaultNamespace,
-        appnavn: String = defaultAppnavn,
-        grupperingsId: String = defaultGrupperingsId,
-        eventTidspunkt: ZonedDateTime = defaultEventTidspunkt,
-        forstBehandlet: ZonedDateTime = defaultForstBehandlet,
-        produsent: String = defaultProdusent,
-        sistOppdatert: ZonedDateTime = defaultSistOppdatert,
-        tekst: String = defaultTekst,
-        link: String = defaultLink,
-        sikkerhetsnivaa: Int = defaultSikkerhetsnivaa,
+        namespace: String = "min-side",
+        appnavn: String = "test-app",
+        grupperingsId: String = "100$defaultFodselsnummer",
+        eventTidspunkt: ZonedDateTime = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
+        forstBehandlet: ZonedDateTime = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
+        produsent: String = "$defaultSystembruker-produsent",
+        sistOppdatert: ZonedDateTime = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
+        tekst: String = "Dette er oppgave til brukeren",
+        link: String = "https://nav.no/systemX/$defaultFodselsnummer",
+        sikkerhetsnivaa: Int = 4,
         eksternVarslingInfo: EksternVarslingInfo = defaultEksternVarslinginfo
     ): Oppgave {
         return Oppgave(

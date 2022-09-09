@@ -15,39 +15,26 @@ object BeskjedObjectMother {
     private var eventIdIncrementor = 0
 
     private const val defaultFodselsnummer = "123456789"
-    private const val defaultSikkerhetsnivaa = 4
-    private const val defaultAktiv = true
     private const val defaultSystembruker = "x-dittnav"
-    private const val defaultNamespace = "min-side"
-    private const val defaultAppnavn = "test-app"
-    private const val defaultGrupperingsId = "100$defaultFodselsnummer"
-    private const val defaultTekst = "Dette er beskjed til brukeren"
-    private const val defaultLink = "https://nav.no/systemX/$defaultFodselsnummer"
-    private const val defaultProdusent = "$defaultSystembruker-produsent"
-    private val defaultSynligFremTil = ZonedDateTime.now(ZoneId.of("Europe/Oslo")).plusDays(7)
-    private val defaultEventTidspunkt = ZonedDateTime.now(ZoneId.of("Europe/Oslo"))
-    private val defaultForstBehandlet = ZonedDateTime.now(ZoneId.of("Europe/Oslo"))
-    private val defaultSistOppdatert = ZonedDateTime.now(ZoneId.of("Europe/Oslo"))
-    private val defaultEksternVarslinginfo = createEskternVarslingInfo()
 
     fun createBeskjed(
         id: Int = ++idIncrementor,
         eventId: String = (++eventIdIncrementor).toString(),
         fodselsnummer: String = defaultFodselsnummer,
-        synligFremTil: ZonedDateTime? = defaultSynligFremTil,
-        aktiv: Boolean = defaultAktiv,
+        synligFremTil: ZonedDateTime? =  ZonedDateTime.now(ZoneId.of("Europe/Oslo")).plusDays(7),
+        aktiv: Boolean = true,
         systembruker: String = defaultSystembruker,
-        namespace: String = defaultNamespace,
-        appnavn: String = defaultAppnavn,
-        produsent: String = defaultProdusent,
-        eventTidspunkt: ZonedDateTime = defaultEventTidspunkt,
-        forstBehandlet: ZonedDateTime = defaultForstBehandlet,
-        grupperingsId: String = defaultGrupperingsId,
-        tekst: String = defaultTekst,
-        link: String = defaultLink,
-        sistOppdatert: ZonedDateTime = defaultSistOppdatert,
-        sikkerhetsnivaa: Int = defaultSikkerhetsnivaa,
-        eksternVarslingInfo: EksternVarslingInfo = defaultEksternVarslinginfo
+        namespace: String = "min-side",
+        appnavn: String = "test-app",
+        produsent: String = "$defaultSystembruker-produsent",
+        eventTidspunkt: ZonedDateTime = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
+        forstBehandlet: ZonedDateTime = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
+        grupperingsId: String = "100$defaultFodselsnummer",
+        tekst: String = "Dette er beskjed til brukeren",
+        link: String = "https://nav.no/systemX/$defaultFodselsnummer",
+        sistOppdatert: ZonedDateTime = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
+        sikkerhetsnivaa: Int = 4,
+        eksternVarslingInfo: EksternVarslingInfo = createEskternVarslingInfo()
     ): Beskjed {
         return Beskjed(
             id = id,

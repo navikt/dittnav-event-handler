@@ -7,15 +7,6 @@ import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
 import no.nav.personbruker.dittnav.eventhandler.common.findCountFor
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.DoknotifikasjonTestStatus
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.createDoknotStatusInnboks
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.deleteDoknotStatusInnboks
-import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksTestBruker1.doknotStatusForInnboks1
-import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksTestBruker1.doknotStatusForInnboks2
-import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksTestBruker1.innboks1Aktiv
-import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksTestBruker1.innboks2Aktiv
-import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksTestBruker2.innboks3Aktiv
-import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksTestBruker2.innboks4Inaktiv
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test

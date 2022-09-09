@@ -6,22 +6,13 @@ import io.kotest.matchers.shouldBe
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.application.Application
-import io.ktor.server.testing.TestApplication
 import io.ktor.server.testing.TestApplicationBuilder
 import io.ktor.server.testing.testApplication
 import no.nav.personbruker.dittnav.eventhandler.ComparableVarsel
 import no.nav.personbruker.dittnav.eventhandler.asZonedDateTime
-
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.DoknotifikasjonTestStatus
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus
-import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksTestBruker1.doknotStatusForInnboks1
-import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksTestBruker1.doknotStatusForInnboks2
-import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksTestBruker1.innboks1Aktiv
-import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksTestBruker1.innboks2Aktiv
-import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksTestBruker2.innboks3Aktiv
-import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksTestBruker2.innboks4Inaktiv
 import no.nav.personbruker.dittnav.eventhandler.mockEventHandlerApi
 import no.nav.tms.token.support.authentication.installer.mock.installMockedAuthenticators
 import org.junit.jupiter.api.AfterAll
@@ -60,7 +51,7 @@ class InnboksApiTest {
             objectMapper.readTree(aktiveVarsler.bodyAsText()) shouldContainExactly expected
         }
         testApplication {
-            val expected = listOf(innboks3Aktiv)
+            val expected = listOf(innboks3Aktiv.updateWith(null))
             mockApiWithFnr(database, innboksTestFnr2)
             val aktiveVarsler = client.get("$innboksEndpoint/aktive")
             aktiveVarsler.status shouldBe HttpStatusCode.OK
@@ -77,7 +68,7 @@ class InnboksApiTest {
             objectMapper.readTree(aktiveVarsler.bodyAsText()).toList().size shouldBe 0
         }
         testApplication {
-            val expected = listOf(innboks4Inaktiv)
+            val expected = listOf(innboks4Inaktiv.updateWith(null))
             mockApiWithFnr(database, innboksTestFnr2)
             val aktiveVarsler = client.get("$innboksEndpoint/inaktive")
             aktiveVarsler.status shouldBe HttpStatusCode.OK
@@ -98,7 +89,7 @@ class InnboksApiTest {
             objectMapper.readTree(aktiveVarsler.bodyAsText()) shouldContainExactly expected
         }
         testApplication {
-            val expected = listOf(innboks4Inaktiv, innboks3Aktiv)
+            val expected = listOf(innboks4Inaktiv.updateWith(null), innboks3Aktiv.updateWith(null))
             mockApiWithFnr(database, innboksTestFnr2)
             val aktiveVarsler = client.get("$innboksEndpoint/all")
             aktiveVarsler.status shouldBe HttpStatusCode.OK
@@ -122,7 +113,7 @@ class InnboksApiTest {
 }
 
 
-private fun Innboks.updateWith(doknotStatus: DoknotifikasjonTestStatus) =
+private fun Innboks.updateWith(doknotStatus: DoknotifikasjonTestStatus?) =
     if (doknotStatus != null) {
         this.copy(
             eksternVarslingInfo = this.eksternVarslingInfo.copy(

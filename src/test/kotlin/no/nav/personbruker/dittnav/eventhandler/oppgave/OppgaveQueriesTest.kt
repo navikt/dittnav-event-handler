@@ -7,14 +7,13 @@ import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
 import no.nav.personbruker.dittnav.eventhandler.common.findCountFor
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.*
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveTestData.appnavn
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveTestData.doknotStatusForOppgave1
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveTestData.doknotStatusForOppgave2
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveTestData.grupperingsid
-import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveTestData.oppgave1
-import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveTestData.oppgave2
-import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveTestData.oppgave3
+import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveTestData.oppgave1Aktiv
+import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveTestData.oppgave2Aktiv
+import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveTestData.oppgave3Inaktiv
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveTestData.oppgave4
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveTestData.oppgaveTestFnr
 
@@ -30,14 +29,14 @@ class OppgaveQueriesTest {
 
     @BeforeAll
     fun `populer test-data`() {
-        database.createOppgave(listOf(oppgave1, oppgave2, oppgave3, oppgave4))
+        database.createOppgave(listOf(oppgave1Aktiv, oppgave2Aktiv, oppgave3Inaktiv, oppgave4))
         database.createDoknotStatuses(listOf(doknotStatusForOppgave1, doknotStatusForOppgave2))
     }
 
     @AfterAll
     fun `slett Oppgave-eventer fra tabellen`() {
         database.deleteAllDoknotStatusOppgave()
-        database.deleteOppgave(listOf(oppgave1, oppgave2, oppgave3, oppgave4))
+        database.deleteOppgave(listOf(oppgave1Aktiv, oppgave2Aktiv, oppgave3Inaktiv, oppgave4))
     }
 
     @Test
@@ -136,7 +135,7 @@ class OppgaveQueriesTest {
             val groupedEventsBySystemuser = database.dbQuery { getAllGroupedOppgaveEventsBySystemuser() }
 
             groupedEventsBySystemuser.size shouldBe 2
-            groupedEventsBySystemuser[oppgave1.systembruker] shouldBe 3
+            groupedEventsBySystemuser[oppgave1Aktiv.systembruker] shouldBe 3
             groupedEventsBySystemuser[oppgave4.systembruker] shouldBe 1
         }
     }
@@ -147,7 +146,7 @@ class OppgaveQueriesTest {
             val groupedEventsBySystemuser = database.dbQuery { getAllGroupedOppgaveEventsByProducer() }
 
             groupedEventsBySystemuser.size shouldBe 2
-            groupedEventsBySystemuser.findCountFor(oppgave1.namespace, oppgave1.appnavn) shouldBe 3
+            groupedEventsBySystemuser.findCountFor(oppgave1Aktiv.namespace, oppgave1Aktiv.appnavn) shouldBe 3
             groupedEventsBySystemuser.findCountFor(oppgave4.namespace, oppgave4.appnavn) shouldBe 1
         }
     }
@@ -155,15 +154,15 @@ class OppgaveQueriesTest {
     @Test
     fun `Returnerer riktig info om ekstern varsling dersom status er mottat og oversendt`() = runBlocking {
         val oppgave = database.dbQuery {
-            getAktivOppgaveForFodselsnummer(oppgave1.fodselsnummer)
+            getAktivOppgaveForFodselsnummer(oppgave1Aktiv.fodselsnummer)
         }.filter {
-            it.eventId == oppgave1.eventId
+            it.eventId == oppgave1Aktiv.eventId
         }.first()
 
         val eksternVarslingInfo = oppgave.eksternVarslingInfo
 
-        eksternVarslingInfo.bestilt shouldBe oppgave1.eksternVarslingInfo.bestilt
-        eksternVarslingInfo.prefererteKanaler shouldContainAll oppgave1.eksternVarslingInfo.prefererteKanaler
+        eksternVarslingInfo.bestilt shouldBe oppgave1Aktiv.eksternVarslingInfo.bestilt
+        eksternVarslingInfo.prefererteKanaler shouldContainAll oppgave1Aktiv.eksternVarslingInfo.prefererteKanaler
         eksternVarslingInfo.sendt shouldBe true
         eksternVarslingInfo.sendteKanaler shouldContain doknotStatusForOppgave1.kanaler
     }
@@ -171,15 +170,15 @@ class OppgaveQueriesTest {
     @Test
     fun `Returnerer riktig info om ekstern varsling dersom status er mottat og feilet`() = runBlocking {
         val oppgave = database.dbQuery {
-            getAktivOppgaveForFodselsnummer(oppgave2.fodselsnummer)
+            getAktivOppgaveForFodselsnummer(oppgave2Aktiv.fodselsnummer)
         }.filter {
-            it.eventId == oppgave2.eventId
+            it.eventId == oppgave2Aktiv.eventId
         }.first()
 
         val eksternVarslingInfo = oppgave.eksternVarslingInfo
 
-        eksternVarslingInfo.bestilt shouldBe oppgave2.eksternVarslingInfo.bestilt
-        eksternVarslingInfo.prefererteKanaler shouldContainAll oppgave2.eksternVarslingInfo.prefererteKanaler
+        eksternVarslingInfo.bestilt shouldBe oppgave2Aktiv.eksternVarslingInfo.bestilt
+        eksternVarslingInfo.prefererteKanaler shouldContainAll oppgave2Aktiv.eksternVarslingInfo.prefererteKanaler
         eksternVarslingInfo.sendt shouldBe false
         eksternVarslingInfo.sendteKanaler.isEmpty() shouldBe true
     }
@@ -187,15 +186,15 @@ class OppgaveQueriesTest {
     @Test
     fun `Returnerer riktig info om ekstern varsling dersom status ikke er mottatt`() = runBlocking {
         val oppgave = database.dbQuery {
-            getInaktivOppgaveForFodselsnummer(oppgave3.fodselsnummer)
+            getInaktivOppgaveForFodselsnummer(oppgave3Inaktiv.fodselsnummer)
         }.filter {
-            it.eventId == oppgave3.eventId
+            it.eventId == oppgave3Inaktiv.eventId
         }.first()
 
         val eksternVarslingInfo = oppgave.eksternVarslingInfo
 
-        eksternVarslingInfo.bestilt shouldBe oppgave3.eksternVarslingInfo.bestilt
-        eksternVarslingInfo.prefererteKanaler shouldContainAll oppgave3.eksternVarslingInfo.prefererteKanaler
+        eksternVarslingInfo.bestilt shouldBe oppgave3Inaktiv.eksternVarslingInfo.bestilt
+        eksternVarslingInfo.prefererteKanaler shouldContainAll oppgave3Inaktiv.eksternVarslingInfo.prefererteKanaler
         eksternVarslingInfo.sendt shouldBe false
         eksternVarslingInfo.sendteKanaler.isEmpty() shouldBe true
     }

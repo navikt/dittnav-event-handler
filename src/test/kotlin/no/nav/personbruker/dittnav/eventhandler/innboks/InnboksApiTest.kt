@@ -63,16 +63,16 @@ class InnboksApiTest {
     fun `henter inaktive innboks varsler`() {
         testApplication {
             mockApiWithFnr(database, innboksTestFnr1)
-            val aktiveVarsler = client.get("$innboksEndpoint/inaktive")
-            aktiveVarsler.status shouldBe HttpStatusCode.OK
-            objectMapper.readTree(aktiveVarsler.bodyAsText()).toList().size shouldBe 0
+            val inaktiveVarsler = client.get("$innboksEndpoint/inaktive")
+            inaktiveVarsler.status shouldBe HttpStatusCode.OK
+            objectMapper.readTree(inaktiveVarsler.bodyAsText()).toList().size shouldBe 0
         }
         testApplication {
             val expected = listOf(innboks4Inaktiv.updateWith(null))
             mockApiWithFnr(database, innboksTestFnr2)
-            val aktiveVarsler = client.get("$innboksEndpoint/inaktive")
-            aktiveVarsler.status shouldBe HttpStatusCode.OK
-            objectMapper.readTree(aktiveVarsler.bodyAsText()) shouldContainExactly expected
+            val inaktiveVarsler = client.get("$innboksEndpoint/inaktive")
+            inaktiveVarsler.status shouldBe HttpStatusCode.OK
+            objectMapper.readTree(inaktiveVarsler.bodyAsText()) shouldContainExactly expected
         }
     }
 
@@ -84,16 +84,16 @@ class InnboksApiTest {
                 innboks1Aktiv.updateWith(doknotStatusForInnboks1),
                 innboks2Aktiv.updateWith(doknotStatusForInnboks2)
             )
-            val aktiveVarsler = client.get("$innboksEndpoint/all")
-            aktiveVarsler.status shouldBe HttpStatusCode.OK
-            objectMapper.readTree(aktiveVarsler.bodyAsText()) shouldContainExactly expected
+            val alleVarsler = client.get("$innboksEndpoint/all")
+            alleVarsler.status shouldBe HttpStatusCode.OK
+            objectMapper.readTree(alleVarsler.bodyAsText()) shouldContainExactly expected
         }
         testApplication {
             val expected = listOf(innboks4Inaktiv.updateWith(null), innboks3Aktiv.updateWith(null))
             mockApiWithFnr(database, innboksTestFnr2)
-            val aktiveVarsler = client.get("$innboksEndpoint/all")
-            aktiveVarsler.status shouldBe HttpStatusCode.OK
-            objectMapper.readTree(aktiveVarsler.bodyAsText()) shouldContainExactly expected
+            val alleVarsler = client.get("$innboksEndpoint/all")
+            alleVarsler.status shouldBe HttpStatusCode.OK
+            objectMapper.readTree(alleVarsler.bodyAsText()) shouldContainExactly expected
         }
 
     }

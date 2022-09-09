@@ -68,7 +68,7 @@ object OppgaveTestData {
     internal val appnavn = "dittnav"
     internal val grupperingsid = "100$oppgaveTestFnr"
 
-    internal val oppgave1 = OppgaveObjectMother.createOppgave(
+    internal val oppgave1Aktiv = OppgaveObjectMother.createOppgave(
         id = 1,
         eventId = "123",
         fodselsnummer = oppgaveTestFnr,
@@ -85,14 +85,14 @@ object OppgaveTestData {
     )
 
     val doknotStatusForOppgave1 = DoknotifikasjonTestStatus(
-        eventId = oppgave1.eventId,
+        eventId = oppgave1Aktiv.eventId,
         status = EksternVarslingStatus.OVERSENDT.name,
         melding = "melding",
         distribusjonsId = 123L,
         kanaler = "SMS"
     )
 
-    internal val oppgave2 = OppgaveObjectMother.createOppgave(
+    internal val oppgave2Aktiv = OppgaveObjectMother.createOppgave(
         id = 2,
         eventId = "345",
         fodselsnummer = oppgaveTestFnr,
@@ -109,14 +109,14 @@ object OppgaveTestData {
     )
 
     internal val doknotStatusForOppgave2 = DoknotifikasjonTestStatus(
-        eventId = oppgave2.eventId,
+        eventId = oppgave2Aktiv.eventId,
         status = EksternVarslingStatus.FEILET.name,
         melding = "feilet",
         distribusjonsId = null,
         kanaler = ""
     )
 
-    internal val oppgave3 = OppgaveObjectMother.createOppgave(
+    internal val oppgave3Inaktiv = OppgaveObjectMother.createOppgave(
         id = 3,
         eventId = "567",
         fodselsnummer = oppgaveTestFnr,

@@ -40,7 +40,7 @@ class OppgaveQueriesTest {
         )
     )
 
-    val doknotStatusForOppgave1 = DoknotifikasjonStatusDto(
+    val doknotStatusForOppgave1 = DoknotifikasjonTestStatus(
         eventId = oppgave1.eventId,
         status = EksternVarslingStatus.OVERSENDT.name,
         melding = "melding",
@@ -64,7 +64,7 @@ class OppgaveQueriesTest {
         )
     )
 
-    val doknotStatusForOppgave2 = DoknotifikasjonStatusDto(
+    val doknotStatusForOppgave2 = DoknotifikasjonTestStatus(
         eventId = oppgave2.eventId,
         status = EksternVarslingStatus.FEILET.name,
         melding = "feilet",
@@ -278,7 +278,7 @@ class OppgaveQueriesTest {
         }
     }
 
-    private fun createDoknotStatuses(statuses: List<DoknotifikasjonStatusDto>) = runBlocking {
+    private fun createDoknotStatuses(statuses: List<DoknotifikasjonTestStatus>) = runBlocking {
         database.dbQuery {
             statuses.forEach { status ->
                 createDoknotStatusOppgave(status)

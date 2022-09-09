@@ -1,7 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.beskjed
 
 import Beskjed
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.DoknotifikasjonStatusDto
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.DoknotifikasjonTestStatus
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfo
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfoObjectMother
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfoObjectMother.createEskternVarslingInfo
@@ -97,7 +97,7 @@ object BeskjedTestData {
         )
     )
 
-    val doknotStatusForBeskjed1 = DoknotifikasjonStatusDto(
+    val doknotStatusForBeskjed1 = DoknotifikasjonTestStatus(
         eventId = beskjed1Aktiv.eventId,
         status = EksternVarslingStatus.OVERSENDT.name,
         melding = "melding",
@@ -122,7 +122,7 @@ object BeskjedTestData {
         )
     )
 
-    val doknotStatusForBeskjed2 = DoknotifikasjonStatusDto(
+    val doknotStatusForBeskjed2 = DoknotifikasjonTestStatus(
         eventId = beskjed2Aktiv.eventId,
         status = EksternVarslingStatus.FEILET.name,
         melding = "feilet",

@@ -3,7 +3,7 @@ package no.nav.personbruker.dittnav.eventhandler.beskjed
 import Beskjed
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.DoknotifikasjonStatusDto
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.DoknotifikasjonTestStatus
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.createDoknotStatusBeskjed
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.deleteDoknotStatusBeskjed
 import java.sql.Connection
@@ -58,7 +58,7 @@ internal fun LocalPostgresDatabase.createBeskjed(beskjeder: List<Beskjed>) = run
 internal fun LocalPostgresDatabase.deleteBeskjed(beskjeder: List<Beskjed>) = runBlocking { dbQuery { deleteBeskjed(beskjeder) } }
 
 internal fun LocalPostgresDatabase.deleteAllDoknotStatusBeskjed() = runBlocking { dbQuery { deleteDoknotStatusBeskjed() }}
-internal fun LocalPostgresDatabase.createDoknotStatuses(statuses: List<DoknotifikasjonStatusDto>) = runBlocking {
+internal fun LocalPostgresDatabase.createDoknotStatuses(statuses: List<DoknotifikasjonTestStatus>) = runBlocking {
     dbQuery {
         statuses.forEach { status -> createDoknotStatusBeskjed(status) }
     }

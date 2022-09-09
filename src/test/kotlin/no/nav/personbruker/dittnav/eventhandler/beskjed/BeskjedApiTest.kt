@@ -1,13 +1,11 @@
 package no.nav.personbruker.dittnav.eventhandler.beskjed
 
 import Beskjed
-import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.matchers.shouldBe
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
-import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.testing.testApplication
 import no.nav.personbruker.dittnav.eventhandler.ComparableVarsel
@@ -20,19 +18,21 @@ import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.beskjedT
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.doknotStatusForBeskjed1
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.doknotStatusForBeskjed2
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.DoknotifikasjonTestStatus
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus
 import no.nav.personbruker.dittnav.eventhandler.mockEventHandlerApi
 import no.nav.tms.token.support.authentication.installer.mock.installMockedAuthenticators
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import java.time.ZonedDateTime
 
 private val objectMapper = ObjectMapper()
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BeskjedApiTest {
     private val fetchBeskjedEndpoint = "/dittnav-event-handler/fetch/beskjed"
+    private val database = LocalPostgresDatabase.cleanDb()
 
     @BeforeAll
     fun `populer testdata`() {
@@ -60,6 +60,10 @@ class BeskjedApiTest {
 
     @Test
     fun `henter beskjedvarsel`() {
+        val expectedVarsler = listOf(
+            beskjed1Aktiv.updateWith(doknotStatusForBeskjed1),
+            beskjed2Aktiv.updateWith(doknotStatusForBeskjed2)
+        )
         testApplication {
             mockEventHandlerApi(
                 database = database,
@@ -67,9 +71,8 @@ class BeskjedApiTest {
                 installAuthenticatorsFunction = Application::beskjedAuthConfig
             )
             val aktiveVarsler = client.get("$fetchBeskjedEndpoint/aktive")
-            aktiveVarsler.status shouldBe HttpStatusCode.OK
-            objectMapper.readTree(aktiveVarsler.bodyAsText()) shouldContainExactly listOf(
-                beskjed1Aktiv, beskjed2Aktiv)
+
+            objectMapper.readTree(aktiveVarsler.bodyAsText()) shouldContainExactly expectedVarsler
         }
 
     }
@@ -84,8 +87,6 @@ class BeskjedApiTest {
         /fetch/modia/beskjed/inaktive
         "/fetch/modia/beskjed/all" */
 
-    private val database = LocalPostgresDatabase.cleanDb()
-
 }
 
 private infix fun JsonNode.shouldContainExactly(expected: List<Beskjed>) {
@@ -93,7 +94,7 @@ private infix fun JsonNode.shouldContainExactly(expected: List<Beskjed>) {
     comparableResultList.size shouldBe expected.size
     comparableResultList.forEach { comparableResult ->
         val comparableExpected = expected.find { it.eventId == comparableResult.eventId }
-        require(comparableExpected!=null)
+        require(comparableExpected != null)
         comparableResult shouldEqual comparableExpected
     }
 }
@@ -126,3 +127,16 @@ private fun Application.beskjedAuthConfig() {
         installAzureAuthMock { }
     }
 }
+
+private fun Beskjed.updateWith(doknotStatus: DoknotifikasjonTestStatus?): Beskjed =
+    if (doknotStatus != null) {
+        this.copy(
+            eksternVarslingInfo = this.eksternVarslingInfo.copy(
+                sendt = doknotStatus.status == EksternVarslingStatus.OVERSENDT.name,
+                sendteKanaler = if(doknotStatus.kanaler!="")listOf(doknotStatus.kanaler) else listOf()
+            )
+        )
+    } else {
+        this.copy()
+    }
+

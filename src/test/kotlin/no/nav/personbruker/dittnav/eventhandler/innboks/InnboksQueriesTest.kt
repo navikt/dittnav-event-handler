@@ -7,7 +7,7 @@ import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
 import no.nav.personbruker.dittnav.eventhandler.common.findCountFor
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.DoknotifikasjonStatusDto
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.DoknotifikasjonTestStatus
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfoObjectMother
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus.FEILET
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus.OVERSENDT
@@ -46,7 +46,7 @@ class InnboksQueriesTest {
         )
     )
 
-    val doknotStatusForInnboks1 = DoknotifikasjonStatusDto(
+    val doknotStatusForInnboks1 = DoknotifikasjonTestStatus(
         eventId = innboks1.eventId,
         status = OVERSENDT.name,
         melding = "melding",
@@ -69,7 +69,7 @@ class InnboksQueriesTest {
         )
     )
 
-    val doknotStatusForInnboks2 = DoknotifikasjonStatusDto(
+    val doknotStatusForInnboks2 = DoknotifikasjonTestStatus(
         eventId = innboks2.eventId,
         status = FEILET.name,
         melding = "feilet",
@@ -285,7 +285,7 @@ class InnboksQueriesTest {
         }
     }
 
-    private fun createDoknotStatuses(statuses: List<DoknotifikasjonStatusDto>) = runBlocking {
+    private fun createDoknotStatuses(statuses: List<DoknotifikasjonTestStatus>) = runBlocking {
         database.dbQuery {
             statuses.forEach { status ->
                 createDoknotStatusInnboks(status)

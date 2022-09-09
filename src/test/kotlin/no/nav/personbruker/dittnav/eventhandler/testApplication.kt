@@ -8,6 +8,7 @@ import io.kotest.matchers.comparables.shouldBeEqualComparingTo
 import io.kotest.matchers.shouldBe
 import io.ktor.server.application.Application
 import io.ktor.server.testing.TestApplicationBuilder
+import io.mockk.InternalPlatformDsl.toArray
 import io.mockk.mockk
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
@@ -21,6 +22,7 @@ import no.nav.personbruker.dittnav.eventhandler.statistics.EventStatisticsServic
 import no.nav.tms.token.support.authentication.installer.mock.installMockedAuthenticators
 import no.nav.tms.token.support.tokenx.validation.mock.SecurityLevel
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import java.time.ZonedDateTime
 
 const val apiTestfnr = "12345678910"
@@ -106,8 +108,10 @@ internal class ComparableVarsel(
         assertEquals(link, result.link, "tekst")
         assertEquals(aktiv, result.aktiv)
         assertEquals(eksternVarslingSendt,result.eksternVarslingSendt, "eksternVarslingSendt")
-        assertEquals(eksternVarslingKanaler,result.eksternVarslingKanaler, "eksternVarslingKanaler")
-
+        assertEquals(eksternVarslingKanaler.size, result.eksternVarslingKanaler.size, "eksternVarslingKanaler: ${result.eksternVarslingKanaler} har ikke samme lengde som $eksternVarslingKanaler}")
+        result.eksternVarslingKanaler.forEach { res ->
+            assertTrue(eksternVarslingKanaler.any { res == it }, "eksternVarslingKanaler: fant ikke $res i $eksternVarslingKanaler")
+        }
     }
 
     infix fun shouldEqual(expected: Beskjed) {

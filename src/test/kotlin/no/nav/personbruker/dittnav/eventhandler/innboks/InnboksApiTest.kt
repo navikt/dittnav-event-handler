@@ -51,7 +51,7 @@ class InnboksApiTest {
             objectMapper.readTree(aktiveVarsler.bodyAsText()) shouldContainExactly expected
         }
         testApplication {
-            val expected = listOf(innboks3Aktiv.updateWith(null))
+            val expected = listOf(innboks3Aktiv)
             mockApiWithFnr(database, innboksTestFnr2)
             val aktiveVarsler = client.get("$innboksEndpoint/aktive")
             aktiveVarsler.status shouldBe HttpStatusCode.OK
@@ -68,7 +68,7 @@ class InnboksApiTest {
             objectMapper.readTree(inaktiveVarsler.bodyAsText()).toList().size shouldBe 0
         }
         testApplication {
-            val expected = listOf(innboks4Inaktiv.updateWith(null))
+            val expected = listOf(innboks4Inaktiv)
             mockApiWithFnr(database, innboksTestFnr2)
             val inaktiveVarsler = client.get("$innboksEndpoint/inaktive")
             inaktiveVarsler.status shouldBe HttpStatusCode.OK
@@ -89,7 +89,7 @@ class InnboksApiTest {
             objectMapper.readTree(alleVarsler.bodyAsText()) shouldContainExactly expected
         }
         testApplication {
-            val expected = listOf(innboks4Inaktiv.updateWith(null), innboks3Aktiv.updateWith(null))
+            val expected = listOf(innboks4Inaktiv, innboks3Aktiv)
             mockApiWithFnr(database, innboksTestFnr2)
             val alleVarsler = client.get("$innboksEndpoint/all")
             alleVarsler.status shouldBe HttpStatusCode.OK

@@ -88,9 +88,7 @@ class BeskjedApiTest {
             val aktiveVarsler = client.get("$fetchBeskjedEndpoint/inaktive")
 
             objectMapper.readTree(aktiveVarsler.bodyAsText()) shouldContainExactly listOf(
-                beskjed3Inaktiv.updateWith(
-                    null
-                )
+                beskjed3Inaktiv.updateWith(null)
             )
         }
 

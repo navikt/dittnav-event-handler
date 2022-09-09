@@ -84,7 +84,7 @@ class OppgaveApiTest {
         testApplication {
             mockApi(database)
             val expected = listOf(
-                oppgave3Inaktiv.updateWith(null)
+                oppgave3Inaktiv
             )
             val inaktiveVarsler = client.get("$oppgaveEndpoint/inaktive")
             inaktiveVarsler.status shouldBe HttpStatusCode.OK
@@ -97,7 +97,7 @@ class OppgaveApiTest {
         testApplication {
             mockApi(database)
             val expected = listOf(
-                oppgave3Inaktiv.updateWith(null),
+                oppgave3Inaktiv,
                 oppgave2Aktiv.updateWith(doknotStatusForOppgave2),
                 oppgave1Aktiv.updateWith(doknotStatusForOppgave1)
             )

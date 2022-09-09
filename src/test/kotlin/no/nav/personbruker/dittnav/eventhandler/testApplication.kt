@@ -3,12 +3,8 @@ package no.nav.personbruker.dittnav.eventhandler
 
 import Beskjed
 import com.fasterxml.jackson.databind.JsonNode
-import io.kotest.matchers.collections.shouldContainExactly
-import io.kotest.matchers.comparables.shouldBeEqualComparingTo
-import io.kotest.matchers.shouldBe
 import io.ktor.server.application.Application
 import io.ktor.server.testing.TestApplicationBuilder
-import io.mockk.InternalPlatformDsl.toArray
 import io.mockk.mockk
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
@@ -16,6 +12,7 @@ import no.nav.personbruker.dittnav.eventhandler.common.health.HealthService
 import no.nav.personbruker.dittnav.eventhandler.config.eventHandlerApi
 import no.nav.personbruker.dittnav.eventhandler.done.DoneEventService
 import no.nav.personbruker.dittnav.eventhandler.event.EventRepository
+import no.nav.personbruker.dittnav.eventhandler.innboks.Innboks
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksEventService
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveEventService
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventStatisticsService
@@ -94,6 +91,21 @@ internal class ComparableVarsel(
             eksternVarslingSendt = eksternVarslingInfo.sendt,
             eksternVarslingKanaler = eksternVarslingInfo.sendteKanaler
         )
+
+        private fun Innboks.toCompparableVarsel() = ComparableVarsel(
+            fodselsnummer = this.fodselsnummer,
+            grupperingsId = this.grupperingsId,
+            eventId = this.eventId,
+            forstBehandlet = this.forstBehandlet,
+            produsent = this.appnavn,
+            sikkerhetsnivaa = this.sikkerhetsnivaa,
+            sistOppdatert = this.sistOppdatert,
+            tekst = this.tekst,
+            link = this.link,
+            aktiv = this.aktiv,
+            eksternVarslingSendt = eksternVarslingInfo.sendt,
+            eksternVarslingKanaler = eksternVarslingInfo.sendteKanaler
+        )
     }
 
     private fun assertResultEquals(result: ComparableVarsel) {
@@ -114,8 +126,12 @@ internal class ComparableVarsel(
         }
     }
 
-    infix fun shouldEqual(expected: Beskjed) {
-        this.assertResultEquals(expected.toCompparableVarsel())
+    infix fun shouldEqual(expectedBeskjed: Beskjed) {
+        this.assertResultEquals(expectedBeskjed.toCompparableVarsel())
+    }
+
+    infix fun shouldEqual(expectedInnboks: Innboks) {
+        this.assertResultEquals(expectedInnboks.toCompparableVarsel())
     }
 }
 

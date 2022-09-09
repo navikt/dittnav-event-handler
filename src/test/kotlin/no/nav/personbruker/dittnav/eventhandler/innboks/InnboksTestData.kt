@@ -71,76 +71,81 @@ object InnboksTestData {
     }
 }
 
-internal const val innboksTestFnr1 = "12345"
-internal const val innboksTestFnr2 = "67890"
+internal const val innboksTestFnr1 = "12345987659"
+internal const val innboksTestFnr2 = "67890987659"
 internal const val innboksTestSystembruker = "x-dittnav"
 internal const val innboksTestnamespace = "localhost"
 internal const val innboksTestAppnavn = "dittnav"
 internal const val innboksTestgrupperingsid = "100$innboksTestFnr1"
 
-internal val innboks1Aktiv = InnboksTestData.createInnboks(
-    id = 1,
-    eventId = "123",
-    fodselsnummer = innboksTestFnr1,
-    grupperingsId = innboksTestgrupperingsid,
-    aktiv = true,
-    systembruker = innboksTestSystembruker,
-    namespace = innboksTestnamespace,
-    appnavn = innboksTestAppnavn,
-    eksternVarslingInfo = EksternVarslingInfoObjectMother.createEskternVarslingInfo(
-        bestilt = true,
-        prefererteKanaler = listOf("SMS", "EPOST")
+
+internal object InnboksTestBruker1 {
+    internal val innboks1Aktiv = InnboksTestData.createInnboks(
+        id = 1,
+        eventId = "123",
+        fodselsnummer = innboksTestFnr1,
+        grupperingsId = innboksTestgrupperingsid,
+        aktiv = true,
+        systembruker = innboksTestSystembruker,
+        namespace = innboksTestnamespace,
+        appnavn = innboksTestAppnavn,
+        eksternVarslingInfo = EksternVarslingInfoObjectMother.createEskternVarslingInfo(
+            bestilt = true,
+            prefererteKanaler = listOf("SMS", "EPOST")
+        )
     )
-)
 
-internal val doknotStatusForInnboks1 = DoknotifikasjonTestStatus(
-    eventId = innboks1Aktiv.eventId,
-    status = EksternVarslingStatus.OVERSENDT.name,
-    melding = "melding",
-    distribusjonsId = 123L,
-    kanaler = "SMS"
-)
-
-internal val innboks2Aktiv = InnboksTestData.createInnboks(
-    id = 2,
-    eventId = "345",
-    fodselsnummer = innboksTestFnr1,
-    grupperingsId = innboksTestgrupperingsid,
-    aktiv = true,
-    systembruker = innboksTestSystembruker,
-    namespace = innboksTestnamespace,
-    appnavn = innboksTestAppnavn,
-    eksternVarslingInfo = EksternVarslingInfoObjectMother.createEskternVarslingInfo(
-        bestilt = true,
-        prefererteKanaler = listOf("SMS", "EPOST")
+    internal val doknotStatusForInnboks1 = DoknotifikasjonTestStatus(
+        eventId = innboks1Aktiv.eventId,
+        status = EksternVarslingStatus.OVERSENDT.name,
+        melding = "melding",
+        distribusjonsId = 123L,
+        kanaler = "SMS"
     )
-)
 
-internal val doknotStatusForInnboks2 = DoknotifikasjonTestStatus(
-    eventId = innboks2Aktiv.eventId,
-    status = EksternVarslingStatus.FEILET.name,
-    melding = "feilet",
-    distribusjonsId = null,
-    kanaler = ""
-)
+    internal val innboks2Aktiv = InnboksTestData.createInnboks(
+        id = 2,
+        eventId = "345",
+        fodselsnummer = innboksTestFnr1,
+        grupperingsId = innboksTestgrupperingsid,
+        aktiv = true,
+        systembruker = innboksTestSystembruker,
+        namespace = innboksTestnamespace,
+        appnavn = innboksTestAppnavn,
+        eksternVarslingInfo = EksternVarslingInfoObjectMother.createEskternVarslingInfo(
+            bestilt = true,
+            prefererteKanaler = listOf("SMS", "EPOST")
+        )
+    )
 
-internal val innboks3Aktiv = InnboksTestData.createInnboks(
-    id = 3,
-    eventId = "567",
-    fodselsnummer = innboksTestFnr2,
-    aktiv = true,
-    systembruker = "x-dittnav-2",
-    namespace = innboksTestnamespace,
-    appnavn = "dittnav-2",
-    forstBehandlet = ZonedDateTime.now().minusDays(5),
-)
-internal val innboks4Inaktiv = InnboksTestData.createInnboks(
-    id = 4,
-    eventId = "789",
-    fodselsnummer = innboksTestFnr2,
-    aktiv = false,
-    systembruker = innboksTestSystembruker,
-    namespace = innboksTestnamespace,
-    appnavn = innboksTestAppnavn,
-    forstBehandlet = ZonedDateTime.now().minusDays(15),
-)
+    internal val doknotStatusForInnboks2 = DoknotifikasjonTestStatus(
+        eventId = innboks2Aktiv.eventId,
+        status = EksternVarslingStatus.FEILET.name,
+        melding = "feilet",
+        distribusjonsId = null,
+        kanaler = ""
+    )
+}
+
+internal object InnboksTestBruker2 {
+    internal val innboks3Aktiv = InnboksTestData.createInnboks(
+        id = 3,
+        eventId = "567",
+        fodselsnummer = innboksTestFnr2,
+        aktiv = true,
+        systembruker = "x-dittnav-2",
+        namespace = innboksTestnamespace,
+        appnavn = "dittnav-2",
+        forstBehandlet = ZonedDateTime.now().minusDays(5),
+    )
+    internal val innboks4Inaktiv = InnboksTestData.createInnboks(
+        id = 4,
+        eventId = "789",
+        fodselsnummer = innboksTestFnr2,
+        aktiv = false,
+        systembruker = innboksTestSystembruker,
+        namespace = innboksTestnamespace,
+        appnavn = innboksTestAppnavn,
+        forstBehandlet = ZonedDateTime.now().minusDays(15),
+    )
+}

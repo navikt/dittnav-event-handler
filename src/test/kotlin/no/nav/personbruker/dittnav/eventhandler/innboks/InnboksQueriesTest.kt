@@ -10,6 +10,12 @@ import no.nav.personbruker.dittnav.eventhandler.common.findCountFor
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.DoknotifikasjonTestStatus
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.createDoknotStatusInnboks
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.deleteDoknotStatusInnboks
+import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksTestBruker1.doknotStatusForInnboks1
+import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksTestBruker1.doknotStatusForInnboks2
+import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksTestBruker1.innboks1Aktiv
+import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksTestBruker1.innboks2Aktiv
+import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksTestBruker2.innboks3Aktiv
+import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksTestBruker2.innboks4Inaktiv
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -22,14 +28,14 @@ class InnboksQueriesTest {
 
     @BeforeAll
     fun `populer test-data`() {
-        createInnboks(listOf(innboks1Aktiv, innboks2Aktiv, innboks3Aktiv, innboks4Inaktiv))
-        createDoknotStatuses(listOf(doknotStatusForInnboks1, doknotStatusForInnboks2))
+        database.createInnboks(listOf(innboks1Aktiv, innboks2Aktiv, innboks3Aktiv, innboks4Inaktiv))
+        database.createDoknotStatuses(listOf(doknotStatusForInnboks1, doknotStatusForInnboks2))
     }
 
     @AfterAll
     fun `slett Innboks-eventer fra tabellen`() {
-        deleteAllDoknotStatusInnboks()
-        deleteInnboks(listOf(innboks1Aktiv, innboks2Aktiv, innboks3Aktiv, innboks4Inaktiv))
+        database.deleteAllDoknotStatusInnboks()
+        database.deleteInnboks(listOf(innboks1Aktiv, innboks2Aktiv, innboks3Aktiv, innboks4Inaktiv))
     }
 
     @Test
@@ -193,31 +199,5 @@ class InnboksQueriesTest {
         eksternVarslingInfo.prefererteKanaler shouldContainAll innboks3Aktiv.eksternVarslingInfo.prefererteKanaler
         eksternVarslingInfo.sendt shouldBe false
         eksternVarslingInfo.sendteKanaler.isEmpty() shouldBe true
-    }
-
-    private fun createInnboks(innboks: List<Innboks>) {
-        runBlocking {
-            database.dbQuery { createInnboks(innboks) }
-        }
-    }
-
-    private fun deleteInnboks(innboks: List<Innboks>) {
-        runBlocking {
-            database.dbQuery { deleteInnboks(innboks) }
-        }
-    }
-
-    private fun createDoknotStatuses(statuses: List<DoknotifikasjonTestStatus>) = runBlocking {
-        database.dbQuery {
-            statuses.forEach { status ->
-                createDoknotStatusInnboks(status)
-            }
-        }
-    }
-
-    private fun deleteAllDoknotStatusInnboks() = runBlocking {
-        database.dbQuery {
-            deleteDoknotStatusInnboks()
-        }
     }
 }

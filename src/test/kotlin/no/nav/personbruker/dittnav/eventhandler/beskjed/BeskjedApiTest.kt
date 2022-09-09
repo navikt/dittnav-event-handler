@@ -59,7 +59,7 @@ class BeskjedApiTest {
     }
 
     @Test
-    fun `henter beskjedvarsel`() {
+    fun `henter aktive beskjedvarsel`() {
         val expectedVarsler = listOf(
             beskjed1Aktiv.updateWith(doknotStatusForBeskjed1),
             beskjed2Aktiv.updateWith(doknotStatusForBeskjed2)
@@ -77,10 +77,48 @@ class BeskjedApiTest {
 
     }
 
+    @Test
+    fun `henter inaktive varsel`() {
+        testApplication {
+            mockEventHandlerApi(
+                database = database,
+                beskjedEventService = BeskjedEventService(database),
+                installAuthenticatorsFunction = Application::beskjedAuthConfig
+            )
+            val aktiveVarsler = client.get("$fetchBeskjedEndpoint/inaktive")
+
+            objectMapper.readTree(aktiveVarsler.bodyAsText()) shouldContainExactly listOf(
+                beskjed3Inaktiv.updateWith(
+                    null
+                )
+            )
+        }
+
+    }
+
+
+    @Test
+    fun `henter alle varsel`() {
+        val expectedVarsel = listOf(
+            beskjed1Aktiv.updateWith(doknotStatusForBeskjed1),
+            beskjed2Aktiv.updateWith(doknotStatusForBeskjed2),
+            beskjed3Inaktiv.updateWith(null)
+        )
+        testApplication {
+            mockEventHandlerApi(
+                database = database,
+                beskjedEventService = BeskjedEventService(database),
+                installAuthenticatorsFunction = Application::beskjedAuthConfig
+            )
+            val aktiveVarsler = client.get("$fetchBeskjedEndpoint/all")
+
+            objectMapper.readTree(aktiveVarsler.bodyAsText()) shouldContainExactly expectedVarsel
+        }
+
+    }
+
     /*
-        "/fetch/beskjed/aktive"
-        "/fetch/beskjed/inaktive"
-        "/fetch/beskjed/all"
+    TODO
         "/fetch/beskjed/grouped"
         "/fetch/grouped/producer/beskjed"
         "/fetch/modia/beskjed/aktive"
@@ -133,10 +171,15 @@ private fun Beskjed.updateWith(doknotStatus: DoknotifikasjonTestStatus?): Beskje
         this.copy(
             eksternVarslingInfo = this.eksternVarslingInfo.copy(
                 sendt = doknotStatus.status == EksternVarslingStatus.OVERSENDT.name,
-                sendteKanaler = if(doknotStatus.kanaler!="")listOf(doknotStatus.kanaler) else listOf()
+                sendteKanaler = if (doknotStatus.kanaler != "") listOf(doknotStatus.kanaler) else emptyList()
             )
         )
     } else {
-        this.copy()
+        this.copy(
+            eksternVarslingInfo = this.eksternVarslingInfo.copy(
+                sendt = false,
+                sendteKanaler = emptyList()
+            )
+        )
     }
 

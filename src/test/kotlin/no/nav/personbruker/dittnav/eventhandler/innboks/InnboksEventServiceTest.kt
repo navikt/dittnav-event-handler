@@ -45,8 +45,8 @@ class InnboksEventServiceTest {
         val innloggetbruker = TokenXUserObjectMother.createInnloggetBruker("100")
         val grupperingsid = "100${innloggetbruker.ident}"
         val innboksEvents = listOf(
-            InnboksObjectMother.createInnboks(fodselsnummer = innloggetbruker.ident, grupperingsId = grupperingsid),
-            InnboksObjectMother.createInnboks(fodselsnummer = innloggetbruker.ident, grupperingsId = grupperingsid)
+            InnboksTestData.createInnboks(fodselsnummer = innloggetbruker.ident, grupperingsId = grupperingsid),
+            InnboksTestData.createInnboks(fodselsnummer = innloggetbruker.ident, grupperingsId = grupperingsid)
         )
         runBlocking {
             coEvery {

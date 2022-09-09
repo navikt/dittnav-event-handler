@@ -5,14 +5,13 @@ import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
-import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksObjectMother
+import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksTestData
 import no.nav.personbruker.dittnav.eventhandler.innboks.createInnboks
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveObjectMother
 import no.nav.personbruker.dittnav.eventhandler.oppgave.createOppgave
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import java.time.ZonedDateTime
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class EventTest {
@@ -85,12 +84,12 @@ class EventTest {
 
     private fun createInnboks(antallAktive: Int, antallInaktive: Int) {
         val innboks = (1..antallAktive).map {
-            InnboksObjectMother.createInnboks(
+            InnboksTestData.createInnboks(
                 fodselsnummer = fodselsnummer,
                 aktiv = true
             )
         } + (1..antallInaktive).map {
-            InnboksObjectMother.createInnboks(
+            InnboksTestData.createInnboks(
                 fodselsnummer = fodselsnummer,
                 aktiv = false
             )

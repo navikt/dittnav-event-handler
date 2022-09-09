@@ -8,129 +8,51 @@ import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
 import no.nav.personbruker.dittnav.eventhandler.common.findCountFor
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.DoknotifikasjonTestStatus
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfoObjectMother
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus.FEILET
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus.OVERSENDT
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.createDoknotStatusInnboks
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.deleteDoknotStatusInnboks
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import java.time.ZonedDateTime
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class InnboksQueriesTest {
 
     private val database = LocalPostgresDatabase.cleanDb()
 
-    private val fodselsnummer1 = "12345"
-    private val fodselsnummer2 = "67890"
-    private val systembruker = "x-dittnav"
-    private val namespace = "localhost"
-    private val appnavn = "dittnav"
-    private val grupperingsid = "100$fodselsnummer1"
-
-    private val innboks1 = InnboksObjectMother.createInnboks(
-        id = 1,
-        eventId = "123",
-        fodselsnummer = fodselsnummer1,
-        grupperingsId = grupperingsid,
-        aktiv = true,
-        systembruker = systembruker,
-        namespace = namespace,
-        appnavn = appnavn,
-        eksternVarslingInfo = EksternVarslingInfoObjectMother.createEskternVarslingInfo(
-            bestilt = true,
-            prefererteKanaler = listOf("SMS", "EPOST")
-        )
-    )
-
-    val doknotStatusForInnboks1 = DoknotifikasjonTestStatus(
-        eventId = innboks1.eventId,
-        status = OVERSENDT.name,
-        melding = "melding",
-        distribusjonsId = 123L,
-        kanaler = "SMS"
-    )
-
-    private val innboks2 = InnboksObjectMother.createInnboks(
-        id = 2,
-        eventId = "345",
-        fodselsnummer = fodselsnummer1,
-        grupperingsId = grupperingsid,
-        aktiv = true,
-        systembruker = systembruker,
-        namespace = namespace,
-        appnavn = appnavn,
-        eksternVarslingInfo = EksternVarslingInfoObjectMother.createEskternVarslingInfo(
-            bestilt = true,
-            prefererteKanaler = listOf("SMS", "EPOST")
-        )
-    )
-
-    val doknotStatusForInnboks2 = DoknotifikasjonTestStatus(
-        eventId = innboks2.eventId,
-        status = FEILET.name,
-        melding = "feilet",
-        distribusjonsId = null,
-        kanaler = ""
-    )
-
-    private val innboks3 = InnboksObjectMother.createInnboks(
-        id = 3,
-        eventId = "567",
-        fodselsnummer = fodselsnummer2,
-        aktiv = true,
-        systembruker = "x-dittnav-2",
-        namespace = namespace,
-        appnavn = "dittnav-2",
-        forstBehandlet = ZonedDateTime.now().minusDays(5),
-    )
-    private val innboks4 = InnboksObjectMother.createInnboks(
-        id = 4,
-        eventId = "789",
-        fodselsnummer = fodselsnummer2,
-        aktiv = false,
-        systembruker = systembruker,
-        namespace = namespace,
-        appnavn = appnavn,
-        forstBehandlet = ZonedDateTime.now().minusDays(15),
-    )
-
     @BeforeAll
     fun `populer test-data`() {
-        createInnboks(listOf(innboks1, innboks2, innboks3, innboks4))
+        createInnboks(listOf(innboks1Aktiv, innboks2Aktiv, innboks3Aktiv, innboks4Inaktiv))
         createDoknotStatuses(listOf(doknotStatusForInnboks1, doknotStatusForInnboks2))
     }
 
     @AfterAll
     fun `slett Innboks-eventer fra tabellen`() {
         deleteAllDoknotStatusInnboks()
-        deleteInnboks(listOf(innboks1, innboks2, innboks3, innboks4))
+        deleteInnboks(listOf(innboks1Aktiv, innboks2Aktiv, innboks3Aktiv, innboks4Inaktiv))
     }
 
     @Test
     fun `Finn alle cachede Innboks-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getAllInnboksForFodselsnummer(fodselsnummer1) }.size shouldBe 2
-            database.dbQuery { getAllInnboksForFodselsnummer(fodselsnummer2) }.size shouldBe 2
+            database.dbQuery { getAllInnboksForFodselsnummer(innboksTestFnr1) }.size shouldBe 2
+            database.dbQuery { getAllInnboksForFodselsnummer(innboksTestFnr2) }.size shouldBe 2
         }
     }
 
     @Test
     fun `Finn kun aktive cachede Innboks-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getAktivInnboksForFodselsnummer(fodselsnummer1) }.size shouldBe 2
-            database.dbQuery { getAktivInnboksForFodselsnummer(fodselsnummer2) }.size shouldBe 1
+            database.dbQuery { getAktivInnboksForFodselsnummer(innboksTestFnr1) }.size shouldBe 2
+            database.dbQuery { getAktivInnboksForFodselsnummer(innboksTestFnr2) }.size shouldBe 1
         }
     }
 
     @Test
     fun `Finn kun inaktive cachede Innboks-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getInaktivInnboksForFodselsnummer(fodselsnummer1) }.shouldBeEmpty()
-            database.dbQuery { getInaktivInnboksForFodselsnummer(fodselsnummer2) }.size shouldBe 1
+            database.dbQuery { getInaktivInnboksForFodselsnummer(innboksTestFnr1) }.shouldBeEmpty()
+            database.dbQuery { getInaktivInnboksForFodselsnummer(innboksTestFnr2) }.size shouldBe 1
         }
     }
 
@@ -153,24 +75,24 @@ class InnboksQueriesTest {
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for aktive eventer`() {
         runBlocking {
-            val innboks = database.dbQuery { getAktivInnboksForFodselsnummer(fodselsnummer1) }.first()
-            innboks.produsent shouldBe appnavn
+            val innboks = database.dbQuery { getAktivInnboksForFodselsnummer(innboksTestFnr1) }.first()
+            innboks.produsent shouldBe innboksTestAppnavn
         }
     }
 
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for inaktive eventer`() {
         runBlocking {
-            val innboks = database.dbQuery { getInaktivInnboksForFodselsnummer(fodselsnummer2) }.first()
-            innboks.produsent shouldBe appnavn
+            val innboks = database.dbQuery { getInaktivInnboksForFodselsnummer(innboksTestFnr2) }.first()
+            innboks.produsent shouldBe innboksTestAppnavn
         }
     }
 
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for alle eventer`() {
         runBlocking {
-            val innboks = database.dbQuery { getAllInnboksForFodselsnummer(fodselsnummer1) }.first()
-            innboks.produsent shouldBe appnavn
+            val innboks = database.dbQuery { getAllInnboksForFodselsnummer(innboksTestFnr1) }.first()
+            innboks.produsent shouldBe innboksTestAppnavn
         }
     }
 
@@ -178,7 +100,7 @@ class InnboksQueriesTest {
     fun `Returnerer en liste av alle grupperte Innboks-eventer`() {
         runBlocking {
             database.dbQuery {
-                getAllGroupedInnboksEventsByIds(fodselsnummer1, grupperingsid, appnavn)
+                getAllGroupedInnboksEventsByIds(innboksTestFnr1, innboksTestgrupperingsid, innboksTestAppnavn)
             }.size shouldBe 2
         }
     }
@@ -188,7 +110,7 @@ class InnboksQueriesTest {
         val noMatchProdusent = "dummyProdusent"
         runBlocking {
             database.dbQuery {
-                getAllGroupedInnboksEventsByIds(fodselsnummer1, grupperingsid, noMatchProdusent)
+                getAllGroupedInnboksEventsByIds(innboksTestFnr1, innboksTestgrupperingsid, noMatchProdusent)
             }.shouldBeEmpty()
         }
     }
@@ -198,7 +120,7 @@ class InnboksQueriesTest {
         val noMatchGrupperingsid = "dummyGrupperingsid"
         runBlocking {
             database.dbQuery {
-                getAllGroupedInnboksEventsByIds(fodselsnummer1, noMatchGrupperingsid, appnavn)
+                getAllGroupedInnboksEventsByIds(innboksTestFnr1, noMatchGrupperingsid, innboksTestAppnavn)
             }.shouldBeEmpty()
         }
     }
@@ -209,8 +131,8 @@ class InnboksQueriesTest {
             val groupedEventsBySystemuser = database.dbQuery { getAllGroupedInnboksEventsBySystemuser() }
 
             groupedEventsBySystemuser.size shouldBe 2
-            groupedEventsBySystemuser[innboks1.systembruker] shouldBe 3
-            groupedEventsBySystemuser[innboks3.systembruker] shouldBe 1
+            groupedEventsBySystemuser[innboks1Aktiv.systembruker] shouldBe 3
+            groupedEventsBySystemuser[innboks3Aktiv.systembruker] shouldBe 1
         }
     }
 
@@ -220,23 +142,23 @@ class InnboksQueriesTest {
             val groupedEventsByProducer = database.dbQuery { getAllGroupedInnboksEventsByProducer() }
 
             groupedEventsByProducer.size shouldBe 2
-            groupedEventsByProducer.findCountFor(innboks1.namespace, innboks1.appnavn) shouldBe 3
-            groupedEventsByProducer.findCountFor(innboks3.namespace, innboks3.appnavn) shouldBe 1
+            groupedEventsByProducer.findCountFor(innboks1Aktiv.namespace, innboks1Aktiv.appnavn) shouldBe 3
+            groupedEventsByProducer.findCountFor(innboks3Aktiv.namespace, innboks3Aktiv.appnavn) shouldBe 1
         }
     }
 
     @Test
     fun `Returnerer riktig info om ekstern varsling dersom status er mottat og oversendt`() = runBlocking {
         val innboks = database.dbQuery {
-            getAktivInnboksForFodselsnummer(innboks1.fodselsnummer)
+            getAktivInnboksForFodselsnummer(innboks1Aktiv.fodselsnummer)
         }.filter {
-            it.eventId == innboks1.eventId
+            it.eventId == innboks1Aktiv.eventId
         }.first()
 
         val eksternVarslingInfo = innboks.eksternVarslingInfo
 
-        eksternVarslingInfo.bestilt shouldBe innboks1.eksternVarslingInfo.bestilt
-        eksternVarslingInfo.prefererteKanaler shouldContainAll innboks1.eksternVarslingInfo.prefererteKanaler
+        eksternVarslingInfo.bestilt shouldBe innboks1Aktiv.eksternVarslingInfo.bestilt
+        eksternVarslingInfo.prefererteKanaler shouldContainAll innboks1Aktiv.eksternVarslingInfo.prefererteKanaler
         eksternVarslingInfo.sendt shouldBe true
         eksternVarslingInfo.sendteKanaler shouldContain doknotStatusForInnboks1.kanaler
     }
@@ -244,15 +166,15 @@ class InnboksQueriesTest {
     @Test
     fun `Returnerer riktig info om ekstern varsling dersom status er mottat og feilet`() = runBlocking {
         val innboks = database.dbQuery {
-            getAktivInnboksForFodselsnummer(innboks2.fodselsnummer)
+            getAktivInnboksForFodselsnummer(innboks2Aktiv.fodselsnummer)
         }.filter {
-            it.eventId == innboks2.eventId
+            it.eventId == innboks2Aktiv.eventId
         }.first()
 
         val eksternVarslingInfo = innboks.eksternVarslingInfo
 
-        eksternVarslingInfo.bestilt shouldBe innboks2.eksternVarslingInfo.bestilt
-        eksternVarslingInfo.prefererteKanaler shouldContainAll innboks2.eksternVarslingInfo.prefererteKanaler
+        eksternVarslingInfo.bestilt shouldBe innboks2Aktiv.eksternVarslingInfo.bestilt
+        eksternVarslingInfo.prefererteKanaler shouldContainAll innboks2Aktiv.eksternVarslingInfo.prefererteKanaler
         eksternVarslingInfo.sendt shouldBe false
         eksternVarslingInfo.sendteKanaler.isEmpty() shouldBe true
     }
@@ -260,15 +182,15 @@ class InnboksQueriesTest {
     @Test
     fun `Returnerer riktig info om ekstern varsling dersom status ikke er mottatt`() = runBlocking {
         val innboks = database.dbQuery {
-            getAktivInnboksForFodselsnummer(innboks3.fodselsnummer)
+            getAktivInnboksForFodselsnummer(innboks3Aktiv.fodselsnummer)
         }.filter {
-            it.eventId == innboks3.eventId
+            it.eventId == innboks3Aktiv.eventId
         }.first()
 
         val eksternVarslingInfo = innboks.eksternVarslingInfo
 
-        eksternVarslingInfo.bestilt shouldBe innboks3.eksternVarslingInfo.bestilt
-        eksternVarslingInfo.prefererteKanaler shouldContainAll innboks3.eksternVarslingInfo.prefererteKanaler
+        eksternVarslingInfo.bestilt shouldBe innboks3Aktiv.eksternVarslingInfo.bestilt
+        eksternVarslingInfo.prefererteKanaler shouldContainAll innboks3Aktiv.eksternVarslingInfo.prefererteKanaler
         eksternVarslingInfo.sendt shouldBe false
         eksternVarslingInfo.sendteKanaler.isEmpty() shouldBe true
     }

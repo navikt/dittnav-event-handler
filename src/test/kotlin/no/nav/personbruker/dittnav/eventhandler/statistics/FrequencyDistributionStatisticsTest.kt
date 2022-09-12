@@ -46,9 +46,9 @@ class FrequencyDistributionStatisticsTest {
 
     @BeforeAll
     fun `populer testdata`() {
-        createBeskjed(listOf(beskjed1, beskjed2, beskjed3, beskjed4))
-        createInnboks(listOf(innboks1, innboks2, innboks3))
-        createOppgave(listOf(oppgave1, oppgave2, oppgave3, oppgave4, oppgave5, oppgave6))
+        database.createBeskjed(listOf(beskjed1, beskjed2, beskjed3, beskjed4))
+        database.createInnboks(listOf(innboks1, innboks2, innboks3))
+        database.createOppgave(listOf(oppgave1, oppgave2, oppgave3, oppgave4, oppgave5, oppgave6))
     }
 
     @Test
@@ -75,22 +75,6 @@ class FrequencyDistributionStatisticsTest {
             val eventFrekvensFordeling = eventStatisticsService.getActiveEventsFrequencyDistribution(EventType.INNBOKS)
             eventFrekvensFordeling.eventFrequencies.size shouldBe 1
             eventFrekvensFordeling.eventFrequencies.first { it.antallEventer == 1 }.antallBrukere shouldBe 2
-        }
-    }
-
-    private fun createBeskjed(beskjeder: List<Beskjed>) {
-        runBlocking {
-            database.dbQuery { createBeskjed(beskjeder) }
-        }
-    }
-    private fun createInnboks(innboks: List<Innboks>) {
-        runBlocking {
-            database.dbQuery { createInnboks(innboks) }
-        }
-    }
-    private fun createOppgave(oppgaver: List<Oppgave>) {
-        runBlocking {
-            database.dbQuery { createOppgave(oppgaver) }
         }
     }
 }

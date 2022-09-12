@@ -52,16 +52,16 @@ class EventStatisticsServiceTest {
 
     @BeforeAll
     fun `populer testdata`() {
-        createBeskjed(listOf(beskjed1, beskjed2, beskjed3, beskjed4))
-        createInnboks(listOf(innboks1, innboks2, innboks3, innboks4))
-        createOppgave(listOf(oppgave1, oppgave2, oppgave3, oppgave4))
+        database.createBeskjed(listOf(beskjed1, beskjed2, beskjed3, beskjed4))
+        database.createInnboks(listOf(innboks1, innboks2, innboks3, innboks4))
+        database.createOppgave(listOf(oppgave1, oppgave2, oppgave3, oppgave4))
     }
 
     @AfterAll
     fun `slett testdata`() {
-        deleteBeskjed(listOf(beskjed1, beskjed2, beskjed3, beskjed4))
-        deleteInnboks(listOf(innboks1, innboks2, innboks3, innboks4))
-        deleteOppgave(listOf(oppgave1, oppgave2, oppgave3, oppgave4))
+        database.deleteBeskjed(listOf(beskjed1, beskjed2, beskjed3, beskjed4))
+        database.deleteInnboks(listOf(innboks1, innboks2, innboks3, innboks4))
+        database.deleteOppgave(listOf(oppgave1, oppgave2, oppgave3, oppgave4))
     }
 
     @Test
@@ -102,37 +102,6 @@ class EventStatisticsServiceTest {
             eventStatisticsService.getTotalTextLength().min shouldBe 2
             eventStatisticsService.getTotalCountUsersWithEvents().count shouldBe 3
             eventStatisticsService.getTotalActiveEventCount().count shouldBe 9
-        }
-    }
-
-    private fun createBeskjed(beskjeder: List<Beskjed>) {
-        runBlocking {
-            database.dbQuery { createBeskjed(beskjeder) }
-        }
-    }
-    private fun deleteBeskjed(beskjeder: List<Beskjed>) {
-        runBlocking {
-            database.dbQuery { deleteBeskjed(beskjeder) }
-        }
-    }
-    private fun createInnboks(innboks: List<Innboks>) {
-        runBlocking {
-            database.dbQuery { createInnboks(innboks) }
-        }
-    }
-    private fun deleteInnboks(innboks: List<Innboks>) {
-        runBlocking {
-            database.dbQuery { deleteInnboks(innboks) }
-        }
-    }
-    private fun createOppgave(oppgaver: List<Oppgave>) {
-        runBlocking {
-            database.dbQuery { createOppgave(oppgaver) }
-        }
-    }
-    private fun deleteOppgave(oppgaver: List<Oppgave>) {
-        runBlocking {
-            database.dbQuery { deleteOppgave(oppgaver) }
         }
     }
 }

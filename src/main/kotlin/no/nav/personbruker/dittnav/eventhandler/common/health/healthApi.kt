@@ -1,14 +1,15 @@
 package no.nav.personbruker.dittnav.eventhandler.common.health
 
-import io.ktor.application.*
-import io.ktor.http.*
-import io.ktor.response.*
+import io.ktor.application.call
+import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
+import io.ktor.response.respond
+import io.ktor.response.respondText
 import io.ktor.routing.Route
 import io.ktor.routing.get
-import io.prometheus.client.CollectorRegistry
-import io.prometheus.client.exporter.common.TextFormat
+import io.micrometer.prometheus.PrometheusMeterRegistry
 
-fun Route.healthApi(healthService: HealthService, collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry) {
+fun Route.healthApi(healthService: HealthService, prometheusMeterRegistry: PrometheusMeterRegistry) {
 
     val pingJsonResponse = """{"ping": "pong"}"""
 
@@ -33,10 +34,7 @@ fun Route.healthApi(healthService: HealthService, collectorRegistry: CollectorRe
     }
 
     get("/metrics") {
-        val names = call.request.queryParameters.getAll("name[]")?.toSet() ?: emptySet()
-        call.respondTextWriter(ContentType.parse(TextFormat.CONTENT_TYPE_004)) {
-            TextFormat.write004(this, collectorRegistry.filteredMetricFamilySamples(names))
-        }
+        call.respond(prometheusMeterRegistry.scrape())
     }
 }
 

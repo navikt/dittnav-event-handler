@@ -8,11 +8,13 @@ import io.ktor.application.install
 import io.ktor.auth.authenticate
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
+import io.ktor.metrics.micrometer.MicrometerMetrics
 import io.ktor.routing.route
 import io.ktor.routing.routing
 import io.ktor.serialization.json
 import io.ktor.util.pipeline.PipelineContext
-import io.prometheus.client.hotspot.DefaultExports
+import io.micrometer.prometheus.PrometheusConfig
+import io.micrometer.prometheus.PrometheusMeterRegistry
 import kotlinx.serialization.json.Json
 import no.nav.personbruker.dittnav.common.util.config.StringEnvVar
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService
@@ -51,18 +53,22 @@ fun Application.eventHandlerApi(
     installAuthenticatorsFunction: Application.() -> Unit = installAuth(),
     installShutdownHook: (database: Database) -> Unit = { configureShutdownHook(database) }
 ) {
+    val prometheusMeterRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
 
-    DefaultExports.initialize()
     install(DefaultHeaders)
     install(ContentNegotiation) {
         json(Json { ignoreUnknownKeys = true })
+    }
+
+    install(MicrometerMetrics) {
+        registry = prometheusMeterRegistry
     }
 
     installAuthenticatorsFunction()
 
     routing {
         route("/dittnav-event-handler") {
-            healthApi(healthService)
+            healthApi(healthService, prometheusMeterRegistry)
             authenticate {
                 doneApi(doneEventService)
                 beskjedApi(beskjedEventService)

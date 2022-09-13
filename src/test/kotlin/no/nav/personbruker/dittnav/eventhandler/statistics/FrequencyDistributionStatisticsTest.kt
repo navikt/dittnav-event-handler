@@ -1,16 +1,13 @@
 package no.nav.personbruker.dittnav.eventhandler.statistics
 
-import Beskjed
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
 import no.nav.personbruker.dittnav.eventhandler.event.EventType
-import no.nav.personbruker.dittnav.eventhandler.innboks.Innboks
-import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksTestData
+import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksObjectMother
 import no.nav.personbruker.dittnav.eventhandler.innboks.createInnboks
-import no.nav.personbruker.dittnav.eventhandler.oppgave.Oppgave
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveObjectMother
 import no.nav.personbruker.dittnav.eventhandler.oppgave.createOppgave
 import org.junit.jupiter.api.BeforeAll
@@ -40,9 +37,9 @@ class FrequencyDistributionStatisticsTest {
     private val oppgave5 = OppgaveObjectMother.createOppgave(fodselsnummer = "37226687654", aktiv = true, systembruker = systembruker)
     private val oppgave6 = OppgaveObjectMother.createOppgave(fodselsnummer = "37226687635", aktiv = true, systembruker = systembruker)
 
-    private val innboks1 = InnboksTestData.createInnboks(fodselsnummer = fodselsnummer, aktiv = true, systembruker = systembruker, tekst = "ab")
-    private val innboks2 = InnboksTestData.createInnboks(fodselsnummer = fodselsnummer2, aktiv = true, systembruker = "x-dittnav-2")
-    private val innboks3 = InnboksTestData.createInnboks(fodselsnummer = fodselsnummer2, aktiv = false, systembruker = systembruker)
+    private val innboks1 = InnboksObjectMother.createInnboks(fodselsnummer = fodselsnummer, aktiv = true, systembruker = systembruker, tekst = "ab")
+    private val innboks2 = InnboksObjectMother.createInnboks(fodselsnummer = fodselsnummer2, aktiv = true, systembruker = "x-dittnav-2")
+    private val innboks3 = InnboksObjectMother.createInnboks(fodselsnummer = fodselsnummer2, aktiv = false, systembruker = systembruker)
 
     @BeforeAll
     fun `populer testdata`() {

@@ -37,12 +37,11 @@ fun TestApplicationBuilder.mockEventHandlerApi(
         installMockedAuthenticators {
             installTokenXAuthMock {
                 setAsDefault = true
-
                 alwaysAuthenticated = true
                 staticUserPid = apiTestfnr
                 staticSecurityLevel = SecurityLevel.LEVEL_4
             }
-            installAzureAuthMock { }
+            installAzureAuthMock {}
         }
     }
 ) {

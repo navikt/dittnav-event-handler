@@ -1,6 +1,5 @@
 package no.nav.personbruker.dittnav.eventhandler.statistics
 
-import Beskjed
 import io.kotest.matchers.doubles.shouldBeGreaterThan
 import io.kotest.matchers.doubles.shouldBeGreaterThanOrEqual
 import io.kotest.matchers.shouldBe
@@ -10,11 +9,9 @@ import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
 import no.nav.personbruker.dittnav.eventhandler.beskjed.deleteBeskjed
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
 import no.nav.personbruker.dittnav.eventhandler.event.EventType
-import no.nav.personbruker.dittnav.eventhandler.innboks.Innboks
-import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksTestData
+import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksObjectMother
 import no.nav.personbruker.dittnav.eventhandler.innboks.createInnboks
 import no.nav.personbruker.dittnav.eventhandler.innboks.deleteInnboks
-import no.nav.personbruker.dittnav.eventhandler.oppgave.Oppgave
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveObjectMother
 import no.nav.personbruker.dittnav.eventhandler.oppgave.createOppgave
 import no.nav.personbruker.dittnav.eventhandler.oppgave.deleteOppgave
@@ -45,10 +42,10 @@ class EventStatisticsServiceTest {
     private val oppgave3 = OppgaveObjectMother.createOppgave(fodselsnummer = fodselsnummer, aktiv = false, systembruker = systembruker)
     private val oppgave4 = OppgaveObjectMother.createOppgave(fodselsnummer = "54321", aktiv = true, systembruker = "x-dittnav-2")
 
-    private val innboks1 = InnboksTestData.createInnboks(fodselsnummer = fodselsnummer, aktiv = true, systembruker = systembruker, tekst = "ab")
-    private val innboks2 = InnboksTestData.createInnboks(fodselsnummer = fodselsnummer1, aktiv = true, systembruker = systembruker)
-    private val innboks3 = InnboksTestData.createInnboks(fodselsnummer = fodselsnummer2, aktiv = true, systembruker = "x-dittnav-2")
-    private val innboks4 = InnboksTestData.createInnboks(fodselsnummer = fodselsnummer2, aktiv = false, systembruker = systembruker)
+    private val innboks1 = InnboksObjectMother.createInnboks(fodselsnummer = fodselsnummer, aktiv = true, systembruker = systembruker, tekst = "ab")
+    private val innboks2 = InnboksObjectMother.createInnboks(fodselsnummer = fodselsnummer1, aktiv = true, systembruker = systembruker)
+    private val innboks3 = InnboksObjectMother.createInnboks(fodselsnummer = fodselsnummer2, aktiv = true, systembruker = "x-dittnav-2")
+    private val innboks4 = InnboksObjectMother.createInnboks(fodselsnummer = fodselsnummer2, aktiv = false, systembruker = systembruker)
 
     @BeforeAll
     fun `populer testdata`() {

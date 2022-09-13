@@ -98,6 +98,8 @@ fun Route.statisticsSystemClientApi(statisticsService: EventStatisticsService) {
         }
     }
 
+    //TODO: Slett unødvendige endepunkt
+
     get("/stats/grouped/bruker/grupperings/{type}") {
         try {
             val type = EventType.fromOriginalType(call.parameters["type"]!!)

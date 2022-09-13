@@ -7,7 +7,7 @@ import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingS
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-object InnboksTestData {
+object InnboksObjectMother {
 
     private var idIncrementor = 0
     private var eventIdIncrementor = 0
@@ -68,7 +68,7 @@ internal const val innboksTestAppnavn = "dittnav"
 internal const val innboksTestgrupperingsid = "100$innboksTestFnr1"
 
 
-internal val innboks1Aktiv = InnboksTestData.createInnboks(
+internal val innboks1Aktiv = InnboksObjectMother.createInnboks(
     id = 1,
     eventId = "123",
     fodselsnummer = innboksTestFnr1,
@@ -91,7 +91,7 @@ internal val doknotStatusForInnboks1 = DoknotifikasjonTestStatus(
     kanaler = "SMS"
 )
 
-internal val innboks2Aktiv = InnboksTestData.createInnboks(
+internal val innboks2Aktiv = InnboksObjectMother.createInnboks(
     id = 2,
     eventId = "345",
     fodselsnummer = innboksTestFnr1,
@@ -114,7 +114,7 @@ internal val doknotStatusForInnboks2 = DoknotifikasjonTestStatus(
     kanaler = ""
 )
 
-internal val innboks3Aktiv = InnboksTestData.createInnboks(
+internal val innboks3Aktiv = InnboksObjectMother.createInnboks(
     id = 3,
     eventId = "567",
     fodselsnummer = innboksTestFnr2,
@@ -124,7 +124,7 @@ internal val innboks3Aktiv = InnboksTestData.createInnboks(
     appnavn = "dittnav-2",
     forstBehandlet = ZonedDateTime.now().minusDays(5),
 )
-internal val innboks4Inaktiv = InnboksTestData.createInnboks(
+internal val innboks4Inaktiv = InnboksObjectMother.createInnboks(
     id = 4,
     eventId = "789",
     fodselsnummer = innboksTestFnr2,

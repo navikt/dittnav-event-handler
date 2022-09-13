@@ -70,6 +70,7 @@ dependencies {
     testImplementation(Ktor2.Test.serverTestHost)
     testImplementation(Ktor2.TmsTokenSupport.authenticationInstallerMock)
     testImplementation(Ktor2.TmsTokenSupport.tokenXValidationMock)
+    testImplementation(Ktor2.TmsTokenSupport.azureValidationMock)
     testImplementation(Kotest.runnerJunit5)
     testImplementation(Kotest.assertionsCore)
 

@@ -8,7 +8,7 @@ class InnboksTest {
 
     @Test
     fun `skal returnere maskerte data fra toString-metoden`() {
-        val innboks = InnboksTestData.createInnboks()
+        val innboks = InnboksObjectMother.createInnboks()
         val innboksAsString = innboks.toString()
         innboksAsString shouldContain "fodselsnummer=***"
         innboksAsString shouldContain "tekst=***"
@@ -18,7 +18,7 @@ class InnboksTest {
 
     @Test
     fun `skal transformere til DTO`() {
-        val innboks = InnboksTestData.createInnboks()
+        val innboks = InnboksObjectMother.createInnboks()
         val innboksDTO = innboks.toDTO()
         innboksDTO.fodselsnummer shouldBe innboks.fodselsnummer
         innboksDTO.eventId shouldBe innboks.eventId

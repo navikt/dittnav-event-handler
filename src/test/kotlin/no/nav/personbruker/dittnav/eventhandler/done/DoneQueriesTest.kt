@@ -7,7 +7,7 @@ import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
 import no.nav.personbruker.dittnav.eventhandler.beskjed.deleteBeskjed
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
 import no.nav.personbruker.dittnav.eventhandler.common.findCountFor
-import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksTestData
+import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksObjectMother
 import no.nav.personbruker.dittnav.eventhandler.innboks.createInnboks
 import no.nav.personbruker.dittnav.eventhandler.innboks.deleteInnboks
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveObjectMother
@@ -36,7 +36,7 @@ internal class DoneQueriesTest {
     private val done2 = DoneObjectMother.createDone(systembruker = "y-dittnav", eventTidspunkt, fodselsnummer, "2", grupperingsId, forstBehandlet)
     private val inaktivBeskjed = BeskjedObjectMother.createBeskjed(id = 1, eventId = "123", fodselsnummer = "00", synligFremTil = ZonedDateTime.now().plusHours(1), aktiv = false, systembruker = systembruker, namespace = namespace, appnavn = appnavn)
     private val inaktivOppgave = OppgaveObjectMother.createOppgave(id = 1, eventId = "123", fodselsnummer = "01", aktiv = false, systembruker = systembruker, namespace = namespace, appnavn = appnavn)
-    private val inaktivInnboks = InnboksTestData.createInnboks(id = 1, eventId = "123", fodselsnummer = "02", aktiv = false, systembruker = "x-dittnav-2", namespace = namespace, appnavn = "dittnav-2")
+    private val inaktivInnboks = InnboksObjectMother.createInnboks(id = 1, eventId = "123", fodselsnummer = "02", aktiv = false, systembruker = "x-dittnav-2", namespace = namespace, appnavn = "dittnav-2")
 
     @BeforeAll
     fun `populer testdata`() {

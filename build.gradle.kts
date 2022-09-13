@@ -57,6 +57,9 @@ dependencies {
     implementation(Ktor2.kotlinX)
     implementation(Ktor2.Server.authJwt)
     implementation(Ktor2.Server.htmlDsl)
+    implementation(Micrometer.registryPrometheus)
+    implementation(NAV.vaultJdbc)
+    implementation(Postgresql.postgresql)
 
     testImplementation(Jjwt.api)
     testImplementation(Junit.api)

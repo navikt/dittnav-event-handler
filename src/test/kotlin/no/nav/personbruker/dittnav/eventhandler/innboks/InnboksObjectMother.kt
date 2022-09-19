@@ -1,5 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.innboks
 
+import no.nav.personbruker.dittnav.eventhandler.OsloDateTime
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.DoknotifikasjonTestStatus
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfo
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfoObjectMother
@@ -31,12 +32,12 @@ object InnboksObjectMother {
         namespace: String = "min-side",
         appnavn: String = "test-app",
         produsent: String = "$defaultSystembruker-produsent",
-        eventTidspunkt: ZonedDateTime = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
-        forstBehandlet: ZonedDateTime = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
+        eventTidspunkt: ZonedDateTime = OsloDateTime.now(),
+        forstBehandlet: ZonedDateTime = OsloDateTime.now(),
         grupperingsId: String = "100$defaultFodselsnummer",
         tekst: String = "Dette er innboks melding til brukeren",
         link: String = "https://nav.no/systemX/$defaultFodselsnummer",
-        sistOppdatert: ZonedDateTime = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
+        sistOppdatert: ZonedDateTime = OsloDateTime.now(),
         sikkerhetsnivaa: Int = 4,
         eksternVarslingInfo: EksternVarslingInfo = defaultEksternVarslinginfo
     ): Innboks {
@@ -123,7 +124,7 @@ internal val innboks3Aktiv = InnboksObjectMother.createInnboks(
     systembruker = "x-dittnav-2",
     namespace = innboksTestnamespace,
     appnavn = "dittnav-2",
-    forstBehandlet = ZonedDateTime.now().minusDays(5),
+    forstBehandlet = OsloDateTime.now().minusDays(5),
 )
 internal val innboks4Inaktiv = InnboksObjectMother.createInnboks(
     id = 4,
@@ -133,6 +134,6 @@ internal val innboks4Inaktiv = InnboksObjectMother.createInnboks(
     systembruker = innboksTestSystembruker,
     namespace = innboksTestnamespace,
     appnavn = innboksTestAppnavn,
-    forstBehandlet = ZonedDateTime.now().minusDays(15),
+    forstBehandlet = OsloDateTime.now().minusDays(15),
 )
 

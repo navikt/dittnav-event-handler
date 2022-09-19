@@ -10,6 +10,7 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.brukernotifikasjon.schemas.builders.exception.FieldValidationException
+import no.nav.personbruker.dittnav.eventhandler.OsloDateTime
 import no.nav.personbruker.dittnav.eventhandler.common.TokenXUserObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import org.junit.jupiter.api.AfterAll
@@ -136,7 +137,7 @@ class BeskjedEventServiceTest {
     private fun getBeskjedList(): MutableList<Beskjed> {
         return mutableListOf(
             BeskjedObjectMother.createBeskjed(fodselsnummer = bruker.ident, synligFremTil = null),
-            BeskjedObjectMother.createBeskjed(fodselsnummer = bruker.ident, synligFremTil = ZonedDateTime.now().minusDays(2))
+            BeskjedObjectMother.createBeskjed(fodselsnummer = bruker.ident, synligFremTil = OsloDateTime.now().minusDays(2))
         )
     }
 }

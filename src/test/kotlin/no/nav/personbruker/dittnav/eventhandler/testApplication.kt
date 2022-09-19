@@ -21,6 +21,8 @@ import no.nav.tms.token.support.authentication.installer.mock.installMockedAuthe
 import no.nav.tms.token.support.tokenx.validation.mock.SecurityLevel
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import java.time.Instant
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
@@ -64,10 +66,10 @@ fun TestApplicationBuilder.mockEventHandlerApi(
 
 internal class ComparableVarsel(
     sistOppdatert: ZonedDateTime,
+    forstBehandlet: ZonedDateTime,
     val eventId: String,
     private val fodselsnummer: String,
     private val grupperingsId: String,
-    private val forstBehandlet: ZonedDateTime,
     private val produsent: String,
     private val sikkerhetsnivaa: Int,
     private val tekst: String,
@@ -76,25 +78,26 @@ internal class ComparableVarsel(
     private val eksternVarslingSendt: Boolean,
     private val eksternVarslingKanaler: List<String>
 ) {
-    private val sistOppdatert = sistOppdatert.truncatedTo(ChronoUnit.MINUTES)
-    private fun assertResultEquals(result: ComparableVarsel) {
-        assertEquals(fodselsnummer, result.fodselsnummer, "fodselsnummer")
-        assertEquals(grupperingsId, result.grupperingsId, "grupperingsid")
-        assertEquals(eventId, result.eventId, "eventId")
-        assertEquals(forstBehandlet, result.forstBehandlet, "forstBehandlet")
-        assertEquals(produsent, result.produsent, "produsent")
-        assertEquals(sikkerhetsnivaa, result.sikkerhetsnivaa, "sikkerhetsnivaa")
-        assertEquals(sistOppdatert, result.sistOppdatert, "sistOppdatert")
-        assertEquals(tekst, result.tekst, "tekst")
-        assertEquals(link, result.link, "tekst")
-        assertEquals(aktiv, result.aktiv)
-        assertEquals(eksternVarslingSendt, result.eksternVarslingSendt, "eksternVarslingSendt")
+    private val sistOppdatert = sistOppdatert.withZoneSameInstant(ZoneId.of("Europe/Oslo")).truncatedTo(ChronoUnit.SECONDS)
+    private val forstBehandlet = forstBehandlet.withZoneSameInstant(ZoneId.of("Europe/Oslo")).truncatedTo(ChronoUnit.SECONDS)
+    private fun assertThisEquals(expected: ComparableVarsel) {
+        assertEquals(expected.fodselsnummer, this.fodselsnummer, "fodselsnummer")
+        assertEquals(expected.grupperingsId, this.grupperingsId, "grupperingsid")
+        assertEquals(expected.eventId, this.eventId, "eventId")
+        assertEquals(expected.forstBehandlet, this.forstBehandlet, "forstBehandlet")
+        assertEquals(expected.produsent, this.produsent, "produsent")
+        assertEquals(expected.sikkerhetsnivaa, this.sikkerhetsnivaa, "sikkerhetsnivaa")
+        assertEquals(expected.sistOppdatert, this.sistOppdatert, "sistOppdatert")
+        assertEquals(expected.tekst, this.tekst, "tekst")
+        assertEquals(expected.link, this.link, "tekst")
+        assertEquals(expected.aktiv, this.aktiv)
+        assertEquals(expected.eksternVarslingSendt, this.eksternVarslingSendt, "eksternVarslingSendt")
         assertEquals(
             eksternVarslingKanaler.size,
-            result.eksternVarslingKanaler.size,
-            "eksternVarslingKanaler: ${result.eksternVarslingKanaler} har ikke samme lengde som $eksternVarslingKanaler}"
+            this.eksternVarslingKanaler.size,
+            "eksternVarslingKanaler: ${this.eksternVarslingKanaler} har ikke samme lengde som $eksternVarslingKanaler}"
         )
-        result.eksternVarslingKanaler.forEach { res ->
+        this.eksternVarslingKanaler.forEach { res ->
             assertTrue(
                 eksternVarslingKanaler.any { res == it },
                 "eksternVarslingKanaler: fant ikke $res i $eksternVarslingKanaler"
@@ -103,15 +106,15 @@ internal class ComparableVarsel(
     }
 
     infix fun shouldEqual(expectedBeskjed: Beskjed) {
-        this.assertResultEquals(expectedBeskjed.toCompparableVarsel())
+        this.assertThisEquals(expectedBeskjed.toCompparableVarsel())
     }
 
     infix fun shouldEqual(expectedInnboks: Innboks) {
-        this.assertResultEquals(expectedInnboks.toCompparableVarsel())
+        this.assertThisEquals(expectedInnboks.toCompparableVarsel())
     }
 
     infix fun shouldEqual(expectedOppgave: Oppgave) {
-        this.assertResultEquals(expectedOppgave.toCompparableVarsel())
+        this.assertThisEquals(expectedOppgave.toCompparableVarsel())
     }
 }
 
@@ -163,6 +166,11 @@ private fun Oppgave.toCompparableVarsel(): ComparableVarsel = ComparableVarsel(
 )
 
 internal fun JsonNode.asZonedDateTime(): ZonedDateTime =
-    ZonedDateTime.parse(this.asText()).minusHours(2)
+    ZonedDateTime.parse(this.asText())
 
-
+internal object OsloDateTime{
+    private val zoneID = ZoneId.of("Europe/Oslo")
+    internal fun now(): ZonedDateTime {
+        return ZonedDateTime.ofInstant(Instant.now(), zoneID)
+    }
+}

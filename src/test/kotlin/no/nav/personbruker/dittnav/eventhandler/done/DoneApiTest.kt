@@ -9,11 +9,9 @@ import io.ktor.client.request.url
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.request.header
-import io.ktor.server.testing.setBody
 import io.ktor.server.testing.testApplication
-import io.ktor.server.testing.withTestApplication
 import kotlinx.coroutines.runBlocking
+import no.nav.personbruker.dittnav.eventhandler.OsloDateTime
 import no.nav.personbruker.dittnav.eventhandler.apiTestfnr
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
@@ -22,7 +20,7 @@ import no.nav.personbruker.dittnav.eventhandler.mockEventHandlerApi
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import java.time.ZonedDateTime
+
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class DoneApiTest {
@@ -36,7 +34,7 @@ class DoneApiTest {
         id = 1,
         eventId = "12387696478230",
         fodselsnummer = apiTestfnr,
-        synligFremTil = ZonedDateTime.now().plusHours(1),
+        synligFremTil = OsloDateTime.now().plusHours(1),
         aktiv = false,
         systembruker = systembruker,
         namespace = namespace,
@@ -46,7 +44,7 @@ class DoneApiTest {
         id = 2,
         eventId = "123465abnhkfg",
         fodselsnummer = apiTestfnr,
-        synligFremTil = ZonedDateTime.now().plusHours(1),
+        synligFremTil = OsloDateTime.now().plusHours(1),
         aktiv = true,
         systembruker = systembruker,
         namespace = namespace,

@@ -1,10 +1,10 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
+import no.nav.personbruker.dittnav.eventhandler.OsloDateTime
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.DoknotifikasjonTestStatus
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfo
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfoObjectMother
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus
-import java.time.ZoneId
 import java.time.ZonedDateTime
 
 object OppgaveObjectMother {
@@ -31,10 +31,10 @@ object OppgaveObjectMother {
         namespace: String = "min-side",
         appnavn: String = "test-app",
         grupperingsId: String = "100$defaultFodselsnummer",
-        eventTidspunkt: ZonedDateTime = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
-        forstBehandlet: ZonedDateTime = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
+        eventTidspunkt: ZonedDateTime = OsloDateTime.now(),
+        forstBehandlet: ZonedDateTime = OsloDateTime.now(),
         produsent: String = "$defaultSystembruker-produsent",
-        sistOppdatert: ZonedDateTime = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
+        sistOppdatert: ZonedDateTime = OsloDateTime.now(),
         tekst: String = "Dette er oppgave til brukeren",
         link: String = "https://nav.no/systemX/$defaultFodselsnummer",
         sikkerhetsnivaa: Int = 4,
@@ -77,7 +77,7 @@ object OppgaveTestData {
         systembruker = systembruker,
         namespace = namespace,
         appnavn = appnavn,
-        forstBehandlet = ZonedDateTime.now(),
+        forstBehandlet = OsloDateTime.now(),
         eksternVarslingInfo = EksternVarslingInfoObjectMother.createEskternVarslingInfo(
             bestilt = true,
             prefererteKanaler = listOf("SMS", "EPOST")
@@ -101,7 +101,7 @@ object OppgaveTestData {
         systembruker = systembruker,
         namespace = namespace,
         appnavn = appnavn,
-        forstBehandlet = ZonedDateTime.now().minusDays(5),
+        forstBehandlet = OsloDateTime.now().minusDays(5),
         eksternVarslingInfo = EksternVarslingInfoObjectMother.createEskternVarslingInfo(
             bestilt = true,
             prefererteKanaler = listOf("SMS", "EPOST")
@@ -125,7 +125,7 @@ object OppgaveTestData {
         systembruker = systembruker,
         namespace = namespace,
         appnavn = appnavn,
-        forstBehandlet = ZonedDateTime.now().minusDays(15)
+        forstBehandlet = OsloDateTime.now().minusDays(15)
     )
     internal val oppgave4 = OppgaveObjectMother.createOppgave(
         id = 4,
@@ -135,6 +135,6 @@ object OppgaveTestData {
         systembruker = "x-dittnav-2",
         namespace = namespace,
         appnavn = "x-dittnav",
-        forstBehandlet = ZonedDateTime.now().minusDays(25)
+        forstBehandlet = OsloDateTime.now().minusDays(25)
     )
 }

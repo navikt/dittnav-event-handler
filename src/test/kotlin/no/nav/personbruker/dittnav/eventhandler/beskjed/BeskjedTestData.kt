@@ -1,14 +1,13 @@
 package no.nav.personbruker.dittnav.eventhandler.beskjed
 
 import Beskjed
+import no.nav.personbruker.dittnav.eventhandler.OsloDateTime
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.DoknotifikasjonTestStatus
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfo
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfoObjectMother
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfoObjectMother.createEskternVarslingInfo
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus
-import java.time.ZoneId
 import java.time.ZonedDateTime
-import java.time.temporal.ChronoUnit
 
 object BeskjedObjectMother {
     private var idIncrementor = 0
@@ -21,18 +20,18 @@ object BeskjedObjectMother {
         id: Int = ++idIncrementor,
         eventId: String = (++eventIdIncrementor).toString(),
         fodselsnummer: String = defaultFodselsnummer,
-        synligFremTil: ZonedDateTime? =  ZonedDateTime.now(ZoneId.of("Europe/Oslo")).plusDays(7),
+        synligFremTil: ZonedDateTime? =  OsloDateTime.now().plusDays(7),
         aktiv: Boolean = true,
         systembruker: String = defaultSystembruker,
         namespace: String = "min-side",
         appnavn: String = "test-app",
         produsent: String = "$defaultSystembruker-produsent",
-        eventTidspunkt: ZonedDateTime = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
-        forstBehandlet: ZonedDateTime = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
+        eventTidspunkt: ZonedDateTime = OsloDateTime.now(),
+        forstBehandlet: ZonedDateTime = OsloDateTime.now(),
         grupperingsId: String = "100$defaultFodselsnummer",
         tekst: String = "Dette er beskjed til brukeren",
         link: String = "https://nav.no/systemX/$defaultFodselsnummer",
-        sistOppdatert: ZonedDateTime = ZonedDateTime.now(ZoneId.of("Europe/Oslo")),
+        sistOppdatert: ZonedDateTime = OsloDateTime.now(),
         sikkerhetsnivaa: Int = 4,
         eksternVarslingInfo: EksternVarslingInfo = createEskternVarslingInfo()
     ): Beskjed {
@@ -72,8 +71,8 @@ object BeskjedTestData {
         eventId = "123",
         fodselsnummer = beskjedTestFnr,
         grupperingsId = grupperingsid,
-        synligFremTil = ZonedDateTime.now().plusHours(1),
-        forstBehandlet = ZonedDateTime.now(),
+        synligFremTil = OsloDateTime.now().plusHours(1),
+        forstBehandlet = OsloDateTime.now(),
         aktiv = true,
         systembruker = systembruker,
         namespace = namespace,
@@ -97,8 +96,8 @@ object BeskjedTestData {
         eventId = eventId,
         fodselsnummer = beskjedTestFnr,
         grupperingsId = grupperingsid,
-        synligFremTil = ZonedDateTime.now().plusHours(1),
-        forstBehandlet = ZonedDateTime.now().minusDays(5),
+        synligFremTil = OsloDateTime.now().plusHours(1),
+        forstBehandlet = OsloDateTime.now().minusDays(5),
         aktiv = true,
         systembruker = systembruker,
         namespace = namespace,
@@ -122,8 +121,8 @@ object BeskjedTestData {
         eventId = "567",
         fodselsnummer = beskjedTestFnr,
         grupperingsId = grupperingsid,
-        synligFremTil = ZonedDateTime.now().plusHours(1),
-        forstBehandlet = ZonedDateTime.now().minusDays(15),
+        synligFremTil = OsloDateTime.now().plusHours(1),
+        forstBehandlet = OsloDateTime.now().minusDays(15),
         aktiv = false,
         systembruker = systembruker,
         namespace = namespace,
@@ -133,8 +132,8 @@ object BeskjedTestData {
         id = 4,
         eventId = "789",
         fodselsnummer = "54321",
-        synligFremTil = ZonedDateTime.now().plusHours(1),
-        forstBehandlet = ZonedDateTime.now().minusDays(25),
+        synligFremTil = OsloDateTime.now().plusHours(1),
+        forstBehandlet = OsloDateTime.now().minusDays(25),
         aktiv = true,
         systembruker = "x-dittnav-2",
         namespace = namespace,

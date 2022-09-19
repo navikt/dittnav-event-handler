@@ -6,6 +6,7 @@ import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingI
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 
 object InnboksObjectMother {
 

@@ -22,6 +22,7 @@ import no.nav.tms.token.support.tokenx.validation.mock.SecurityLevel
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 
 const val apiTestfnr = "12345678910"
 fun TestApplicationBuilder.mockEventHandlerApi(
@@ -62,20 +63,20 @@ fun TestApplicationBuilder.mockEventHandlerApi(
 }
 
 internal class ComparableVarsel(
+    sistOppdatert: ZonedDateTime,
     val eventId: String,
     private val fodselsnummer: String,
     private val grupperingsId: String,
     private val forstBehandlet: ZonedDateTime,
     private val produsent: String,
     private val sikkerhetsnivaa: Int,
-    private val sistOppdatert: ZonedDateTime,
     private val tekst: String,
     private val link: String,
     private val aktiv: Boolean,
     private val eksternVarslingSendt: Boolean,
     private val eksternVarslingKanaler: List<String>
 ) {
-
+    private val sistOppdatert = sistOppdatert.truncatedTo(ChronoUnit.MINUTES)
     private fun assertResultEquals(result: ComparableVarsel) {
         assertEquals(fodselsnummer, result.fodselsnummer, "fodselsnummer")
         assertEquals(grupperingsId, result.grupperingsId, "grupperingsid")
@@ -161,6 +162,7 @@ private fun Oppgave.toCompparableVarsel(): ComparableVarsel = ComparableVarsel(
     eksternVarslingKanaler = eksternVarslingInfo.sendteKanaler
 )
 
-internal fun JsonNode.asZonedDateTime(): ZonedDateTime = ZonedDateTime.parse(this.asText()).minusHours(2)
+internal fun JsonNode.asZonedDateTime(): ZonedDateTime =
+    ZonedDateTime.parse(this.asText()).minusHours(2)
 
 

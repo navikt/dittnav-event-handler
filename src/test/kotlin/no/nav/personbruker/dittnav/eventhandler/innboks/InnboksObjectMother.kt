@@ -1,28 +1,22 @@
 package no.nav.personbruker.dittnav.eventhandler.innboks
 
+import no.nav.personbruker.dittnav.eventhandler.OsloDateTime
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.DoknotifikasjonTestStatus
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfo
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfoObjectMother
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 
 object InnboksObjectMother {
 
     private var idIncrementor = 0
     private var eventIdIncrementor = 0
 
-    val defaultFodselsnummer = "123456789"
-    val defaultAktiv = true
-    val defaultSystembruker = "x-dittnav"
-    val defaultNamespace = "min-side"
-    val defaultAppnavn = "test-app"
-    val defaultProdusent = "$defaultSystembruker-produsent"
-    val defaultEventTidspunkt = ZonedDateTime.now(ZoneId.of("Europe/Oslo"))
-    val defaultForstBehandlet = ZonedDateTime.now(ZoneId.of("Europe/Oslo"))
-    val defaultGrupperingsId = "100$defaultFodselsnummer"
-    val defaultTekst = "Dette er innboks melding til brukeren"
-    val defaultLink = "https://nav.no/systemX/$defaultFodselsnummer"
-    val defaultSistOppdatert = ZonedDateTime.now(ZoneId.of("Europe/Oslo"))
-    val defaultSikkerhetsnivaa = 4
-    val defaultEksternVarslinginfo = EksternVarslingInfo(
+    private const val defaultFodselsnummer = "123456789"
+    private const val defaultSystembruker = "x-dittnav"
+    private val defaultEksternVarslinginfo = EksternVarslingInfo(
         bestilt = false,
         prefererteKanaler = emptyList(),
         sendt = false,
@@ -33,18 +27,18 @@ object InnboksObjectMother {
         id: Int = ++idIncrementor,
         eventId: String = (++eventIdIncrementor).toString(),
         fodselsnummer: String = defaultFodselsnummer,
-        aktiv: Boolean = defaultAktiv,
+        aktiv: Boolean = true,
         systembruker: String = defaultSystembruker,
-        namespace: String = defaultNamespace,
-        appnavn: String = defaultAppnavn,
-        produsent: String = defaultProdusent,
-        eventTidspunkt: ZonedDateTime = defaultEventTidspunkt,
-        forstBehandlet: ZonedDateTime = defaultForstBehandlet,
-        grupperingsId: String = defaultGrupperingsId,
-        tekst: String = defaultTekst,
-        link: String = defaultLink,
-        sistOppdatert: ZonedDateTime = defaultSistOppdatert,
-        sikkerhetsnivaa: Int = defaultSikkerhetsnivaa,
+        namespace: String = "min-side",
+        appnavn: String = "test-app",
+        produsent: String = "$defaultSystembruker-produsent",
+        eventTidspunkt: ZonedDateTime = OsloDateTime.now(),
+        forstBehandlet: ZonedDateTime = OsloDateTime.now(),
+        grupperingsId: String = "100$defaultFodselsnummer",
+        tekst: String = "Dette er innboks melding til brukeren",
+        link: String = "https://nav.no/systemX/$defaultFodselsnummer",
+        sistOppdatert: ZonedDateTime = OsloDateTime.now(),
+        sikkerhetsnivaa: Int = 4,
         eksternVarslingInfo: EksternVarslingInfo = defaultEksternVarslinginfo
     ): Innboks {
         return Innboks(
@@ -67,3 +61,79 @@ object InnboksObjectMother {
         )
     }
 }
+
+internal const val innboksTestFnr1 = "12345987659"
+internal const val innboksTestFnr2 = "67890987659"
+internal const val innboksTestSystembruker = "x-dittnav"
+internal const val innboksTestnamespace = "localhost"
+internal const val innboksTestAppnavn = "dittnav"
+internal const val innboksTestgrupperingsid = "100$innboksTestFnr1"
+
+
+internal val innboks1Aktiv = InnboksObjectMother.createInnboks(
+    id = 1,
+    eventId = "123",
+    fodselsnummer = innboksTestFnr1,
+    grupperingsId = innboksTestgrupperingsid,
+    aktiv = true,
+    systembruker = innboksTestSystembruker,
+    namespace = innboksTestnamespace,
+    appnavn = innboksTestAppnavn,
+    eksternVarslingInfo = EksternVarslingInfoObjectMother.createEskternVarslingInfo(
+        bestilt = true,
+        prefererteKanaler = listOf("SMS", "EPOST")
+    )
+)
+
+internal val doknotStatusForInnboks1 = DoknotifikasjonTestStatus(
+    eventId = innboks1Aktiv.eventId,
+    status = EksternVarslingStatus.OVERSENDT.name,
+    melding = "melding",
+    distribusjonsId = 123L,
+    kanaler = "SMS"
+)
+
+internal val innboks2Aktiv = InnboksObjectMother.createInnboks(
+    id = 2,
+    eventId = "345",
+    fodselsnummer = innboksTestFnr1,
+    grupperingsId = innboksTestgrupperingsid,
+    aktiv = true,
+    systembruker = innboksTestSystembruker,
+    namespace = innboksTestnamespace,
+    appnavn = innboksTestAppnavn,
+    eksternVarslingInfo = EksternVarslingInfoObjectMother.createEskternVarslingInfo(
+        bestilt = true,
+        prefererteKanaler = listOf("SMS", "EPOST")
+    )
+)
+
+internal val doknotStatusForInnboks2 = DoknotifikasjonTestStatus(
+    eventId = innboks2Aktiv.eventId,
+    status = EksternVarslingStatus.FEILET.name,
+    melding = "feilet",
+    distribusjonsId = null,
+    kanaler = ""
+)
+
+internal val innboks3Aktiv = InnboksObjectMother.createInnboks(
+    id = 3,
+    eventId = "567",
+    fodselsnummer = innboksTestFnr2,
+    aktiv = true,
+    systembruker = "x-dittnav-2",
+    namespace = innboksTestnamespace,
+    appnavn = "dittnav-2",
+    forstBehandlet = OsloDateTime.now().minusDays(5),
+)
+internal val innboks4Inaktiv = InnboksObjectMother.createInnboks(
+    id = 4,
+    eventId = "789",
+    fodselsnummer = innboksTestFnr2,
+    aktiv = false,
+    systembruker = innboksTestSystembruker,
+    namespace = innboksTestnamespace,
+    appnavn = innboksTestAppnavn,
+    forstBehandlet = OsloDateTime.now().minusDays(15),
+)
+

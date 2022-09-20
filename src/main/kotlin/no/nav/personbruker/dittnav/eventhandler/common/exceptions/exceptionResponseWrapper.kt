@@ -1,8 +1,9 @@
 package no.nav.personbruker.dittnav.eventhandler.common.exceptions
 
-import io.ktor.application.*
-import io.ktor.http.*
-import io.ktor.response.*
+
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.response.respond
 import no.nav.brukernotifikasjon.schemas.builders.exception.FieldValidationException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.database.RetriableDatabaseException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.database.UnretriableDatabaseException

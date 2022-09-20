@@ -11,7 +11,7 @@ private val insertStatusBeskjed = insertQuery("beskjed")
 private val insertStatusOppgave = insertQuery("oppgave")
 private val insertStatusInnboks = insertQuery("innboks")
 
-fun Connection.createDoknotStatusBeskjed(status: DoknotifikasjonStatusDto) {
+fun Connection.createDoknotStatusBeskjed(status: DoknotifikasjonTestStatus) {
     prepareStatement(insertStatusBeskjed).use {
         it.setString(1, status.eventId)
         it.setString(2, status.status)
@@ -22,7 +22,7 @@ fun Connection.createDoknotStatusBeskjed(status: DoknotifikasjonStatusDto) {
     }
 }
 
-fun Connection.createDoknotStatusOppgave(status: DoknotifikasjonStatusDto) {
+fun Connection.createDoknotStatusOppgave(status: DoknotifikasjonTestStatus) {
     prepareStatement(insertStatusOppgave).use {
         it.setString(1, status.eventId)
         it.setString(2, status.status)
@@ -33,7 +33,7 @@ fun Connection.createDoknotStatusOppgave(status: DoknotifikasjonStatusDto) {
     }
 }
 
-fun Connection.createDoknotStatusInnboks(status: DoknotifikasjonStatusDto) {
+fun Connection.createDoknotStatusInnboks(status: DoknotifikasjonTestStatus) {
     prepareStatement(insertStatusInnboks).use {
         it.setString(1, status.eventId)
         it.setString(2, status.status)

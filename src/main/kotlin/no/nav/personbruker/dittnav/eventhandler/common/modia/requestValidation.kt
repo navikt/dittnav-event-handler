@@ -1,9 +1,12 @@
 package no.nav.personbruker.dittnav.eventhandler.common.modia
 
-import io.ktor.application.*
-import io.ktor.http.*
-import io.ktor.response.*
-import io.ktor.util.pipeline.*
+
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.application.call
+import io.ktor.server.response.respond
+import io.ktor.util.pipeline.PipelineContext
+
 import org.slf4j.LoggerFactory
 
 val log = LoggerFactory.getLogger("requestValidation.tk")

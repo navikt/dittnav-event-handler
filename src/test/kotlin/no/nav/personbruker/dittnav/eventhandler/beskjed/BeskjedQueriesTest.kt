@@ -1,120 +1,49 @@
 package no.nav.personbruker.dittnav.eventhandler.beskjed
 
-import Beskjed
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
+import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.appnavn
+import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.beskjed1Aktiv
+import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.beskjed2Aktiv
+import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.beskjed3Inaktiv
+import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.beskjed4Aktiv
+import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.beskjedTestFnr
+import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.doknotStatusForBeskjed1
+import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.doknotStatusForBeskjed2
+import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.eventId
+import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.grupperingsid
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
 import no.nav.personbruker.dittnav.eventhandler.common.findCountFor
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.*
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus.OVERSENDT
-import org.junit.jupiter.api.*
-import java.time.ZonedDateTime
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.assertThrows
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BeskjedQueriesTest {
 
     private val database = LocalPostgresDatabase.cleanDb()
 
-    private val fodselsnummer = "12345"
-    private val eventId = "124"
-    private val grupperingsid = "100$fodselsnummer"
-    private val systembruker = "x-dittnav"
-    private val namespace = "localhost"
-    private val appnavn = "dittnav"
-
-    private val beskjed1 = BeskjedObjectMother.createBeskjed(
-        id = 1,
-        eventId = "123",
-        fodselsnummer = fodselsnummer,
-        grupperingsId = grupperingsid,
-        synligFremTil = ZonedDateTime.now().plusHours(1),
-        forstBehandlet = ZonedDateTime.now(),
-        aktiv = true,
-        systembruker = systembruker,
-        namespace = namespace,
-        appnavn = appnavn,
-        eksternVarslingInfo = EksternVarslingInfoObjectMother.createEskternVarslingInfo(
-            bestilt = true,
-            prefererteKanaler = listOf("SMS", "EPOST")
-        )
-    )
-
-    val doknotStatusForBeskjed1 = DoknotifikasjonStatusDto(
-        eventId = beskjed1.eventId,
-        status = OVERSENDT.name,
-        melding = "melding",
-        distribusjonsId = 123L,
-        kanaler = "SMS"
-    )
-
-    private val beskjed2 = BeskjedObjectMother.createBeskjed(
-        id = 2,
-        eventId = eventId,
-        fodselsnummer = fodselsnummer,
-        grupperingsId = grupperingsid,
-        synligFremTil = ZonedDateTime.now().plusHours(1),
-        forstBehandlet = ZonedDateTime.now().minusDays(5),
-        aktiv = true,
-        systembruker = systembruker,
-        namespace = namespace,
-        appnavn = appnavn,
-        eksternVarslingInfo = EksternVarslingInfoObjectMother.createEskternVarslingInfo(
-            bestilt = true,
-            prefererteKanaler = listOf("SMS", "EPOST")
-        )
-    )
-
-    val doknotStatusForBeskjed2 = DoknotifikasjonStatusDto(
-        eventId = beskjed2.eventId,
-        status = EksternVarslingStatus.FEILET.name,
-        melding = "feilet",
-        distribusjonsId = null,
-        kanaler = ""
-    )
-
-    private val beskjed3 = BeskjedObjectMother.createBeskjed(
-        id = 3,
-        eventId = "567",
-        fodselsnummer = fodselsnummer,
-        grupperingsId = grupperingsid,
-        synligFremTil = ZonedDateTime.now().plusHours(1),
-        forstBehandlet = ZonedDateTime.now().minusDays(15),
-        aktiv = false,
-        systembruker = systembruker,
-        namespace = namespace,
-        appnavn = appnavn
-    )
-    private val beskjed4 = BeskjedObjectMother.createBeskjed(
-        id = 4,
-        eventId = "789",
-        fodselsnummer = "54321",
-        synligFremTil = ZonedDateTime.now().plusHours(1),
-        forstBehandlet = ZonedDateTime.now().minusDays(25),
-        aktiv = true,
-        systembruker = "x-dittnav-2",
-        namespace = namespace,
-        appnavn = "dittnav-2"
-    )
-
     @BeforeAll
     fun `populer testdata`() {
-        createBeskjed(listOf(beskjed1, beskjed2, beskjed3, beskjed4))
-        createDoknotStatuses(listOf(doknotStatusForBeskjed1, doknotStatusForBeskjed2))
+        database.createBeskjed(listOf(beskjed1Aktiv, beskjed2Aktiv, beskjed3Inaktiv, beskjed4Aktiv))
+        database.createDoknotStatuses(listOf(doknotStatusForBeskjed1, doknotStatusForBeskjed2))
     }
 
     @AfterAll
     fun `slett testdata`() {
-        deleteAllDoknotStatusBeskjed()
-        deleteBeskjed(listOf(beskjed1, beskjed2, beskjed3, beskjed4))
+        database.deleteAllDoknotStatusBeskjed()
+        database.deleteBeskjed(listOf(beskjed1Aktiv, beskjed2Aktiv, beskjed3Inaktiv, beskjed4Aktiv))
     }
 
     @Test
     fun `Finn alle cachede Beskjed-eventer for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getAllBeskjedForFodselsnummer(fodselsnummer) }.size shouldBe 3
+            database.dbQuery { getAllBeskjedForFodselsnummer(beskjedTestFnr) }.size shouldBe 3
         }
     }
 
@@ -122,7 +51,7 @@ class BeskjedQueriesTest {
     fun `Finn kun aktive cachede Beskjed-eventer for fodselsnummer`() {
         runBlocking {
             database.dbQuery {
-                val aktivBeskjedByUser = getAktivBeskjedForFodselsnummer(fodselsnummer)
+                val aktivBeskjedByUser = getAktivBeskjedForFodselsnummer(beskjedTestFnr)
                 aktivBeskjedByUser
             }.size shouldBe 2
         }
@@ -132,18 +61,18 @@ class BeskjedQueriesTest {
     fun `deaktiverer beskjeder`() {
         runBlocking {
 
-            database.dbQuery { setBeskjedInaktiv(fodselsnummer, beskjed1.eventId) } shouldBe 1
-            database.dbQuery { setBeskjedInaktiv(fodselsnummer, beskjed1.eventId) } shouldBe 1
-            database.dbQuery { getAktivBeskjedForFodselsnummer(fodselsnummer) }.size shouldBe 1
+            database.dbQuery { setBeskjedInaktiv(beskjedTestFnr, beskjed1Aktiv.eventId) } shouldBe 1
+            database.dbQuery { setBeskjedInaktiv(beskjedTestFnr, beskjed1Aktiv.eventId) } shouldBe 1
+            database.dbQuery { getAktivBeskjedForFodselsnummer(beskjedTestFnr) }.size shouldBe 1
         }
         assertThrows<BeskjedNotFoundException> {
             runBlocking {
-                database.dbQuery { setBeskjedInaktiv("12345678910", beskjed1.eventId) }
+                database.dbQuery { setBeskjedInaktiv("9631486855", beskjed1Aktiv.eventId) }
             }
         }
         assertThrows<BeskjedNotFoundException> {
             runBlocking {
-                database.dbQuery { setBeskjedInaktiv(fodselsnummer, "8879") } shouldBe 0
+                database.dbQuery { setBeskjedInaktiv(beskjedTestFnr, "8879") } shouldBe 0
             }
         }
     }
@@ -152,7 +81,7 @@ class BeskjedQueriesTest {
     fun `Finn kun inaktive cachede Beskjed-eventer for fodselsnummer`() {
         runBlocking {
             database.dbQuery {
-                val inaktivBeskjedByUser = getInaktivBeskjedForFodselsnummer(fodselsnummer)
+                val inaktivBeskjedByUser = getInaktivBeskjedForFodselsnummer(beskjedTestFnr)
                 inaktivBeskjedByUser
             }.size shouldBe 1
         }
@@ -177,7 +106,7 @@ class BeskjedQueriesTest {
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for aktive eventer`() {
         runBlocking {
-            val beskjed = database.dbQuery { getAktivBeskjedForFodselsnummer(fodselsnummer) }.first()
+            val beskjed = database.dbQuery { getAktivBeskjedForFodselsnummer(beskjedTestFnr) }.first()
             beskjed.produsent shouldBe appnavn
         }
     }
@@ -185,7 +114,7 @@ class BeskjedQueriesTest {
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for inaktive eventer`() {
         runBlocking {
-            val beskjed = database.dbQuery { getInaktivBeskjedForFodselsnummer(fodselsnummer) }.first()
+            val beskjed = database.dbQuery { getInaktivBeskjedForFodselsnummer(beskjedTestFnr) }.first()
             beskjed.produsent shouldBe appnavn
         }
     }
@@ -193,7 +122,7 @@ class BeskjedQueriesTest {
     @Test
     fun `Returnerer lesbart navn for produsent som kan eksponeres for alle eventer`() {
         runBlocking {
-            val beskjed = database.dbQuery { getAllBeskjedForFodselsnummer(fodselsnummer) }.first()
+            val beskjed = database.dbQuery { getAllBeskjedForFodselsnummer(beskjedTestFnr) }.first()
             beskjed.produsent shouldBe appnavn
         }
     }
@@ -201,14 +130,14 @@ class BeskjedQueriesTest {
     @Test
     fun `Finn alle cachede events som matcher fodselsnummer og eventId`() {
         runBlocking {
-            database.dbQuery { getBeskjedByIds(fodselsnummer, eventId) }.size shouldBe 1
+            database.dbQuery { getBeskjedByIds(beskjedTestFnr, eventId) }.size shouldBe 1
         }
     }
 
     @Test
     fun `Returnerer tom liste hvis Beskjed-eventer ikke stemmer med eventId`() {
         runBlocking {
-            database.dbQuery { getBeskjedByIds(fodselsnummer, "dummyEventId") }.shouldBeEmpty()
+            database.dbQuery { getBeskjedByIds(beskjedTestFnr, "dummyEventId") }.shouldBeEmpty()
         }
     }
 
@@ -232,7 +161,7 @@ class BeskjedQueriesTest {
     fun `Returnerer en liste av alle grupperte Beskjed-eventer`() {
         runBlocking {
             database.dbQuery {
-                getAllGroupedBeskjedEventsByIds(fodselsnummer, grupperingsid, appnavn)
+                getAllGroupedBeskjedEventsByIds(beskjedTestFnr, grupperingsid, appnavn)
             }.size shouldBe 3
         }
     }
@@ -242,7 +171,7 @@ class BeskjedQueriesTest {
         val noMatchProdusent = "dummyProdusent"
         runBlocking {
             database.dbQuery {
-                getAllGroupedBeskjedEventsByIds(fodselsnummer, grupperingsid, noMatchProdusent)
+                getAllGroupedBeskjedEventsByIds(beskjedTestFnr, grupperingsid, noMatchProdusent)
             }.shouldBeEmpty()
         }
     }
@@ -252,7 +181,7 @@ class BeskjedQueriesTest {
         val noMatchGrupperingsid = "dummyGrupperingsid"
         runBlocking {
             database.dbQuery {
-                getAllGroupedBeskjedEventsByIds(fodselsnummer, noMatchGrupperingsid, appnavn)
+                getAllGroupedBeskjedEventsByIds(beskjedTestFnr, noMatchGrupperingsid, appnavn)
             }.shouldBeEmpty()
         }
     }
@@ -263,8 +192,8 @@ class BeskjedQueriesTest {
             val groupedEventsBySystemuser = database.dbQuery { getAllGroupedBeskjedEventsBySystemuser() }
 
             groupedEventsBySystemuser.size shouldBe 2
-            groupedEventsBySystemuser[beskjed1.systembruker] shouldBe 3
-            groupedEventsBySystemuser[beskjed4.systembruker] shouldBe 1
+            groupedEventsBySystemuser[beskjed1Aktiv.systembruker] shouldBe 3
+            groupedEventsBySystemuser[beskjed4Aktiv.systembruker] shouldBe 1
         }
     }
 
@@ -274,21 +203,21 @@ class BeskjedQueriesTest {
             val groupedEventsBySystemuser = database.dbQuery { getAllGroupedBeskjedEventsByProducer() }
 
             groupedEventsBySystemuser.size shouldBe 2
-            groupedEventsBySystemuser.findCountFor(beskjed1.namespace, beskjed1.appnavn) shouldBe 3
-            groupedEventsBySystemuser.findCountFor(beskjed4.namespace, beskjed4.appnavn) shouldBe 1
+            groupedEventsBySystemuser.findCountFor(beskjed1Aktiv.namespace, beskjed1Aktiv.appnavn) shouldBe 3
+            groupedEventsBySystemuser.findCountFor(beskjed4Aktiv.namespace, beskjed4Aktiv.appnavn) shouldBe 1
         }
     }
 
     @Test
     fun `Returnerer riktig info om ekstern varsling dersom status er mottat og oversendt`() = runBlocking {
         val beskjed = database.dbQuery {
-            getBeskjedByIds(beskjed1.fodselsnummer, beskjed1.eventId)
+            getBeskjedByIds(beskjed1Aktiv.fodselsnummer, beskjed1Aktiv.eventId)
         }.first()
 
         val eksternVarslingInfo = beskjed.eksternVarslingInfo
 
-        eksternVarslingInfo.bestilt shouldBe beskjed1.eksternVarslingInfo.bestilt
-        eksternVarslingInfo.prefererteKanaler shouldContainAll beskjed1.eksternVarslingInfo.prefererteKanaler
+        eksternVarslingInfo.bestilt shouldBe beskjed1Aktiv.eksternVarslingInfo.bestilt
+        eksternVarslingInfo.prefererteKanaler shouldContainAll beskjed1Aktiv.eksternVarslingInfo.prefererteKanaler
         eksternVarslingInfo.sendt shouldBe true
         eksternVarslingInfo.sendteKanaler shouldContain doknotStatusForBeskjed1.kanaler
     }
@@ -296,13 +225,13 @@ class BeskjedQueriesTest {
     @Test
     fun `Returnerer riktig info om ekstern varsling dersom status er mottat og feilet`() = runBlocking {
         val beskjed = database.dbQuery {
-            getBeskjedByIds(beskjed2.fodselsnummer, beskjed2.eventId)
+            getBeskjedByIds(beskjed2Aktiv.fodselsnummer, beskjed2Aktiv.eventId)
         }.first()
 
         val eksternVarslingInfo = beskjed.eksternVarslingInfo
 
-        eksternVarslingInfo.bestilt shouldBe beskjed2.eksternVarslingInfo.bestilt
-        eksternVarslingInfo.prefererteKanaler shouldContainAll beskjed2.eksternVarslingInfo.prefererteKanaler
+        eksternVarslingInfo.bestilt shouldBe beskjed2Aktiv.eksternVarslingInfo.bestilt
+        eksternVarslingInfo.prefererteKanaler shouldContainAll beskjed2Aktiv.eksternVarslingInfo.prefererteKanaler
         eksternVarslingInfo.sendt shouldBe false
         eksternVarslingInfo.sendteKanaler.isEmpty() shouldBe true
     }
@@ -310,40 +239,14 @@ class BeskjedQueriesTest {
     @Test
     fun `Returnerer riktig info om ekstern varsling dersom status ikke er mottatt`() = runBlocking {
         val beskjed = database.dbQuery {
-            getBeskjedByIds(beskjed3.fodselsnummer, beskjed3.eventId)
+            getBeskjedByIds(beskjed3Inaktiv.fodselsnummer, beskjed3Inaktiv.eventId)
         }.first()
 
         val eksternVarslingInfo = beskjed.eksternVarslingInfo
 
-        eksternVarslingInfo.bestilt shouldBe beskjed3.eksternVarslingInfo.bestilt
-        eksternVarslingInfo.prefererteKanaler shouldContainAll beskjed3.eksternVarslingInfo.prefererteKanaler
+        eksternVarslingInfo.bestilt shouldBe beskjed3Inaktiv.eksternVarslingInfo.bestilt
+        eksternVarslingInfo.prefererteKanaler shouldContainAll beskjed3Inaktiv.eksternVarslingInfo.prefererteKanaler
         eksternVarslingInfo.sendt shouldBe false
         eksternVarslingInfo.sendteKanaler.isEmpty() shouldBe true
-    }
-
-    private fun createBeskjed(beskjeder: List<Beskjed>) {
-        runBlocking {
-            database.dbQuery { createBeskjed(beskjeder) }
-        }
-    }
-
-    private fun deleteBeskjed(beskjeder: List<Beskjed>) {
-        runBlocking {
-            database.dbQuery { deleteBeskjed(beskjeder) }
-        }
-    }
-
-    private fun createDoknotStatuses(statuses: List<DoknotifikasjonStatusDto>) = runBlocking {
-        database.dbQuery {
-            statuses.forEach { status ->
-                createDoknotStatusBeskjed(status)
-            }
-        }
-    }
-
-    private fun deleteAllDoknotStatusBeskjed() = runBlocking {
-        database.dbQuery {
-            deleteDoknotStatusBeskjed()
-        }
     }
 }

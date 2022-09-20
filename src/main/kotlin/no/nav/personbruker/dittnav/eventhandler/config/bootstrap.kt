@@ -1,23 +1,28 @@
 package no.nav.personbruker.dittnav.eventhandler.config
 
-import io.ktor.application.Application
-import io.ktor.application.ApplicationCall
-import io.ktor.application.ApplicationStopPreparing
-import io.ktor.application.call
-import io.ktor.application.install
-import io.ktor.auth.authenticate
-import io.ktor.features.ContentNegotiation
-import io.ktor.features.DefaultHeaders
-import io.ktor.metrics.micrometer.MicrometerMetrics
-import io.ktor.routing.route
-import io.ktor.routing.routing
-import io.ktor.serialization.json
+
+import io.ktor.http.HttpStatusCode
+import io.ktor.serialization.kotlinx.json.json
+import io.ktor.server.application.Application
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.application.ApplicationStopPreparing
+import io.ktor.server.application.call
+import io.ktor.server.application.install
+import io.ktor.server.auth.authenticate
+import io.ktor.server.metrics.micrometer.MicrometerMetrics
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.plugins.defaultheaders.DefaultHeaders
+import io.ktor.server.plugins.statuspages.StatusPages
+import io.ktor.server.response.respond
+import io.ktor.server.routing.route
+import io.ktor.server.routing.routing
 import io.ktor.util.pipeline.PipelineContext
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import kotlinx.serialization.json.Json
 import no.nav.personbruker.dittnav.common.util.config.StringEnvVar
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService
+import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedNotFoundException
 import no.nav.personbruker.dittnav.eventhandler.beskjed.beskjedApi
 import no.nav.personbruker.dittnav.eventhandler.beskjed.beskjedSystemClientApi
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
@@ -65,6 +70,11 @@ fun Application.eventHandlerApi(
     }
 
     installAuthenticatorsFunction()
+    install(StatusPages) {
+        exception<BeskjedNotFoundException> { call, cause ->
+            call.respond(status = HttpStatusCode.BadRequest, message = cause.message.toString())
+        }
+    }
 
     routing {
         route("/dittnav-event-handler") {
@@ -111,7 +121,7 @@ private fun closeTheDatabaseConectionPool(database: Database) {
 }
 
 val PipelineContext<Unit, ApplicationCall>.innloggetBruker: TokenXUser
-    get(): TokenXUser {
+    get():  TokenXUser {
         val claimName = StringEnvVar.getOptionalEnvVar("OIDC_CLAIM_CONTAINING_THE_IDENTITY")
         return if (claimName.isNullOrEmpty()) {
             TokenXUserFactory.createTokenXUser(call)

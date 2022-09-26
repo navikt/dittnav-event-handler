@@ -1,6 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.beskjed
 
 import Beskjed
+import no.nav.personbruker.dittnav.eventhandler.common.LocalDateTimeHelper
 import no.nav.personbruker.dittnav.eventhandler.common.database.getListFromSeparatedString
 import no.nav.personbruker.dittnav.eventhandler.common.database.getNullableUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
@@ -12,6 +13,7 @@ import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import org.slf4j.LoggerFactory
 import java.sql.Connection
 import java.sql.ResultSet
+import java.sql.Types
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
@@ -156,10 +158,11 @@ fun Connection.setBeskjedInaktiv(fodselsnummer: String, eventId: String): Int {
     if (getBeskjedByIds(fodselsnummer, eventId).isEmpty()) {
         throw BeskjedNotFoundException(eventId)
     }
-    return prepareStatement("""UPDATE beskjed  SET aktiv=FALSE WHERE fodselsnummer = ? AND eventId = ?""".trimMargin())
+    return prepareStatement("""UPDATE beskjed SET aktiv = false, sistOppdatert = ? WHERE fodselsnummer = ? AND eventId = ?""".trimMargin())
         .use {
-            it.setString(1, fodselsnummer)
-            it.setString(2, eventId)
+            it.setObject(1, LocalDateTimeHelper.nowAtUtc(), Types.TIMESTAMP)
+            it.setString(2, fodselsnummer)
+            it.setString(3, eventId)
             it.executeUpdate()
         }
 }

@@ -5,15 +5,14 @@ import io.ktor.server.application.call
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
+import mu.KotlinLogging
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.respondWithError
 import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
-import org.slf4j.LoggerFactory
-
 
 
 fun Route.eventApi(eventRepository: EventRepository) {
 
-    val log = LoggerFactory.getLogger(EventRepository::class.java)
+    val log = KotlinLogging.logger {}
 
     get("/fetch/event/inaktive") {
         try {

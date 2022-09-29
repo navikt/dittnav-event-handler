@@ -27,12 +27,10 @@ repositories {
 
 dependencies {
     implementation("com.github.navikt:brukernotifikasjon-schemas:v2.5.0")
-    implementation(DittNAV.Common.logging)
     implementation(DittNAV.Common.utils)
     implementation(Hikari.cp)
-    implementation(Logback.classic)
-    implementation(Logstash.logbackEncoder)
     implementation(Kafka.Apache.clients)
+    implementation(KotlinLogging.logging)
     implementation(Kafka.Confluent.avroSerializer)
     implementation(NAV.vaultJdbc)
     implementation(Postgresql.postgresql)

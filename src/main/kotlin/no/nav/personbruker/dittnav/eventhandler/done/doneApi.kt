@@ -9,10 +9,10 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import kotlinx.serialization.Serializable
+import mu.KotlinLogging
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.respondWithError
 import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
-import org.slf4j.LoggerFactory
 
 fun Route.doneApi(doneEventService: DoneEventService) {
 
@@ -26,7 +26,7 @@ fun Route.doneApi(doneEventService: DoneEventService) {
 
 fun Route.doneSystemClientApi(doneEventService: DoneEventService) {
 
-    val log = LoggerFactory.getLogger(DoneEventService::class.java)
+    val log = KotlinLogging.logger {}
 
     get("/fetch/grouped/producer/done") {
         try {

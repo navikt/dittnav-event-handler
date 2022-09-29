@@ -4,9 +4,12 @@ import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
+import mu.KotlinLogging
 import org.postgresql.util.PSQLException
 
 class LocalPostgresDatabase private constructor() : Database {
+
+    override val log = KotlinLogging.logger {}
 
     private val memDataSource: HikariDataSource
     private val container = TestPostgresqlContainer()

@@ -1,9 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.beskjed
 
 import Beskjed
-import ch.qos.logback.classic.Logger
-import ch.qos.logback.classic.spi.ILoggingEvent
-import ch.qos.logback.core.read.ListAppender
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
@@ -13,12 +10,8 @@ import no.nav.brukernotifikasjon.schemas.builders.exception.FieldValidationExcep
 import no.nav.personbruker.dittnav.eventhandler.OsloDateTime
 import no.nav.personbruker.dittnav.eventhandler.common.TokenXUserObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.slf4j.LoggerFactory
-import java.time.ZonedDateTime
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BeskjedEventServiceTest {
@@ -28,20 +21,6 @@ class BeskjedEventServiceTest {
     private val bruker = TokenXUserObjectMother.createInnloggetBruker("123")
     private val produsent = "dittnav"
     private val grupperingsid = "100${bruker.ident}"
-
-    private val appender: ListAppender<ILoggingEvent> = ListAppender()
-    private val logger: Logger = LoggerFactory.getLogger(BeskjedEventService::class.java) as Logger
-
-    @BeforeAll
-    fun setup() {
-        appender.start()
-        logger.addAppender(appender)
-    }
-
-    @AfterAll
-    fun teardown() {
-        logger.detachAppender(appender)
-    }
 
     @Test
     fun `Skal kunne hente alle beskjeder`() {

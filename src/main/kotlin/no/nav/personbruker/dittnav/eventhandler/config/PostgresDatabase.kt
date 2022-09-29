@@ -2,9 +2,12 @@ package no.nav.personbruker.dittnav.eventhandler.config
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import mu.KotlinLogging
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 
 class PostgresDatabase(env: Environment) : Database {
+
+    override val log = KotlinLogging.logger {}
 
     private val envDataSource: HikariDataSource
 

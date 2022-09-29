@@ -6,15 +6,15 @@ import io.ktor.server.application.call
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
+import mu.KotlinLogging
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.respondWithError
 import no.nav.personbruker.dittnav.eventhandler.common.modia.doIfValidRequest
 import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
-import org.slf4j.LoggerFactory
 import java.time.ZonedDateTime
 
 fun Route.beskjedApi(beskjedEventService: BeskjedEventService) {
 
-    val log = LoggerFactory.getLogger(BeskjedEventService::class.java)
+    val log = KotlinLogging.logger {}
 
     get("/fetch/beskjed/aktive") {
         try {
@@ -61,7 +61,7 @@ fun Route.beskjedApi(beskjedEventService: BeskjedEventService) {
 
 fun Route.beskjedSystemClientApi(beskjedEventService: BeskjedEventService) {
 
-    val log = LoggerFactory.getLogger(BeskjedEventService::class.java)
+    val log = KotlinLogging.logger {}
 
     get("/fetch/grouped/producer/beskjed") {
         try {

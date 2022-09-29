@@ -4,19 +4,8 @@
     <property name="loggingPattern"
               value="%d [%-5level] [%thread] %logger{5} %replace(- [%X{consumerId}, %X{callId}, %X{userId}] ){'- \[, , \] ',''}- %m%n"/>
 
-    <appender name="stdout_json" class="no.nav.personbruker.dittnav.eventhandler.logging.MaskingAppender">
-        <appender name="stdout_json_masked" class="ch.qos.logback.core.ConsoleAppender">
-            <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-                <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
-                    <maxDepthPerThrowable>30</maxDepthPerThrowable>
-                    <exclude>java\.util\.concurrent\..*</exclude>
-                    <exclude>org\.apache\.tomcat\..*</exclude>
-                    <exclude>org\.apache\.coyote\..*</exclude>
-                    <exclude>org\.apache\.catalina\..*</exclude>
-                    <exclude>org\.springframework\.web\..*</exclude>
-                </throwableConverter>
-            </encoder>
-        </appender>
+    <appender name="stdout_json" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
     </appender>
 
     <appender name="metrics" class="io.prometheus.client.logback.InstrumentedAppender"/>

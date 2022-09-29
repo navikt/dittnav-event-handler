@@ -9,15 +9,15 @@ import no.nav.personbruker.dittnav.eventhandler.common.health.HealthCheck
 import no.nav.personbruker.dittnav.eventhandler.common.health.HealthStatus
 import no.nav.personbruker.dittnav.eventhandler.common.health.Status
 import org.postgresql.util.PSQLException
-import org.slf4j.LoggerFactory
+import org.slf4j.Logger
 import java.sql.Connection
 import java.sql.SQLException
 import java.sql.SQLRecoverableException
 import java.sql.SQLTransientException
 
-private val log = LoggerFactory.getLogger(Database::class.java)
-
 interface Database : HealthCheck {
+
+    val log: Logger
 
     val dataSource: HikariDataSource
 

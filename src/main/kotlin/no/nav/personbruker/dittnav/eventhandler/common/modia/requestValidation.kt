@@ -6,10 +6,9 @@ import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.call
 import io.ktor.server.response.respond
 import io.ktor.util.pipeline.PipelineContext
+import mu.KotlinLogging
 
-import org.slf4j.LoggerFactory
-
-val log = LoggerFactory.getLogger("requestValidation.tk")
+val log = KotlinLogging.logger {}
 
 suspend inline fun PipelineContext<Unit, ApplicationCall>.doIfValidRequest(handler: (fnr: User) -> Unit) {
     val headerName = "fodselsnummer"

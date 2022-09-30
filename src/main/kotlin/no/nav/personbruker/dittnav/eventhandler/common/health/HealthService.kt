@@ -4,6 +4,8 @@ import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 
 class HealthService(private val database: Database) {
 
+
+    //yooo
     suspend fun getHealthChecks(): List<HealthStatus> {
         return listOf(
             database.status()

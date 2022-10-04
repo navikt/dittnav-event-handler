@@ -1,7 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.statistics.query
 
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapSingleResult
-import no.nav.personbruker.dittnav.eventhandler.event.EventType
+import no.nav.personbruker.dittnav.eventhandler.common.EventType
 import no.nav.personbruker.dittnav.eventhandler.statistics.CountMeasurement
 import java.sql.Connection
 import java.sql.ResultSet

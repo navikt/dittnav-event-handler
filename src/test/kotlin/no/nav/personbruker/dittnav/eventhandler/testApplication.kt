@@ -11,7 +11,7 @@ import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.health.HealthService
 import no.nav.personbruker.dittnav.eventhandler.config.eventHandlerApi
 import no.nav.personbruker.dittnav.eventhandler.done.DoneEventService
-import no.nav.personbruker.dittnav.eventhandler.event.EventRepository
+import no.nav.personbruker.dittnav.eventhandler.varsel.VarselRepository
 import no.nav.personbruker.dittnav.eventhandler.innboks.Innboks
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksEventService
 import no.nav.personbruker.dittnav.eventhandler.oppgave.Oppgave
@@ -33,7 +33,7 @@ fun TestApplicationBuilder.mockEventHandlerApi(
     oppgaveEventService: OppgaveEventService = mockk(relaxed = true),
     innboksEventService: InnboksEventService = mockk(relaxed = true),
     doneEventService: DoneEventService = mockk(relaxed = true),
-    eventRepository: EventRepository = mockk(relaxed = true),
+    eventRepository: VarselRepository = mockk(relaxed = true),
     eventStatisticsService: EventStatisticsService = mockk(relaxed = true),
     database: Database = mockk(relaxed = true),
     installAuthenticatorsFunction: Application.() -> Unit = {
@@ -55,7 +55,7 @@ fun TestApplicationBuilder.mockEventHandlerApi(
             oppgaveEventService = oppgaveEventService,
             innboksEventService = innboksEventService,
             doneEventService = doneEventService,
-            eventRepository = eventRepository,
+            varselRepository = eventRepository,
             eventStatisticsService = eventStatisticsService,
             database = database,
             installAuthenticatorsFunction = installAuthenticatorsFunction,

@@ -6,9 +6,8 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import mu.KotlinLogging
-import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.respondWithError
-import no.nav.personbruker.dittnav.eventhandler.event.EventType
+import no.nav.personbruker.dittnav.eventhandler.common.EventType
 
 fun Route.statisticsSystemClientApi(statisticsService: EventStatisticsService) {
 

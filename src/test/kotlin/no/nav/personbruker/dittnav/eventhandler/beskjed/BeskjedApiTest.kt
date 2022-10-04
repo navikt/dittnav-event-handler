@@ -7,7 +7,6 @@ import io.kotest.matchers.shouldBe
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 import io.ktor.server.application.Application
-import io.ktor.server.config.MapApplicationConfig
 import io.ktor.server.testing.testApplication
 import no.nav.personbruker.dittnav.eventhandler.ComparableVarsel
 import no.nav.personbruker.dittnav.eventhandler.asZonedDateTime
@@ -27,7 +26,6 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import java.time.temporal.ChronoUnit
 
 private val objectMapper = ObjectMapper()
 

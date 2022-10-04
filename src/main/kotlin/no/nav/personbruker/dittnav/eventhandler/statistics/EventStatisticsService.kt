@@ -1,7 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.statistics
 
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
-import no.nav.personbruker.dittnav.eventhandler.event.EventType
+import no.nav.personbruker.dittnav.eventhandler.common.EventType
 import no.nav.personbruker.dittnav.eventhandler.statistics.query.*
 
 class EventStatisticsService(private val database: Database) {

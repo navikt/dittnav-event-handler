@@ -12,7 +12,7 @@ fun Route.varselApi(varselRepository: VarselRepository) {
 
     val log = KotlinLogging.logger {}
 
-    get("/fetch/varsel/for-fnr/inaktive") {
+    get("/fetch/varsel/on-behalf-of/inaktive") {
         doIfValidRequest { user ->
             try {
                 val inactiveEventDTOs = varselRepository.getInactiveVarsel(user.fodselsnummer)
@@ -24,7 +24,7 @@ fun Route.varselApi(varselRepository: VarselRepository) {
         }
     }
 
-    get("/fetch/varsel/for-fnr/aktive") {
+    get("/fetch/varsel/on-behalf-of/aktive") {
         doIfValidRequest { user ->
             try {
                 val inactiveEventDTOs = varselRepository.getActiveVarsel(user.fodselsnummer)

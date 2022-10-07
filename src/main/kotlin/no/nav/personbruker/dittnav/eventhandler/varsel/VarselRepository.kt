@@ -1,5 +1,6 @@
-package no.nav.personbruker.dittnav.eventhandler.event
+package no.nav.personbruker.dittnav.eventhandler.varsel
 
+import no.nav.personbruker.dittnav.eventhandler.common.EventType
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
@@ -7,35 +8,35 @@ import java.sql.ResultSet
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-class EventRepository(private val database: Database) {
+class VarselRepository(private val database: Database) {
 
-    suspend fun getInactiveEvents(fodselsnummer: String): List<Event> {
-        return getEvents(fodselsnummer, false)
+    suspend fun getInactiveVarsel(fodselsnummer: String): List<Varsel> {
+        return getVarsel(fodselsnummer, false)
     }
 
-    suspend fun getActiveEvents(fodselsnummer: String): List<Event> {
-        return getEvents(fodselsnummer, true)
+    suspend fun getActiveVarsel(fodselsnummer: String): List<Varsel> {
+        return getVarsel(fodselsnummer, true)
     }
 
-    private suspend fun getEvents(fodselsnummer: String, active: Boolean): List<Event> {
+    private suspend fun getVarsel(fodselsnummer: String, active: Boolean): List<Varsel> {
         return database.queryWithExceptionTranslation {
             prepareStatement(
                 """
-                ${eventQuery("beskjed", active)}
+                ${varselQuery("beskjed", active)}
                 UNION ALL
-                ${eventQuery("oppgave", active)}
+                ${varselQuery("oppgave", active)}
                 UNION ALL 
-                ${eventQuery("innboks", active)}
+                ${varselQuery("innboks", active)}
                 """.trimIndent()
             ).also {
                 it.setString(1, fodselsnummer)
                 it.setString(2, fodselsnummer)
                 it.setString(3, fodselsnummer)
-            }.executeQuery().mapList { toEvent() }
+            }.executeQuery().mapList { toVarsel() }
         }
     }
 
-    private fun eventQuery(table: String, active: Boolean): String {
+    private fun varselQuery(table: String, active: Boolean): String {
         return """
             SELECT
                 eventTidspunkt,
@@ -56,7 +57,7 @@ class EventRepository(private val database: Database) {
         """
     }
 
-    private fun ResultSet.toEvent(): Event = Event(
+    private fun ResultSet.toVarsel() = Varsel(
         fodselsnummer = getString("fodselsnummer"),
         grupperingsId = getString("grupperingsId"),
         eventId = getString("eventId"),

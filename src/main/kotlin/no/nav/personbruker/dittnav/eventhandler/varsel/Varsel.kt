@@ -1,14 +1,15 @@
 @file:UseSerializers(ZonedDateTimeSerializer::class)
 
-package no.nav.personbruker.dittnav.eventhandler.event
+package no.nav.personbruker.dittnav.eventhandler.varsel
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
+import no.nav.personbruker.dittnav.eventhandler.common.EventType
 import no.nav.personbruker.dittnav.eventhandler.common.serializer.ZonedDateTimeSerializer
 import java.time.ZonedDateTime
 
 @Serializable
-data class EventDTO(
+data class VarselDTO(
     val grupperingsId: String,
     val eventId: String,
     val eventTidspunkt: ZonedDateTime,
@@ -22,7 +23,7 @@ data class EventDTO(
     val forstBehandlet: ZonedDateTime
 )
 
-class Event(
+class Varsel(
     private val fodselsnummer: String,
     private val grupperingsId: String,
     private val eventId: String,
@@ -36,8 +37,8 @@ class Event(
     private val type: EventType,
     private val forstBehandlet: ZonedDateTime
 ) {
-    fun toEventDTO(): EventDTO {
-        return EventDTO(
+    fun toEventDTO(): VarselDTO {
+        return VarselDTO(
             grupperingsId = grupperingsId,
             eventId = eventId,
             eventTidspunkt = eventTidspunkt,

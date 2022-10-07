@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventhandler.event
+package no.nav.personbruker.dittnav.eventhandler.varsel
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.matchers.shouldBe
@@ -8,6 +8,7 @@ import io.ktor.http.*
 import io.ktor.server.testing.*
 import io.mockk.coEvery
 import io.mockk.mockk
+import no.nav.personbruker.dittnav.eventhandler.common.EventType
 import no.nav.personbruker.dittnav.eventhandler.mockEventHandlerApi
 import org.junit.jupiter.api.Test
 import java.time.ZoneId
@@ -28,7 +29,7 @@ class EventApiTest {
     private val aktiv = false
     private val type = EventType.BESKJED
 
-    private val event = Event(
+    private val event = Varsel(
         fodselsnummer = fodselsnummer,
         grupperingsId = grupperingsId,
         eventId = eventId,
@@ -45,9 +46,9 @@ class EventApiTest {
 
     @Test
     fun `eventer-apiet skal returnere inaktive eventer`() {
-        val eventRepositoryMock: EventRepository = mockk()
+        val eventRepositoryMock: VarselRepository = mockk()
         coEvery {
-            eventRepositoryMock.getInactiveEvents(any())
+            eventRepositoryMock.getInactiveVarsel(any())
         }.returns(
             listOf(
                 event
@@ -76,9 +77,9 @@ class EventApiTest {
 
     @Test
     fun `eventer-apiet skal returnere aktive eventer`() {
-        val eventRepositoryMock: EventRepository = mockk()
+        val eventRepositoryMock: VarselRepository = mockk()
         coEvery {
-            eventRepositoryMock.getActiveEvents(any())
+            eventRepositoryMock.getActiveVarsel(any())
         }.returns(
             listOf(
                 event

@@ -31,8 +31,8 @@ import no.nav.personbruker.dittnav.eventhandler.common.health.healthApi
 import no.nav.personbruker.dittnav.eventhandler.done.DoneEventService
 import no.nav.personbruker.dittnav.eventhandler.done.doneApi
 import no.nav.personbruker.dittnav.eventhandler.done.doneSystemClientApi
-import no.nav.personbruker.dittnav.eventhandler.event.EventRepository
-import no.nav.personbruker.dittnav.eventhandler.event.eventApi
+import no.nav.personbruker.dittnav.eventhandler.varsel.VarselRepository
+import no.nav.personbruker.dittnav.eventhandler.varsel.varselApi
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksEventService
 import no.nav.personbruker.dittnav.eventhandler.innboks.innboksApi
 import no.nav.personbruker.dittnav.eventhandler.innboks.innboksSystemClientApi
@@ -41,6 +41,7 @@ import no.nav.personbruker.dittnav.eventhandler.oppgave.oppgaveApi
 import no.nav.personbruker.dittnav.eventhandler.oppgave.oppgaveSystemClientApi
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventStatisticsService
 import no.nav.personbruker.dittnav.eventhandler.statistics.statisticsSystemClientApi
+import no.nav.personbruker.dittnav.eventhandler.varsel.eventApi
 import no.nav.tms.token.support.authentication.installer.installAuthenticators
 import no.nav.tms.token.support.azure.validation.AzureAuthenticator
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
@@ -52,7 +53,7 @@ fun Application.eventHandlerApi(
     oppgaveEventService: OppgaveEventService,
     innboksEventService: InnboksEventService,
     doneEventService: DoneEventService,
-    eventRepository: EventRepository,
+    varselRepository: VarselRepository,
     eventStatisticsService: EventStatisticsService,
     database: Database,
     installAuthenticatorsFunction: Application.() -> Unit = installAuth(),
@@ -84,13 +85,14 @@ fun Application.eventHandlerApi(
                 beskjedApi(beskjedEventService)
                 innboksApi(innboksEventService)
                 oppgaveApi(oppgaveEventService)
-                eventApi(eventRepository)
+                eventApi(varselRepository)
             }
             authenticate(AzureAuthenticator.name) {
                 doneSystemClientApi(doneEventService)
                 beskjedSystemClientApi(beskjedEventService)
                 innboksSystemClientApi(innboksEventService)
                 oppgaveSystemClientApi(oppgaveEventService)
+                varselApi(varselRepository)
 
                 statisticsSystemClientApi(eventStatisticsService)
             }

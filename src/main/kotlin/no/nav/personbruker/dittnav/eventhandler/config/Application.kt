@@ -6,7 +6,7 @@ import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.health.HealthService
 import no.nav.personbruker.dittnav.eventhandler.done.DoneEventService
-import no.nav.personbruker.dittnav.eventhandler.event.EventRepository
+import no.nav.personbruker.dittnav.eventhandler.varsel.VarselRepository
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksEventService
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveEventService
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventStatisticsService
@@ -22,7 +22,7 @@ fun main() {
     val innboksEventService = InnboksEventService(database)
     val doneEventService = DoneEventService(database)
     val eventStatisticsService = EventStatisticsService(database)
-    val eventRepository = EventRepository(database)
+    val eventRepository = VarselRepository(database)
 
     val healthService = HealthService(database)
 

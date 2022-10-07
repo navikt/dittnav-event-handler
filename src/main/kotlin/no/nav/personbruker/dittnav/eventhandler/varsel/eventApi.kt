@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.eventhandler.event
+package no.nav.personbruker.dittnav.eventhandler.varsel
 
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
@@ -9,14 +9,13 @@ import mu.KotlinLogging
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.respondWithError
 import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
 
-
-fun Route.eventApi(eventRepository: EventRepository) {
+fun Route.eventApi(eventRepository: VarselRepository) {
 
     val log = KotlinLogging.logger {}
 
     get("/fetch/event/inaktive") {
         try {
-            val inactiveEventDTOs = eventRepository.getInactiveEvents(innloggetBruker.ident)
+            val inactiveEventDTOs = eventRepository.getInactiveVarsel(innloggetBruker.ident)
                 .map { event -> event.toEventDTO() }
             call.respond(HttpStatusCode.OK, inactiveEventDTOs)
         } catch (exception: Exception) {
@@ -26,7 +25,7 @@ fun Route.eventApi(eventRepository: EventRepository) {
 
     get("/fetch/event/aktive") {
         try {
-            val inactiveEventDTOs = eventRepository.getActiveEvents(innloggetBruker.ident)
+            val inactiveEventDTOs = eventRepository.getActiveVarsel(innloggetBruker.ident)
                 .map { event -> event.toEventDTO() }
             call.respond(HttpStatusCode.OK, inactiveEventDTOs)
         } catch (exception: Exception) {

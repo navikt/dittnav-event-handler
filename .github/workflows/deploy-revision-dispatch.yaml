@@ -15,12 +15,12 @@ jobs:
       should_build_image: ${{ env.SHOULD_BUILD_IMAGE }}
     steps:
 
-      - name: 'Sjekk ut koden for dette repo-et'
+      - name: 'Sjekk ut ønsket commit'
         uses: 'actions/checkout@v3'
         with:
           ref: ${{ env.COMMIT_SHA }}
 
-      - name: 'Utled navn på tag og docker-image basert på siste commit'
+      - name: 'Utled navn på docker-image basert på siste commit'
         run: |
           APP_NAME=$(echo $GITHUB_REPOSITORY | rev | cut -f1 -d"/" | rev )
           TAG_NAME="$(git log -1 --pretty='%ad' --date=format:'%Y%m%d%H%M%S')-$(git log -1 --pretty='%h')"
@@ -43,28 +43,28 @@ jobs:
         with:
           ref: ${{ env.COMMIT_SHA }}
 
-      - name: Setup java
+      - name: 'Setup java'
         uses: actions/setup-java@v1
         with:
           java-version: '17.x'
 
-      - name: Finn cache-variabler
+      - name: 'Finn cache-variabler'
         uses: navikt/pb-common-gh-actions/cache-prep@v2
 
-      - name: Sett opp cache
+      - name: 'Sett opp cache'
         uses: actions/cache@v2
         with:
           path: |
             ${{ env.CACHE_PATHS }}
           key: ${{ runner.os }}${{ env.CACHE_KEY_NAMESPACE }}${{ hashFiles(env.CACHE_KEY_HASHED_PATH) }}
 
-      - name: Bygg prosjekt
+      - name: 'Bygg prosjekt'
         uses: navikt/pb-common-gh-actions/build@v2
         with:
           SKIP_TESTS: "true"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Bygg, tag og push Docker image
+      - name: 'Bygg, tag og push Docker image'
         run: |
           echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u $GITHUB_REPOSITORY --password-stdin
           docker build --tag ${{ needs.setup.outputs.docker_image }} .
@@ -86,7 +86,7 @@ jobs:
         with:
           ref: ${{ env.COMMIT_SHA }}
 
-      - name: 'Deploy-er til ${{ matrix.CLUSTER }}'
+      - name: 'Deployer til ${{ matrix.CLUSTER }}'
         uses: 'nais/deploy/actions/deploy@v1'
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}

@@ -12,7 +12,11 @@ class DoneEventService(private val database: Database) {
 
     suspend fun markEventAsInaktiv(innloggetBruker: TokenXUser, eventId: String) {
         database.dbQuery {
-            setBeskjedInaktiv(fodselsnummer = innloggetBruker.ident, eventId = eventId)
+            setBeskjedInaktiv(fodselsnummer = innloggetBruker.ident, eventId = eventId).also {
+                if(it==0){
+                    log.warn ("Forsøk på inaktiv-markering av varsel med eventid $eventId påvirket 0 rader")
+                }
+            }
         }
     }
 

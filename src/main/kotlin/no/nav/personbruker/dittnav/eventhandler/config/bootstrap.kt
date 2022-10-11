@@ -20,6 +20,7 @@ import io.ktor.util.pipeline.PipelineContext
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import kotlinx.serialization.json.Json
+import mu.KotlinLogging
 import no.nav.personbruker.dittnav.common.util.config.StringEnvVar
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedNotFoundException
@@ -47,6 +48,8 @@ import no.nav.tms.token.support.azure.validation.AzureAuthenticator
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUserFactory
 
+val log = KotlinLogging.logger {}
+
 fun Application.eventHandlerApi(
     healthService: HealthService,
     beskjedEventService: BeskjedEventService,
@@ -73,6 +76,7 @@ fun Application.eventHandlerApi(
     installAuthenticatorsFunction()
     install(StatusPages) {
         exception<BeskjedNotFoundException> { call, cause ->
+            log.warn { cause.message }
             call.respond(status = HttpStatusCode.BadRequest, message = cause.message.toString())
         }
     }

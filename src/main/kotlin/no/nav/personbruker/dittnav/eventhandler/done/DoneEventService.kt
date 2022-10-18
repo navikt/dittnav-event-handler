@@ -10,9 +10,9 @@ class DoneEventService(private val database: Database) {
 
     val log = KotlinLogging.logger {}
 
-    suspend fun markEventAsInaktiv(innloggetBruker: TokenXUser, eventId: String) {
+    suspend fun markEventAsInaktiv(fnr: String, eventId: String) {
         database.dbQuery {
-            setBeskjedInaktiv(fodselsnummer = innloggetBruker.ident, eventId = eventId).also {
+            setBeskjedInaktiv(fodselsnummer = fnr, eventId = eventId).also {
                 if(it==0){
                     log.warn ("Forsøk på inaktiv-markering av varsel med eventid $eventId påvirket 0 rader")
                 }

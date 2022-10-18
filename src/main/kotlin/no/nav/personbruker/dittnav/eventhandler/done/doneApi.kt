@@ -11,6 +11,7 @@ import io.ktor.server.routing.post
 import kotlinx.serialization.Serializable
 import mu.KotlinLogging
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.respondWithError
+import no.nav.personbruker.dittnav.eventhandler.common.modia.doIfValidRequest
 import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 
@@ -18,7 +19,7 @@ fun Route.doneApi(doneEventService: DoneEventService) {
 
     post("/produce/done") {
         call.receive<EventIdBody>().eventId?.let { eventId ->
-            doneEventService.markEventAsInaktiv(innloggetBruker, eventId)
+            doneEventService.markEventAsInaktiv(innloggetBruker.ident, eventId)
             call.respond(HttpStatusCode.OK)
         } ?: call.respond(HttpStatusCode.BadRequest, "eventid parameter mangler")
     }
@@ -38,6 +39,15 @@ fun Route.doneSystemClientApi(doneEventService: DoneEventService) {
             call.respond(HttpStatusCode.OK, result)
         } catch (exception: Exception) {
             respondWithError(call, log, exception)
+        }
+    }
+
+    post("/beskjed/done") {
+        doIfValidRequest {user ->
+            call.receive<EventIdBody>().eventId?.let { eventId ->
+                doneEventService.markEventAsInaktiv(user.fodselsnummer, eventId)
+                call.respond(HttpStatusCode.OK)
+            } ?: call.respond(HttpStatusCode.BadRequest, "eventid parameter mangler")
         }
     }
 }
@@ -75,4 +85,4 @@ private fun List<EventCountForProducer>.transformToMap(): Map<Pair<String, Strin
 }
 
 @Serializable
-data class EventIdBody(val eventId: String?=null)
+data class EventIdBody(val eventId: String? = null)

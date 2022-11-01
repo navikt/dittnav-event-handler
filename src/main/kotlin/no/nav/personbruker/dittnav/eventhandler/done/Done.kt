@@ -11,16 +11,4 @@ data class Done(
     val grupperingsId: String,
     val eventTidspunkt: ZonedDateTime,
     val forstBehandlet: ZonedDateTime
-) {
-    override fun toString(): String {
-        return "Done(" +
-            "eventId=$eventId, " +
-            "systembruker=$systembruker, " +
-            "namespace=$namespace, " +
-            "appnavn=$appnavn, " +
-            "fodselsnummer=***, " +
-            "grupperingsId=$grupperingsId, " +
-            "eventTidspunkt=$eventTidspunkt" +
-            "forstBehandlet=$forstBehandlet"
-    }
-}
+)

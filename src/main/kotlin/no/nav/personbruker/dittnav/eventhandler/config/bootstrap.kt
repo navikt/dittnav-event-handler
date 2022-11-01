@@ -30,7 +30,6 @@ import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.health.HealthService
 import no.nav.personbruker.dittnav.eventhandler.common.health.healthApi
 import no.nav.personbruker.dittnav.eventhandler.done.DoneEventService
-import no.nav.personbruker.dittnav.eventhandler.done.doneApi
 import no.nav.personbruker.dittnav.eventhandler.done.doneSystemClientApi
 import no.nav.personbruker.dittnav.eventhandler.varsel.VarselRepository
 import no.nav.personbruker.dittnav.eventhandler.varsel.varselApi
@@ -85,7 +84,6 @@ fun Application.eventHandlerApi(
         route("/dittnav-event-handler") {
             healthApi(healthService, prometheusMeterRegistry)
             authenticate {
-                doneApi(doneEventService)
                 beskjedApi(beskjedEventService)
                 innboksApi(innboksEventService)
                 oppgaveApi(oppgaveEventService)

@@ -3,26 +3,14 @@ package no.nav.personbruker.dittnav.eventhandler.done
 
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
-import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
-import io.ktor.server.routing.post
 import kotlinx.serialization.Serializable
 import mu.KotlinLogging
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.respondWithError
-import no.nav.personbruker.dittnav.eventhandler.config.innloggetBruker
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 
-fun Route.doneApi(doneEventService: DoneEventService) {
-
-    post("/produce/done") {
-        call.receive<EventIdBody>().eventId?.let { eventId ->
-            doneEventService.markEventAsInaktiv(innloggetBruker, eventId)
-            call.respond(HttpStatusCode.OK)
-        } ?: call.respond(HttpStatusCode.BadRequest, "eventid parameter mangler")
-    }
-}
 
 fun Route.doneSystemClientApi(doneEventService: DoneEventService) {
 

@@ -1,11 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.beskjed
 
-import Beskjed
 import no.nav.personbruker.dittnav.eventhandler.OsloDateTime
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.DoknotifikasjonTestStatus
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfo
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfoObjectMother
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfoObjectMother.createEskternVarslingInfo
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus
 import java.time.ZonedDateTime
 
@@ -33,7 +29,9 @@ object BeskjedObjectMother {
         link: String = "https://nav.no/systemX/$defaultFodselsnummer",
         sistOppdatert: ZonedDateTime = OsloDateTime.now(),
         sikkerhetsnivaa: Int = 4,
-        eksternVarslingInfo: EksternVarslingInfo = createEskternVarslingInfo()
+        eksternVarslingSendt: Boolean = false,
+        eksternVarslingKanaler: List<String> = listOf()
+    ,
     ): Beskjed {
         return Beskjed(
             id = id,
@@ -52,7 +50,8 @@ object BeskjedObjectMother {
             synligFremTil = synligFremTil,
             sikkerhetsnivaa = sikkerhetsnivaa,
             aktiv = aktiv,
-            eksternVarslingInfo = eksternVarslingInfo
+            eksternVarslingSendt = eksternVarslingSendt,
+            eksternVarslingKanaler = eksternVarslingKanaler
         )
     }
 }
@@ -77,10 +76,9 @@ object BeskjedTestData {
         systembruker = systembruker,
         namespace = namespace,
         appnavn = appnavn,
-        eksternVarslingInfo = createEskternVarslingInfo(
-            bestilt = true,
-            prefererteKanaler = listOf("SMS", "EPOST")
-        )
+        eksternVarslingSendt = true,
+        eksternVarslingKanaler = listOf("SMS","EPOST")
+
     )
 
     val doknotStatusForBeskjed1 = DoknotifikasjonTestStatus(
@@ -88,7 +86,7 @@ object BeskjedTestData {
         status = EksternVarslingStatus.OVERSENDT.name,
         melding = "melding",
         distribusjonsId = 123L,
-        kanaler = "SMS"
+        kanaler = "SMS,EPOST"
     )
 
     internal val beskjed2Aktiv = BeskjedObjectMother.createBeskjed(
@@ -102,10 +100,8 @@ object BeskjedTestData {
         systembruker = systembruker,
         namespace = namespace,
         appnavn = appnavn,
-        eksternVarslingInfo = EksternVarslingInfoObjectMother.createEskternVarslingInfo(
-            bestilt = true,
-            prefererteKanaler = listOf("SMS", "EPOST")
-        )
+        eksternVarslingKanaler = emptyList(),
+        eksternVarslingSendt = false
     )
 
     val doknotStatusForBeskjed2 = DoknotifikasjonTestStatus(

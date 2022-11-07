@@ -1,6 +1,5 @@
 package no.nav.personbruker.dittnav.eventhandler.beskjed
 
-import Beskjed
 import no.nav.brukernotifikasjon.schemas.builders.util.ValidationUtil.validateNonNullFieldMaxLength
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
@@ -9,39 +8,39 @@ import java.sql.Connection
 
 class BeskjedEventService(private val database: Database) {
 
-    suspend fun getActiveEventsForFodselsnummer(fodselsnummer: String): List<BeskjedDTO> {
-        return getEvents {
+    suspend fun getActiveEventsForFodselsnummer(fodselsnummer: String): List<Beskjed> =
+        getEvents {
             getAktivBeskjedForFodselsnummer(fodselsnummer)
-        }.map { beskjed -> beskjed.toDTO() }
-    }
+        }
 
-    suspend fun getInactiveEventsForFodselsnummer(fodselsnummer: String): List<BeskjedDTO> {
-        return getEvents {
+
+    suspend fun getInactiveEventsForFodselsnummer(fodselsnummer: String): List<Beskjed> =
+        getEvents {
             getInaktivBeskjedForFodselsnummer(fodselsnummer)
-        }.map { beskjed -> beskjed.toDTO() }
-    }
+        }
 
-    suspend fun getAllEventsForFodselsnummer(fodselsnummer: String): List<BeskjedDTO> {
-        return getEvents {
+
+    suspend fun getAllEventsForFodselsnummer(fodselsnummer: String): List<Beskjed> =
+        getEvents {
             getAllBeskjedForFodselsnummer(fodselsnummer)
-        }.map { beskjed -> beskjed.toDTO() }
-    }
+        }
 
-    suspend fun getAllGroupedEventsFromCacheForUser(bruker: TokenXUser, grupperingsid: String?, appnavn: String?): List<BeskjedDTO> {
+    suspend fun getAllGroupedEventsFromCacheForUser(
+        bruker: TokenXUser,
+        grupperingsid: String?,
+        appnavn: String?
+    ): List<Beskjed> {
         val grupperingsId = validateNonNullFieldMaxLength(grupperingsid, "grupperingsid", 100)
         val app = validateNonNullFieldMaxLength(appnavn, "appnavn", 100)
         return getEvents { getAllGroupedBeskjedEventsByIds(bruker.ident, grupperingsId, app) }
-            .map { beskjed -> beskjed.toDTO() }
     }
 
-    suspend fun getAllGroupedEventsByProducerFromCache(): List<EventCountForProducer> {
-        return database.queryWithExceptionTranslation { getAllGroupedBeskjedEventsByProducer() }
-    }
+    suspend fun getAllGroupedEventsByProducerFromCache(): List<EventCountForProducer> =
+        database.queryWithExceptionTranslation { getAllGroupedBeskjedEventsByProducer() }
 
-    private suspend fun getEvents(operationToExecute: Connection.() -> List<Beskjed>): List<Beskjed> {
-        val events = database.queryWithExceptionTranslation {
+
+    private suspend fun getEvents(operationToExecute: Connection.() -> List<Beskjed>): List<Beskjed> =
+        database.queryWithExceptionTranslation {
             operationToExecute()
         }
-        return events
-    }
 }

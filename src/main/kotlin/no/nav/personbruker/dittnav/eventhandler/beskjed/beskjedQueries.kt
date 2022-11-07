@@ -1,12 +1,10 @@
 package no.nav.personbruker.dittnav.eventhandler.beskjed
 
-import Beskjed
 import no.nav.personbruker.dittnav.eventhandler.common.LocalDateTimeHelper
 import no.nav.personbruker.dittnav.eventhandler.common.database.getListFromSeparatedString
 import no.nav.personbruker.dittnav.eventhandler.common.database.getNullableUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfo
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import java.sql.Connection
@@ -127,18 +125,8 @@ fun ResultSet.toBeskjed(): Beskjed {
             getUtcTimeStamp("forstBehandlet").toInstant(),
             ZoneId.of("Europe/Oslo")
         ),
-        eksternVarslingInfo = toEksternVarslingInfo()
-    )
-}
-
-private fun ResultSet.toEksternVarslingInfo(): EksternVarslingInfo {
-    val eksternVarslingSendt = getString("doknotifikasjon_status") == EksternVarslingStatus.OVERSENDT.name
-
-    return EksternVarslingInfo(
-        bestilt = getBoolean("eksternVarsling"),
-        prefererteKanaler = getListFromSeparatedString("prefererteKanaler"),
-        sendt = eksternVarslingSendt,
-        sendteKanaler = getListFromSeparatedString("doknotifikasjon_kanaler")
+        eksternVarslingSendt = getString("doknotifikasjon_status") == EksternVarslingStatus.OVERSENDT.name,
+        eksternVarslingKanaler = getListFromSeparatedString("doknotifikasjon_kanaler")
     )
 }
 

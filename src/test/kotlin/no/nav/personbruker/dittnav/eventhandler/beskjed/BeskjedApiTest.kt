@@ -1,11 +1,11 @@
 package no.nav.personbruker.dittnav.eventhandler.beskjed
 
+import Beskjed
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.matchers.shouldBe
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
-import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.testing.testApplication
 import no.nav.personbruker.dittnav.eventhandler.ComparableVarsel
@@ -71,7 +71,7 @@ class BeskjedApiTest {
                 installAuthenticatorsFunction = Application::beskjedAuthConfig
             )
             val aktiveVarsler = client.get("$fetchBeskjedEndpoint/aktive")
-            aktiveVarsler.status shouldBe HttpStatusCode.OK
+
             objectMapper.readTree(aktiveVarsler.bodyAsText()) shouldContainExactly expectedVarsler
         }
 
@@ -166,14 +166,17 @@ private fun Application.beskjedAuthConfig() {
 private fun Beskjed.updateWith(doknotStatus: DoknotifikasjonTestStatus?): Beskjed =
     if (doknotStatus != null) {
         this.copy(
-            eksternVarslingKanaler = this.eksternVarslingKanaler,
-            eksternVarslingSendt = this.eksternVarslingSendt
+            eksternVarslingInfo = this.eksternVarslingInfo.copy(
+                sendt = doknotStatus.status == EksternVarslingStatus.OVERSENDT.name,
+                sendteKanaler = if (doknotStatus.kanaler != "") listOf(doknotStatus.kanaler) else emptyList()
+            )
         )
     } else {
         this.copy(
-            eksternVarslingKanaler = this.eksternVarslingKanaler,
-            eksternVarslingSendt = false
-
+            eksternVarslingInfo = this.eksternVarslingInfo.copy(
+                sendt = false,
+                sendteKanaler = emptyList()
+            )
         )
     }
 

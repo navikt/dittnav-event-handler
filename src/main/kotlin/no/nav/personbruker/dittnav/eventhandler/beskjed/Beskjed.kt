@@ -1,12 +1,6 @@
-@file:UseSerializers(ZonedDateTimeSerializer::class)
-package no.nav.personbruker.dittnav.eventhandler.beskjed
-
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.UseSerializers
-import no.nav.personbruker.dittnav.eventhandler.common.serializer.ZonedDateTimeSerializer
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfo
 import java.time.ZonedDateTime
 
-@Serializable
 data class Beskjed(
     val id: Int,
     val fodselsnummer: String,
@@ -24,6 +18,25 @@ data class Beskjed(
     val tekst: String,
     val link: String,
     val aktiv: Boolean,
-    val eksternVarslingSendt: Boolean,
-    val eksternVarslingKanaler: List<String>
-)
+    val eksternVarslingInfo: EksternVarslingInfo
+) {
+    override fun toString(): String {
+        return "Beskjed(" +
+            "id=$id, " +
+            "fodselsnummer=***, " +
+            "grupperingsId=$grupperingsId, " +
+            "eventId=$eventId, " +
+            "eventTidspunkt=$eventTidspunkt, " +
+            "forstBehandlet=$forstBehandlet, " +
+            "produsent=$produsent, " +
+            "systembruker=$systembruker, " +
+            "namespace=$namespace, " +
+            "appnavn=$appnavn, " +
+            "sikkerhetsnivaa=$sikkerhetsnivaa, " +
+            "sistOppdatert=$sistOppdatert, " +
+            "synligFremTil=$synligFremTil, " +
+            "tekst=***, " +
+            "link=***, " +
+            "aktiv=$aktiv"
+    }
+}

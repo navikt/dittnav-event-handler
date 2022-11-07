@@ -1,5 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.beskjed
 
+import Beskjed
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery

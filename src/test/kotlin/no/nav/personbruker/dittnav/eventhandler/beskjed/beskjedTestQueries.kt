@@ -1,6 +1,5 @@
 package no.nav.personbruker.dittnav.eventhandler.beskjed
 
-import Beskjed
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.DoknotifikasjonTestStatus
@@ -36,8 +35,8 @@ fun Connection.createBeskjed(beskjeder: List<Beskjed>) =
                     it.setString(13, beskjed.namespace)
                     it.setString(14, beskjed.appnavn)
                     it.setObject(15, beskjed.forstBehandlet.utcLocalDate(), Types.TIMESTAMP)
-                    it.setBoolean(16, beskjed.eksternVarslingInfo.bestilt)
-                    it.setString(17, beskjed.eksternVarslingInfo.prefererteKanaler.joinToString(","))
+                    it.setBoolean(16, beskjed.eksternVarslingSendt)
+                    it.setString(17, beskjed.eksternVarslingKanaler.joinToString(","))
                     it.addBatch()
                 }
             }

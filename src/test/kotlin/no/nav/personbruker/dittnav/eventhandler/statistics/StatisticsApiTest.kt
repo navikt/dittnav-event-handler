@@ -1,6 +1,5 @@
 package no.nav.personbruker.dittnav.eventhandler.statistics
 
-import Beskjed
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.matchers.shouldBe
@@ -12,6 +11,7 @@ import io.ktor.server.testing.testApplication
 import io.mockk.clearMocks
 import io.mockk.coEvery
 import io.mockk.mockk
+import no.nav.personbruker.dittnav.eventhandler.beskjed.Beskjed
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
 import no.nav.personbruker.dittnav.eventhandler.beskjed.deleteBeskjed

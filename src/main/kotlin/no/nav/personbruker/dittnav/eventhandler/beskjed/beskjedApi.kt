@@ -18,7 +18,7 @@ fun Route.beskjedApi(beskjedEventService: BeskjedEventService) {
 
     get("/fetch/beskjed/aktive") {
         try {
-            ZonedDateTime.now().offset
+            ZonedDateTime.now().getOffset()
             val aktiveBeskjedEventsDTO = beskjedEventService.getActiveEventsForFodselsnummer(innloggetBruker.ident)
             call.respond(HttpStatusCode.OK, aktiveBeskjedEventsDTO)
         } catch (exception: Exception) {

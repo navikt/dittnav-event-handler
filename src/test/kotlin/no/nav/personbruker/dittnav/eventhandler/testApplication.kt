@@ -1,10 +1,11 @@
 package no.nav.personbruker.dittnav.eventhandler
 
+
+import Beskjed
 import com.fasterxml.jackson.databind.JsonNode
 import io.ktor.server.application.Application
 import io.ktor.server.testing.TestApplicationBuilder
 import io.mockk.mockk
-import no.nav.personbruker.dittnav.eventhandler.beskjed.Beskjed
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.health.HealthService
@@ -48,7 +49,6 @@ fun TestApplicationBuilder.mockEventHandlerApi(
     }
 ) {
     application {
-
         eventHandlerApi(
             healthService = healthService,
             beskjedEventService = beskjedEventService,
@@ -78,13 +78,9 @@ internal class ComparableVarsel(
     private val eksternVarslingSendt: Boolean,
     private val eksternVarslingKanaler: List<String>
 ) {
-    private val sistOppdatert =
-        sistOppdatert.withZoneSameInstant(ZoneId.of("Europe/Oslo")).truncatedTo(ChronoUnit.SECONDS)
-    private val forstBehandlet =
-        forstBehandlet.withZoneSameInstant(ZoneId.of("Europe/Oslo")).truncatedTo(ChronoUnit.SECONDS)
-
+    private val sistOppdatert = sistOppdatert.withZoneSameInstant(ZoneId.of("Europe/Oslo")).truncatedTo(ChronoUnit.SECONDS)
+    private val forstBehandlet = forstBehandlet.withZoneSameInstant(ZoneId.of("Europe/Oslo")).truncatedTo(ChronoUnit.SECONDS)
     private fun assertThisEquals(expected: ComparableVarsel) {
-        val eventId = expected.eventId
         assertEquals(expected.fodselsnummer, this.fodselsnummer, "fodselsnummer")
         assertEquals(expected.grupperingsId, this.grupperingsId, "grupperingsid")
         assertEquals(expected.eventId, this.eventId, "eventId")
@@ -134,8 +130,8 @@ private fun Beskjed.toCompparableVarsel() = ComparableVarsel(
     tekst = this.tekst,
     link = this.link,
     aktiv = this.aktiv,
-    eksternVarslingSendt = eksternVarslingSendt,
-    eksternVarslingKanaler = eksternVarslingKanaler
+    eksternVarslingSendt = eksternVarslingInfo.sendt,
+    eksternVarslingKanaler = eksternVarslingInfo.sendteKanaler
 )
 
 private fun Innboks.toCompparableVarsel() = ComparableVarsel(
@@ -172,14 +168,9 @@ private fun Oppgave.toCompparableVarsel(): ComparableVarsel = ComparableVarsel(
 internal fun JsonNode.asZonedDateTime(): ZonedDateTime =
     ZonedDateTime.parse(this.asText())
 
-internal object OsloDateTime {
+internal object OsloDateTime{
     private val zoneID = ZoneId.of("Europe/Oslo")
     internal fun now(): ZonedDateTime {
         return ZonedDateTime.ofInstant(Instant.now(), zoneID)
     }
 }
-
-internal inline fun <T> T.assert(block: T.() -> Unit): T =
-    apply {
-        block()
-    }

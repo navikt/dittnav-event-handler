@@ -2,10 +2,10 @@ package no.nav.personbruker.dittnav.eventhandler.varsel
 
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
 import no.nav.personbruker.dittnav.eventhandler.common.EventType
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
+import no.nav.personbruker.dittnav.eventhandler.createBeskjed
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksObjectMother
 import no.nav.personbruker.dittnav.eventhandler.innboks.createInnboks
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveObjectMother
@@ -49,12 +49,12 @@ class EventTest {
 
     private fun createBeskjeder(antallAktive: Int, antallInaktive: Int) {
         val beskjeder = (1..antallAktive).map {
-            BeskjedObjectMother.createBeskjed(
+            createBeskjed(
                 fodselsnummer = fodselsnummer,
                 aktiv = true
             )
         } + (1..antallInaktive).map {
-            BeskjedObjectMother.createBeskjed(
+            createBeskjed(
                 fodselsnummer = fodselsnummer,
                 aktiv = false
             )

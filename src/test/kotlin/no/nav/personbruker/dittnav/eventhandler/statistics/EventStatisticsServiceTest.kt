@@ -4,11 +4,11 @@ import io.kotest.matchers.doubles.shouldBeGreaterThan
 import io.kotest.matchers.doubles.shouldBeGreaterThanOrEqual
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
 import no.nav.personbruker.dittnav.eventhandler.beskjed.deleteBeskjed
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
 import no.nav.personbruker.dittnav.eventhandler.common.EventType
+import no.nav.personbruker.dittnav.eventhandler.createBeskjed
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksObjectMother
 import no.nav.personbruker.dittnav.eventhandler.innboks.createInnboks
 import no.nav.personbruker.dittnav.eventhandler.innboks.deleteInnboks
@@ -32,10 +32,10 @@ class EventStatisticsServiceTest {
     private val fodselsnummer2 = "67890"
     private val systembruker = "x-dittnav"
 
-    private val beskjed1 = BeskjedObjectMother.createBeskjed(fodselsnummer = fodselsnummer, synligFremTil = ZonedDateTime.now().plusHours(1), aktiv = true, systembruker = systembruker, tekst = "12")
-    private val beskjed2 = BeskjedObjectMother.createBeskjed(fodselsnummer = fodselsnummer, synligFremTil = ZonedDateTime.now().plusHours(1), aktiv = true, systembruker = systembruker)
-    private val beskjed3 = BeskjedObjectMother.createBeskjed(fodselsnummer = fodselsnummer, synligFremTil = ZonedDateTime.now().plusHours(1), aktiv = false, systembruker = systembruker)
-    private val beskjed4 = BeskjedObjectMother.createBeskjed(fodselsnummer = "54321", synligFremTil = ZonedDateTime.now().plusHours(1), aktiv = true, systembruker = "x-dittnav-2")
+    private val beskjed1 = createBeskjed(fodselsnummer = fodselsnummer, synligFremTil = ZonedDateTime.now().plusHours(1), aktiv = true, systembruker = systembruker, tekst = "12")
+    private val beskjed2 = createBeskjed(fodselsnummer = fodselsnummer, synligFremTil = ZonedDateTime.now().plusHours(1), aktiv = true, systembruker = systembruker)
+    private val beskjed3 = createBeskjed(fodselsnummer = fodselsnummer, synligFremTil = ZonedDateTime.now().plusHours(1), aktiv = false, systembruker = systembruker)
+    private val beskjed4 = createBeskjed(fodselsnummer = "54321", synligFremTil = ZonedDateTime.now().plusHours(1), aktiv = true, systembruker = "x-dittnav-2")
 
     private val oppgave1 = OppgaveObjectMother.createOppgave(fodselsnummer = fodselsnummer, aktiv = true, systembruker = systembruker, tekst = "123")
     private val oppgave2 = OppgaveObjectMother.createOppgave(fodselsnummer = fodselsnummer, aktiv = true, systembruker = systembruker)

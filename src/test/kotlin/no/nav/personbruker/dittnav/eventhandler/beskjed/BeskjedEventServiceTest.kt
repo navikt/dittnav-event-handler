@@ -9,6 +9,7 @@ import no.nav.brukernotifikasjon.schemas.builders.exception.FieldValidationExcep
 import no.nav.personbruker.dittnav.eventhandler.OsloDateTime
 import no.nav.personbruker.dittnav.eventhandler.common.TokenXUserObjectMother
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
+import no.nav.personbruker.dittnav.eventhandler.createBeskjed
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 
@@ -39,8 +40,8 @@ class BeskjedEventServiceTest {
         val innloggetbruker = TokenXUserObjectMother.createInnloggetBruker("100")
         val grupperingsid = "100${innloggetbruker.ident}"
         val beskjedEvents = listOf(
-            BeskjedObjectMother.createBeskjed(fodselsnummer = innloggetbruker.ident, grupperingsId = grupperingsid),
-            BeskjedObjectMother.createBeskjed(fodselsnummer = innloggetbruker.ident, grupperingsId = grupperingsid)
+            createBeskjed(fodselsnummer = innloggetbruker.ident, grupperingsId = grupperingsid),
+            createBeskjed(fodselsnummer = innloggetbruker.ident, grupperingsId = grupperingsid)
         )
         runBlocking {
             coEvery {
@@ -114,8 +115,8 @@ class BeskjedEventServiceTest {
 
     private fun getBeskjedList(): MutableList<Beskjed> {
         return mutableListOf(
-            BeskjedObjectMother.createBeskjed(fodselsnummer = bruker.ident, synligFremTil = null),
-            BeskjedObjectMother.createBeskjed(fodselsnummer = bruker.ident, synligFremTil = OsloDateTime.now().minusDays(2))
+            createBeskjed(fodselsnummer = bruker.ident, synligFremTil = null),
+            createBeskjed(fodselsnummer = bruker.ident, synligFremTil = OsloDateTime.now().minusDays(2))
         )
     }
 }

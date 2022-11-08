@@ -13,9 +13,9 @@ import io.ktor.server.testing.testApplication
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.OsloDateTime
 import no.nav.personbruker.dittnav.eventhandler.apiTestfnr
-import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
+import no.nav.personbruker.dittnav.eventhandler.createBeskjed
 import no.nav.personbruker.dittnav.eventhandler.mockEventHandlerApi
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -30,7 +30,7 @@ class DoneApiTest {
     private val systembruker = "x-dittnav"
     private val namespace = "localhost"
     private val appnavn = "dittnav"
-    private val inaktivBeskjed = BeskjedObjectMother.createBeskjed(
+    private val inaktivBeskjed = createBeskjed(
         id = 1,
         eventId = "12387696478230",
         fodselsnummer = apiTestfnr,
@@ -40,7 +40,7 @@ class DoneApiTest {
         namespace = namespace,
         appnavn = appnavn
     )
-    private val aktivBeskjed = BeskjedObjectMother.createBeskjed(
+    private val aktivBeskjed = createBeskjed(
         id = 2,
         eventId = "123465abnhkfg",
         fodselsnummer = apiTestfnr,

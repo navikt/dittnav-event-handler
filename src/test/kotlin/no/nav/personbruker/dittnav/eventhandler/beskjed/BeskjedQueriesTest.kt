@@ -18,26 +18,31 @@ import org.junit.jupiter.api.assertThrows
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BeskjedQueriesTest {
+    private val beskjedTestFnr = "12345678910"
+    private val grupperingsid = "100$beskjedTestFnr"
+    private val systembruker = "x-dittnav"
+    private val namespace = "localhost"
+    private val appnavn = "dittnav"
+
 
     private val database = LocalPostgresDatabase.cleanDb()
-    private val beskjedTestFnr = "12345678910"
-    internal val grupperingsid = "100$beskjedTestFnr"
-    internal val systembruker = "x-dittnav"
-    internal val namespace = "localhost"
-    internal val appnavn = "dittnav"
-
 
     @BeforeEach
     fun `populer testdata`() {
         database.createBeskjed(
             listOf(
-                aktivBeskjedMedEksternVarsling,
-                aktivBeskjedMedFeiletInternVarsling,
+                aktivMedSendtEksternVarsling.beskjed,
+                aktivMedFeiletEksternVarsling.beskjed,
                 inaktivBeskjedUtenEksternVarsling,
                 aktivBeskjedMedAnnetpersonNummer
             )
         )
-        database.createDoknotStatuses(listOf(doknotStatusForBeskjed1, doknotStatusForBeskjed2))
+        database.createDoknotStatuses(
+            listOf(
+                aktivMedSendtEksternVarsling.doknotStatus,
+                aktivMedFeiletEksternVarsling.doknotStatus
+            )
+        )
     }
 
     @AfterEach
@@ -45,8 +50,8 @@ class BeskjedQueriesTest {
         database.deleteAllDoknotStatusBeskjed()
         database.deleteBeskjed(
             listOf(
-                aktivBeskjedMedEksternVarsling,
-                aktivBeskjedMedFeiletInternVarsling,
+                aktivMedSendtEksternVarsling.beskjed,
+                aktivMedFeiletEksternVarsling.beskjed,
                 inaktivBeskjedUtenEksternVarsling,
                 aktivBeskjedMedAnnetpersonNummer
             )
@@ -76,14 +81,24 @@ class BeskjedQueriesTest {
     fun `Deaktiverer beskjeder`() {
         runBlocking {
 
-            database.dbQuery { setBeskjedInaktiv(beskjedTestFnr, aktivBeskjedMedEksternVarsling.eventId) } shouldBe 1
-            database.dbQuery { setBeskjedInaktiv(beskjedTestFnr, aktivBeskjedMedEksternVarsling.eventId) } shouldBe 1
+            database.dbQuery {
+                setBeskjedInaktiv(
+                    beskjedTestFnr,
+                    aktivMedSendtEksternVarsling.beskjed.eventId
+                )
+            } shouldBe 1
+            database.dbQuery {
+                setBeskjedInaktiv(
+                    beskjedTestFnr,
+                    aktivMedSendtEksternVarsling.beskjed.eventId
+                )
+            } shouldBe 1
             database.dbQuery { getAktiveBeskjederForFodselsnummer(beskjedTestFnr) }.size shouldBe 1
             database.dbQuery { getInaktiveBeskjederForFodselsnummer(beskjedTestFnr) }.size shouldBe 2
         }
         assertThrows<BeskjedNotFoundException> {
             runBlocking {
-                database.dbQuery { setBeskjedInaktiv("9631486855", aktivBeskjedMedEksternVarsling.eventId) }
+                database.dbQuery { setBeskjedInaktiv("9631486855", aktivMedSendtEksternVarsling.beskjed.eventId) }
             }
         }
         assertThrows<BeskjedNotFoundException> {
@@ -138,7 +153,7 @@ class BeskjedQueriesTest {
         runBlocking {
             database.dbQuery { getAllGroupedBeskjederBySystemuser() }.assert {
                 size shouldBe 2
-                this[aktivBeskjedMedEksternVarsling.systembruker] shouldBe 3
+                this[aktivMedSendtEksternVarsling.beskjed.systembruker] shouldBe 3
                 this[aktivBeskjedMedAnnetpersonNummer.systembruker] shouldBe 1
             }
         }
@@ -150,8 +165,8 @@ class BeskjedQueriesTest {
             database.dbQuery { getAllGroupedBeskjedEventsByProducer() }.assert {
                 size shouldBe 2
                 findCountFor(
-                    aktivBeskjedMedEksternVarsling.namespace,
-                    aktivBeskjedMedEksternVarsling.appnavn
+                    aktivMedSendtEksternVarsling.beskjed.namespace,
+                    aktivMedSendtEksternVarsling.beskjed.appnavn
                 ) shouldBe 3
                 findCountFor(
                     aktivBeskjedMedAnnetpersonNummer.namespace,
@@ -165,16 +180,19 @@ class BeskjedQueriesTest {
     fun `Riktig ekstern varsling info`() {
         runBlocking {
             database.dbQuery {
-                getBeskjedById(aktivBeskjedMedEksternVarsling.fodselsnummer, aktivBeskjedMedEksternVarsling.eventId)
+                getBeskjedById(
+                    aktivMedSendtEksternVarsling.beskjed.fodselsnummer,
+                    aktivMedSendtEksternVarsling.beskjed.eventId
+                )
             }.assert {
                 eksternVarslingSendt shouldBe true
-                eksternVarslingKanaler shouldBe aktivBeskjedMedEksternVarsling.eksternVarslingKanaler
+                eksternVarslingKanaler shouldBe aktivMedSendtEksternVarsling.beskjed.eksternVarslingKanaler
             }
 
             database.dbQuery {
                 getBeskjedById(
-                    aktivBeskjedMedFeiletInternVarsling.fodselsnummer,
-                    aktivBeskjedMedFeiletInternVarsling.eventId
+                    aktivMedFeiletEksternVarsling.beskjed.fodselsnummer,
+                    aktivMedFeiletEksternVarsling.beskjed.eventId
                 )
             }.assert {
                 eksternVarslingSendt shouldBe false
@@ -195,7 +213,7 @@ class BeskjedQueriesTest {
         }
     }
 
-    private val aktivBeskjedMedEksternVarsling = createBeskjed(
+    private val aktivMedSendtEksternVarsling = createBeskjed(
         id = 1,
         eventId = "123",
         fodselsnummer = beskjedTestFnr,
@@ -208,47 +226,26 @@ class BeskjedQueriesTest {
         appnavn = appnavn,
         eksternVarslingSendt = true,
         eksternVarslingKanaler = listOf("SMS", "EPOST")
+    ).medEksternVarsling(sendt = true)
 
-    )
-
-    private val doknotStatusForBeskjed1 = DoknotifikasjonTestStatus(
-        eventId = aktivBeskjedMedEksternVarsling.eventId,
-        status = EksternVarslingStatus.OVERSENDT.name,
-        melding = "melding",
-        distribusjonsId = 123L,
-        kanaler = "SMS,EPOST"
-    )
-
-    private val aktivBeskjedMedFeiletInternVarsling = createBeskjed(
+    private val aktivMedFeiletEksternVarsling = createBeskjed(
         id = 2,
         eventId = "887766",
         fodselsnummer = beskjedTestFnr,
         grupperingsId = grupperingsid,
-        synligFremTil = OsloDateTime.now().plusHours(1),
-        forstBehandlet = OsloDateTime.now().minusDays(5),
         aktiv = true,
         systembruker = systembruker,
         namespace = namespace,
         appnavn = appnavn,
         eksternVarslingKanaler = emptyList(),
         eksternVarslingSendt = false
-    )
-
-    private val doknotStatusForBeskjed2 = DoknotifikasjonTestStatus(
-        eventId = aktivBeskjedMedFeiletInternVarsling.eventId,
-        status = EksternVarslingStatus.FEILET.name,
-        melding = "feilet",
-        distribusjonsId = null,
-        kanaler = ""
-    )
+    ).medEksternVarsling(sendt = false)
 
     private val inaktivBeskjedUtenEksternVarsling = createBeskjed(
         id = 3,
         eventId = "567",
         fodselsnummer = beskjedTestFnr,
         grupperingsId = grupperingsid,
-        synligFremTil = OsloDateTime.now().plusHours(1),
-        forstBehandlet = OsloDateTime.now().minusDays(15),
         aktiv = false,
         systembruker = systembruker,
         namespace = namespace,
@@ -258,13 +255,10 @@ class BeskjedQueriesTest {
         id = 4,
         eventId = "789",
         fodselsnummer = "54321",
-        synligFremTil = OsloDateTime.now().plusHours(1),
-        forstBehandlet = OsloDateTime.now().minusDays(25),
         aktiv = true,
         systembruker = "x-dittnav-2",
         namespace = namespace,
         appnavn = "dittnav-2"
     )
-
 }
 

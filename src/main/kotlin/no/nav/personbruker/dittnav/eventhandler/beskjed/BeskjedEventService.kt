@@ -10,19 +10,19 @@ class BeskjedEventService(private val database: Database) {
 
     suspend fun getActiveEventsForFodselsnummer(fodselsnummer: String): List<Beskjed> =
         getEvents {
-            getAktivBeskjedForFodselsnummer(fodselsnummer)
+            getAktiveBeskjederForFodselsnummer(fodselsnummer)
         }
 
 
     suspend fun getInactiveEventsForFodselsnummer(fodselsnummer: String): List<Beskjed> =
         getEvents {
-            getInaktivBeskjedForFodselsnummer(fodselsnummer)
+            getInaktiveBeskjederForFodselsnummer(fodselsnummer)
         }
 
 
     suspend fun getAllEventsForFodselsnummer(fodselsnummer: String): List<Beskjed> =
         getEvents {
-            getAllBeskjedForFodselsnummer(fodselsnummer)
+            getAllBeskjederForFodselsnummer(fodselsnummer)
         }
 
     suspend fun getAllGroupedEventsFromCacheForUser(
@@ -32,7 +32,7 @@ class BeskjedEventService(private val database: Database) {
     ): List<Beskjed> {
         val grupperingsId = validateNonNullFieldMaxLength(grupperingsid, "grupperingsid", 100)
         val app = validateNonNullFieldMaxLength(appnavn, "appnavn", 100)
-        return getEvents { getAllGroupedBeskjedEventsByIds(bruker.ident, grupperingsId, app) }
+        return getEvents { getAllGroupedBeskjederByGrupperingsId(bruker.ident, grupperingsId, app) }
     }
 
     suspend fun getAllGroupedEventsByProducerFromCache(): List<EventCountForProducer> =

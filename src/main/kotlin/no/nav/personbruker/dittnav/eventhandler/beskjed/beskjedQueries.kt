@@ -23,13 +23,13 @@ private val baseSelectQuery = """
         LEFT JOIN DOKNOTIFIKASJON_STATUS_BESKJED as dok_status on beskjed.eventId = dok_status.eventId
 """.trimMargin()
 
-fun Connection.getInaktivBeskjedForFodselsnummer(fodselsnummer: String): List<Beskjed> =
-    getBeskjedForFodselsnummerByAktiv(fodselsnummer, false)
+fun Connection.getInaktiveBeskjederForFodselsnummer(fodselsnummer: String): List<Beskjed> =
+    getBeskjederForFodselsnummerByAktiv(fodselsnummer, false)
 
-fun Connection.getAktivBeskjedForFodselsnummer(fodselsnummer: String): List<Beskjed> =
-    getBeskjedForFodselsnummerByAktiv(fodselsnummer, true)
+fun Connection.getAktiveBeskjederForFodselsnummer(fodselsnummer: String): List<Beskjed> =
+    getBeskjederForFodselsnummerByAktiv(fodselsnummer, true)
 
-private fun Connection.getBeskjedForFodselsnummerByAktiv(fodselsnummer: String, aktiv: Boolean): List<Beskjed> =
+private fun Connection.getBeskjederForFodselsnummerByAktiv(fodselsnummer: String, aktiv: Boolean): List<Beskjed> =
     prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ? AND aktiv = ?""".trimMargin())
         .use {
             it.setString(1, fodselsnummer)
@@ -39,7 +39,7 @@ private fun Connection.getBeskjedForFodselsnummerByAktiv(fodselsnummer: String, 
             }
         }
 
-fun Connection.getAllBeskjedForFodselsnummer(fodselsnummer: String): List<Beskjed> =
+fun Connection.getAllBeskjederForFodselsnummer(fodselsnummer: String): List<Beskjed> =
     prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ?""".trimMargin())
         .use {
             it.setString(1, fodselsnummer)
@@ -48,7 +48,7 @@ fun Connection.getAllBeskjedForFodselsnummer(fodselsnummer: String): List<Beskje
             }
         }
 
-fun Connection.getAllGroupedBeskjedEventsByIds(
+fun Connection.getAllGroupedBeskjederByGrupperingsId(
     fodselsnummer: String,
     grupperingsid: String,
     appnavn: String
@@ -63,7 +63,7 @@ fun Connection.getAllGroupedBeskjedEventsByIds(
             }
         }
 
-fun Connection.getAllGroupedBeskjedEventsBySystemuser(): Map<String, Int> {
+fun Connection.getAllGroupedBeskjederBySystemuser(): Map<String, Int> {
     return prepareStatement(
         "SELECT systembruker, COUNT(*) FROM beskjed GROUP BY systembruker",
         ResultSet.TYPE_SCROLL_INSENSITIVE,
@@ -143,7 +143,7 @@ fun Connection.setBeskjedInaktiv(fodselsnummer: String, eventId: String): Int {
         }
 }
 
-fun Connection.beskjedExists(fodselsnummer: String, eventId: String): Boolean =
+private fun Connection.beskjedExists(fodselsnummer: String, eventId: String): Boolean =
     prepareStatement("""SELECT EXISTS(SELECT 1 FROM beskjed WHERE fodselsnummer = ? AND eventId=?) as exists""".trimMargin())
         .use {
             it.setString(1, fodselsnummer)

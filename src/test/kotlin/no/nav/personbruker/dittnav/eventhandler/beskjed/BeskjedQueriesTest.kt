@@ -1,9 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.beskjed
 
-import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.assert
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.appnavn
@@ -14,18 +12,14 @@ import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.beskjed4
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.beskjedTestFnr
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.doknotStatusForBeskjed1
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.doknotStatusForBeskjed2
-import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.eventId
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.grupperingsid
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
 import no.nav.personbruker.dittnav.eventhandler.common.findCountFor
-import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
-import org.postgresql.util.PSQLException
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BeskjedQueriesTest {
@@ -47,9 +41,9 @@ class BeskjedQueriesTest {
     @Test
     fun `Beskjeder for fodselsnummer`() {
         runBlocking {
-            database.dbQuery { getAllBeskjedForFodselsnummer(beskjedTestFnr) }.size shouldBe 3
-            database.dbQuery { getAktivBeskjedForFodselsnummer(beskjedTestFnr) }.size shouldBe 2
-            database.dbQuery { getInaktivBeskjedForFodselsnummer(beskjedTestFnr) }.size shouldBe 1
+            database.dbQuery { getAllBeskjederForFodselsnummer(beskjedTestFnr) }.size shouldBe 3
+            database.dbQuery { getAktiveBeskjederForFodselsnummer(beskjedTestFnr) }.size shouldBe 2
+            database.dbQuery { getInaktiveBeskjederForFodselsnummer(beskjedTestFnr) }.size shouldBe 1
         }
     }
 
@@ -57,8 +51,8 @@ class BeskjedQueriesTest {
     fun `Tom liste hvis det ikke finnes beskjeder knyttet til fødelsnummeret`() {
         val brukerSomIkkeFinnes = "0"
         runBlocking {
-            database.dbQuery { getAktivBeskjedForFodselsnummer(brukerSomIkkeFinnes) }.shouldBeEmpty()
-            database.dbQuery { getAktivBeskjedForFodselsnummer("") }.shouldBeEmpty()
+            database.dbQuery { getAktiveBeskjederForFodselsnummer(brukerSomIkkeFinnes) }.shouldBeEmpty()
+            database.dbQuery { getAktiveBeskjederForFodselsnummer("") }.shouldBeEmpty()
         }
     }
 
@@ -69,8 +63,8 @@ class BeskjedQueriesTest {
 
             database.dbQuery { setBeskjedInaktiv(beskjedTestFnr, beskjed1Aktiv.eventId) } shouldBe 1
             database.dbQuery { setBeskjedInaktiv(beskjedTestFnr, beskjed1Aktiv.eventId) } shouldBe 1
-            database.dbQuery { getAktivBeskjedForFodselsnummer(beskjedTestFnr) }.size shouldBe 1
-            database.dbQuery { getInaktivBeskjedForFodselsnummer(beskjedTestFnr) }.size shouldBe 2
+            database.dbQuery { getAktiveBeskjederForFodselsnummer(beskjedTestFnr) }.size shouldBe 1
+            database.dbQuery { getInaktiveBeskjederForFodselsnummer(beskjedTestFnr) }.size shouldBe 2
         }
         assertThrows<BeskjedNotFoundException> {
             runBlocking {
@@ -87,11 +81,11 @@ class BeskjedQueriesTest {
     @Test
     fun `Lesbart navn for produsent`() {
         runBlocking {
-            database.dbQuery { getAktivBeskjedForFodselsnummer(beskjedTestFnr) }.first()
+            database.dbQuery { getAktiveBeskjederForFodselsnummer(beskjedTestFnr) }.first()
                 .produsent shouldBe appnavn
-            database.dbQuery { getInaktivBeskjedForFodselsnummer(beskjedTestFnr) }.first()
+            database.dbQuery { getInaktiveBeskjederForFodselsnummer(beskjedTestFnr) }.first()
                 .produsent shouldBe appnavn
-            database.dbQuery { getAllBeskjedForFodselsnummer(beskjedTestFnr) }.first()
+            database.dbQuery { getAllBeskjederForFodselsnummer(beskjedTestFnr) }.first()
                 .produsent shouldBe appnavn
         }
     }
@@ -100,7 +94,7 @@ class BeskjedQueriesTest {
     fun `Liste av alle grupperte beskjeder`() {
         runBlocking {
             database.dbQuery {
-                getAllGroupedBeskjedEventsByIds(beskjedTestFnr, grupperingsid, appnavn)
+                getAllGroupedBeskjederByGrupperingsId(beskjedTestFnr, grupperingsid, appnavn)
             }.size shouldBe 3
         }
     }
@@ -110,7 +104,7 @@ class BeskjedQueriesTest {
         val noMatchProdusent = "dummyProdusent"
         runBlocking {
             database.dbQuery {
-                getAllGroupedBeskjedEventsByIds(beskjedTestFnr, grupperingsid, noMatchProdusent)
+                getAllGroupedBeskjederByGrupperingsId(beskjedTestFnr, grupperingsid, noMatchProdusent)
             }.shouldBeEmpty()
         }
     }
@@ -119,7 +113,7 @@ class BeskjedQueriesTest {
     fun `Tom liste hvis grupperingsid ikke matcher beskjed-eventet`() {
         runBlocking {
             database.dbQuery {
-                getAllGroupedBeskjedEventsByIds(beskjedTestFnr, "dummyGrupperingsid", appnavn)
+                getAllGroupedBeskjederByGrupperingsId(beskjedTestFnr, "dummyGrupperingsid", appnavn)
             }.shouldBeEmpty()
         }
     }
@@ -127,7 +121,7 @@ class BeskjedQueriesTest {
     @Test
     fun `Liste av alle grupperte Beskjed-eventer basert paa systembruker`() {
         runBlocking {
-            database.dbQuery { getAllGroupedBeskjedEventsBySystemuser() }.assert {
+            database.dbQuery { getAllGroupedBeskjederBySystemuser() }.assert {
                 size shouldBe 2
                 this[beskjed1Aktiv.systembruker] shouldBe 3
                 this[beskjed4Aktiv.systembruker] shouldBe 1

@@ -5,6 +5,7 @@ import no.nav.personbruker.dittnav.eventhandler.common.database.getListFromSepar
 import no.nav.personbruker.dittnav.eventhandler.common.database.getNullableUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
+import no.nav.personbruker.dittnav.eventhandler.common.database.mapSingleResult
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import java.sql.Connection
@@ -42,16 +43,6 @@ fun Connection.getAllBeskjedForFodselsnummer(fodselsnummer: String): List<Beskje
     prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ?""".trimMargin())
         .use {
             it.setString(1, fodselsnummer)
-            it.executeQuery().mapList {
-                toBeskjed()
-            }
-        }
-
-fun Connection.getBeskjedByIds(fodselsnummer: String, eventId: String): List<Beskjed> =
-    prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ? AND beskjed.eventId = ?""".trimMargin())
-        .use {
-            it.setString(1, fodselsnummer)
-            it.setString(2, eventId)
             it.executeQuery().mapList {
                 toBeskjed()
             }
@@ -140,7 +131,7 @@ private fun ResultSet.getNullableZonedDateTime(label: String): ZonedDateTime? {
 }
 
 fun Connection.setBeskjedInaktiv(fodselsnummer: String, eventId: String): Int {
-    if (getBeskjedByIds(fodselsnummer, eventId).isEmpty()) {
+    if (!beskjedExists(fodselsnummer, eventId)) {
         throw BeskjedNotFoundException(eventId)
     }
     return prepareStatement("""UPDATE beskjed SET aktiv = false, sistOppdatert = ? WHERE fodselsnummer = ? AND eventId = ?""".trimMargin())
@@ -151,5 +142,14 @@ fun Connection.setBeskjedInaktiv(fodselsnummer: String, eventId: String): Int {
             it.executeUpdate()
         }
 }
+
+fun Connection.beskjedExists(fodselsnummer: String, eventId: String): Boolean =
+    prepareStatement("""SELECT EXISTS(SELECT 1 FROM beskjed WHERE fodselsnummer = ? AND eventId=?) as exists""".trimMargin())
+        .use {
+            it.setString(1, fodselsnummer)
+            it.setString(2, eventId)
+            it.executeQuery().mapSingleResult { this.getBoolean("exists") }
+        }
+
 
 class BeskjedNotFoundException(val eventid: String) : IllegalArgumentException("beskjed med eventId $eventid ikke funnet")

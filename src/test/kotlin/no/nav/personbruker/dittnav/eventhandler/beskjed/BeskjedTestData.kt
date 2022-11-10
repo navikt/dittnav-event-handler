@@ -1,43 +1,25 @@
 package no.nav.personbruker.dittnav.eventhandler.beskjed
 
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.DoknotifikasjonTestStatus
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus.*
 
 internal fun Beskjed.medEksternVarsling(
-    sendt: Boolean
+    oversendt: Boolean
 ): Pair<Beskjed, DoknotifikasjonTestStatus> = Pair(
-    copy(eksternVarslingSendt = sendt),
+    copy(eksternVarslingSendt = oversendt),
     DoknotifikasjonTestStatus(
         eventId = eventId,
-        status = sendt.resolveVarslingStatus(),
-        melding = sendt.resolveMelding(),
-        distribusjonsId = if (sendt) 123L else null,
-        kanaler = eksternVarslingKanaler.resolveVarslingKanaler(sendt)
+        status = oversendt.resolveVarslingStatus(),
+        melding = oversendt.resolveMelding(),
+        distribusjonsId = if (oversendt) 123L else null,
+        kanaler = eksternVarslingKanaler.resolveVarslingKanaler(oversendt)
     )
 )
 
-internal val Pair<Beskjed, DoknotifikasjonTestStatus>.beskjed: Beskjed
+internal val Pair<Beskjed, DoknotifikasjonTestStatus>.beskjed
     get() = first
-
-internal val Pair<Beskjed, DoknotifikasjonTestStatus>.doknotStatus: DoknotifikasjonTestStatus
+internal val Pair<Beskjed, DoknotifikasjonTestStatus>.doknotStatus
     get() = second
-
-
-private fun Boolean.resolveMelding(): String = if (this) {
-    EksternVarslingStatus.OVERSENDT.name
-} else {
-    "feilet"
-}
-
-private fun Boolean.resolveVarslingStatus(): String =
-    if (this) {
-        EksternVarslingStatus.OVERSENDT.name
-    } else {
-        EksternVarslingStatus.FEILET.name
-    }
-
-private fun List<String>.resolveVarslingKanaler(sendt: Boolean) = if (sendt) {
-    this.joinToString(",")
-} else {
-    ""
-}
+private fun Boolean.resolveMelding(): String = if (this) OVERSENDT.name else "feilet"
+private fun Boolean.resolveVarslingStatus(): String = if (this) OVERSENDT.name else FEILET.name
+private fun List<String>.resolveVarslingKanaler(sendt: Boolean) = if (sendt) this.joinToString(",") else ""

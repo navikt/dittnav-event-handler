@@ -13,7 +13,6 @@ import no.nav.personbruker.dittnav.eventhandler.asZonedDateTime
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
 import no.nav.personbruker.dittnav.eventhandler.createBeskjed
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.DoknotifikasjonTestStatus
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus
 import no.nav.personbruker.dittnav.eventhandler.mockEventHandlerApi
 import no.nav.tms.token.support.authentication.installer.mock.installMockedAuthenticators
 import org.junit.jupiter.api.AfterAll
@@ -25,27 +24,28 @@ private val objectMapper = ObjectMapper()
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BeskjedApiTest {
+    private val baseEventId = "7777"
     private val beskjedTestFnr = "234567"
     private val fetchBeskjedEndpoint = "/dittnav-event-handler/fetch/beskjed"
     private val database = LocalPostgresDatabase.cleanDb()
-    private val aktivBeskjedMedEksternVarsling = createBeskjed()
-    private val aktivBeskjedMedFeiletEksternVarsling = createBeskjed()
-    private val inaktivBeskjedUtenEksternVarsling = createBeskjed()
-    private val aktivBeskjedMedAnnetpersonNummer = createBeskjed()
-    private val sendtDoknotStatus = DoknotifikasjonTestStatus(
-        eventId = aktivBeskjedMedEksternVarsling.eventId,
-        status = EksternVarslingStatus.OVERSENDT.name,
-        melding = "melding",
-        distribusjonsId = 8877L,
-        kanaler = "SMS,EPOST"
+    private val aktivMedEksternVarsling = createBeskjed(
+        fodselsnummer = beskjedTestFnr,
+        eventId = "${baseEventId}9",
+        eksternVarslingKanaler = listOf("SMS")
+    ).medEksternVarsling(true)
+    private val aktivBeskjedMedFeiletEksternVarsling = createBeskjed(
+        fodselsnummer = beskjedTestFnr,
+        eventId = "${baseEventId}8",
+        eksternVarslingKanaler = listOf("SMS", "EPOST")
+    ).medEksternVarsling(false)
+    private val inaktivBeskjedUtenEksternVarsling = createBeskjed(
+        fodselsnummer = beskjedTestFnr,
+        eventId = "${baseEventId}7",
+        aktiv = false
     )
-    private val feiletDoknostStatus = DoknotifikasjonTestStatus(
-        eventId = aktivBeskjedMedFeiletEksternVarsling.eventId,
-        status = EksternVarslingStatus.FEILET.name,
-        melding = "feilet",
-        distribusjonsId = 8877L,
-        kanaler = "SMS"
-
+    private val aktivBeskjedMedAnnetpersonNummer = createBeskjed(
+        eventId = "${baseEventId}3",
+        fodselsnummer = "887766"
     )
 
 
@@ -53,16 +53,16 @@ class BeskjedApiTest {
     fun `populer testdata`() {
         database.createBeskjed(
             listOf(
-                aktivBeskjedMedEksternVarsling,
-                aktivBeskjedMedFeiletEksternVarsling,
+                aktivMedEksternVarsling.beskjed,
+                aktivBeskjedMedFeiletEksternVarsling.beskjed,
                 inaktivBeskjedUtenEksternVarsling,
                 aktivBeskjedMedAnnetpersonNummer
             )
         )
         database.createDoknotStatuses(
             listOf(
-                sendtDoknotStatus,
-                feiletDoknostStatus
+                aktivMedEksternVarsling.doknotStatus,
+                aktivBeskjedMedFeiletEksternVarsling.doknotStatus
             )
         )
     }
@@ -72,8 +72,8 @@ class BeskjedApiTest {
         database.deleteAllDoknotStatusBeskjed()
         database.deleteBeskjed(
             listOf(
-                aktivBeskjedMedEksternVarsling,
-                aktivBeskjedMedFeiletEksternVarsling,
+                aktivMedEksternVarsling.beskjed,
+                aktivBeskjedMedFeiletEksternVarsling.beskjed,
                 inaktivBeskjedUtenEksternVarsling,
                 aktivBeskjedMedAnnetpersonNummer
             )
@@ -83,8 +83,8 @@ class BeskjedApiTest {
     @Test
     fun `henter aktive beskjedvarsel`() {
         val expectedVarsler = listOf(
-            aktivBeskjedMedEksternVarsling.updateWith(sendtDoknotStatus),
-            aktivBeskjedMedFeiletEksternVarsling.updateWith(feiletDoknostStatus)
+            aktivMedEksternVarsling.beskjed,
+            aktivBeskjedMedFeiletEksternVarsling.beskjed
         )
         testApplication {
             mockEventHandlerApi(
@@ -107,10 +107,10 @@ class BeskjedApiTest {
                 beskjedEventService = BeskjedEventService(database),
                 installAuthenticatorsFunction = { beskjedAuthConfig(beskjedTestFnr) }
             )
-            val aktiveVarsler = client.get("$fetchBeskjedEndpoint/inaktive")
+            val inaktiveVarsler = client.get("$fetchBeskjedEndpoint/inaktive")
 
-            objectMapper.readTree(aktiveVarsler.bodyAsText()) shouldContainExactly listOf(
-                inaktivBeskjedUtenEksternVarsling.updateWith(null)
+            objectMapper.readTree(inaktiveVarsler.bodyAsText()) shouldContainExactly listOf(
+                inaktivBeskjedUtenEksternVarsling
             )
         }
 
@@ -120,9 +120,9 @@ class BeskjedApiTest {
     @Test
     fun `henter alle varsel`() {
         val expectedVarsel = listOf(
-            aktivBeskjedMedEksternVarsling.updateWith(sendtDoknotStatus),
-            aktivBeskjedMedFeiletEksternVarsling.updateWith(feiletDoknostStatus),
-            inaktivBeskjedUtenEksternVarsling.updateWith(null)
+            aktivMedEksternVarsling.beskjed,
+            aktivBeskjedMedFeiletEksternVarsling.beskjed,
+            inaktivBeskjedUtenEksternVarsling
         )
         testApplication {
             mockEventHandlerApi(
@@ -184,18 +184,3 @@ private fun Application.beskjedAuthConfig(testFnr: String) {
         installAzureAuthMock { }
     }
 }
-
-private fun Beskjed.updateWith(doknotStatus: DoknotifikasjonTestStatus?): Beskjed =
-    if (doknotStatus != null) {
-        this.copy(
-            eksternVarslingKanaler = this.eksternVarslingKanaler,
-            eksternVarslingSendt = this.eksternVarslingSendt
-        )
-    } else {
-        this.copy(
-            eksternVarslingKanaler = this.eksternVarslingKanaler,
-            eksternVarslingSendt = false
-
-        )
-    }
-

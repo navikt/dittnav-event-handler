@@ -51,7 +51,7 @@ fun Connection.getActiveRateEventsStatisticsPerUserForBeskjed(): DecimalMeasurem
         }
 }
 
-val totalEventActiveRatePerUserQueryString = """
+const val totalEventActiveRatePerUserQueryString = """
     select
         min(aggregate.rate) as minRate, 
         max(aggregate.rate) as maxRate,

@@ -2,6 +2,27 @@ package no.nav.personbruker.dittnav.eventhandler.done
 
 import java.sql.Connection
 import java.sql.Types
+import java.time.ZonedDateTime
+
+fun createDone(
+    systembruker: String,
+    eventTidspunkt: ZonedDateTime,
+    fodselsnummer: String,
+    eventId: String,
+    grupperingsId: String,
+    forstBehandlet: ZonedDateTime
+): Done {
+    return Done(
+        systembruker = systembruker,
+        eventTidspunkt = eventTidspunkt,
+        fodselsnummer = fodselsnummer,
+        eventId = eventId,
+        grupperingsId = grupperingsId,
+        namespace = "dummyNamespace",
+        appnavn = "dummyAppnavn",
+        forstBehandlet = forstBehandlet
+    )
+}
 
 fun Connection.createDone(done: List<Done>) =
     prepareStatement(

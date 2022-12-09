@@ -8,11 +8,11 @@ import org.junit.jupiter.api.Test
 class BeskjedSerializerTest {
 
     @Test
-    fun `jsonSerialisering`(){
-        val beskjed = BeskjedObjectMother.createBeskjed()
+    fun `jsonSerialisering`() {
+        BeskjedObjectMother.createBeskjed()
         shouldNotThrow<Exception> {
             Json { ignoreUnknownKeys = true }
-            }
+        }
 
     }
 }

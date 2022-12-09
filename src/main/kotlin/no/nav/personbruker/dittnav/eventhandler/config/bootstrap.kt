@@ -29,8 +29,6 @@ import no.nav.personbruker.dittnav.eventhandler.beskjed.beskjedSystemClientApi
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.health.HealthService
 import no.nav.personbruker.dittnav.eventhandler.common.health.healthApi
-import no.nav.personbruker.dittnav.eventhandler.done.DoneEventService
-import no.nav.personbruker.dittnav.eventhandler.done.doneSystemClientApi
 import no.nav.personbruker.dittnav.eventhandler.varsel.VarselRepository
 import no.nav.personbruker.dittnav.eventhandler.varsel.varselApi
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksEventService
@@ -54,7 +52,6 @@ fun Application.eventHandlerApi(
     beskjedEventService: BeskjedEventService,
     oppgaveEventService: OppgaveEventService,
     innboksEventService: InnboksEventService,
-    doneEventService: DoneEventService,
     varselRepository: VarselRepository,
     eventStatisticsService: EventStatisticsService,
     database: Database,
@@ -90,7 +87,6 @@ fun Application.eventHandlerApi(
                 eventApi(varselRepository)
             }
             authenticate(AzureAuthenticator.name) {
-                doneSystemClientApi(doneEventService)
                 beskjedSystemClientApi(beskjedEventService)
                 innboksSystemClientApi(innboksEventService)
                 oppgaveSystemClientApi(oppgaveEventService)

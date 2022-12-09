@@ -5,7 +5,6 @@ import io.ktor.server.netty.Netty
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.health.HealthService
-import no.nav.personbruker.dittnav.eventhandler.done.DoneEventService
 import no.nav.personbruker.dittnav.eventhandler.varsel.VarselRepository
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksEventService
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveEventService
@@ -20,22 +19,20 @@ fun main() {
     val beskjedEventService = BeskjedEventService(database)
     val oppgaveEventService = OppgaveEventService(database)
     val innboksEventService = InnboksEventService(database)
-    val doneEventService = DoneEventService(database)
     val eventStatisticsService = EventStatisticsService(database)
-    val eventRepository = VarselRepository(database)
+    val varselRepository = VarselRepository(database)
 
     val healthService = HealthService(database)
 
     embeddedServer(Netty, port = 8080) {
         eventHandlerApi(
-            healthService,
-            beskjedEventService,
-            oppgaveEventService,
-            innboksEventService,
-            doneEventService,
-            eventRepository,
-            eventStatisticsService,
-            database
+            healthService = healthService,
+            beskjedEventService = beskjedEventService,
+            oppgaveEventService = oppgaveEventService,
+            innboksEventService = innboksEventService,
+            varselRepository = varselRepository,
+            eventStatisticsService = eventStatisticsService,
+            database = database
         )
     }.start(wait = true)
 }

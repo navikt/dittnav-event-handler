@@ -9,7 +9,6 @@ import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.health.HealthService
 import no.nav.personbruker.dittnav.eventhandler.config.eventHandlerApi
-import no.nav.personbruker.dittnav.eventhandler.done.DoneEventService
 import no.nav.personbruker.dittnav.eventhandler.varsel.VarselRepository
 import no.nav.personbruker.dittnav.eventhandler.innboks.Innboks
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksEventService
@@ -31,7 +30,6 @@ fun TestApplicationBuilder.mockEventHandlerApi(
     beskjedEventService: BeskjedEventService = mockk(relaxed = true),
     oppgaveEventService: OppgaveEventService = mockk(relaxed = true),
     innboksEventService: InnboksEventService = mockk(relaxed = true),
-    doneEventService: DoneEventService = mockk(relaxed = true),
     eventRepository: VarselRepository = mockk(relaxed = true),
     eventStatisticsService: EventStatisticsService = mockk(relaxed = true),
     database: Database = mockk(relaxed = true),
@@ -54,7 +52,6 @@ fun TestApplicationBuilder.mockEventHandlerApi(
             beskjedEventService = beskjedEventService,
             oppgaveEventService = oppgaveEventService,
             innboksEventService = innboksEventService,
-            doneEventService = doneEventService,
             varselRepository = eventRepository,
             eventStatisticsService = eventStatisticsService,
             database = database,

@@ -1,20 +1,17 @@
 package no.nav.personbruker.dittnav.eventhandler.varsel
 
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.matchers.shouldBe
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.*
 import io.ktor.server.testing.*
-import io.mockk.coEvery
-import io.mockk.mockk
 import no.nav.personbruker.dittnav.eventhandler.apiTestfnr
-import no.nav.personbruker.dittnav.eventhandler.beskjed.Beskjed
+import no.nav.personbruker.dittnav.eventhandler.asDateTime
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
-import no.nav.personbruker.dittnav.eventhandler.common.EventType
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
+import no.nav.personbruker.dittnav.eventhandler.comparableTime
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksObjectMother
 import no.nav.personbruker.dittnav.eventhandler.innboks.createInnboks
 import no.nav.personbruker.dittnav.eventhandler.mockEventHandlerApi
@@ -23,8 +20,6 @@ import no.nav.personbruker.dittnav.eventhandler.oppgave.createOppgave
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import java.time.ZonedDateTime
-import java.time.temporal.ChronoUnit
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class EventApiTest {
@@ -77,10 +72,10 @@ class EventApiTest {
             val response = client.get("dittnav-event-handler/fetch/event/inaktive")
 
             response.status shouldBe HttpStatusCode.OK
-            val varselListe = ObjectMapper().readTree(response.bodyAsText())
-            varselListe.size() shouldBe antallinaktiveVarselForFnr
+            val eventListe = ObjectMapper().readTree(response.bodyAsText())
+            eventListe.size() shouldBe antallinaktiveVarselForFnr
 
-            val varselJson = varselListe.find { it["eventId"].asText() == inaktivBeskjed.eventId }
+            val varselJson = eventListe.find { it["eventId"].asText() == inaktivBeskjed.eventId }
             require(varselJson != null)
             varselJson["grupperingsId"].asText() shouldBe inaktivBeskjed.grupperingsId
             varselJson["eventId"].asText() shouldBe inaktivBeskjed.eventId
@@ -103,46 +98,23 @@ class EventApiTest {
             val response = client.get("dittnav-event-handler/fetch/event/aktive")
 
             response.status shouldBe HttpStatusCode.OK
-            val varselListe = ObjectMapper().readTree(response.bodyAsText())
-            varselListe.size() shouldBe antallaktiveVarselForFnr
+            val eventListe = ObjectMapper().readTree(response.bodyAsText())
+            eventListe.size() shouldBe antallaktiveVarselForFnr
 
-            val varselJson = varselListe.find { it["eventId"].asText() == aktivBeskjed.eventId }
-            require(varselJson != null)
-            varselJson["grupperingsId"].asText() shouldBe aktivBeskjed.grupperingsId
-            varselJson["eventId"].asText() shouldBe aktivBeskjed.eventId
-            varselJson["eventTidspunkt"].asDateTime() shouldBe aktivBeskjed.eventTidspunkt.comparableTime()
-            varselJson["produsent"].asText() shouldBe aktivBeskjed.appnavn
-            varselJson["sikkerhetsnivaa"].asInt() shouldBe aktivBeskjed.sikkerhetsnivaa
-            varselJson["sistOppdatert"].asDateTime() shouldBe aktivBeskjed.sistOppdatert.comparableTime()
-            varselJson["tekst"].asText() shouldBe aktivBeskjed.tekst
-            varselJson["link"].asText() shouldBe aktivBeskjed.link
-            varselJson["aktiv"].asBoolean() shouldBe true
-            varselJson["forstBehandlet"].asDateTime() shouldBe aktivBeskjed.forstBehandlet.comparableTime()
-            varselJson["type"].asText() shouldBe "BESKJED"
+            val eventJson = eventListe.find { it["eventId"].asText() == aktivBeskjed.eventId }
+            require(eventJson != null)
+            eventJson["grupperingsId"].asText() shouldBe aktivBeskjed.grupperingsId
+            eventJson["eventId"].asText() shouldBe aktivBeskjed.eventId
+            eventJson["eventTidspunkt"].asDateTime() shouldBe aktivBeskjed.eventTidspunkt.comparableTime()
+            eventJson["produsent"].asText() shouldBe aktivBeskjed.appnavn
+            eventJson["sikkerhetsnivaa"].asInt() shouldBe aktivBeskjed.sikkerhetsnivaa
+            eventJson["sistOppdatert"].asDateTime() shouldBe aktivBeskjed.sistOppdatert.comparableTime()
+            eventJson["tekst"].asText() shouldBe aktivBeskjed.tekst
+            eventJson["link"].asText() shouldBe aktivBeskjed.link
+            eventJson["aktiv"].asBoolean() shouldBe true
+            eventJson["forstBehandlet"].asDateTime() shouldBe aktivBeskjed.forstBehandlet.comparableTime()
+            eventJson["type"].asText() shouldBe "BESKJED"
         }
     }
 }
 
-private fun JsonNode.asDateTime()=
-    ZonedDateTime.parse(asText()).comparableTime()
-
-private fun ZonedDateTime.comparableTime()=
-    truncatedTo(ChronoUnit.SECONDS).toLocalDateTime()
-
-
-
-
-private fun Beskjed.toVarsel() = Varsel(
-    fodselsnummer = fodselsnummer,
-    grupperingsId = grupperingsId,
-    eventId = eventId,
-    eventTidspunkt = eventTidspunkt,
-    produsent = produsent,
-    sikkerhetsnivaa = sikkerhetsnivaa,
-    sistOppdatert = sistOppdatert,
-    tekst = tekst,
-    link = link,
-    aktiv = aktiv,
-    type = EventType.BESKJED,
-    forstBehandlet = forstBehandlet
-)

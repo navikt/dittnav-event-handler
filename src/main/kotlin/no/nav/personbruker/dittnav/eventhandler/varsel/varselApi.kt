@@ -27,9 +27,9 @@ fun Route.varselApi(varselRepository: VarselRepository) {
     get("/fetch/varsel/on-behalf-of/aktive") {
         doIfValidRequest { user ->
             try {
-                val inactiveEventDTOs = varselRepository.getActiveVarsel(user.fodselsnummer)
+                val activeEventDTOs = varselRepository.getActiveVarsel(user.fodselsnummer)
                     .map { event -> event.toEventDTO() }
-                call.respond(HttpStatusCode.OK, inactiveEventDTOs)
+                call.respond(HttpStatusCode.OK, activeEventDTOs)
             } catch (exception: Exception) {
                 respondWithError(call, log, exception)
             }

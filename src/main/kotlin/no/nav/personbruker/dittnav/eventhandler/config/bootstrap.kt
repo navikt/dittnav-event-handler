@@ -91,7 +91,6 @@ fun Application.eventHandlerApi(
                 innboksSystemClientApi(innboksEventService)
                 oppgaveSystemClientApi(oppgaveEventService)
                 varselApi(varselRepository)
-
                 statisticsSystemClientApi(eventStatisticsService)
             }
         }

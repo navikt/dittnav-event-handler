@@ -1,6 +1,11 @@
 package no.nav.personbruker.dittnav.eventhandler
 
 import com.fasterxml.jackson.databind.JsonNode
+import io.ktor.client.HttpClient
+import io.ktor.client.request.get
+import io.ktor.client.request.header
+import io.ktor.client.request.url
+import io.ktor.client.statement.HttpResponse
 import io.ktor.server.application.Application
 import io.ktor.server.testing.TestApplicationBuilder
 import io.mockk.mockk
@@ -41,7 +46,10 @@ fun TestApplicationBuilder.mockEventHandlerApi(
                 staticUserPid = apiTestfnr
                 staticSecurityLevel = SecurityLevel.LEVEL_4
             }
-            installAzureAuthMock {}
+            installAzureAuthMock {
+                setAsDefault = false
+                alwaysAuthenticated = true
+            }
         }
     }
 ) {
@@ -180,3 +188,14 @@ internal inline fun <T> T.assert(block: T.() -> Unit): T =
     apply {
         block()
     }
+
+internal fun JsonNode.asDateTime()=
+    ZonedDateTime.parse(asText()).comparableTime()
+
+internal fun ZonedDateTime.comparableTime()=
+    truncatedTo(ChronoUnit.SECONDS).toLocalDateTime()
+
+suspend fun HttpClient.getMedFnrHeader(url: String, fnr: String = apiTestfnr): HttpResponse = get {
+    url(url)
+    header("fodselsnummer",fnr)
+}

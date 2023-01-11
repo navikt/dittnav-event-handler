@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class EventTest {
+class VarselTest {
     private val database = LocalPostgresDatabase.cleanDb()
     private val eventRepository = VarselRepository(database)
 

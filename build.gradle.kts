@@ -75,6 +75,8 @@ dependencies {
     testImplementation(Ktor2.TmsTokenSupport.azureValidationMock)
     testImplementation(Kotest.runnerJunit5)
     testImplementation(Kotest.assertionsCore)
+    testImplementation("io.ktor:ktor-server-tests-jvm:2.1.1")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.7.10")
 
     testRuntimeOnly(Bouncycastle.bcprovJdk15on)
     testRuntimeOnly(Jjwt.impl)

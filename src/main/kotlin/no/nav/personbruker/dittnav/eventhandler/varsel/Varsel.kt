@@ -20,7 +20,8 @@ data class VarselDTO(
     val link: String,
     val aktiv: Boolean,
     val type: EventType,
-    val forstBehandlet: ZonedDateTime
+    val forstBehandlet: ZonedDateTime,
+    val fristUtløpt: Boolean?
 )
 
 class Varsel(
@@ -35,9 +36,10 @@ class Varsel(
     private val link: String,
     private val aktiv: Boolean,
     private val type: EventType,
-    private val forstBehandlet: ZonedDateTime
+    private val forstBehandlet: ZonedDateTime,
+    private val fristUtløpt: Boolean?
 ) {
-    fun toEventDTO(): VarselDTO {
+    fun toVarselDTO(): VarselDTO {
         return VarselDTO(
             grupperingsId = grupperingsId,
             eventId = eventId,
@@ -49,7 +51,8 @@ class Varsel(
             link = link,
             aktiv = aktiv,
             type = type,
-            forstBehandlet = forstBehandlet
+            forstBehandlet = forstBehandlet,
+            fristUtløpt = fristUtløpt
         )
     }
 }

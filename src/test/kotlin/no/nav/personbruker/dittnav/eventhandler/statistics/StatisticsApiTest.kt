@@ -535,17 +535,21 @@ private object TestBruker1 : TestBruker {
     override val fodselsnummer = "12345"
 
     override val beskjeder = listOf(
-        BeskjedObjectMother.createBeskjed(fodselsnummer = fodselsnummer),
-        BeskjedObjectMother.createBeskjed(fodselsnummer = fodselsnummer, tekst = "Kort tekst"),
-        BeskjedObjectMother.createBeskjed(fodselsnummer = fodselsnummer, tekst = "tekst fordi gøy eller noe"),
+        BeskjedObjectMother.createBeskjed(fodselsnummer = fodselsnummer,),
+        BeskjedObjectMother.createBeskjed(fodselsnummer = fodselsnummer, tekst = "Kort tekst",),
+        BeskjedObjectMother.createBeskjed(fodselsnummer = fodselsnummer, tekst = "tekst fordi gøy eller noe",),
     )
 
     override val oppgaver = listOf(
-        OppgaveObjectMother.createOppgave(fodselsnummer = fodselsnummer),
-        OppgaveObjectMother.createOppgave(fodselsnummer = fodselsnummer),
-        OppgaveObjectMother.createOppgave(fodselsnummer = fodselsnummer),
-        OppgaveObjectMother.createOppgave(fodselsnummer = fodselsnummer),
-        OppgaveObjectMother.createOppgave(fodselsnummer = fodselsnummer, tekst = "Laaaaaaaaaaaaaang tekst"),
+        OppgaveObjectMother.createOppgave(fodselsnummer = fodselsnummer, fristUtløpt = null),
+        OppgaveObjectMother.createOppgave(fodselsnummer = fodselsnummer, fristUtløpt = null),
+        OppgaveObjectMother.createOppgave(fodselsnummer = fodselsnummer, fristUtløpt = null),
+        OppgaveObjectMother.createOppgave(fodselsnummer = fodselsnummer, fristUtløpt = null),
+        OppgaveObjectMother.createOppgave(
+            fodselsnummer = fodselsnummer,
+            tekst = "Laaaaaaaaaaaaaang tekst",
+            fristUtløpt = null
+        ),
     )
 
     override val innbokser = listOf(
@@ -564,16 +568,17 @@ private object TestBruker2 : TestBruker {
     override val fodselsnummer = "99999"
 
     override val beskjeder = listOf(
-        BeskjedObjectMother.createBeskjed(fodselsnummer = fodselsnummer),
+        BeskjedObjectMother.createBeskjed(fodselsnummer = fodselsnummer,),
     )
 
     override val oppgaver = listOf(
-        OppgaveObjectMother.createOppgave(fodselsnummer = fodselsnummer),
-        OppgaveObjectMother.createOppgave(fodselsnummer = fodselsnummer),
+        OppgaveObjectMother.createOppgave(fodselsnummer = fodselsnummer, fristUtløpt = null),
+        OppgaveObjectMother.createOppgave(fodselsnummer = fodselsnummer, fristUtløpt = null),
         OppgaveObjectMother.createOppgave(
             fodselsnummer = fodselsnummer,
             aktiv = false,
-            tekst = "Og tekst på inaktive saker, regner med det teller"
+            tekst = "Og tekst på inaktive saker, regner med det teller",
+            fristUtløpt = null
         )
     )
 
@@ -594,7 +599,7 @@ private object TestBruker3 : TestBruker {
     override val fodselsnummer = "99998"
 
     override val beskjeder = listOf(
-        BeskjedObjectMother.createBeskjed(fodselsnummer = fodselsnummer, tekst = "Tekst fordi tekst er tekst"),
+        BeskjedObjectMother.createBeskjed(fodselsnummer = fodselsnummer, tekst = "Tekst fordi tekst er tekst",),
     )
     override val oppgaver: List<Oppgave> = listOf()
     override val innbokser: List<Innboks> = listOf()

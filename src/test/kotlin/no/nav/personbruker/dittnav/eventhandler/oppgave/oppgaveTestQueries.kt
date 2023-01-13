@@ -14,8 +14,8 @@ import java.time.ZonedDateTime
 
 fun Connection.createOppgave(oppgaver: List<Oppgave>) =
     prepareStatement(
-        """INSERT INTO oppgave(id, systembruker, eventTidspunkt, fodselsnummer, eventId, grupperingsId, tekst, link, sikkerhetsnivaa, sistOppdatert, aktiv, namespace, appnavn, forstBehandlet, eksternVarsling, prefererteKanaler)
-            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        """INSERT INTO oppgave(id, systembruker, eventTidspunkt, fodselsnummer, eventId, grupperingsId, tekst, link, sikkerhetsnivaa, sistOppdatert, aktiv, namespace, appnavn, forstBehandlet, eksternVarsling, prefererteKanaler, frist_utløpt)
+            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)"""
     )
         .use {
             oppgaver.forEach { oppgave ->
@@ -36,6 +36,8 @@ fun Connection.createOppgave(oppgaver: List<Oppgave>) =
                     it.setObject(14, oppgave.forstBehandlet.utcLocalDate(), Types.TIMESTAMP)
                     it.setObject(15, oppgave.eksternVarslingInfo.bestilt)
                     it.setObject(16, oppgave.eksternVarslingInfo.prefererteKanaler.joinToString(","))
+                    oppgave.fristUtløpt?.let { fristUtløpt -> it.setBoolean(17, fristUtløpt) } ?: it.setNull(17, Types.BOOLEAN)
+
                     it.addBatch()
                 }
             }

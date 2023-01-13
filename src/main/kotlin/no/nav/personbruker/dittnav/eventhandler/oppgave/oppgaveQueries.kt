@@ -62,21 +62,22 @@ private fun ResultSet.toOppgave(): Oppgave {
     val verifiedEventTidspunkt = convertIfUnlikelyDate(rawEventTidspunkt)
     return Oppgave(
         id = getInt("id"),
+        fodselsnummer = getString("fodselsnummer"),
+        grupperingsId = getString("grupperingsId"),
+        eventId = getString("eventId"),
+        eventTidspunkt = verifiedEventTidspunkt,
+        forstBehandlet = ZonedDateTime.ofInstant(getUtcTimeStamp("forstBehandlet").toInstant(), ZoneId.of("Europe/Oslo")),
         produsent = getString("appnavn") ?: "",
         systembruker = getString("systembruker"),
         namespace = getString("namespace"),
         appnavn = getString("appnavn"),
-        eventTidspunkt = verifiedEventTidspunkt,
-        fodselsnummer = getString("fodselsnummer"),
-        eventId = getString("eventId"),
-        grupperingsId = getString("grupperingsId"),
-        tekst = getString("tekst"),
-        link = getString("link"),
         sikkerhetsnivaa = getInt("sikkerhetsnivaa"),
         sistOppdatert = ZonedDateTime.ofInstant(getUtcTimeStamp("sistOppdatert").toInstant(), ZoneId.of("Europe/Oslo")),
+        tekst = getString("tekst"),
+        link = getString("link"),
         aktiv = getBoolean("aktiv"),
-        forstBehandlet = ZonedDateTime.ofInstant(getUtcTimeStamp("forstBehandlet").toInstant(), ZoneId.of("Europe/Oslo")),
-        eksternVarslingInfo = toEksternVarslingInfo()
+        eksternVarslingInfo = toEksternVarslingInfo(),
+        fristUtløpt = getBoolean("frist_utløpt").let { if(wasNull()) null else it}
     )
 }
 

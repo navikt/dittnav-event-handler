@@ -16,7 +16,7 @@ object BeskjedObjectMother {
         id: Int = ++idIncrementor,
         eventId: String = (++eventIdIncrementor).toString(),
         fodselsnummer: String = defaultFodselsnummer,
-        synligFremTil: ZonedDateTime? =  OsloDateTime.now().plusDays(7),
+        synligFremTil: ZonedDateTime? = OsloDateTime.now().plusDays(7),
         aktiv: Boolean = true,
         systembruker: String = defaultSystembruker,
         namespace: String = "min-side",
@@ -30,8 +30,8 @@ object BeskjedObjectMother {
         sistOppdatert: ZonedDateTime = OsloDateTime.now(),
         sikkerhetsnivaa: Int = 4,
         eksternVarslingSendt: Boolean = false,
-        eksternVarslingKanaler: List<String> = listOf()
-    ,
+        eksternVarslingKanaler: List<String> = listOf(),
+        fristUtløpt: Boolean? = null
     ): Beskjed {
         return Beskjed(
             id = id,
@@ -51,7 +51,8 @@ object BeskjedObjectMother {
             sikkerhetsnivaa = sikkerhetsnivaa,
             aktiv = aktiv,
             eksternVarslingSendt = eksternVarslingSendt,
-            eksternVarslingKanaler = eksternVarslingKanaler
+            eksternVarslingKanaler = eksternVarslingKanaler,
+            fristUtløpt = fristUtløpt
         )
     }
 }
@@ -69,17 +70,17 @@ object BeskjedTestData {
         id = 1,
         eventId = "123",
         fodselsnummer = beskjedTestFnr,
-        grupperingsId = grupperingsid,
         synligFremTil = OsloDateTime.now().plusHours(1),
-        forstBehandlet = OsloDateTime.now(),
         aktiv = true,
         systembruker = systembruker,
         namespace = namespace,
         appnavn = appnavn,
+        forstBehandlet = OsloDateTime.now(),
+        grupperingsId = grupperingsid,
         eksternVarslingSendt = true,
-        eksternVarslingKanaler = listOf("SMS","EPOST")
+        eksternVarslingKanaler = listOf("SMS","EPOST"),
 
-    )
+        )
 
     val doknotStatusForBeskjed1 = DoknotifikasjonTestStatus(
         eventId = beskjed1Aktiv.eventId,
@@ -93,15 +94,15 @@ object BeskjedTestData {
         id = 2,
         eventId = eventId,
         fodselsnummer = beskjedTestFnr,
-        grupperingsId = grupperingsid,
         synligFremTil = OsloDateTime.now().plusHours(1),
-        forstBehandlet = OsloDateTime.now().minusDays(5),
         aktiv = true,
         systembruker = systembruker,
         namespace = namespace,
         appnavn = appnavn,
+        forstBehandlet = OsloDateTime.now().minusDays(5),
+        grupperingsId = grupperingsid,
+        eksternVarslingSendt = false,
         eksternVarslingKanaler = emptyList(),
-        eksternVarslingSendt = false
     )
 
     val doknotStatusForBeskjed2 = DoknotifikasjonTestStatus(
@@ -116,23 +117,23 @@ object BeskjedTestData {
         id = 3,
         eventId = "567",
         fodselsnummer = beskjedTestFnr,
-        grupperingsId = grupperingsid,
         synligFremTil = OsloDateTime.now().plusHours(1),
-        forstBehandlet = OsloDateTime.now().minusDays(15),
         aktiv = false,
         systembruker = systembruker,
         namespace = namespace,
-        appnavn = appnavn
+        appnavn = appnavn,
+        forstBehandlet = OsloDateTime.now().minusDays(15),
+        grupperingsId = grupperingsid,
     )
     internal val beskjed4Aktiv = BeskjedObjectMother.createBeskjed(
         id = 4,
         eventId = "789",
         fodselsnummer = "54321",
         synligFremTil = OsloDateTime.now().plusHours(1),
-        forstBehandlet = OsloDateTime.now().minusDays(25),
         aktiv = true,
         systembruker = "x-dittnav-2",
         namespace = namespace,
-        appnavn = "dittnav-2"
+        appnavn = "dittnav-2",
+        forstBehandlet = OsloDateTime.now().minusDays(25),
     )
 }

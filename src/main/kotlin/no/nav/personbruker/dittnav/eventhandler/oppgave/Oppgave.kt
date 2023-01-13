@@ -19,7 +19,8 @@ data class Oppgave(
     val tekst: String,
     val link: String,
     val aktiv: Boolean,
-    val eksternVarslingInfo: EksternVarslingInfo
+    val eksternVarslingInfo: EksternVarslingInfo,
+    val fristUtløpt: Boolean?
 ) {
     override fun toString(): String {
         return "Oppgave(" +

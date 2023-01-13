@@ -25,8 +25,16 @@ class OppgaveEventServiceTest {
         val innloggetbruker = TokenXUserObjectMother.createInnloggetBruker("100")
         val grupperingsid = "100${innloggetbruker.ident}"
         val oppgaveEvents = listOf(
-            OppgaveObjectMother.createOppgave(fodselsnummer = innloggetbruker.ident, grupperingsId = grupperingsid),
-            OppgaveObjectMother.createOppgave(fodselsnummer = innloggetbruker.ident, grupperingsId = grupperingsid)
+            OppgaveObjectMother.createOppgave(
+                fodselsnummer = innloggetbruker.ident,
+                grupperingsId = grupperingsid,
+                fristUtløpt = null
+            ),
+            OppgaveObjectMother.createOppgave(
+                fodselsnummer = innloggetbruker.ident,
+                grupperingsId = grupperingsid,
+                fristUtløpt = null
+            )
         )
         runBlocking {
             coEvery {

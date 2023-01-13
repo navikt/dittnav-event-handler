@@ -38,7 +38,8 @@ object OppgaveObjectMother {
         tekst: String = "Dette er oppgave til brukeren",
         link: String = "https://nav.no/systemX/$defaultFodselsnummer",
         sikkerhetsnivaa: Int = 4,
-        eksternVarslingInfo: EksternVarslingInfo = defaultEksternVarslinginfo
+        eksternVarslingInfo: EksternVarslingInfo = defaultEksternVarslinginfo,
+        fristUtløpt: Boolean?
     ): Oppgave {
         return Oppgave(
             id = id,
@@ -56,7 +57,8 @@ object OppgaveObjectMother {
             tekst = tekst,
             link = link,
             aktiv = aktiv,
-            eksternVarslingInfo = eksternVarslingInfo
+            eksternVarslingInfo = eksternVarslingInfo,
+            fristUtløpt = fristUtløpt
         )
     }
 }
@@ -72,16 +74,17 @@ object OppgaveTestData {
         id = 1,
         eventId = "123",
         fodselsnummer = oppgaveTestFnr,
-        grupperingsId = grupperingsid,
         aktiv = true,
         systembruker = systembruker,
         namespace = namespace,
         appnavn = appnavn,
+        grupperingsId = grupperingsid,
         forstBehandlet = OsloDateTime.now(),
         eksternVarslingInfo = EksternVarslingInfoObjectMother.createEskternVarslingInfo(
             bestilt = true,
             prefererteKanaler = listOf("SMS", "EPOST")
-        )
+        ),
+        fristUtløpt = null
     )
 
     val doknotStatusForOppgave1 = DoknotifikasjonTestStatus(
@@ -96,16 +99,17 @@ object OppgaveTestData {
         id = 2,
         eventId = "345",
         fodselsnummer = oppgaveTestFnr,
-        grupperingsId = grupperingsid,
         aktiv = true,
         systembruker = systembruker,
         namespace = namespace,
         appnavn = appnavn,
+        grupperingsId = grupperingsid,
         forstBehandlet = OsloDateTime.now().minusDays(5),
         eksternVarslingInfo = EksternVarslingInfoObjectMother.createEskternVarslingInfo(
             bestilt = true,
             prefererteKanaler = listOf("SMS", "EPOST")
-        )
+        ),
+        fristUtløpt = null
     )
 
     internal val doknotStatusForOppgave2 = DoknotifikasjonTestStatus(
@@ -120,12 +124,13 @@ object OppgaveTestData {
         id = 3,
         eventId = "567",
         fodselsnummer = oppgaveTestFnr,
-        grupperingsId = grupperingsid,
         aktiv = false,
         systembruker = systembruker,
         namespace = namespace,
         appnavn = appnavn,
-        forstBehandlet = OsloDateTime.now().minusDays(15)
+        grupperingsId = grupperingsid,
+        forstBehandlet = OsloDateTime.now().minusDays(15),
+        fristUtløpt = null
     )
     internal val oppgave4 = OppgaveObjectMother.createOppgave(
         id = 4,
@@ -135,6 +140,7 @@ object OppgaveTestData {
         systembruker = "x-dittnav-2",
         namespace = namespace,
         appnavn = "x-dittnav",
-        forstBehandlet = OsloDateTime.now().minusDays(25)
+        forstBehandlet = OsloDateTime.now().minusDays(25),
+        fristUtløpt = null
     )
 }

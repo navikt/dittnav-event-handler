@@ -8,7 +8,7 @@ class OppgaveTest {
 
     @Test
     fun `skal returnere maskerte data fra toString-metoden`() {
-        val oppgave = OppgaveObjectMother.createOppgave()
+        val oppgave = OppgaveObjectMother.createOppgave(fristUtløpt = null)
         val oppgaveAsString = oppgave.toString()
         oppgaveAsString shouldContain "fodselsnummer=***"
         oppgaveAsString shouldContain "tekst=***"
@@ -17,7 +17,7 @@ class OppgaveTest {
     }
     @Test
     fun `skal transformere til DTO`() {
-        val oppgave = OppgaveObjectMother.createOppgave()
+        val oppgave = OppgaveObjectMother.createOppgave(fristUtløpt = null)
         val oppgaveDTO = oppgave.toDTO()
         oppgaveDTO.fodselsnummer shouldBe oppgave.fodselsnummer
         oppgaveDTO.grupperingsId shouldBe oppgave.grupperingsId

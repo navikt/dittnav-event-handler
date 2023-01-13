@@ -50,6 +50,7 @@ class VarselRepository(private val database: Database) {
                 sistOppdatert,
                 aktiv,
                 forstBehandlet,
+                frist_utløpt,
                 '$table' as type 
             FROM $table
             WHERE fodselsnummer = ?
@@ -78,6 +79,8 @@ class VarselRepository(private val database: Database) {
         forstBehandlet = ZonedDateTime.ofInstant(
             getUtcTimeStamp("forstBehandlet").toInstant(),
             ZoneId.of("Europe/Oslo")
-        )
+        ),
+        fristUtløpt = getBoolean("frist_utløpt").let { if(wasNull()) null else it}
     )
 }
+

@@ -117,7 +117,7 @@ class BeskjedQueriesTest {
     @Test
     fun `Lesbart navn for produsent som kan eksponeres for alle eventer`() {
         runBlocking {
-            val beskjed = database.dbQuery { getAllBeskjedForFodselsnummer(beskjedTestFnr) }.first()
+            database.dbQuery { getAllBeskjedForFodselsnummer(beskjedTestFnr) }.first()
                 .produsent shouldBe appnavn
         }
     }

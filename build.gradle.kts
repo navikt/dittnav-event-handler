@@ -62,6 +62,7 @@ dependencies {
 
     testImplementation(Jjwt.api)
     testImplementation(Junit.api)
+    testImplementation(Junit.params)
     testImplementation(Kafka.Apache.kafka_2_12)
     testImplementation(Kafka.Apache.streams)
     testImplementation(Kafka.Confluent.schemaRegistry)

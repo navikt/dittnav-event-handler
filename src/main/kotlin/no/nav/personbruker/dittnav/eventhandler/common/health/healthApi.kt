@@ -18,7 +18,7 @@ fun Route.healthApi(healthService: HealthService, prometheusMeterRegistry: Prome
     }
 
     get("/internal/isReady") {
-        if (isReady(healthService)) {
+        if (isReady()) {
             call.respondText(text = "READY", contentType = ContentType.Text.Plain)
         } else {
             call.respondText(text = "NOTREADY", contentType = ContentType.Text.Plain, status = HttpStatusCode.FailedDependency)
@@ -38,7 +38,6 @@ fun Route.healthApi(healthService: HealthService, prometheusMeterRegistry: Prome
     }
 }
 
-private fun isReady(healthService: HealthService): Boolean {
-    // utvid eventuelt med logikk for å inkludere helsesjekker som skal påvirke om appen er ready eller ikke.
+private fun isReady(): Boolean {
     return true
 }

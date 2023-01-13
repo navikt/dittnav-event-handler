@@ -72,6 +72,7 @@ spec:
           cluster: dev-fss
         - application: tms-event-api
         - application: tms-varselbjelle-api
+        - application: tms-varsel-api
     outbound:
       external:
         - host: kafka-schema-registry.nais-q.adeo.no

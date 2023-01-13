@@ -89,7 +89,6 @@ internal class ComparableVarsel(
         forstBehandlet.withZoneSameInstant(ZoneId.of("Europe/Oslo")).truncatedTo(ChronoUnit.SECONDS)
 
     private fun assertThisEquals(expected: ComparableVarsel) {
-        val eventId = expected.eventId
         assertEquals(expected.fodselsnummer, this.fodselsnummer, "fodselsnummer")
         assertEquals(expected.grupperingsId, this.grupperingsId, "grupperingsid")
         assertEquals(expected.eventId, this.eventId, "eventId")

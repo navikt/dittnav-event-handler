@@ -1,7 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.config
 
 
-import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationCall
@@ -13,7 +12,6 @@ import io.ktor.server.metrics.micrometer.MicrometerMetrics
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.defaultheaders.DefaultHeaders
 import io.ktor.server.plugins.statuspages.StatusPages
-import io.ktor.server.response.respond
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.ktor.util.pipeline.PipelineContext
@@ -23,14 +21,14 @@ import kotlinx.serialization.json.Json
 import mu.KotlinLogging
 import no.nav.personbruker.dittnav.common.util.config.StringEnvVar
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService
-import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedNotFoundException
 import no.nav.personbruker.dittnav.eventhandler.beskjed.beskjedApi
 import no.nav.personbruker.dittnav.eventhandler.beskjed.beskjedSystemClientApi
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
+import no.nav.personbruker.dittnav.eventhandler.common.exceptions.configureErrorResponses
 import no.nav.personbruker.dittnav.eventhandler.common.health.HealthService
 import no.nav.personbruker.dittnav.eventhandler.common.health.healthApi
 import no.nav.personbruker.dittnav.eventhandler.varsel.VarselRepository
-import no.nav.personbruker.dittnav.eventhandler.varsel.varselApi
+import no.nav.personbruker.dittnav.eventhandler.varsel.oboVarselApi
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksEventService
 import no.nav.personbruker.dittnav.eventhandler.innboks.innboksApi
 import no.nav.personbruker.dittnav.eventhandler.innboks.innboksSystemClientApi
@@ -39,7 +37,7 @@ import no.nav.personbruker.dittnav.eventhandler.oppgave.oppgaveApi
 import no.nav.personbruker.dittnav.eventhandler.oppgave.oppgaveSystemClientApi
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventStatisticsService
 import no.nav.personbruker.dittnav.eventhandler.statistics.statisticsSystemClientApi
-import no.nav.personbruker.dittnav.eventhandler.varsel.eventApi
+import no.nav.personbruker.dittnav.eventhandler.varsel.varselApi
 import no.nav.tms.token.support.authentication.installer.installAuthenticators
 import no.nav.tms.token.support.azure.validation.AzureAuthenticator
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
@@ -71,10 +69,7 @@ fun Application.eventHandlerApi(
 
     installAuthenticatorsFunction()
     install(StatusPages) {
-        exception<BeskjedNotFoundException> { call, cause ->
-            log.warn { cause.message }
-            call.respond(status = HttpStatusCode.BadRequest, message = cause.message.toString())
-        }
+        configureErrorResponses()
     }
 
     routing {
@@ -84,19 +79,20 @@ fun Application.eventHandlerApi(
                 beskjedApi(beskjedEventService)
                 innboksApi(innboksEventService)
                 oppgaveApi(oppgaveEventService)
-                eventApi(varselRepository)
+                varselApi(varselRepository)
             }
             authenticate(AzureAuthenticator.name) {
                 beskjedSystemClientApi(beskjedEventService)
                 innboksSystemClientApi(innboksEventService)
                 oppgaveSystemClientApi(oppgaveEventService)
-                varselApi(varselRepository)
+                oboVarselApi(varselRepository)
                 statisticsSystemClientApi(eventStatisticsService)
             }
         }
     }
     installShutdownHook(database)
 }
+
 
 private fun installAuth(): Application.() -> Unit = {
     installAuthenticators {

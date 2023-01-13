@@ -1,6 +1,5 @@
 package no.nav.personbruker.dittnav.eventhandler.varsel;
 
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.matchers.shouldBe
 import io.ktor.client.statement.bodyAsText
@@ -20,8 +19,10 @@ import no.nav.personbruker.dittnav.eventhandler.mockEventHandlerApi
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveObjectMother
 import no.nav.personbruker.dittnav.eventhandler.oppgave.createOppgave
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
+
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class VarselApiTest {
@@ -79,12 +80,13 @@ class VarselApiTest {
     }
 
 
-    @Test
-    fun `varsel-apiet skal returnere inaktive varsler`() =
+    @ParameterizedTest
+    @ValueSource(strings = ["dittnav-event-handler/fetch/varsel/on-behalf-of/inaktive","dittnav-event-handler/fetch/event/inaktive"])
+    fun `varsel-apiet skal returnere inaktive varsler`(url: String) =
         testApplication {
             mockEventHandlerApi(eventRepository = varselRepository)
             val response =
-                client.getMedFnrHeader("dittnav-event-handler/fetch/varsel/on-behalf-of/inaktive", fodselsnummer)
+                client.getMedFnrHeader(url, fodselsnummer)
 
             response.status shouldBe HttpStatusCode.OK
             val varselListe = ObjectMapper().readTree(response.bodyAsText())
@@ -111,7 +113,8 @@ class VarselApiTest {
         }
 
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(strings = ["dittnav-event-handler/fetch/varsel/on-behalf-of/aktive","dittnav-event-handler/fetch/event/aktive"])
     fun `varsel-apiet skal returnere aktive varsler`() {
         testApplication {
             mockEventHandlerApi(eventRepository = varselRepository)

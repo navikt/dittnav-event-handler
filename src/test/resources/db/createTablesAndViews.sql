@@ -19,6 +19,7 @@ create table if not exists beskjed
     forstbehandlet      timestamp,
     eksternVarsling     boolean,
     prefererteKanaler   varchar(100),
+    frist_utløpt BOOLEAN DEFAULT NULL,
     constraint beskjedeventidprodusent
     unique (eventid, systembruker)
 );
@@ -43,6 +44,7 @@ create table if not exists oppgave
     forstbehandlet      timestamp,
     eksternVarsling     boolean,
     prefererteKanaler   varchar(100),
+    frist_utløpt BOOLEAN DEFAULT NULL,
   constraint oppgaveeventidprodusent
   unique (eventid, systembruker)
 );
@@ -66,6 +68,7 @@ create table if not exists innboks
   forstbehandlet  timestamp,
   eksternVarsling     boolean,
   prefererteKanaler   varchar(100),
+  frist_utløpt BOOLEAN DEFAULT NULL,
   constraint innbokseventidprodusent
   unique (eventid, systembruker)
 );

@@ -37,26 +37,27 @@ class VarselTest {
     fun `hente brukers inaktive eventer`() = runBlocking {
         val inaktiveEventer = eventRepository.getInactiveVarsel(fodselsnummer)
         inaktiveEventer.size shouldBe 10
-        inaktiveEventer.map { it.toEventDTO().type }.toSet() shouldBe alleEventTyper
+        inaktiveEventer.map { it.toVarselDTO().type }.toSet() shouldBe alleEventTyper
+
     }
 
     @Test
     fun `hente brukers aktive eventer`() = runBlocking {
         val aktiveEventer = eventRepository.getActiveVarsel(fodselsnummer)
         aktiveEventer.size shouldBe 6
-        aktiveEventer.map { it.toEventDTO().type }.toSet() shouldBe alleEventTyper
+        aktiveEventer.map { it.toVarselDTO().type }.toSet() shouldBe alleEventTyper
     }
 
     private fun createBeskjeder(antallAktive: Int, antallInaktive: Int) {
         val beskjeder = (1..antallAktive).map {
             BeskjedObjectMother.createBeskjed(
                 fodselsnummer = fodselsnummer,
-                aktiv = true
+                aktiv = true,
             )
         } + (1..antallInaktive).map {
             BeskjedObjectMother.createBeskjed(
                 fodselsnummer = fodselsnummer,
-                aktiv = false
+                aktiv = false,
             )
         }
 
@@ -69,12 +70,14 @@ class VarselTest {
         val oppgaver = (1..antallAktive).map {
             OppgaveObjectMother.createOppgave(
                 fodselsnummer = fodselsnummer,
-                aktiv = true
+                aktiv = true,
+                fristUtløpt = null
             )
         } + (1..antallInaktive).map {
             OppgaveObjectMother.createOppgave(
                 fodselsnummer = fodselsnummer,
-                aktiv = false
+                aktiv = false,
+                fristUtløpt = null
             )
         }
 

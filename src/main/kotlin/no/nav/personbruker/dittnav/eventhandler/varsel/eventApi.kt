@@ -1,5 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.varsel
 
+//Deprecated?
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.response.respond
@@ -16,7 +17,7 @@ fun Route.eventApi(eventRepository: VarselRepository) {
     get("/fetch/event/inaktive") {
         try {
             val inactiveEventDTOs = eventRepository.getInactiveVarsel(innloggetBruker.ident)
-                .map { event -> event.toEventDTO() }
+                .map { event -> event.toVarselDTO() }
             call.respond(HttpStatusCode.OK, inactiveEventDTOs)
         } catch (exception: Exception) {
             respondWithError(call, log, exception)
@@ -26,7 +27,7 @@ fun Route.eventApi(eventRepository: VarselRepository) {
     get("/fetch/event/aktive") {
         try {
             val inactiveEventDTOs = eventRepository.getActiveVarsel(innloggetBruker.ident)
-                .map { event -> event.toEventDTO() }
+                .map { event -> event.toVarselDTO() }
             call.respond(HttpStatusCode.OK, inactiveEventDTOs)
         } catch (exception: Exception) {
             respondWithError(call, log, exception)

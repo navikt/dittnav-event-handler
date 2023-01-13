@@ -1,11 +1,13 @@
 package no.nav.personbruker.dittnav.eventhandler.varsel;
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.matchers.shouldBe
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import no.nav.personbruker.dittnav.eventhandler.apiTestfnr
+import no.nav.personbruker.dittnav.eventhandler.asBooleanOrNull
 import no.nav.personbruker.dittnav.eventhandler.asDateTime
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
@@ -28,9 +30,22 @@ class VarselApiTest {
     private val varselRepository = VarselRepository(database)
     private val fodselsnummer = apiTestfnr
     private val aktivBeskjed =
-        BeskjedObjectMother.createBeskjed(eventId = "765322", aktiv = true, fodselsnummer = fodselsnummer)
+        BeskjedObjectMother.createBeskjed(eventId = "765322", fodselsnummer = fodselsnummer, aktiv = true)
     private val inaktivBeskjed =
-        BeskjedObjectMother.createBeskjed(eventId = "7666622", aktiv = false, fodselsnummer = fodselsnummer)
+        BeskjedObjectMother.createBeskjed(
+            eventId = "7666622",
+            aktiv = false,
+            fodselsnummer = fodselsnummer,
+            fristUtløpt = false
+        )
+    private val inaktivOppgave =
+        OppgaveObjectMother.createOppgave(
+            eventId = "88",
+            aktiv = false,
+            fodselsnummer = fodselsnummer,
+            fristUtløpt = true
+        )
+
 
     private val antallaktiveVarselForFnr = 2
     private val antallinaktiveVarselForFnr = 4
@@ -43,13 +58,13 @@ class VarselApiTest {
                 listOf(
                     aktivBeskjed,
                     inaktivBeskjed,
-                    BeskjedObjectMother.createBeskjed(aktiv = true, fodselsnummer = "123")
+                    BeskjedObjectMother.createBeskjed(fodselsnummer = "123", aktiv = true)
                 )
             )
             createOppgave(
                 listOf(
-                    OppgaveObjectMother.createOppgave(aktiv = false, fodselsnummer = fodselsnummer),
-                    OppgaveObjectMother.createOppgave(aktiv = false, fodselsnummer = "321")
+                    inaktivOppgave,
+                    OppgaveObjectMother.createOppgave(fodselsnummer = "321", aktiv = false, fristUtløpt = null)
                 )
             )
             createInnboks(
@@ -65,11 +80,11 @@ class VarselApiTest {
 
 
     @Test
-    fun `varsel-apiet skal returnere inaktive varsler`() {
-
+    fun `varsel-apiet skal returnere inaktive varsler`() =
         testApplication {
             mockEventHandlerApi(eventRepository = varselRepository)
-            val response = client.getMedFnrHeader("dittnav-event-handler/fetch/varsel/on-behalf-of/inaktive", fodselsnummer)
+            val response =
+                client.getMedFnrHeader("dittnav-event-handler/fetch/varsel/on-behalf-of/inaktive", fodselsnummer)
 
             response.status shouldBe HttpStatusCode.OK
             val varselListe = ObjectMapper().readTree(response.bodyAsText())
@@ -88,14 +103,20 @@ class VarselApiTest {
             varselJson["aktiv"].asBoolean() shouldBe false
             varselJson["forstBehandlet"].asDateTime() shouldBe inaktivBeskjed.forstBehandlet.comparableTime()
             varselJson["type"].asText() shouldBe "BESKJED"
+            varselJson["fristUtløpt"].asBoolean() shouldBe false
+            varselListe.find { it["eventId"].asText() == inaktivOppgave.eventId }.apply {
+                require(this != null)
+                this.get("fristUtløpt").asBooleanOrNull() shouldBe true
+            }
         }
-    }
+
 
     @Test
     fun `varsel-apiet skal returnere aktive varsler`() {
         testApplication {
             mockEventHandlerApi(eventRepository = varselRepository)
-            val response = client.getMedFnrHeader("dittnav-event-handler/fetch/varsel/on-behalf-of/aktive", fodselsnummer)
+            val response =
+                client.getMedFnrHeader("dittnav-event-handler/fetch/varsel/on-behalf-of/aktive", fodselsnummer)
 
             response.status shouldBe HttpStatusCode.OK
             val varselListe = ObjectMapper().readTree(response.bodyAsText())
@@ -114,8 +135,9 @@ class VarselApiTest {
             varselJson["aktiv"].asBoolean() shouldBe true
             varselJson["forstBehandlet"].asDateTime() shouldBe aktivBeskjed.forstBehandlet.comparableTime()
             varselJson["type"].asText() shouldBe "BESKJED"
+            varselJson["fristUtløpt"].asBooleanOrNull() shouldBe null
+
         }
     }
 }
-
 

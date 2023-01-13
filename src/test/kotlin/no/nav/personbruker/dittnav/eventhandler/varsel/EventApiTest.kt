@@ -28,9 +28,9 @@ class EventApiTest {
     private val varselRepository = VarselRepository(database)
     private val fodselsnummer = apiTestfnr
     private val aktivBeskjed =
-        BeskjedObjectMother.createBeskjed(eventId = "765322", aktiv = true, fodselsnummer = fodselsnummer)
+        BeskjedObjectMother.createBeskjed(eventId = "765322", fodselsnummer = fodselsnummer, aktiv = true,)
     private val inaktivBeskjed =
-        BeskjedObjectMother.createBeskjed(eventId = "7666622", aktiv = false, fodselsnummer = fodselsnummer)
+        BeskjedObjectMother.createBeskjed(eventId = "7666622", fodselsnummer = fodselsnummer, aktiv = false,)
 
     private val antallaktiveVarselForFnr = 2
     private val antallinaktiveVarselForFnr = 4
@@ -43,13 +43,13 @@ class EventApiTest {
                 listOf(
                     aktivBeskjed,
                     inaktivBeskjed,
-                    BeskjedObjectMother.createBeskjed(aktiv = true, fodselsnummer = "123")
+                    BeskjedObjectMother.createBeskjed(fodselsnummer = "123", aktiv = true,)
                 )
             )
             createOppgave(
                 listOf(
-                    OppgaveObjectMother.createOppgave(aktiv = false, fodselsnummer = fodselsnummer),
-                    OppgaveObjectMother.createOppgave(aktiv = false, fodselsnummer = "321")
+                    OppgaveObjectMother.createOppgave(fodselsnummer = fodselsnummer, aktiv = false, fristUtløpt = null),
+                    OppgaveObjectMother.createOppgave(fodselsnummer = "321", aktiv = false, fristUtløpt = null)
                 )
             )
             createInnboks(

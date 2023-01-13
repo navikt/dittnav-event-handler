@@ -189,13 +189,15 @@ internal inline fun <T> T.assert(block: T.() -> Unit): T =
         block()
     }
 
-internal fun JsonNode.asDateTime()=
+internal fun JsonNode.asDateTime() =
     ZonedDateTime.parse(asText()).comparableTime()
 
-internal fun ZonedDateTime.comparableTime()=
+internal fun ZonedDateTime.comparableTime() =
     truncatedTo(ChronoUnit.SECONDS).toLocalDateTime()
 
-suspend fun HttpClient.getMedFnrHeader(url: String, fnr: String = apiTestfnr): HttpResponse = get {
+suspend internal fun HttpClient.getMedFnrHeader(url: String, fnr: String = apiTestfnr): HttpResponse = get {
     url(url)
-    header("fodselsnummer",fnr)
+    header("fodselsnummer", fnr)
 }
+
+internal fun JsonNode.asBooleanOrNull() = if (isNull) null else asBoolean()

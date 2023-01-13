@@ -8,6 +8,7 @@ import mu.KotlinLogging
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.respondWithError
 import no.nav.personbruker.dittnav.eventhandler.common.modia.doIfValidRequest
 
+//brukes av varselbjella
 fun Route.varselApi(varselRepository: VarselRepository) {
 
     val log = KotlinLogging.logger {}
@@ -15,9 +16,9 @@ fun Route.varselApi(varselRepository: VarselRepository) {
     get("/fetch/varsel/on-behalf-of/inaktive") {
         doIfValidRequest { user ->
             try {
-                val inactiveEventDTOs = varselRepository.getInactiveVarsel(user.fodselsnummer)
-                    .map { event -> event.toEventDTO() }
-                call.respond(HttpStatusCode.OK, inactiveEventDTOs)
+                val inactiveVarsler = varselRepository.getInactiveVarsel(user.fodselsnummer)
+                    .map { varsel -> varsel.toVarselDTO() }
+                call.respond(HttpStatusCode.OK, inactiveVarsler)
             } catch (exception: Exception) {
                 respondWithError(call, log, exception)
             }
@@ -28,7 +29,7 @@ fun Route.varselApi(varselRepository: VarselRepository) {
         doIfValidRequest { user ->
             try {
                 val activeEventDTOs = varselRepository.getActiveVarsel(user.fodselsnummer)
-                    .map { event -> event.toEventDTO() }
+                    .map { varsel -> varsel.toVarselDTO() }
                 call.respond(HttpStatusCode.OK, activeEventDTOs)
             } catch (exception: Exception) {
                 respondWithError(call, log, exception)

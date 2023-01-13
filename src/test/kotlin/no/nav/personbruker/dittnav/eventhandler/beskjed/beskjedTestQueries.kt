@@ -14,8 +14,8 @@ import java.time.ZonedDateTime
 
 fun Connection.createBeskjed(beskjeder: List<Beskjed>) =
     prepareStatement(
-        """INSERT INTO beskjed(id, systembruker, eventTidspunkt, fodselsnummer, eventId, grupperingsId, tekst, link, sikkerhetsnivaa, sistOppdatert, aktiv, synligFremTil, namespace, appnavn, forstBehandlet, eksternVarsling, prefererteKanaler)
-            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        """INSERT INTO beskjed(id, systembruker, eventTidspunkt, fodselsnummer, eventId, grupperingsId, tekst, link, sikkerhetsnivaa, sistOppdatert, aktiv, synligFremTil, namespace, appnavn, forstBehandlet, eksternVarsling, prefererteKanaler,frist_utløpt)
+            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)"""
     )
         .use {
             beskjeder.forEach { beskjed ->
@@ -37,6 +37,7 @@ fun Connection.createBeskjed(beskjeder: List<Beskjed>) =
                     it.setObject(15, beskjed.forstBehandlet.utcLocalDate(), Types.TIMESTAMP)
                     it.setBoolean(16, beskjed.eksternVarslingSendt)
                     it.setString(17, beskjed.eksternVarslingKanaler.joinToString(","))
+                    beskjed.fristUtløpt?.let { fristUtløpt -> it.setBoolean(18, fristUtløpt) } ?: it.setNull(18, Types.BOOLEAN)
                     it.addBatch()
                 }
             }
@@ -56,15 +57,20 @@ fun Connection.deleteBeskjed(beskjeder: List<Beskjed>) =
         }
 
 
+internal fun LocalPostgresDatabase.createBeskjed(beskjeder: List<Beskjed>) =
+    runBlocking { dbQuery { createBeskjed(beskjeder) } }
 
-internal fun LocalPostgresDatabase.createBeskjed(beskjeder: List<Beskjed>) = runBlocking { dbQuery { createBeskjed(beskjeder) } }
-internal fun LocalPostgresDatabase.deleteBeskjed(beskjeder: List<Beskjed>) = runBlocking { dbQuery { deleteBeskjed(beskjeder) } }
+internal fun LocalPostgresDatabase.deleteBeskjed(beskjeder: List<Beskjed>) =
+    runBlocking { dbQuery { deleteBeskjed(beskjeder) } }
 
-internal fun LocalPostgresDatabase.deleteAllDoknotStatusBeskjed() = runBlocking { dbQuery { deleteDoknotStatusBeskjed() }}
+internal fun LocalPostgresDatabase.deleteAllDoknotStatusBeskjed() =
+    runBlocking { dbQuery { deleteDoknotStatusBeskjed() } }
+
 internal fun LocalPostgresDatabase.createDoknotStatuses(statuses: List<DoknotifikasjonTestStatus>) = runBlocking {
     dbQuery {
         statuses.forEach { status -> createDoknotStatusBeskjed(status) }
     }
 }
 
-private fun ZonedDateTime.utcLocalDate()= LocalDateTime.ofInstant(Instant.ofEpochSecond(this.toEpochSecond()), ZoneId.of("UTC"))
+private fun ZonedDateTime.utcLocalDate() =
+    LocalDateTime.ofInstant(Instant.ofEpochSecond(this.toEpochSecond()), ZoneId.of("UTC"))

@@ -1,5 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.beskjed
 
+import no.nav.personbruker.dittnav.eventhandler.common.EventType
 import no.nav.personbruker.dittnav.eventhandler.common.LocalDateTimeHelper
 import no.nav.personbruker.dittnav.eventhandler.common.database.getListFromSeparatedString
 import no.nav.personbruker.dittnav.eventhandler.common.database.getNullableUtcTimeStamp
@@ -126,7 +127,8 @@ fun ResultSet.toBeskjed(): Beskjed {
             ZoneId.of("Europe/Oslo")
         ),
         eksternVarslingSendt = getString("doknotifikasjon_status") == EksternVarslingStatus.OVERSENDT.name,
-        eksternVarslingKanaler = getListFromSeparatedString("doknotifikasjon_kanaler")
+        eksternVarslingKanaler = getListFromSeparatedString("doknotifikasjon_kanaler"),
+        fristUtløpt = getBoolean("frist_utløpt").let { if(wasNull()) null else it}
     )
 }
 
@@ -153,3 +155,9 @@ fun Connection.setBeskjedInaktiv(fodselsnummer: String, eventId: String): Int {
 }
 
 class BeskjedNotFoundException(val eventid: String) : IllegalArgumentException("beskjed med eventId $eventid ikke funnet")
+
+private fun ResultSet.getFristUtløpt(): Boolean? {
+
+    val result = getBoolean("frist_utløpt")
+    return if (wasNull()) null else result
+}

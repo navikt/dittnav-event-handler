@@ -5,6 +5,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import mu.KotlinLogging
+import no.nav.personbruker.dittnav.eventhandler.common.VarselType
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.DoknotifikasjonTestStatus
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.createDoknotStatusBeskjed
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.createDoknotStatusInnboks
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.createDoknotStatusOppgave
 import org.postgresql.util.PSQLException
 
 class LocalPostgresDatabase private constructor() : Database {
@@ -22,6 +28,9 @@ class LocalPostgresDatabase private constructor() : Database {
         fun cleanDb(): LocalPostgresDatabase {
             runBlocking {
                 instance.dbQuery {
+                    prepareStatement("delete from doknotifikasjon_status_oppgave").executeUpdate()
+                    prepareStatement("delete from doknotifikasjon_status_beskjed").executeUpdate()
+                    prepareStatement("delete from doknotifikasjon_status_innboks").executeUpdate()
                     prepareStatement("delete from beskjed").execute()
                     prepareStatement("delete from oppgave").execute()
                     prepareStatement("delete from innboks").execute()
@@ -67,3 +76,50 @@ class LocalPostgresDatabase private constructor() : Database {
         }
     }
 }
+
+internal fun LocalPostgresDatabase.createDoknotifikasjon(
+    eventId: String,
+    type: VarselType,
+    kanaler: String = "SMS,EPOST"
+) {
+    runBlocking {
+        dbQuery {
+            when (type) {
+                VarselType.OPPGAVE -> createDoknotStatusOppgave(
+                    status = DoknotifikasjonTestStatus(
+                        eventId = eventId,
+                        status = EksternVarslingStatus.FERDIGSTILT.name,
+                        melding = "Ekstern melding",
+                        distribusjonsId = null,
+                        kanaler = kanaler
+                    )
+                )
+
+                VarselType.BESKJED -> createDoknotStatusBeskjed(
+                    status = DoknotifikasjonTestStatus(
+                        eventId = eventId,
+                        status = EksternVarslingStatus.FERDIGSTILT.name,
+                        melding = "Ekstern melding",
+                        distribusjonsId = null,
+                        kanaler = kanaler
+                    )
+                )
+
+                VarselType.INNBOKS -> createDoknotStatusInnboks(
+                    status = DoknotifikasjonTestStatus(
+                        eventId = eventId,
+                        status = EksternVarslingStatus.FERDIGSTILT.name,
+                        melding = "Ekstern melding",
+                        distribusjonsId = null,
+                        kanaler = kanaler
+                    )
+                )
+
+                else -> {
+                    IllegalArgumentException("Kan ikke lage doknotifikasjon for varseltype $type")
+                }
+            }
+        }
+    }
+}
+

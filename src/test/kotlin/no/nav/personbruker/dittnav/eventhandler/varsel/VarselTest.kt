@@ -6,16 +6,11 @@ import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.beskjed.Beskjed
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
-import no.nav.personbruker.dittnav.eventhandler.common.VarselType
 import no.nav.personbruker.dittnav.eventhandler.common.VarselType.BESKJED
 import no.nav.personbruker.dittnav.eventhandler.common.VarselType.INNBOKS
 import no.nav.personbruker.dittnav.eventhandler.common.VarselType.OPPGAVE
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.DoknotifikasjonTestStatus
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.createDoknotStatusBeskjed
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.createDoknotStatusInnboks
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.createDoknotStatusOppgave
+import no.nav.personbruker.dittnav.eventhandler.common.database.createDoknotifikasjon
 import no.nav.personbruker.dittnav.eventhandler.innboks.Innboks
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksObjectMother
 import no.nav.personbruker.dittnav.eventhandler.innboks.createInnboks
@@ -41,14 +36,14 @@ class VarselTest {
     @BeforeAll
     fun `populer testdata`() {
         createBeskjeder(3, 5).apply {
-            filter { it.aktiv }.subList(0, 2).forEach { createDoknotifikasjon(it.eventId, BESKJED) }
-            filter { !it.aktiv }.subList(0, 3).forEach { createDoknotifikasjon(it.eventId, BESKJED) }
+            filter { it.aktiv }.subList(0, 2).forEach { database.createDoknotifikasjon(it.eventId, BESKJED) }
+            filter { !it.aktiv }.subList(0, 3).forEach { database.createDoknotifikasjon(it.eventId, BESKJED) }
         }
         createOppgaver(1, 4).apply {
-            filter { !it.aktiv }.subList(0, 3).forEach { createDoknotifikasjon(it.eventId, OPPGAVE) }
+            filter { !it.aktiv }.subList(0, 3).forEach { database.createDoknotifikasjon(it.eventId, OPPGAVE) }
         }
         createInnboks(2, 1).apply {
-            first { it.aktiv }.apply { createDoknotifikasjon(eventId, INNBOKS, "SMS") }
+            first { it.aktiv }.apply { database.createDoknotifikasjon(eventId, INNBOKS, "SMS") }
         }
     }
 
@@ -133,48 +128,4 @@ class VarselTest {
 
         return innboks
     }
-
-    private fun createDoknotifikasjon(eventId: String, type: VarselType, kanaler: String = "SMS,EPOST") {
-        runBlocking {
-            database.dbQuery {
-                when (type) {
-                    OPPGAVE -> createDoknotStatusOppgave(
-                        status = DoknotifikasjonTestStatus(
-                            eventId = eventId,
-                            status = EksternVarslingStatus.FERDIGSTILT.name,
-                            melding = "Ekstern melding",
-                            distribusjonsId = null,
-                            kanaler = kanaler
-                        )
-                    )
-
-                    BESKJED -> createDoknotStatusBeskjed(
-                        status = DoknotifikasjonTestStatus(
-                            eventId = eventId,
-                            status = EksternVarslingStatus.FERDIGSTILT.name,
-                            melding = "Ekstern melding",
-                            distribusjonsId = null,
-                            kanaler = kanaler
-                        )
-                    )
-
-                    INNBOKS -> createDoknotStatusInnboks(
-                        status = DoknotifikasjonTestStatus(
-                            eventId = eventId,
-                            status = EksternVarslingStatus.FERDIGSTILT.name,
-                            melding = "Ekstern melding",
-                            distribusjonsId = null,
-                            kanaler = kanaler
-                        )
-                    )
-
-                    else -> {
-                        IllegalArgumentException("Kan ikke lage doknotifikasjon for varseltype $type")
-                    }
-                }
-            }
-        }
-    }
-
 }
-

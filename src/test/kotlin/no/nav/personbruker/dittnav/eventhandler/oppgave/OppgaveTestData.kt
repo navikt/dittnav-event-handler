@@ -39,7 +39,7 @@ object OppgaveObjectMother {
         link: String = "https://nav.no/systemX/$defaultFodselsnummer",
         sikkerhetsnivaa: Int = 4,
         eksternVarslingInfo: EksternVarslingInfo = defaultEksternVarslinginfo,
-        fristUtløpt: Boolean?
+        fristUtløpt: Boolean? =null
     ): Oppgave {
         return Oppgave(
             id = id,

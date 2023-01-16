@@ -74,7 +74,7 @@ class VarselApiTest {
                     OppgaveObjectMother.createOppgave(fodselsnummer = "321", aktiv = false, fristUtløpt = null)
                 )
             )
-            createDoknotifikasjon(inaktivOppgave.eventId,VarselType.OPPGAVE)
+            createDoknotifikasjon(inaktivOppgave.eventId, VarselType.OPPGAVE)
             createInnboks(
                 listOf(
                     InnboksObjectMother.createInnboks(aktiv = true, fodselsnummer = fodselsnummer),
@@ -87,7 +87,7 @@ class VarselApiTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = ["dittnav-event-handler/fetch/varsel/on-behalf-of/inaktive","dittnav-event-handler/fetch/event/inaktive"])
+    @ValueSource(strings = ["dittnav-event-handler/fetch/varsel/on-behalf-of/inaktive", "dittnav-event-handler/fetch/event/inaktive"])
     fun `varsel-apiet skal returnere inaktive varsler`(url: String) =
         testApplication {
             mockEventHandlerApi(eventRepository = varselRepository)
@@ -115,18 +115,18 @@ class VarselApiTest {
                 require(this != null)
                 get("fristUtløpt").asBooleanOrNull() shouldBe true
                 get("eksternVarslingSendt").asBoolean() shouldBe true
-                get("eksternVarslingKanaler").toList().map { it.asText() } shouldContainExactly listOf("SMS","EPOST")
+                get("eksternVarslingKanaler").toList().map { it.asText() } shouldContainExactly listOf("SMS", "EPOST")
             }
         }
 
 
     @ParameterizedTest
-    @ValueSource(strings = ["dittnav-event-handler/fetch/varsel/on-behalf-of/aktive","dittnav-event-handler/fetch/event/aktive"])
-    fun `varsel-apiet skal returnere aktive varsler`() {
+    @ValueSource(strings = ["dittnav-event-handler/fetch/varsel/on-behalf-of/aktive", "dittnav-event-handler/fetch/event/aktive"])
+    fun `varsel-apiet skal returnere aktive varsler`(url: String) {
         testApplication {
             mockEventHandlerApi(eventRepository = varselRepository)
             val response =
-                client.getMedFnrHeader("dittnav-event-handler/fetch/varsel/on-behalf-of/aktive", fodselsnummer)
+                client.getMedFnrHeader(url, fodselsnummer)
 
             response.status shouldBe HttpStatusCode.OK
             val varselListe = ObjectMapper().readTree(response.bodyAsText())

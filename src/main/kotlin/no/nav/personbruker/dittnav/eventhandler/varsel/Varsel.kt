@@ -14,8 +14,8 @@ data class VarselDTO(
     val eventId: String,
     val sikkerhetsnivaa: Int,
     val sistOppdatert: ZonedDateTime,
-    val tekst: String,
-    val link: String,
+    val tekst: String?,
+    val link: String?,
     val aktiv: Boolean,
     val type: VarselType,
     val forstBehandlet: ZonedDateTime,
@@ -41,18 +41,18 @@ class Varsel(
     val eksternVarslingSendt: Boolean,
     val eksternVarslingKanaler: List<String>
 ) {
-    fun toVarselDTO(): VarselDTO {
+    fun toVarselDTO(innloggingsnivå: Int): VarselDTO {
         return VarselDTO(
             eventId = eventId,
             sikkerhetsnivaa = sikkerhetsnivaa,
             sistOppdatert = sistOppdatert,
-            tekst = tekst,
-            link = link,
+            tekst = innloggingsnivå.let { if (innloggingsnivå < sikkerhetsnivaa) null else tekst },
+            link = innloggingsnivå.let { if (innloggingsnivå < sikkerhetsnivaa) null else link },
             aktiv = aktiv,
             type = type,
             forstBehandlet = forstBehandlet,
             fristUtløpt = fristUtløpt,
-            eksternVarslingSendt=eksternVarslingSendt,
+            eksternVarslingSendt = eksternVarslingSendt,
             eksternVarslingKanaler = eksternVarslingKanaler
         )
     }

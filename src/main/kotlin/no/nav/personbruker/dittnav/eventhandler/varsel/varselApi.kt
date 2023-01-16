@@ -14,7 +14,7 @@ fun Route.oboVarselApi(varselRepository: VarselRepository) {
     get("/fetch/varsel/on-behalf-of/inaktive") {
         doIfValidRequest { user ->
             val inactiveVarsler = varselRepository.getInactiveVarsel(user.fodselsnummer)
-                .map { varsel -> varsel.toVarselDTO() }
+                .map { varsel -> varsel.toVarselDTO(1) }
             call.respond(HttpStatusCode.OK, inactiveVarsler)
         }
     }
@@ -22,7 +22,7 @@ fun Route.oboVarselApi(varselRepository: VarselRepository) {
     get("/fetch/varsel/on-behalf-of/aktive") {
         doIfValidRequest { user ->
             val activeVarsler = varselRepository.getActiveVarsel(user.fodselsnummer)
-                .map { varsel -> varsel.toVarselDTO() }
+                .map { varsel -> varsel.toVarselDTO(1) }
             call.respond(HttpStatusCode.OK, activeVarsler)
         }
     }
@@ -32,13 +32,13 @@ fun Route.varselApi(eventRepository: VarselRepository) {
 
     get("/fetch/event/inaktive") {
             val inactiveVarsler = eventRepository.getInactiveVarsel(innloggetBruker.ident)
-                .map { event -> event.toVarselDTO() }
+                .map { event -> event.toVarselDTO(innloggetBruker.loginLevel) }
             call.respond(HttpStatusCode.OK, inactiveVarsler)
     }
 
     get("/fetch/event/aktive") {
             val activeVarler = eventRepository.getActiveVarsel(innloggetBruker.ident)
-                .map { event -> event.toVarselDTO() }
+                .map { event -> event.toVarselDTO(innloggetBruker.loginLevel) }
             call.respond(HttpStatusCode.OK, activeVarler)
     }
 }

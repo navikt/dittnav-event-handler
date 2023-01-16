@@ -14,7 +14,7 @@ fun Route.oboVarselApi(varselRepository: VarselRepository) {
     get("/fetch/varsel/on-behalf-of/inaktive") {
         doIfValidRequest { user ->
             val inactiveVarsler = varselRepository.getInactiveVarsel(user.fodselsnummer)
-                .map { varsel -> varsel.toVarselDTO(1) }
+                .map { varsel -> varsel.toVarselDTO(user.authlevel) }
             call.respond(HttpStatusCode.OK, inactiveVarsler)
         }
     }
@@ -22,7 +22,7 @@ fun Route.oboVarselApi(varselRepository: VarselRepository) {
     get("/fetch/varsel/on-behalf-of/aktive") {
         doIfValidRequest { user ->
             val activeVarsler = varselRepository.getActiveVarsel(user.fodselsnummer)
-                .map { varsel -> varsel.toVarselDTO(1) }
+                .map { varsel -> varsel.toVarselDTO(user.authlevel) }
             call.respond(HttpStatusCode.OK, activeVarsler)
         }
     }

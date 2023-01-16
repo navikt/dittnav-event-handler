@@ -11,20 +11,23 @@ import mu.KotlinLogging
 val log = KotlinLogging.logger {}
 
 suspend inline fun PipelineContext<Unit, ApplicationCall>.doIfValidRequest(handler: (fnr: User) -> Unit) {
-    val headerName = "fodselsnummer"
-    val fnrHeader = call.request.headers[headerName]
+    val fnrHeaderName = "fodselsnummer"
+    val authlevelHeaderName = "authlevel"
+    val fnr = call.request.headers[fnrHeaderName]
+    val authlevel = call.request.headers[authlevelHeaderName]?.toInt()
 
-    if (fnrHeader != null) {
-        if (isFodselsnummerOfValidLength(fnrHeader)) {
-            val user = User(fnrHeader)
+    if (fnr != null && authlevel != null) {
+        if (isFodselsnummerOfValidLength(fnr)) {
+            val user = User(fnr, authlevel)
             handler.invoke(user)
         } else {
-            val msg = "Header-en '$headerName' inneholder ikke et gyldig fødselsnummer."
+            val msg = "Header-en '$fnrHeaderName' inneholder ikke et gyldig fødselsnummer."
             log.warn(msg)
             call.respond(HttpStatusCode.BadRequest, msg)
         }
     } else {
-        val msg = "Requesten mangler header-en '$headerName'"
+
+        val msg = "Requesten mangler påkrevde headere $fnrHeaderName og/eller $authlevelHeaderName"
         log.warn(msg)
         call.respond(HttpStatusCode.BadRequest, msg)
     }

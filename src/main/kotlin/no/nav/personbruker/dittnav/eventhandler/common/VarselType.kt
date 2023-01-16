@@ -1,6 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.common
 
-enum class EventType(val eventType: String) {
+enum class VarselType(val eventType: String) {
     OPPGAVE("oppgave"),
     BESKJED("beskjed"),
     INNBOKS("innboks"),

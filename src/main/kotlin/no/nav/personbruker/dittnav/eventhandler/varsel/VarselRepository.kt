@@ -1,9 +1,11 @@
 package no.nav.personbruker.dittnav.eventhandler.varsel
 
-import no.nav.personbruker.dittnav.eventhandler.common.EventType
+import no.nav.personbruker.dittnav.eventhandler.common.VarselType
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus.FERDIGSTILT
 import java.sql.ResultSet
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -39,22 +41,24 @@ class VarselRepository(private val database: Database) {
     private fun varselQuery(table: String, active: Boolean): String {
         return """
             SELECT
-                eventTidspunkt,
-                fodselsnummer,
-                eventId,
-                grupperingsId,
-                tekst,
-                appnavn,
-                link,
-                sikkerhetsnivaa,
-                sistOppdatert,
-                aktiv,
-                forstBehandlet,
-                frist_utløpt,
-                '$table' as type 
-            FROM $table
-            WHERE fodselsnummer = ?
-            AND aktiv = $active
+                v.eventTidspunkt,
+                v.fodselsnummer,
+                v.eventId,
+                v.grupperingsId,
+                v.tekst,
+                v.appnavn,
+                v.link,
+                v.sikkerhetsnivaa,
+                v.sistOppdatert,
+                v.aktiv,
+                v.forstBehandlet,
+                v.frist_utløpt,
+                '$table' as type,
+                ds.kanaler as doknot_kanaler,
+                ds.status as doknot_status
+            FROM $table as v
+            LEFT JOIN doknotifikasjon_status_$table ds ON v.eventId=ds.eventId
+            WHERE fodselsnummer = ? AND aktiv = $active
         """
     }
 
@@ -75,12 +79,14 @@ class VarselRepository(private val database: Database) {
         tekst = getString("tekst"),
         link = getString("link"),
         aktiv = getBoolean("aktiv"),
-        type = EventType.fromOriginalType(getString("type")),
+        type = VarselType.fromOriginalType(getString("type")),
         forstBehandlet = ZonedDateTime.ofInstant(
             getUtcTimeStamp("forstBehandlet").toInstant(),
             ZoneId.of("Europe/Oslo")
         ),
-        fristUtløpt = getBoolean("frist_utløpt").let { if(wasNull()) null else it}
+        fristUtløpt = getBoolean("frist_utløpt").let { if (wasNull()) null else it },
+        eksternVarslingSendt = EksternVarslingStatus[getString("doknot_status")] == FERDIGSTILT,
+        eksternVarslingKanaler = getString("doknot_kanaler").let { if (wasNull()) emptyList() else it.split(",") }
     )
 }
 

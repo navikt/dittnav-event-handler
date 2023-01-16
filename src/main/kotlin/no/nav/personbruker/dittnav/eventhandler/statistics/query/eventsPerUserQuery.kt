@@ -1,13 +1,13 @@
 package no.nav.personbruker.dittnav.eventhandler.statistics.query
 
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapSingleResult
-import no.nav.personbruker.dittnav.eventhandler.common.EventType
+import no.nav.personbruker.dittnav.eventhandler.common.VarselType
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventsPerUser
 import no.nav.personbruker.dittnav.eventhandler.statistics.IntegerMeasurement
 import java.sql.Connection
 import java.sql.ResultSet
 
-private fun singleTableQueryString(type: EventType) = """
+private fun singleTableQueryString(type: VarselType) = """
     select
         min(aggregate.events) as minEvents,
         max(aggregate.events) as maxEvents,
@@ -20,9 +20,9 @@ private fun singleTableQueryString(type: EventType) = """
     from (select count(1) as events from ${type.eventType} group by fodselsnummer) as aggregate
 """
 
-val beskjedEventsPerUserQueryString = singleTableQueryString(EventType.BESKJED)
-val oppgaveEventsPerUserQueryString = singleTableQueryString(EventType.OPPGAVE)
-val innboksEventsPerUserQueryString = singleTableQueryString(EventType.INNBOKS)
+val beskjedEventsPerUserQueryString = singleTableQueryString(VarselType.BESKJED)
+val oppgaveEventsPerUserQueryString = singleTableQueryString(VarselType.OPPGAVE)
+val innboksEventsPerUserQueryString = singleTableQueryString(VarselType.INNBOKS)
 
 fun Connection.getEventsPerUserForOppgave(): IntegerMeasurement {
     return prepareStatement(oppgaveEventsPerUserQueryString)

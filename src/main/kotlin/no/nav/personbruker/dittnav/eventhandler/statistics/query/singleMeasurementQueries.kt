@@ -1,17 +1,17 @@
 package no.nav.personbruker.dittnav.eventhandler.statistics.query
 
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapSingleResult
-import no.nav.personbruker.dittnav.eventhandler.common.EventType
+import no.nav.personbruker.dittnav.eventhandler.common.VarselType
 import no.nav.personbruker.dittnav.eventhandler.statistics.CountMeasurement
 import java.sql.Connection
 import java.sql.ResultSet
 
-private fun usersQueryString(type: EventType) = "select count(distinct fodselsnummer) as scalar_value from ${type.eventType}"
+private fun usersQueryString(type: VarselType) = "select count(distinct fodselsnummer) as scalar_value from ${type.eventType}"
 
 val totalUsersQueryString = "select count(distinct fodselsnummer) as scalar_value from brukernotifikasjon_view"
-val beskjedUsersQueryString = usersQueryString(EventType.BESKJED)
-val oppgaveUsersQueryString = usersQueryString(EventType.OPPGAVE)
-val innboksUsersQueryString = usersQueryString(EventType.INNBOKS)
+val beskjedUsersQueryString = usersQueryString(VarselType.BESKJED)
+val oppgaveUsersQueryString = usersQueryString(VarselType.OPPGAVE)
+val innboksUsersQueryString = usersQueryString(VarselType.INNBOKS)
 fun Connection.getCountUsersWithEventsForOppgave(): CountMeasurement {
     return prepareStatement(oppgaveUsersQueryString)
         .use {
@@ -44,12 +44,12 @@ fun Connection.getCountUsersWithEvents(): CountMeasurement =
             }
         }
 
-private fun eventsQueryString(type: EventType) = "select count(1) as scalar_value from ${type.eventType}"
+private fun eventsQueryString(type: VarselType) = "select count(1) as scalar_value from ${type.eventType}"
 val totalEventsQueryString = "select count(1) as scalar_value from brukernotifikasjon_view"
 val cachedDoneEventsQueryString = "select count(1) as scalar_value from done"
-val beskjedEventsQueryString = eventsQueryString(EventType.BESKJED)
-val oppgaveEventsQueryString = eventsQueryString(EventType.OPPGAVE)
-val innboksEventsQueryString = eventsQueryString(EventType.INNBOKS)
+val beskjedEventsQueryString = eventsQueryString(VarselType.BESKJED)
+val oppgaveEventsQueryString = eventsQueryString(VarselType.OPPGAVE)
+val innboksEventsQueryString = eventsQueryString(VarselType.INNBOKS)
 fun Connection.getCountForOppgave(): CountMeasurement {
     return prepareStatement(oppgaveEventsQueryString)
         .use {
@@ -90,12 +90,12 @@ fun Connection.getCountNumberOfEvents(): CountMeasurement =
             }
         }
 
-private fun eventsActiveQueryString(type: EventType) = "select count(1) as scalar_value from ${type.eventType} where aktiv"
+private fun eventsActiveQueryString(type: VarselType) = "select count(1) as scalar_value from ${type.eventType} where aktiv"
 
 val totalEventsActiveQueryString = "select count(1) as scalar_value from brukernotifikasjon_view where aktiv"
-val beskjedEventsActiveQueryString = eventsActiveQueryString(EventType.BESKJED)
-val oppgaveEventsActiveQueryString = eventsActiveQueryString(EventType.OPPGAVE)
-val innboksEventsActiveQueryString = eventsActiveQueryString(EventType.INNBOKS)
+val beskjedEventsActiveQueryString = eventsActiveQueryString(VarselType.BESKJED)
+val oppgaveEventsActiveQueryString = eventsActiveQueryString(VarselType.OPPGAVE)
+val innboksEventsActiveQueryString = eventsActiveQueryString(VarselType.INNBOKS)
 fun Connection.getActiveCountForOppgave(): CountMeasurement {
     return prepareStatement(oppgaveEventsActiveQueryString)
         .use {

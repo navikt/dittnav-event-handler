@@ -1,6 +1,5 @@
 package no.nav.personbruker.dittnav.eventhandler.beskjed
 
-import no.nav.personbruker.dittnav.eventhandler.common.EventType
 import no.nav.personbruker.dittnav.eventhandler.common.LocalDateTimeHelper
 import no.nav.personbruker.dittnav.eventhandler.common.database.getListFromSeparatedString
 import no.nav.personbruker.dittnav.eventhandler.common.database.getNullableUtcTimeStamp

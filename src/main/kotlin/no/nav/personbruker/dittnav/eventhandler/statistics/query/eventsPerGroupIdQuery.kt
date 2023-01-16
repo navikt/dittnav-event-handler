@@ -1,13 +1,13 @@
 package no.nav.personbruker.dittnav.eventhandler.statistics.query
 
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapSingleResult
-import no.nav.personbruker.dittnav.eventhandler.common.EventType
+import no.nav.personbruker.dittnav.eventhandler.common.VarselType
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventsPerGroupId
 import no.nav.personbruker.dittnav.eventhandler.statistics.IntegerMeasurement
 import java.sql.Connection
 import java.sql.ResultSet
 
-private fun singleTableQueryString(type: EventType) = """
+private fun singleTableQueryString(type: VarselType) = """
     select
         min(aggregate.events) as minEvents,
         max(aggregate.events) as maxEvents,
@@ -20,9 +20,9 @@ private fun singleTableQueryString(type: EventType) = """
     from (select count(1) as events from ${type.eventType} group by systembruker, fodselsnummer, grupperingsid) as aggregate 
 """
 
-val beskjedEventsPerGroupIdQueryString = singleTableQueryString(EventType.BESKJED)
-val oppgaveEventsPerGroupIdQueryString = singleTableQueryString(EventType.OPPGAVE)
-val innboksEventsPerGroupIdQueryString = singleTableQueryString(EventType.INNBOKS)
+val beskjedEventsPerGroupIdQueryString = singleTableQueryString(VarselType.BESKJED)
+val oppgaveEventsPerGroupIdQueryString = singleTableQueryString(VarselType.OPPGAVE)
+val innboksEventsPerGroupIdQueryString = singleTableQueryString(VarselType.INNBOKS)
 
 fun Connection.getEventsPerGroupIdForOppgave(): IntegerMeasurement {
     return prepareStatement(oppgaveEventsPerGroupIdQueryString)

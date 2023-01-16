@@ -8,7 +8,7 @@ import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
 import no.nav.personbruker.dittnav.eventhandler.beskjed.deleteBeskjed
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
-import no.nav.personbruker.dittnav.eventhandler.common.EventType
+import no.nav.personbruker.dittnav.eventhandler.common.VarselType
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksObjectMother
 import no.nav.personbruker.dittnav.eventhandler.innboks.createInnboks
 import no.nav.personbruker.dittnav.eventhandler.innboks.deleteInnboks
@@ -106,32 +106,32 @@ class EventStatisticsServiceTest {
     @Test
     fun `Should run stats`() {
         runBlocking {
-            eventStatisticsService.getEventsStatisticsPerUser(EventType.BESKJED).max shouldBe 3
-            eventStatisticsService.getActiveEventsStatisticsPerUser(EventType.BESKJED).max shouldBe 2
-            eventStatisticsService.getActiveRateEventsStatisticsPerUser(EventType.BESKJED).min shouldBeGreaterThan 0.6
-            eventStatisticsService.getEventsStatisticsPerGroupId(EventType.BESKJED).max shouldBe 3
-            eventStatisticsService.getGroupIdsPerUser(EventType.BESKJED).max shouldBe 1
-            eventStatisticsService.getTextLength(EventType.BESKJED).min shouldBe 2
-            eventStatisticsService.getCountUsersWithEvents(EventType.BESKJED).count shouldBe 2
-            eventStatisticsService.getActiveEventCount(EventType.BESKJED).count shouldBe 3
+            eventStatisticsService.getEventsStatisticsPerUser(VarselType.BESKJED).max shouldBe 3
+            eventStatisticsService.getActiveEventsStatisticsPerUser(VarselType.BESKJED).max shouldBe 2
+            eventStatisticsService.getActiveRateEventsStatisticsPerUser(VarselType.BESKJED).min shouldBeGreaterThan 0.6
+            eventStatisticsService.getEventsStatisticsPerGroupId(VarselType.BESKJED).max shouldBe 3
+            eventStatisticsService.getGroupIdsPerUser(VarselType.BESKJED).max shouldBe 1
+            eventStatisticsService.getTextLength(VarselType.BESKJED).min shouldBe 2
+            eventStatisticsService.getCountUsersWithEvents(VarselType.BESKJED).count shouldBe 2
+            eventStatisticsService.getActiveEventCount(VarselType.BESKJED).count shouldBe 3
 
-            eventStatisticsService.getEventsStatisticsPerUser(EventType.OPPGAVE).max shouldBe 3
-            eventStatisticsService.getActiveEventsStatisticsPerUser(EventType.OPPGAVE).max shouldBe 2
-            eventStatisticsService.getActiveRateEventsStatisticsPerUser(EventType.OPPGAVE).min shouldBeGreaterThan 0.6
-            eventStatisticsService.getEventsStatisticsPerGroupId(EventType.OPPGAVE).max shouldBe 3
-            eventStatisticsService.getGroupIdsPerUser(EventType.OPPGAVE).max shouldBe 1
-            eventStatisticsService.getTextLength(EventType.OPPGAVE).min shouldBe 3
-            eventStatisticsService.getCountUsersWithEvents(EventType.OPPGAVE).count shouldBe 2
-            eventStatisticsService.getActiveEventCount(EventType.OPPGAVE).count shouldBe 3
+            eventStatisticsService.getEventsStatisticsPerUser(VarselType.OPPGAVE).max shouldBe 3
+            eventStatisticsService.getActiveEventsStatisticsPerUser(VarselType.OPPGAVE).max shouldBe 2
+            eventStatisticsService.getActiveRateEventsStatisticsPerUser(VarselType.OPPGAVE).min shouldBeGreaterThan 0.6
+            eventStatisticsService.getEventsStatisticsPerGroupId(VarselType.OPPGAVE).max shouldBe 3
+            eventStatisticsService.getGroupIdsPerUser(VarselType.OPPGAVE).max shouldBe 1
+            eventStatisticsService.getTextLength(VarselType.OPPGAVE).min shouldBe 3
+            eventStatisticsService.getCountUsersWithEvents(VarselType.OPPGAVE).count shouldBe 2
+            eventStatisticsService.getActiveEventCount(VarselType.OPPGAVE).count shouldBe 3
 
-            eventStatisticsService.getEventsStatisticsPerUser(EventType.INNBOKS).max shouldBe 2
-            eventStatisticsService.getActiveEventsStatisticsPerUser(EventType.INNBOKS).max shouldBe 2
-            eventStatisticsService.getActiveRateEventsStatisticsPerUser(EventType.INNBOKS).min shouldBeGreaterThanOrEqual 0.5
-            eventStatisticsService.getEventsStatisticsPerGroupId(EventType.INNBOKS).max shouldBe 2
-            eventStatisticsService.getGroupIdsPerUser(EventType.INNBOKS).max shouldBe 1
-            eventStatisticsService.getTextLength(EventType.INNBOKS).min shouldBe 2
-            eventStatisticsService.getCountUsersWithEvents(EventType.INNBOKS).count shouldBe 2
-            eventStatisticsService.getActiveEventCount(EventType.INNBOKS).count shouldBe 3
+            eventStatisticsService.getEventsStatisticsPerUser(VarselType.INNBOKS).max shouldBe 2
+            eventStatisticsService.getActiveEventsStatisticsPerUser(VarselType.INNBOKS).max shouldBe 2
+            eventStatisticsService.getActiveRateEventsStatisticsPerUser(VarselType.INNBOKS).min shouldBeGreaterThanOrEqual 0.5
+            eventStatisticsService.getEventsStatisticsPerGroupId(VarselType.INNBOKS).max shouldBe 2
+            eventStatisticsService.getGroupIdsPerUser(VarselType.INNBOKS).max shouldBe 1
+            eventStatisticsService.getTextLength(VarselType.INNBOKS).min shouldBe 2
+            eventStatisticsService.getCountUsersWithEvents(VarselType.INNBOKS).count shouldBe 2
+            eventStatisticsService.getActiveEventCount(VarselType.INNBOKS).count shouldBe 3
 
             eventStatisticsService.getTotalEventsStatisticsPerUser().max shouldBe 8
             eventStatisticsService.getTotalActiveEventsStatisticsPerUser().max shouldBe 6

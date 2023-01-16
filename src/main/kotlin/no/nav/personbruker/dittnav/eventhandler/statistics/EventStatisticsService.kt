@@ -1,18 +1,18 @@
 package no.nav.personbruker.dittnav.eventhandler.statistics
 
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
-import no.nav.personbruker.dittnav.eventhandler.common.EventType
+import no.nav.personbruker.dittnav.eventhandler.common.VarselType
 import no.nav.personbruker.dittnav.eventhandler.statistics.query.*
 
 class EventStatisticsService(private val database: Database) {
 
-    suspend fun getEventsStatisticsPerUser(type: EventType): IntegerMeasurement {
+    suspend fun getEventsStatisticsPerUser(type: VarselType): IntegerMeasurement {
         return database.queryWithExceptionTranslation {
             when (type) {
-                EventType.BESKJED -> getEventsPerUserForBeskjed()
-                EventType.OPPGAVE -> getEventsPerUserForOppgave()
-                EventType.INNBOKS -> getEventsPerUserForInnboks()
-                EventType.DONE -> throw Exception("Statistik ikke tilgjengelig for done-eventer")
+                VarselType.BESKJED -> getEventsPerUserForBeskjed()
+                VarselType.OPPGAVE -> getEventsPerUserForOppgave()
+                VarselType.INNBOKS -> getEventsPerUserForInnboks()
+                VarselType.DONE -> throw Exception("Statistik ikke tilgjengelig for done-eventer")
             }
         }
     }
@@ -23,13 +23,13 @@ class EventStatisticsService(private val database: Database) {
         }
     }
 
-    suspend fun getActiveEventsStatisticsPerUser(type: EventType): IntegerMeasurement {
+    suspend fun getActiveEventsStatisticsPerUser(type: VarselType): IntegerMeasurement {
         return database.queryWithExceptionTranslation {
             when (type) {
-                EventType.BESKJED -> getActiveEventsStatisticsPerUserForBeskjed()
-                EventType.OPPGAVE -> getActiveEventsStatisticsPerUserForOppgave()
-                EventType.INNBOKS -> getActiveEventsStatisticsPerUserForInnboks()
-                EventType.DONE -> throw Exception("Statistik ikke tilgjengelig for done-eventer")
+                VarselType.BESKJED -> getActiveEventsStatisticsPerUserForBeskjed()
+                VarselType.OPPGAVE -> getActiveEventsStatisticsPerUserForOppgave()
+                VarselType.INNBOKS -> getActiveEventsStatisticsPerUserForInnboks()
+                VarselType.DONE -> throw Exception("Statistik ikke tilgjengelig for done-eventer")
             }
         }
     }
@@ -40,13 +40,13 @@ class EventStatisticsService(private val database: Database) {
         }
     }
 
-    suspend fun getActiveRateEventsStatisticsPerUser(type: EventType): DecimalMeasurement {
+    suspend fun getActiveRateEventsStatisticsPerUser(type: VarselType): DecimalMeasurement {
         return database.queryWithExceptionTranslation {
             when (type) {
-                EventType.BESKJED -> getActiveRateEventsStatisticsPerUserForBeskjed()
-                EventType.OPPGAVE -> getActiveRateEventsStatisticsPerUserForOppgave()
-                EventType.INNBOKS -> getActiveRateEventsStatisticsPerUserForInnboks()
-                EventType.DONE -> throw Exception("Statistik ikke tilgjengelig for done-eventer")
+                VarselType.BESKJED -> getActiveRateEventsStatisticsPerUserForBeskjed()
+                VarselType.OPPGAVE -> getActiveRateEventsStatisticsPerUserForOppgave()
+                VarselType.INNBOKS -> getActiveRateEventsStatisticsPerUserForInnboks()
+                VarselType.DONE -> throw Exception("Statistik ikke tilgjengelig for done-eventer")
             }
         }
     }
@@ -57,13 +57,13 @@ class EventStatisticsService(private val database: Database) {
         }
     }
 
-    suspend fun getEventsStatisticsPerGroupId(type: EventType): IntegerMeasurement {
+    suspend fun getEventsStatisticsPerGroupId(type: VarselType): IntegerMeasurement {
         return database.queryWithExceptionTranslation {
             when (type) {
-                EventType.BESKJED -> getEventsPerGroupIdForBeskjed()
-                EventType.OPPGAVE -> getEventsPerGroupIdForOppgave()
-                EventType.INNBOKS -> getEventsPerGroupIdForInnboks()
-                EventType.DONE -> throw Exception("Statistik ikke tilgjengelig for done-eventer")
+                VarselType.BESKJED -> getEventsPerGroupIdForBeskjed()
+                VarselType.OPPGAVE -> getEventsPerGroupIdForOppgave()
+                VarselType.INNBOKS -> getEventsPerGroupIdForInnboks()
+                VarselType.DONE -> throw Exception("Statistik ikke tilgjengelig for done-eventer")
             }
         }
     }
@@ -74,13 +74,13 @@ class EventStatisticsService(private val database: Database) {
         }
     }
 
-    suspend fun getGroupIdsPerUser(type: EventType): IntegerMeasurement {
+    suspend fun getGroupIdsPerUser(type: VarselType): IntegerMeasurement {
         return database.queryWithExceptionTranslation {
             when (type) {
-                EventType.BESKJED -> getEventGroupIdsPerUserForBeskjed()
-                EventType.OPPGAVE -> getEventGroupIdsPerUserForOppgave()
-                EventType.INNBOKS -> getEventGroupIdsPerUserForInnboks()
-                EventType.DONE -> throw Exception("Statistik ikke tilgjengelig for done-eventer")
+                VarselType.BESKJED -> getEventGroupIdsPerUserForBeskjed()
+                VarselType.OPPGAVE -> getEventGroupIdsPerUserForOppgave()
+                VarselType.INNBOKS -> getEventGroupIdsPerUserForInnboks()
+                VarselType.DONE -> throw Exception("Statistik ikke tilgjengelig for done-eventer")
             }
         }
     }
@@ -91,13 +91,13 @@ class EventStatisticsService(private val database: Database) {
         }
     }
 
-    suspend fun getTextLength(type: EventType): IntegerMeasurement {
+    suspend fun getTextLength(type: VarselType): IntegerMeasurement {
         return database.queryWithExceptionTranslation {
             when (type) {
-                EventType.BESKJED -> getTextLengthForBeskjed()
-                EventType.OPPGAVE -> getTextLengthForOppgave()
-                EventType.INNBOKS -> getTextLengthForInnboks()
-                EventType.DONE -> throw Exception("Statistik ikke tilgjengelig for done-eventer")
+                VarselType.BESKJED -> getTextLengthForBeskjed()
+                VarselType.OPPGAVE -> getTextLengthForOppgave()
+                VarselType.INNBOKS -> getTextLengthForInnboks()
+                VarselType.DONE -> throw Exception("Statistik ikke tilgjengelig for done-eventer")
             }
         }
     }
@@ -108,13 +108,13 @@ class EventStatisticsService(private val database: Database) {
         }
     }
 
-    suspend fun getCountUsersWithEvents(type: EventType): CountMeasurement {
+    suspend fun getCountUsersWithEvents(type: VarselType): CountMeasurement {
         return database.queryWithExceptionTranslation {
             when (type) {
-                EventType.BESKJED -> getCountUsersWithEventsForBeskjed()
-                EventType.OPPGAVE -> getCountUsersWithEventsForOppgave()
-                EventType.INNBOKS -> getCountUsersWithEventsForInnboks()
-                EventType.DONE -> throw Exception("Statistik ikke tilgjengelig for done-eventer")
+                VarselType.BESKJED -> getCountUsersWithEventsForBeskjed()
+                VarselType.OPPGAVE -> getCountUsersWithEventsForOppgave()
+                VarselType.INNBOKS -> getCountUsersWithEventsForInnboks()
+                VarselType.DONE -> throw Exception("Statistik ikke tilgjengelig for done-eventer")
             }
         }
     }
@@ -125,13 +125,13 @@ class EventStatisticsService(private val database: Database) {
         }
     }
 
-    suspend fun getEventCount(type: EventType): CountMeasurement {
+    suspend fun getEventCount(type: VarselType): CountMeasurement {
         return database.queryWithExceptionTranslation {
             when (type) {
-                EventType.BESKJED -> getCountForBeskjed()
-                EventType.OPPGAVE -> getCountForOppgave()
-                EventType.INNBOKS -> getCountForInnboks()
-                EventType.DONE -> getCountForDone()
+                VarselType.BESKJED -> getCountForBeskjed()
+                VarselType.OPPGAVE -> getCountForOppgave()
+                VarselType.INNBOKS -> getCountForInnboks()
+                VarselType.DONE -> getCountForDone()
             }
         }
     }
@@ -142,13 +142,13 @@ class EventStatisticsService(private val database: Database) {
         }
     }
 
-    suspend fun getActiveEventCount(type: EventType): CountMeasurement {
+    suspend fun getActiveEventCount(type: VarselType): CountMeasurement {
         return database.queryWithExceptionTranslation {
             when (type) {
-                EventType.BESKJED -> getActiveCountForBeskjed()
-                EventType.OPPGAVE -> getActiveCountForOppgave()
-                EventType.INNBOKS -> getActiveCountForInnboks()
-                EventType.DONE -> throw Exception("Statistik ikke tilgjengelig for done-eventer")
+                VarselType.BESKJED -> getActiveCountForBeskjed()
+                VarselType.OPPGAVE -> getActiveCountForOppgave()
+                VarselType.INNBOKS -> getActiveCountForInnboks()
+                VarselType.DONE -> throw Exception("Statistik ikke tilgjengelig for done-eventer")
             }
         }
     }
@@ -159,13 +159,13 @@ class EventStatisticsService(private val database: Database) {
         }
     }
 
-    suspend fun getActiveEventsFrequencyDistribution(type: EventType): EventFrequencyDistribution {
+    suspend fun getActiveEventsFrequencyDistribution(type: VarselType): EventFrequencyDistribution {
         return database.queryWithExceptionTranslation {
             when (type) {
-                EventType.BESKJED -> getActiveEventsFrequencyDistribution("beskjed")
-                EventType.OPPGAVE -> getActiveEventsFrequencyDistribution("oppgave")
-                EventType.INNBOKS -> getActiveEventsFrequencyDistribution("innboks")
-                EventType.DONE -> throw Exception("Statistik ikke tilgjengelig for done-eventer")
+                VarselType.BESKJED -> getActiveEventsFrequencyDistribution("beskjed")
+                VarselType.OPPGAVE -> getActiveEventsFrequencyDistribution("oppgave")
+                VarselType.INNBOKS -> getActiveEventsFrequencyDistribution("innboks")
+                VarselType.DONE -> throw Exception("Statistik ikke tilgjengelig for done-eventer")
             }
         }
     }

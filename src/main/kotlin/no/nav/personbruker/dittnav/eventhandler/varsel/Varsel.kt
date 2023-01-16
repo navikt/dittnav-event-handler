@@ -4,24 +4,24 @@ package no.nav.personbruker.dittnav.eventhandler.varsel
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
-import no.nav.personbruker.dittnav.eventhandler.common.EventType
+import no.nav.personbruker.dittnav.eventhandler.common.VarselType
 import no.nav.personbruker.dittnav.eventhandler.common.serializer.ZonedDateTimeSerializer
 import java.time.ZonedDateTime
 
+
 @Serializable
 data class VarselDTO(
-    val grupperingsId: String,
     val eventId: String,
-    val eventTidspunkt: ZonedDateTime,
-    val produsent: String,
     val sikkerhetsnivaa: Int,
     val sistOppdatert: ZonedDateTime,
     val tekst: String,
     val link: String,
     val aktiv: Boolean,
-    val type: EventType,
+    val type: VarselType,
     val forstBehandlet: ZonedDateTime,
-    val fristUtløpt: Boolean?
+    val fristUtløpt: Boolean?,
+    val eksternVarslingSendt: Boolean,
+    val eksternVarslingKanaler: List<String>
 )
 
 class Varsel(
@@ -35,16 +35,15 @@ class Varsel(
     private val tekst: String,
     private val link: String,
     private val aktiv: Boolean,
-    private val type: EventType,
+    private val type: VarselType,
     private val forstBehandlet: ZonedDateTime,
-    private val fristUtløpt: Boolean?
+    private val fristUtløpt: Boolean?,
+    val eksternVarslingSendt: Boolean,
+    val eksternVarslingKanaler: List<String>
 ) {
     fun toVarselDTO(): VarselDTO {
         return VarselDTO(
-            grupperingsId = grupperingsId,
             eventId = eventId,
-            eventTidspunkt = eventTidspunkt,
-            produsent = produsent,
             sikkerhetsnivaa = sikkerhetsnivaa,
             sistOppdatert = sistOppdatert,
             tekst = tekst,
@@ -52,7 +51,9 @@ class Varsel(
             aktiv = aktiv,
             type = type,
             forstBehandlet = forstBehandlet,
-            fristUtløpt = fristUtløpt
+            fristUtløpt = fristUtløpt,
+            eksternVarslingSendt=eksternVarslingSendt,
+            eksternVarslingKanaler = eksternVarslingKanaler
         )
     }
 }

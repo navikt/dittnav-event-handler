@@ -69,8 +69,7 @@ class VarselApiTest {
             )
             createOppgave(
                 listOf(
-                    inaktivOppgave.also {
-                    },
+                    inaktivOppgave,
                     OppgaveObjectMother.createOppgave(fodselsnummer = "321", aktiv = false, fristUtløpt = null)
                 )
             )
@@ -122,11 +121,11 @@ class VarselApiTest {
 
     @ParameterizedTest
     @ValueSource(strings = ["dittnav-event-handler/fetch/varsel/on-behalf-of/aktive","dittnav-event-handler/fetch/event/aktive"])
-    fun `varsel-apiet skal returnere aktive varsler`() {
+    fun `varsel-apiet skal returnere aktive varsler`(url:String) {
         testApplication {
             mockEventHandlerApi(eventRepository = varselRepository)
             val response =
-                client.getMedFnrHeader("dittnav-event-handler/fetch/varsel/on-behalf-of/aktive", fodselsnummer)
+                client.getMedFnrHeader(url, fodselsnummer)
 
             response.status shouldBe HttpStatusCode.OK
             val varselListe = ObjectMapper().readTree(response.bodyAsText())

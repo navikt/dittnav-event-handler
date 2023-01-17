@@ -1,13 +1,13 @@
 package no.nav.personbruker.dittnav.eventhandler.statistics.query
 
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapSingleResult
-import no.nav.personbruker.dittnav.eventhandler.common.EventType
+import no.nav.personbruker.dittnav.eventhandler.common.VarselType
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventTextLength
 import no.nav.personbruker.dittnav.eventhandler.statistics.IntegerMeasurement
 import java.sql.Connection
 import java.sql.ResultSet
 
-private fun singleTableQueryString(type: EventType) = """
+private fun singleTableQueryString(type: VarselType) = """
     select
         min(length(tekst)) as minLength,
         max(length(tekst)) as maxLength,
@@ -20,9 +20,9 @@ private fun singleTableQueryString(type: EventType) = """
     from ${type.eventType}
 """
 
-val beskjedEventTextLengthQueryString = singleTableQueryString(EventType.BESKJED)
-val oppgaveEventTextLengthQueryString = singleTableQueryString(EventType.OPPGAVE)
-val innboksEventTextLengthQueryString = singleTableQueryString(EventType.INNBOKS)
+val beskjedEventTextLengthQueryString = singleTableQueryString(VarselType.BESKJED)
+val oppgaveEventTextLengthQueryString = singleTableQueryString(VarselType.OPPGAVE)
+val innboksEventTextLengthQueryString = singleTableQueryString(VarselType.INNBOKS)
 
 fun Connection.getTextLengthForOppgave(): IntegerMeasurement {
     return prepareStatement(oppgaveEventTextLengthQueryString)

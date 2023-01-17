@@ -7,7 +7,7 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import mu.KotlinLogging
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.respondWithError
-import no.nav.personbruker.dittnav.eventhandler.common.EventType
+import no.nav.personbruker.dittnav.eventhandler.common.VarselType
 
 fun Route.statisticsSystemClientApi(statisticsService: EventStatisticsService) {
 
@@ -15,7 +15,7 @@ fun Route.statisticsSystemClientApi(statisticsService: EventStatisticsService) {
 
     get("/stats/grouped/bruker/{type}") {
         try {
-            val type = EventType.fromOriginalType(call.parameters["type"]!!)
+            val type = VarselType.fromOriginalType(call.parameters["type"]!!)
             val measurement = statisticsService.getEventsStatisticsPerUser(type)
 
             call.respond(HttpStatusCode.OK, measurement)
@@ -36,7 +36,7 @@ fun Route.statisticsSystemClientApi(statisticsService: EventStatisticsService) {
 
     get("/stats/grouped/bruker/active/{type}") {
         try {
-            val type = EventType.fromOriginalType(call.parameters["type"]!!)
+            val type = VarselType.fromOriginalType(call.parameters["type"]!!)
             val measurement = statisticsService.getActiveEventsStatisticsPerUser(type)
 
             call.respond(HttpStatusCode.OK, measurement)
@@ -57,7 +57,7 @@ fun Route.statisticsSystemClientApi(statisticsService: EventStatisticsService) {
 
     get("/stats/grouped/bruker/active-rate/{type}") {
         try {
-            val type = EventType.fromOriginalType(call.parameters["type"]!!)
+            val type = VarselType.fromOriginalType(call.parameters["type"]!!)
             val measurement = statisticsService.getActiveRateEventsStatisticsPerUser(type)
 
             call.respond(HttpStatusCode.OK, measurement)
@@ -78,7 +78,7 @@ fun Route.statisticsSystemClientApi(statisticsService: EventStatisticsService) {
 
     get("/stats/grouped/gruppering/{type}") {
         try {
-            val type = EventType.fromOriginalType(call.parameters["type"]!!)
+            val type = VarselType.fromOriginalType(call.parameters["type"]!!)
             val measurement = statisticsService.getEventsStatisticsPerGroupId(type)
 
             call.respond(HttpStatusCode.OK, measurement)
@@ -101,7 +101,7 @@ fun Route.statisticsSystemClientApi(statisticsService: EventStatisticsService) {
 
     get("/stats/grouped/bruker/grupperings/{type}") {
         try {
-            val type = EventType.fromOriginalType(call.parameters["type"]!!)
+            val type = VarselType.fromOriginalType(call.parameters["type"]!!)
             val measurement = statisticsService.getGroupIdsPerUser(type)
 
             call.respond(HttpStatusCode.OK, measurement)
@@ -122,7 +122,7 @@ fun Route.statisticsSystemClientApi(statisticsService: EventStatisticsService) {
 
     get("/stats/text-length/{type}") {
         try {
-            val type = EventType.fromOriginalType(call.parameters["type"]!!)
+            val type = VarselType.fromOriginalType(call.parameters["type"]!!)
             val measurement = statisticsService.getTextLength(type)
 
             call.respond(HttpStatusCode.OK, measurement)
@@ -143,7 +143,7 @@ fun Route.statisticsSystemClientApi(statisticsService: EventStatisticsService) {
 
     get("/stats/bruker-count/{type}") {
         try {
-            val type = EventType.fromOriginalType(call.parameters["type"]!!)
+            val type = VarselType.fromOriginalType(call.parameters["type"]!!)
             val measurement = statisticsService.getCountUsersWithEvents(type)
 
             call.respond(HttpStatusCode.OK, measurement)
@@ -164,7 +164,7 @@ fun Route.statisticsSystemClientApi(statisticsService: EventStatisticsService) {
 
     get("/stats/count/{type}") {
         try {
-            val type = EventType.fromOriginalType(call.parameters["type"]!!)
+            val type = VarselType.fromOriginalType(call.parameters["type"]!!)
             val measurement = statisticsService.getEventCount(type)
 
             call.respond(HttpStatusCode.OK, measurement)
@@ -185,7 +185,7 @@ fun Route.statisticsSystemClientApi(statisticsService: EventStatisticsService) {
 
     get("/stats/count/active/{type}") {
         try {
-            val type = EventType.fromOriginalType(call.parameters["type"]!!)
+            val type = VarselType.fromOriginalType(call.parameters["type"]!!)
             val measurement = statisticsService.getActiveEventCount(type)
 
             call.respond(HttpStatusCode.OK, measurement)
@@ -206,7 +206,7 @@ fun Route.statisticsSystemClientApi(statisticsService: EventStatisticsService) {
 
     get("/stats/frequency-distribution/active/{type}") {
         try {
-            val type = EventType.fromOriginalType(call.parameters["type"]!!)
+            val type = VarselType.fromOriginalType(call.parameters["type"]!!)
             val measurement = statisticsService.getActiveEventsFrequencyDistribution(type)
 
             call.respond(HttpStatusCode.OK, measurement)

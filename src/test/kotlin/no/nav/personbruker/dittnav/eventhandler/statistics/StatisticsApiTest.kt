@@ -16,7 +16,7 @@ import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
 import no.nav.personbruker.dittnav.eventhandler.beskjed.deleteBeskjed
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
-import no.nav.personbruker.dittnav.eventhandler.common.EventType
+import no.nav.personbruker.dittnav.eventhandler.common.VarselType
 import no.nav.personbruker.dittnav.eventhandler.innboks.Innboks
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksObjectMother
 import no.nav.personbruker.dittnav.eventhandler.innboks.createInnboks
@@ -201,13 +201,13 @@ class StatisticsApitest {
     fun `active-rate grupert på bruker og type`() {
         val rateEndpoint = "$baseUrl/stats/grouped/bruker/active-rate"
         coEvery {
-            statistickServiceMock.getActiveRateEventsStatisticsPerUser(EventType.BESKJED)
+            statistickServiceMock.getActiveRateEventsStatisticsPerUser(VarselType.BESKJED)
         } returns mockDecimal(2.75, 1.0, 1.5)
         coEvery {
-            statistickServiceMock.getActiveRateEventsStatisticsPerUser(EventType.OPPGAVE)
+            statistickServiceMock.getActiveRateEventsStatisticsPerUser(VarselType.OPPGAVE)
         } returns mockDecimal(3.22, 1.7, 4.56)
         coEvery {
-            statistickServiceMock.getActiveRateEventsStatisticsPerUser(EventType.INNBOKS)
+            statistickServiceMock.getActiveRateEventsStatisticsPerUser(VarselType.INNBOKS)
         } returns mockDecimal(10.75, 1.11, 5.3)
         coEvery {
             statistickServiceMock.getTotalActiveRateEventsStatisticsPerUser()
@@ -367,19 +367,19 @@ class StatisticsApitest {
     @Test
     fun `Varsel frekvens distribusjon`() {
         coEvery {
-            statistickServiceMock.getActiveEventsFrequencyDistribution(EventType.BESKJED)
+            statistickServiceMock.getActiveEventsFrequencyDistribution(VarselType.BESKJED)
         } returns EventFrequencyDistribution(
             listOf(NumberOfEventsFrequency(antallEventer = 32, antallBrukere = 3))
         )
         coEvery {
-            statistickServiceMock.getActiveEventsFrequencyDistribution(EventType.OPPGAVE)
+            statistickServiceMock.getActiveEventsFrequencyDistribution(VarselType.OPPGAVE)
         } returns EventFrequencyDistribution(
             listOf(
                 NumberOfEventsFrequency(antallEventer = 78, antallBrukere = 50),
                 NumberOfEventsFrequency(antallEventer = 45, antallBrukere = 34)
             )
         )
-        coEvery { statistickServiceMock.getActiveEventsFrequencyDistribution(EventType.INNBOKS) } returns EventFrequencyDistribution(
+        coEvery { statistickServiceMock.getActiveEventsFrequencyDistribution(VarselType.INNBOKS) } returns EventFrequencyDistribution(
             listOf()
         )
 

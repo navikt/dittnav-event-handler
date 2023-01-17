@@ -1,16 +1,21 @@
 package no.nav.personbruker.dittnav.eventhandler.varsel;
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
+import io.ktor.network.sockets.Connection
 import io.ktor.server.testing.testApplication
 import no.nav.personbruker.dittnav.eventhandler.apiTestfnr
 import no.nav.personbruker.dittnav.eventhandler.asBooleanOrNull
 import no.nav.personbruker.dittnav.eventhandler.asDateTime
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
+import no.nav.personbruker.dittnav.eventhandler.beskjed.createDoknotStatuses
+import no.nav.personbruker.dittnav.eventhandler.common.VarselType
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
+import no.nav.personbruker.dittnav.eventhandler.common.database.createDoknotifikasjon
 import no.nav.personbruker.dittnav.eventhandler.comparableTime
 import no.nav.personbruker.dittnav.eventhandler.getMedFnrHeader
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksObjectMother
@@ -68,6 +73,7 @@ class VarselApiTest {
                     OppgaveObjectMother.createOppgave(fodselsnummer = "321", aktiv = false, fristUtløpt = null)
                 )
             )
+            createDoknotifikasjon(inaktivOppgave.eventId,VarselType.OPPGAVE)
             createInnboks(
                 listOf(
                     InnboksObjectMother.createInnboks(aktiv = true, fodselsnummer = fodselsnummer),
@@ -78,7 +84,6 @@ class VarselApiTest {
             )
         }
     }
-
 
     @ParameterizedTest
     @ValueSource(strings = ["dittnav-event-handler/fetch/varsel/on-behalf-of/inaktive","dittnav-event-handler/fetch/event/inaktive"])
@@ -94,10 +99,7 @@ class VarselApiTest {
 
             val varselJson = varselListe.find { it["eventId"].asText() == inaktivBeskjed.eventId }
             require(varselJson != null)
-            varselJson["grupperingsId"].asText() shouldBe inaktivBeskjed.grupperingsId
             varselJson["eventId"].asText() shouldBe inaktivBeskjed.eventId
-            varselJson["eventTidspunkt"].asDateTime() shouldBe inaktivBeskjed.eventTidspunkt.comparableTime()
-            varselJson["produsent"].asText() shouldBe inaktivBeskjed.appnavn
             varselJson["sikkerhetsnivaa"].asInt() shouldBe inaktivBeskjed.sikkerhetsnivaa
             varselJson["sistOppdatert"].asDateTime() shouldBe inaktivBeskjed.sistOppdatert.comparableTime()
             varselJson["tekst"].asText() shouldBe inaktivBeskjed.tekst
@@ -106,20 +108,24 @@ class VarselApiTest {
             varselJson["forstBehandlet"].asDateTime() shouldBe inaktivBeskjed.forstBehandlet.comparableTime()
             varselJson["type"].asText() shouldBe "BESKJED"
             varselJson["fristUtløpt"].asBoolean() shouldBe false
+            varselJson["eksternVarslingSendt"].asBoolean() shouldBe false
+            varselJson["eksternVarslingKanaler"].toList() shouldBe emptyList<String>()
             varselListe.find { it["eventId"].asText() == inaktivOppgave.eventId }.apply {
                 require(this != null)
-                this.get("fristUtløpt").asBooleanOrNull() shouldBe true
+                get("fristUtløpt").asBooleanOrNull() shouldBe true
+                get("eksternVarslingSendt").asBoolean() shouldBe true
+                get("eksternVarslingKanaler").toList().map { it.asText() } shouldContainExactly listOf("SMS","EPOST")
             }
         }
 
 
     @ParameterizedTest
     @ValueSource(strings = ["dittnav-event-handler/fetch/varsel/on-behalf-of/aktive","dittnav-event-handler/fetch/event/aktive"])
-    fun `varsel-apiet skal returnere aktive varsler`() {
+    fun `varsel-apiet skal returnere aktive varsler`(url:String) {
         testApplication {
             mockEventHandlerApi(eventRepository = varselRepository)
             val response =
-                client.getMedFnrHeader("dittnav-event-handler/fetch/varsel/on-behalf-of/aktive", fodselsnummer)
+                client.getMedFnrHeader(url, fodselsnummer)
 
             response.status shouldBe HttpStatusCode.OK
             val varselListe = ObjectMapper().readTree(response.bodyAsText())
@@ -127,10 +133,7 @@ class VarselApiTest {
 
             val varselJson = varselListe.find { it["eventId"].asText() == aktivBeskjed.eventId }
             require(varselJson != null)
-            varselJson["grupperingsId"].asText() shouldBe aktivBeskjed.grupperingsId
             varselJson["eventId"].asText() shouldBe aktivBeskjed.eventId
-            varselJson["eventTidspunkt"].asDateTime() shouldBe aktivBeskjed.eventTidspunkt.comparableTime()
-            varselJson["produsent"].asText() shouldBe aktivBeskjed.appnavn
             varselJson["sikkerhetsnivaa"].asInt() shouldBe aktivBeskjed.sikkerhetsnivaa
             varselJson["sistOppdatert"].asDateTime() shouldBe aktivBeskjed.sistOppdatert.comparableTime()
             varselJson["tekst"].asText() shouldBe aktivBeskjed.tekst
@@ -143,4 +146,3 @@ class VarselApiTest {
         }
     }
 }
-

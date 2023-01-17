@@ -5,7 +5,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
-import no.nav.personbruker.dittnav.eventhandler.common.EventType
+import no.nav.personbruker.dittnav.eventhandler.common.VarselType
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksObjectMother
 import no.nav.personbruker.dittnav.eventhandler.innboks.createInnboks
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveObjectMother
@@ -103,7 +103,7 @@ class FrequencyDistributionStatisticsTest {
     @Test
     fun `Frekvensfordeling av antall aktive beskjeder`() {
         runBlocking {
-            val eventFrekvensFordeling = eventStatisticsService.getActiveEventsFrequencyDistribution(EventType.BESKJED)
+            val eventFrekvensFordeling = eventStatisticsService.getActiveEventsFrequencyDistribution(VarselType.BESKJED)
             eventFrekvensFordeling.eventFrequencies.size shouldBe 2
             eventFrekvensFordeling.eventFrequencies.first { it.antallEventer == 2 }.antallBrukere shouldBe 1
         }
@@ -112,7 +112,7 @@ class FrequencyDistributionStatisticsTest {
     @Test
     fun `Frekvensfordeling av antall aktive oppgaver`() {
         runBlocking {
-            val eventFrekvensFordeling = eventStatisticsService.getActiveEventsFrequencyDistribution(EventType.OPPGAVE)
+            val eventFrekvensFordeling = eventStatisticsService.getActiveEventsFrequencyDistribution(VarselType.OPPGAVE)
             eventFrekvensFordeling.eventFrequencies.size shouldBe 2
             eventFrekvensFordeling.eventFrequencies.first { it.antallEventer == 1 }.antallBrukere shouldBe 3
         }
@@ -121,7 +121,7 @@ class FrequencyDistributionStatisticsTest {
     @Test
     fun `Frekvensfordeling av antall aktive innboks`() {
         runBlocking {
-            val eventFrekvensFordeling = eventStatisticsService.getActiveEventsFrequencyDistribution(EventType.INNBOKS)
+            val eventFrekvensFordeling = eventStatisticsService.getActiveEventsFrequencyDistribution(VarselType.INNBOKS)
             eventFrekvensFordeling.eventFrequencies.size shouldBe 1
             eventFrekvensFordeling.eventFrequencies.first { it.antallEventer == 1 }.antallBrukere shouldBe 2
         }

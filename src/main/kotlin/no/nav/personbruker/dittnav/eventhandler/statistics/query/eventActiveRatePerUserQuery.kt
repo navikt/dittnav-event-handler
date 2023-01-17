@@ -1,13 +1,13 @@
 package no.nav.personbruker.dittnav.eventhandler.statistics.query
 
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapSingleResult
-import no.nav.personbruker.dittnav.eventhandler.common.EventType
+import no.nav.personbruker.dittnav.eventhandler.common.VarselType
 import no.nav.personbruker.dittnav.eventhandler.statistics.DecimalMeasurement
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventActiveRatePerUser
 import java.sql.Connection
 import java.sql.ResultSet
 
-private fun singleTableQueryString(type: EventType) = """
+private fun singleTableQueryString(type: VarselType) = """
     select
         min(aggregate.rate) as minRate, 
         max(aggregate.rate) as maxRate,
@@ -20,9 +20,9 @@ private fun singleTableQueryString(type: EventType) = """
     from (select count(1) filter ( where aktiv = true )::decimal / count(1)::decimal as rate from ${type.eventType} group by fodselsnummer) as aggregate;
 """
 
-val beskjedEventActiveRatePerUserQueryString = singleTableQueryString(EventType.BESKJED)
-val oppgaveEventActiveRatePerUserQueryString = singleTableQueryString(EventType.OPPGAVE)
-val innboksEventActiveRatePerUserQueryString = singleTableQueryString(EventType.INNBOKS)
+val beskjedEventActiveRatePerUserQueryString = singleTableQueryString(VarselType.BESKJED)
+val oppgaveEventActiveRatePerUserQueryString = singleTableQueryString(VarselType.OPPGAVE)
+val innboksEventActiveRatePerUserQueryString = singleTableQueryString(VarselType.INNBOKS)
 
 fun Connection.getActiveRateEventsStatisticsPerUserForOppgave(): DecimalMeasurement {
     return prepareStatement(oppgaveEventActiveRatePerUserQueryString)

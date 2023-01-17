@@ -61,7 +61,6 @@ class VarselTest {
         val redactedVarsel = aktiveVarsel.map { it.toVarselDTO(3) }
         redactedVarsel.filter { it.sikkerhetsnivaa == 4 }.all { it.tekst == null } shouldBe true
         redactedVarsel.filter { it.sikkerhetsnivaa == 3 }.all { it.tekst != null } shouldBe true
-
     }
 
     @Test

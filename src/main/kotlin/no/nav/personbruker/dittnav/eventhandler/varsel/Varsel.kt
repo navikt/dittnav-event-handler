@@ -52,7 +52,7 @@ class Varsel(
             type = type,
             forstBehandlet = forstBehandlet,
             fristUtløpt = fristUtløpt,
-            eksternVarslingSendt = eksternVarslingSendt,
+            eksternVarslingSendt=eksternVarslingSendt,
             eksternVarslingKanaler = eksternVarslingKanaler
         )
     }

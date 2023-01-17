@@ -126,7 +126,7 @@ class VarselApiTest {
 
     @ParameterizedTest
     @ValueSource(strings = ["dittnav-event-handler/fetch/varsel/on-behalf-of/aktive", "dittnav-event-handler/fetch/event/aktive"])
-    fun `varsel-apiet skal returnere aktive varsler`(url: String) {
+    fun `varsel-apiet skal returnere aktive varsler`(url: String) =
         testApplication {
             mockEventHandlerApi(varselRepository = varselRepository)
             val response =
@@ -149,7 +149,7 @@ class VarselApiTest {
             varselJson["fristUtløpt"].asBooleanOrNull() shouldBe null
 
         }
-    }
+
 
     @Test
     fun `skal maskeree varsel`() = testApplication {

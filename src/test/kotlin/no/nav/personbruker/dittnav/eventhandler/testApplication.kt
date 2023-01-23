@@ -35,7 +35,7 @@ fun TestApplicationBuilder.mockEventHandlerApi(
     beskjedEventService: BeskjedEventService = mockk(relaxed = true),
     oppgaveEventService: OppgaveEventService = mockk(relaxed = true),
     innboksEventService: InnboksEventService = mockk(relaxed = true),
-    eventRepository: VarselRepository = mockk(relaxed = true),
+    varselRepository: VarselRepository = mockk(relaxed = true),
     eventStatisticsService: EventStatisticsService = mockk(relaxed = true),
     database: Database = mockk(relaxed = true),
     installAuthenticatorsFunction: Application.() -> Unit = {
@@ -60,7 +60,7 @@ fun TestApplicationBuilder.mockEventHandlerApi(
             beskjedEventService = beskjedEventService,
             oppgaveEventService = oppgaveEventService,
             innboksEventService = innboksEventService,
-            varselRepository = eventRepository,
+            varselRepository = varselRepository,
             eventStatisticsService = eventStatisticsService,
             database = database,
             installAuthenticatorsFunction = installAuthenticatorsFunction,
@@ -194,7 +194,10 @@ internal fun JsonNode.asDateTime() =
 internal fun ZonedDateTime.comparableTime() =
     truncatedTo(ChronoUnit.SECONDS).toLocalDateTime()
 
-suspend internal fun HttpClient.getMedFnrHeader(url: String, fnr: String = apiTestfnr): HttpResponse = get {
+internal suspend fun HttpClient.getMedFnrHeader(
+    url: String,
+    fnr: String = apiTestfnr
+): HttpResponse = get {
     url(url)
     header("fodselsnummer", fnr)
 }

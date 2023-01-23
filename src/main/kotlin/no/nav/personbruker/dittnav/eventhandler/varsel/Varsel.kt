@@ -14,8 +14,8 @@ data class VarselDTO(
     val eventId: String,
     val sikkerhetsnivaa: Int,
     val sistOppdatert: ZonedDateTime,
-    val tekst: String,
-    val link: String,
+    val tekst: String?,
+    val link: String?,
     val aktiv: Boolean,
     val type: VarselType,
     val forstBehandlet: ZonedDateTime,
@@ -41,8 +41,12 @@ class Varsel(
     val eksternVarslingSendt: Boolean,
     val eksternVarslingKanaler: List<String>
 ) {
-    fun toVarselDTO(): VarselDTO {
-        return VarselDTO(
+    fun toVarselDTO() = toVarselDTO(tekst, link)
+    fun toVarselDTO(innloggingsnivå: Int) =
+        toVarselDTO(tekst.withSikkerhetsnivaa(innloggingsnivå), link.withSikkerhetsnivaa(innloggingsnivå))
+
+    private fun toVarselDTO(tekst: String?, link: String?) =
+        VarselDTO(
             eventId = eventId,
             sikkerhetsnivaa = sikkerhetsnivaa,
             sistOppdatert = sistOppdatert,
@@ -52,8 +56,24 @@ class Varsel(
             type = type,
             forstBehandlet = forstBehandlet,
             fristUtløpt = fristUtløpt,
-            eksternVarslingSendt=eksternVarslingSendt,
+            eksternVarslingSendt = eksternVarslingSendt,
             eksternVarslingKanaler = eksternVarslingKanaler
         )
+
+
+    private fun forInnlogingsnivå(innloggingsnivå: Int, text: String) = when {
+        innloggingsnivå < sikkerhetsnivaa -> null
+        innloggingsnivå >= sikkerhetsnivaa -> text
+        else -> {
+            throw IllegalArgumentException("Kunne ikke avgjøre tekst for innloggingsnivå for varsel $eventId med innlogingsnivå $innloggingsnivå")
+        }
     }
+
+    private fun String.withSikkerhetsnivaa(innloggingsnivå: Int): String? =
+        if (innloggingsnivå >= sikkerhetsnivaa) {
+            this
+        } else {
+            null
+        }
 }
+

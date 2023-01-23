@@ -3,16 +3,17 @@ package no.nav.personbruker.dittnav.eventhandler.varsel;
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
-import io.ktor.client.statement.bodyAsText
-import io.ktor.http.HttpStatusCode
-import io.ktor.network.sockets.Connection
-import io.ktor.server.testing.testApplication
+import io.kotest.matchers.shouldNotBe
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import io.ktor.server.testing.*
 import no.nav.personbruker.dittnav.eventhandler.apiTestfnr
 import no.nav.personbruker.dittnav.eventhandler.asBooleanOrNull
 import no.nav.personbruker.dittnav.eventhandler.asDateTime
+import no.nav.personbruker.dittnav.eventhandler.assert
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
-import no.nav.personbruker.dittnav.eventhandler.beskjed.createDoknotStatuses
 import no.nav.personbruker.dittnav.eventhandler.common.VarselType
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
 import no.nav.personbruker.dittnav.eventhandler.common.database.createDoknotifikasjon
@@ -23,7 +24,10 @@ import no.nav.personbruker.dittnav.eventhandler.innboks.createInnboks
 import no.nav.personbruker.dittnav.eventhandler.mockEventHandlerApi
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveObjectMother
 import no.nav.personbruker.dittnav.eventhandler.oppgave.createOppgave
+import no.nav.tms.token.support.authentication.installer.mock.installMockedAuthenticators
+import no.nav.tms.token.support.tokenx.validation.mock.SecurityLevel
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
@@ -32,6 +36,7 @@ import org.junit.jupiter.params.provider.ValueSource
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class VarselApiTest {
 
+    private val objectMapper = ObjectMapper()
     private val database = LocalPostgresDatabase.cleanDb()
     private val varselRepository = VarselRepository(database)
     private val fodselsnummer = apiTestfnr
@@ -69,11 +74,12 @@ class VarselApiTest {
             )
             createOppgave(
                 listOf(
-                    inaktivOppgave,
+                    inaktivOppgave.also {
+                    },
                     OppgaveObjectMother.createOppgave(fodselsnummer = "321", aktiv = false, fristUtløpt = null)
                 )
             )
-            createDoknotifikasjon(inaktivOppgave.eventId,VarselType.OPPGAVE)
+            createDoknotifikasjon(inaktivOppgave.eventId, VarselType.OPPGAVE)
             createInnboks(
                 listOf(
                     InnboksObjectMother.createInnboks(aktiv = true, fodselsnummer = fodselsnummer),
@@ -86,15 +92,15 @@ class VarselApiTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = ["dittnav-event-handler/fetch/varsel/on-behalf-of/inaktive","dittnav-event-handler/fetch/event/inaktive"])
+    @ValueSource(strings = ["dittnav-event-handler/fetch/varsel/on-behalf-of/inaktive", "dittnav-event-handler/fetch/varsel/inaktive"])
     fun `varsel-apiet skal returnere inaktive varsler`(url: String) =
         testApplication {
-            mockEventHandlerApi(eventRepository = varselRepository)
+            mockEventHandlerApi(varselRepository = varselRepository)
             val response =
                 client.getMedFnrHeader(url, fodselsnummer)
 
             response.status shouldBe HttpStatusCode.OK
-            val varselListe = ObjectMapper().readTree(response.bodyAsText())
+            val varselListe = objectMapper.readTree(response.bodyAsText())
             varselListe.size() shouldBe antallinaktiveVarselForFnr
 
             val varselJson = varselListe.find { it["eventId"].asText() == inaktivBeskjed.eventId }
@@ -114,21 +120,21 @@ class VarselApiTest {
                 require(this != null)
                 get("fristUtløpt").asBooleanOrNull() shouldBe true
                 get("eksternVarslingSendt").asBoolean() shouldBe true
-                get("eksternVarslingKanaler").toList().map { it.asText() } shouldContainExactly listOf("SMS","EPOST")
+                get("eksternVarslingKanaler").toList().map { it.asText() } shouldContainExactly listOf("SMS", "EPOST")
             }
         }
 
 
     @ParameterizedTest
-    @ValueSource(strings = ["dittnav-event-handler/fetch/varsel/on-behalf-of/aktive","dittnav-event-handler/fetch/event/aktive"])
-    fun `varsel-apiet skal returnere aktive varsler`(url:String) {
+    @ValueSource(strings = ["dittnav-event-handler/fetch/varsel/on-behalf-of/aktive", "dittnav-event-handler/fetch/varsel/aktive"])
+    fun `varsel-apiet skal returnere aktive varsler`(url: String) =
         testApplication {
-            mockEventHandlerApi(eventRepository = varselRepository)
+            mockEventHandlerApi(varselRepository = varselRepository)
             val response =
                 client.getMedFnrHeader(url, fodselsnummer)
 
             response.status shouldBe HttpStatusCode.OK
-            val varselListe = ObjectMapper().readTree(response.bodyAsText())
+            val varselListe = objectMapper.readTree(response.bodyAsText())
             varselListe.size() shouldBe antallaktiveVarselForFnr
 
             val varselJson = varselListe.find { it["eventId"].asText() == aktivBeskjed.eventId }
@@ -142,6 +148,48 @@ class VarselApiTest {
             varselJson["forstBehandlet"].asDateTime() shouldBe aktivBeskjed.forstBehandlet.comparableTime()
             varselJson["type"].asText() shouldBe "BESKJED"
             varselJson["fristUtløpt"].asBooleanOrNull() shouldBe null
+
+        }
+
+
+    @Test
+    fun `skal maskeree varsel`() = testApplication {
+        mockEventHandlerApi(varselRepository = varselRepository, installAuthenticatorsFunction = {
+            installMockedAuthenticators {
+                installTokenXAuthMock {
+                    setAsDefault = true
+                    alwaysAuthenticated = true
+                    staticUserPid = apiTestfnr
+                    staticSecurityLevel = SecurityLevel.LEVEL_3
+                }
+                installAzureAuthMock {
+                    setAsDefault = false
+                    alwaysAuthenticated = true
+                }
+            }
+        })
+        client.getMedFnrHeader("dittnav-event-handler/fetch/varsel/on-behalf-of/inaktive", fodselsnummer).assert {
+            val varsler = objectMapper.readTree(bodyAsText())
+            varsler.forEach { it["tekst"].textValue() shouldNotBe null }
+            varsler.forEach { it["link"].textValue() shouldNotBe null }
+        }
+
+        client.get("dittnav-event-handler/fetch/varsel/inaktive").assert {
+            val varsler = objectMapper.readTree(bodyAsText())
+            varsler.forEach { it["tekst"].textValue() shouldBe null }
+            varsler.forEach { it["link"].textValue() shouldBe null }
+        }
+
+        client.getMedFnrHeader("dittnav-event-handler/fetch/varsel/on-behalf-of/aktive", fodselsnummer).assert {
+            val varsler = objectMapper.readTree(bodyAsText())
+            varsler.forEach { it["tekst"].textValue() shouldNotBe null }
+            varsler.forEach { it["link"].textValue() shouldNotBe null }
+        }
+
+        client.get("dittnav-event-handler/fetch/varsel/aktive").assert {
+            val varsler = objectMapper.readTree(bodyAsText())
+            varsler.forEach { it["tekst"].textValue() shouldBe null }
+            varsler.forEach { it["link"].textValue() shouldBe null }
 
         }
     }

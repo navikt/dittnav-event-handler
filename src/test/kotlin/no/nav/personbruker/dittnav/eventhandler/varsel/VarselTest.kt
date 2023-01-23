@@ -3,6 +3,7 @@ package no.nav.personbruker.dittnav.eventhandler.varsel
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
+import no.nav.personbruker.dittnav.eventhandler.assert
 import no.nav.personbruker.dittnav.eventhandler.beskjed.Beskjed
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
@@ -49,17 +50,22 @@ class VarselTest {
 
     @Test
     fun `henter aktive varsler`() = runBlocking {
-        val aktiveVarsel = eventRepository.getActiveVarsel(fodselsnummer).map { it.toVarselDTO() }
-        aktiveVarsel.size shouldBe 6
-        aktiveVarsel.map { it.type }.toSet() shouldContainExactly alleVarselType
-        aktiveVarsel.filter { it.eksternVarslingSendt }.size shouldBe 3
-        aktiveVarsel.filter { it.eksternVarslingKanaler == listOf("SMS", "EPOST") }.size shouldBe 2
-        aktiveVarsel.filter { it.eksternVarslingKanaler == listOf("SMS") }.size shouldBe 1
+        val aktiveVarsel = eventRepository.getActiveVarsel(fodselsnummer)
+        val aktiveVarselDTO = aktiveVarsel.map { it.toVarselDTO(4) }
+        aktiveVarselDTO.size shouldBe 6
+        aktiveVarselDTO.map { it.type }.toSet() shouldContainExactly alleVarselType
+        aktiveVarselDTO.filter { it.eksternVarslingSendt }.size shouldBe 3
+        aktiveVarselDTO.filter { it.eksternVarslingKanaler == listOf("SMS", "EPOST") }.size shouldBe 2
+        aktiveVarselDTO.filter { it.eksternVarslingKanaler == listOf("SMS") }.size shouldBe 1
+
+        val redactedVarsel = aktiveVarsel.map { it.toVarselDTO(3) }
+        redactedVarsel.filter { it.sikkerhetsnivaa == 4 }.all { it.tekst == null } shouldBe true
+        redactedVarsel.filter { it.sikkerhetsnivaa == 3 }.all { it.tekst != null } shouldBe true
     }
 
     @Test
     fun `henter inaktive varsel`() = runBlocking {
-        val inaktiveVarsel = eventRepository.getInactiveVarsel(fodselsnummer).map { it.toVarselDTO() }
+        val inaktiveVarsel = eventRepository.getInactiveVarsel(fodselsnummer).map { it.toVarselDTO(4) }
         inaktiveVarsel.size shouldBe 10
         inaktiveVarsel.map { it.type }.toSet() shouldContainExactly alleVarselType
         inaktiveVarsel.filter { it.eksternVarslingSendt }.size shouldBe 6
@@ -72,6 +78,7 @@ class VarselTest {
             BeskjedObjectMother.createBeskjed(
                 fodselsnummer = fodselsnummer,
                 aktiv = true,
+                sikkerhetsnivaa = 3
             )
         } + (1..antallInaktive).map {
             BeskjedObjectMother.createBeskjed(

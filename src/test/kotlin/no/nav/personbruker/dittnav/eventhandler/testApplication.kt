@@ -196,12 +196,10 @@ internal fun ZonedDateTime.comparableTime() =
 
 internal suspend fun HttpClient.getMedFnrHeader(
     url: String,
-    fnr: String = apiTestfnr,
-    authLevel: Int = 4
+    fnr: String = apiTestfnr
 ): HttpResponse = get {
     url(url)
     header("fodselsnummer", fnr)
-    header("authlevel", authLevel)
 }
 
 internal fun JsonNode.asBooleanOrNull() = if (isNull) null else asBoolean()

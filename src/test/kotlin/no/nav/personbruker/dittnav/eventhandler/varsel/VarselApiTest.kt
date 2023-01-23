@@ -3,10 +3,11 @@ package no.nav.personbruker.dittnav.eventhandler.varsel;
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
-import io.ktor.client.request.get
-import io.ktor.client.statement.bodyAsText
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.testing.testApplication
+import io.kotest.matchers.shouldNotBe
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import io.ktor.server.testing.*
 import no.nav.personbruker.dittnav.eventhandler.apiTestfnr
 import no.nav.personbruker.dittnav.eventhandler.asBooleanOrNull
 import no.nav.personbruker.dittnav.eventhandler.asDateTime
@@ -91,7 +92,7 @@ class VarselApiTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = ["dittnav-event-handler/fetch/varsel/on-behalf-of/inaktive", "dittnav-event-handler/fetch/event/inaktive"])
+    @ValueSource(strings = ["dittnav-event-handler/fetch/varsel/on-behalf-of/inaktive", "dittnav-event-handler/fetch/varsel/inaktive"])
     fun `varsel-apiet skal returnere inaktive varsler`(url: String) =
         testApplication {
             mockEventHandlerApi(varselRepository = varselRepository)
@@ -125,7 +126,7 @@ class VarselApiTest {
 
 
     @ParameterizedTest
-    @ValueSource(strings = ["dittnav-event-handler/fetch/varsel/on-behalf-of/aktive", "dittnav-event-handler/fetch/event/aktive"])
+    @ValueSource(strings = ["dittnav-event-handler/fetch/varsel/on-behalf-of/aktive", "dittnav-event-handler/fetch/varsel/aktive"])
     fun `varsel-apiet skal returnere aktive varsler`(url: String) =
         testApplication {
             mockEventHandlerApi(varselRepository = varselRepository)
@@ -167,28 +168,28 @@ class VarselApiTest {
                 }
             }
         })
-        client.getMedFnrHeader("dittnav-event-handler/fetch/varsel/on-behalf-of/inaktive", fodselsnummer, 3).assert {
+        client.getMedFnrHeader("dittnav-event-handler/fetch/varsel/on-behalf-of/inaktive", fodselsnummer).assert {
             val varsler = objectMapper.readTree(bodyAsText())
-            varsler.all { it["tekst"].textValue() == null } shouldBe true
-            varsler.all { it["link"].textValue() == null } shouldBe true
+            varsler.forEach { it["tekst"].textValue() shouldNotBe null }
+            varsler.forEach { it["link"].textValue() shouldNotBe null }
         }
 
-        client.get("dittnav-event-handler/fetch/event/inaktive").assert {
+        client.get("dittnav-event-handler/fetch/varsel/inaktive").assert {
             val varsler = objectMapper.readTree(bodyAsText())
-            varsler.all { it["tekst"].textValue() == null } shouldBe true
-            varsler.all { it["link"].textValue() == null } shouldBe true
+            varsler.forEach { it["tekst"].textValue() shouldBe null }
+            varsler.forEach { it["link"].textValue() shouldBe null }
         }
 
-        client.getMedFnrHeader("dittnav-event-handler/fetch/varsel/on-behalf-of/aktive", fodselsnummer, 3).assert {
+        client.getMedFnrHeader("dittnav-event-handler/fetch/varsel/on-behalf-of/aktive", fodselsnummer).assert {
             val varsler = objectMapper.readTree(bodyAsText())
-            varsler.all { it["tekst"].textValue() == null } shouldBe true
-            varsler.all { it["link"].textValue() == null } shouldBe true
+            varsler.forEach { it["tekst"].textValue() shouldNotBe null }
+            varsler.forEach { it["link"].textValue() shouldNotBe null }
         }
 
-        client.get("dittnav-event-handler/fetch/event/aktive").assert {
+        client.get("dittnav-event-handler/fetch/varsel/aktive").assert {
             val varsler = objectMapper.readTree(bodyAsText())
-            varsler.all { it["tekst"].textValue() == null } shouldBe true
-            varsler.all { it["link"].textValue() == null } shouldBe true
+            varsler.forEach { it["tekst"].textValue() shouldBe null }
+            varsler.forEach { it["link"].textValue() shouldBe null }
 
         }
     }

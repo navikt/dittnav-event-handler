@@ -14,11 +14,9 @@ suspend inline fun PipelineContext<Unit, ApplicationCall>.doIfValidRequest(handl
     val fnrHeaderName = "fodselsnummer"
     val authlevelHeaderName = "authlevel"
     val fnr = call.request.headers[fnrHeaderName]
-    val authlevel = call.request.headers[authlevelHeaderName]?.toInt()
-
-    if (fnr != null && authlevel != null) {
+    if (fnr != null) {
         if (isFodselsnummerOfValidLength(fnr)) {
-            val user = User(fnr, authlevel)
+            val user = User(fnr)
             handler.invoke(user)
         } else {
             val msg = "Header-en '$fnrHeaderName' inneholder ikke et gyldig fødselsnummer."

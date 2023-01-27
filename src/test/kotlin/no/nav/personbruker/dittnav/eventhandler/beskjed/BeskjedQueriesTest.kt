@@ -146,35 +146,6 @@ class BeskjedQueriesTest {
     }
 
     @Test
-    fun `Liste av alle grupperte beskjeder`() {
-        runBlocking {
-            database.dbQuery {
-                getAllGroupedBeskjedEventsByIds(beskjedTestFnr, grupperingsid, appnavn)
-            }.size shouldBe 3
-        }
-    }
-
-    @Test
-    fun `Tom liste hvis produsent ikke matcher beskjed-eventet`() {
-        val noMatchProdusent = "dummyProdusent"
-        runBlocking {
-            database.dbQuery {
-                getAllGroupedBeskjedEventsByIds(beskjedTestFnr, grupperingsid, noMatchProdusent)
-            }.shouldBeEmpty()
-        }
-    }
-
-    @Test
-    fun `Returnerer en tom liste hvis grupperingsid ikke matcher beskjed-eventet`() {
-        val noMatchGrupperingsid = "dummyGrupperingsid"
-        runBlocking {
-            database.dbQuery {
-                getAllGroupedBeskjedEventsByIds(beskjedTestFnr, noMatchGrupperingsid, appnavn)
-            }.shouldBeEmpty()
-        }
-    }
-
-    @Test
     fun `Returnerer en liste av alle grupperte Beskjed-eventer basert paa systembruker`() {
         runBlocking {
             val groupedEventsBySystemuser = database.dbQuery { getAllGroupedBeskjedEventsBySystemuser() }

@@ -41,20 +41,6 @@ fun Route.innboksApi(innboksEventService: InnboksEventService) {
             respondWithError(call, log, exception)
         }
     }
-
-    get("/fetch/innboks/grouped") {
-        try {
-            val innboksEvents =
-                innboksEventService.getAllGroupedEventsFromCacheForUser(
-                    innloggetBruker,
-                    call.request.queryParameters["grupperingsid"],
-                    call.request.queryParameters["produsent"]
-                )
-            call.respond(HttpStatusCode.OK, innboksEvents)
-        } catch (exception: Exception) {
-            respondWithError(call, log, exception)
-        }
-    }
 }
 
 fun Route.innboksSystemClientApi(innboksEventService: InnboksEventService) {

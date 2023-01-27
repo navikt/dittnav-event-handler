@@ -1,6 +1,5 @@
 package no.nav.personbruker.dittnav.eventhandler.beskjed
 
-import no.nav.brukernotifikasjon.schemas.builders.util.ValidationUtil.validateNonNullFieldMaxLength
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
@@ -24,16 +23,6 @@ class BeskjedEventService(private val database: Database) {
         getEvents {
             getAllBeskjedForFodselsnummer(fodselsnummer)
         }
-
-    suspend fun getAllGroupedEventsFromCacheForUser(
-        bruker: TokenXUser,
-        grupperingsid: String?,
-        appnavn: String?
-    ): List<Beskjed> {
-        val grupperingsId = validateNonNullFieldMaxLength(grupperingsid, "grupperingsid", 100)
-        val app = validateNonNullFieldMaxLength(appnavn, "appnavn", 100)
-        return getEvents { getAllGroupedBeskjedEventsByIds(bruker.ident, grupperingsId, app) }
-    }
 
     suspend fun getAllGroupedEventsByProducerFromCache(): List<EventCountForProducer> =
         database.queryWithExceptionTranslation { getAllGroupedBeskjedEventsByProducer() }

@@ -57,21 +57,6 @@ fun Connection.getBeskjedByIds(fodselsnummer: String, eventId: String): List<Bes
             }
         }
 
-fun Connection.getAllGroupedBeskjedEventsByIds(
-    fodselsnummer: String,
-    grupperingsid: String,
-    appnavn: String
-): List<Beskjed> =
-    prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ? AND grupperingsId = ? AND appnavn = ?""".trimMargin())
-        .use {
-            it.setString(1, fodselsnummer)
-            it.setString(2, grupperingsid)
-            it.setString(3, appnavn)
-            it.executeQuery().mapList {
-                toBeskjed()
-            }
-        }
-
 fun Connection.getAllGroupedBeskjedEventsBySystemuser(): Map<String, Int> {
     return prepareStatement(
         "SELECT systembruker, COUNT(*) FROM beskjed GROUP BY systembruker",

@@ -41,20 +41,6 @@ fun Route.oppgaveApi(oppgaveEventService: OppgaveEventService) {
             respondWithError(call, log, exception)
         }
     }
-
-    get("/fetch/oppgave/grouped") {
-        try {
-            val oppgaveEvents =
-                oppgaveEventService.getAllGroupedEventsFromCacheForUser(
-                    innloggetBruker,
-                    call.request.queryParameters["grupperingsid"],
-                    call.request.queryParameters["produsent"]
-                )
-            call.respond(HttpStatusCode.OK, oppgaveEvents)
-        } catch (exception: Exception) {
-            respondWithError(call, log, exception)
-        }
-    }
 }
 
 fun Route.oppgaveSystemClientApi(oppgaveEventService: OppgaveEventService) {

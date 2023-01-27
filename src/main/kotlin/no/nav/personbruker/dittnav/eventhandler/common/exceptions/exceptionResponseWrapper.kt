@@ -5,7 +5,6 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.plugins.statuspages.StatusPagesConfig
 import io.ktor.server.response.respond
-import no.nav.brukernotifikasjon.schemas.builders.exception.FieldValidationException
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedNotFoundException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.database.RetriableDatabaseException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.database.UnretriableDatabaseException
@@ -32,12 +31,6 @@ suspend fun respondWithError(call: ApplicationCall, log: Logger, exception: Exce
         is BackupEventException -> {
             call.respond(HttpStatusCode.FailedDependency)
             val msg = "Fikk feil når vi prøvde å skrive til backup-topic-en. Returnerer feilkode. {}"
-            log.error(msg, exception.toString(), exception)
-        }
-
-        is FieldValidationException -> {
-            call.respond(HttpStatusCode.BadRequest)
-            val msg = "Klarte ikke hente eventer fordi vi fikk en valideringsfeil. Returnerer feilkode. {}"
             log.error(msg, exception.toString(), exception)
         }
 
@@ -71,12 +64,6 @@ fun StatusPagesConfig.configureErrorResponses() {
             is BackupEventException -> {
                 call.respond(HttpStatusCode.FailedDependency)
                 val msg = "Fikk feil når vi prøvde å skrive til backup-topic-en. Returnerer feilkode. {}"
-                log.error(msg, cause.toString(), cause)
-            }
-
-            is FieldValidationException -> {
-                call.respond(HttpStatusCode.BadRequest)
-                val msg = "Klarte ikke hente eventer fordi vi fikk en valideringsfeil. Returnerer feilkode. {}"
                 log.error(msg, cause.toString(), cause)
             }
 

@@ -1,9 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
-import no.nav.brukernotifikasjon.schemas.builders.util.ValidationUtil.validateNonNullFieldMaxLength
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
-import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 import java.sql.Connection
 
 class OppgaveEventService(private val database: Database) {
@@ -24,13 +22,6 @@ class OppgaveEventService(private val database: Database) {
         return getEvents {
             getAllOppgaveForFodselsnummer(fodselsnummer)
         }.map { oppgave -> oppgave.toDTO() }
-    }
-
-    suspend fun getAllGroupedEventsFromCacheForUser(bruker: TokenXUser, grupperingsid: String?, appnavn: String?): List<OppgaveDTO> {
-        val grupperingsId = validateNonNullFieldMaxLength(grupperingsid, "grupperingsid", 100)
-        val app = validateNonNullFieldMaxLength(appnavn, "appnavn", 100)
-        return getEvents { getAllGroupedOppgaveEventsByIds(bruker.ident, grupperingsId, app) }
-            .map { oppgave -> oppgave.toDTO() }
     }
 
     suspend fun getAllGroupedEventsByProducerFromCache(): List<EventCountForProducer> {

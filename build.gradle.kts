@@ -26,12 +26,9 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.navikt:brukernotifikasjon-schemas:v2.5.0")
-    implementation(DittNAV.Common.utils)
+    implementation(DittNAVCommonLib.utils)
     implementation(Hikari.cp)
-    implementation(Kafka.Apache.clients)
     implementation(KotlinLogging.logging)
-    implementation(Kafka.Confluent.avroSerializer)
     implementation(NAV.vaultJdbc)
     implementation(Postgresql.postgresql)
     implementation(Prometheus.common)
@@ -49,11 +46,11 @@ dependencies {
     implementation(Ktor2.Client.core)
     implementation(Ktor2.Client.apache)
     implementation(Ktor2.Client.contentNegotiation)
-    implementation(Ktor2.TmsTokenSupport.tokenXValidation)
-    implementation(Ktor2.TmsTokenSupport.authenticationInstaller)
-    implementation(Ktor2.TmsTokenSupport.azureExchange)
-    implementation(Ktor2.TmsTokenSupport.azureValidation)
-    implementation(Ktor2.kotlinX)
+    implementation(TmsKtorTokenSupport.tokenXValidation)
+    implementation(TmsKtorTokenSupport.authenticationInstaller)
+    implementation(TmsKtorTokenSupport.azureExchange)
+    implementation(TmsKtorTokenSupport.azureValidation)
+    implementation(Ktor2.Serialization.kotlinX)
     implementation(Ktor2.Server.authJwt)
     implementation(Ktor2.Server.htmlDsl)
     implementation(Micrometer.registryPrometheus)
@@ -63,17 +60,14 @@ dependencies {
     testImplementation(Jjwt.api)
     testImplementation(Junit.api)
     testImplementation(Junit.params)
-    testImplementation(Kafka.Apache.kafka_2_12)
-    testImplementation(Kafka.Apache.streams)
-    testImplementation(Kafka.Confluent.schemaRegistry)
     testImplementation(Mockk.mockk)
-    testImplementation(NAV.kafkaEmbedded)
     testImplementation(TestContainers.postgresql)
+    testImplementation(Ktor2.Serialization.jackson)
     testImplementation(Ktor2.Test.clientMock)
     testImplementation(Ktor2.Test.serverTestHost)
-    testImplementation(Ktor2.TmsTokenSupport.authenticationInstallerMock)
-    testImplementation(Ktor2.TmsTokenSupport.tokenXValidationMock)
-    testImplementation(Ktor2.TmsTokenSupport.azureValidationMock)
+    testImplementation(TmsKtorTokenSupport.authenticationInstallerMock)
+    testImplementation(TmsKtorTokenSupport.tokenXValidationMock)
+    testImplementation(TmsKtorTokenSupport.azureValidationMock)
     testImplementation(Kotest.runnerJunit5)
     testImplementation(Kotest.assertionsCore)
 
@@ -93,17 +87,6 @@ tasks {
         testLogging {
             events("passed", "skipped", "failed")
         }
-    }
-
-    register("runServer", JavaExec::class) {
-        println("Setting default environment variables for running with DittNAV docker-compose")
-        DockerComposeDefaults.environomentVariables.forEach { (name, value) ->
-            println("Setting the environment variable $name")
-            environment(name, value)
-        }
-
-        main = application.mainClass.get()
-        classpath = sourceSets["main"].runtimeClasspath
     }
 }
 

@@ -1,7 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.statistics
 
-import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.VarselType
+import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.statistics.query.*
 
 class EventStatisticsService(private val database: Database) {
@@ -167,6 +167,12 @@ class EventStatisticsService(private val database: Database) {
                 VarselType.INNBOKS -> getActiveEventsFrequencyDistribution("innboks")
                 VarselType.DONE -> throw Exception("Statistik ikke tilgjengelig for done-eventer")
             }
+        }
+    }
+
+    suspend fun getTotalActiveEventsFrequencyDistribution(): EventFrequencyDistribution {
+        return database.queryWithExceptionTranslation {
+            getTotalActiveEventsFrequencyDistribution()
         }
     }
 }

@@ -26,3 +26,31 @@ fun Connection.getActiveEventsFrequencyDistribution(table: String): EventFrequen
         }
     )
 }
+
+fun Connection.getTotalActiveEventsFrequencyDistribution(): EventFrequencyDistribution {
+    val statement = prepareStatement(
+        """
+        select antallEventer, count(*) as antallBrukere
+            from (
+                select count(*) as antallEventer
+                from (
+                    select fodselsnummer from beskjed where aktiv = true
+                    union all
+                    select fodselsnummer from oppgave where aktiv = true
+                    union all
+                    select fodselsnummer from innboks where aktiv = true
+                ) as subub
+                 group by fodselsnummer
+            ) as sub
+            group by antallEventer
+            order by antallEventer;
+        """.trimIndent()
+    )
+
+    return EventFrequencyDistribution(
+        statement.executeQuery().mapList {
+            NumberOfEventsFrequency(getInt("antallEventer"), getInt("antallBrukere"))
+        }
+    )
+}
+

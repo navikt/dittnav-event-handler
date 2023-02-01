@@ -206,8 +206,12 @@ fun Route.statisticsSystemClientApi(statisticsService: EventStatisticsService) {
 
     get("/stats/frequency-distribution/active/{type}") {
         try {
-            val type = VarselType.fromOriginalType(call.parameters["type"]!!)
-            val measurement = statisticsService.getActiveEventsFrequencyDistribution(type)
+            val measurement = if(call.parameters["type"]!! == "all") {
+                statisticsService.getTotalActiveEventsFrequencyDistribution()
+            } else {
+                val type = VarselType.fromOriginalType(call.parameters["type"]!!)
+                statisticsService.getActiveEventsFrequencyDistribution(type)
+            }
 
             call.respond(HttpStatusCode.OK, measurement)
         } catch (exception: Exception) {

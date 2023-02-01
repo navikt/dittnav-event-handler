@@ -1,5 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.statistics
 
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
@@ -13,7 +14,6 @@ import no.nav.personbruker.dittnav.eventhandler.oppgave.createOppgave
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import java.time.ZonedDateTime
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class FrequencyDistributionStatisticsTest {
@@ -23,75 +23,22 @@ class FrequencyDistributionStatisticsTest {
 
     private val fodselsnummer = "12345"
     private val fodselsnummer2 = "67890"
-    private val systembruker = "x-dittnav"
 
-    private val beskjed1 = BeskjedObjectMother.createBeskjed(
-        fodselsnummer = fodselsnummer,
-        synligFremTil = ZonedDateTime.now().plusHours(1),
-        aktiv = true,
-        systembruker = systembruker,
-        tekst = "12",
-    )
-    private val beskjed2 = BeskjedObjectMother.createBeskjed(
-        fodselsnummer = fodselsnummer,
-        synligFremTil = ZonedDateTime.now().plusHours(1),
-        aktiv = true,
-        systembruker = systembruker,
-    )
-    private val beskjed3 = BeskjedObjectMother.createBeskjed(
-        fodselsnummer = fodselsnummer,
-        synligFremTil = ZonedDateTime.now().plusHours(1),
-        aktiv = false,
-        systembruker = systembruker,
-    )
-    private val beskjed4 = BeskjedObjectMother.createBeskjed(
-        fodselsnummer = "54321",
-        synligFremTil = ZonedDateTime.now().plusHours(1),
-        aktiv = true,
-        systembruker = "x-dittnav-2",
-    )
+    private val beskjed1 = BeskjedObjectMother.createBeskjed(fodselsnummer = fodselsnummer, aktiv = true)
+    private val beskjed2 = BeskjedObjectMother.createBeskjed(fodselsnummer = fodselsnummer, aktiv = true)
+    private val beskjed3 = BeskjedObjectMother.createBeskjed(fodselsnummer = fodselsnummer, aktiv = false)
+    private val beskjed4 = BeskjedObjectMother.createBeskjed(fodselsnummer = "54321", aktiv = true)
 
-    private val oppgave1 = OppgaveObjectMother.createOppgave(
-        fodselsnummer = fodselsnummer,
-        aktiv = true,
-        systembruker = systembruker,
-        tekst = "123",
-        fristUtløpt = null
-    )
-    private val oppgave2 = OppgaveObjectMother.createOppgave(
-        fodselsnummer = fodselsnummer,
-        aktiv = true,
-        systembruker = systembruker,
-        fristUtløpt = null
-    )
-    private val oppgave3 = OppgaveObjectMother.createOppgave(
-        fodselsnummer = fodselsnummer,
-        aktiv = false,
-        systembruker = systembruker,
-        fristUtløpt = null
-    )
-    private val oppgave4 = OppgaveObjectMother.createOppgave(
-        fodselsnummer = "54321",
-        aktiv = true,
-        systembruker = "x-dittnav-2",
-        fristUtløpt = null
-    )
-    private val oppgave5 = OppgaveObjectMother.createOppgave(
-        fodselsnummer = "37226687654",
-        aktiv = true,
-        systembruker = systembruker,
-        fristUtløpt = null
-    )
-    private val oppgave6 = OppgaveObjectMother.createOppgave(
-        fodselsnummer = "37226687635",
-        aktiv = true,
-        systembruker = systembruker,
-        fristUtløpt = null
-    )
+    private val oppgave1 = OppgaveObjectMother.createOppgave(fodselsnummer = fodselsnummer, aktiv = true)
+    private val oppgave2 = OppgaveObjectMother.createOppgave(fodselsnummer = fodselsnummer, aktiv = true)
+    private val oppgave3 = OppgaveObjectMother.createOppgave(fodselsnummer = fodselsnummer, aktiv = false)
+    private val oppgave4 = OppgaveObjectMother.createOppgave(fodselsnummer = "54321", aktiv = true)
+    private val oppgave5 = OppgaveObjectMother.createOppgave(fodselsnummer = "37226687654", aktiv = true)
+    private val oppgave6 = OppgaveObjectMother.createOppgave(fodselsnummer = "37226687635", aktiv = true)
 
-    private val innboks1 = InnboksObjectMother.createInnboks(fodselsnummer = fodselsnummer, aktiv = true, systembruker = systembruker, tekst = "ab")
-    private val innboks2 = InnboksObjectMother.createInnboks(fodselsnummer = fodselsnummer2, aktiv = true, systembruker = "x-dittnav-2")
-    private val innboks3 = InnboksObjectMother.createInnboks(fodselsnummer = fodselsnummer2, aktiv = false, systembruker = systembruker)
+    private val innboks1 = InnboksObjectMother.createInnboks(fodselsnummer = fodselsnummer, aktiv = true)
+    private val innboks2 = InnboksObjectMother.createInnboks(fodselsnummer = fodselsnummer2, aktiv = true)
+    private val innboks3 = InnboksObjectMother.createInnboks(fodselsnummer = fodselsnummer2, aktiv = false)
 
     @BeforeAll
     fun `populer testdata`() {
@@ -124,6 +71,18 @@ class FrequencyDistributionStatisticsTest {
             val eventFrekvensFordeling = eventStatisticsService.getActiveEventsFrequencyDistribution(VarselType.INNBOKS)
             eventFrekvensFordeling.eventFrequencies.size shouldBe 1
             eventFrekvensFordeling.eventFrequencies.first { it.antallEventer == 1 }.antallBrukere shouldBe 2
+        }
+    }
+
+    @Test
+    fun `Frekvensfordeling av totalt antall aktive varsler`() {
+        runBlocking {
+            val eventFrekvensFordeling = eventStatisticsService.getTotalActiveEventsFrequencyDistribution()
+            eventFrekvensFordeling.eventFrequencies shouldContainExactlyInAnyOrder listOf(
+                NumberOfEventsFrequency(1, 3),
+                NumberOfEventsFrequency(2, 1),
+                NumberOfEventsFrequency(5, 1)
+            )
         }
     }
 }

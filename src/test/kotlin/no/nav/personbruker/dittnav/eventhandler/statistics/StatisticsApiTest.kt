@@ -382,6 +382,11 @@ class StatisticsApitest {
         coEvery { statistickServiceMock.getActiveEventsFrequencyDistribution(VarselType.INNBOKS) } returns EventFrequencyDistribution(
             listOf()
         )
+        coEvery { statistickServiceMock.getTotalActiveEventsFrequencyDistribution() } returns EventFrequencyDistribution(
+            listOf(
+                NumberOfEventsFrequency(antallEventer = 14, antallBrukere = 2),
+            )
+        )
 
         testApplication {
             mockServiceAndApiWithAzureAuth(statistickServiceMock)
@@ -416,6 +421,10 @@ class StatisticsApitest {
             client.get("$baseUrl/stats/frequency-distribution/active/innboks").also { response ->
                 response.status shouldBe HttpStatusCode.OK
                 objectMapper.readTree(response.bodyAsText())["eventFrequencies"].toList().size shouldBe 0
+            }
+            client.get("$baseUrl/stats/frequency-distribution/active/all").also { response ->
+                response.status shouldBe HttpStatusCode.OK
+                objectMapper.readTree(response.bodyAsText())["eventFrequencies"].toList().size shouldBe 1
             }
         }
 

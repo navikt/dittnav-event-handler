@@ -116,6 +116,7 @@ class VarselApiTest {
             varselJson["fristUtløpt"].asBoolean() shouldBe false
             varselJson["eksternVarslingSendt"].asBoolean() shouldBe false
             varselJson["eksternVarslingKanaler"].toList() shouldBe emptyList<String>()
+            varselJson["isMasked"].asBoolean() shouldBe false
             varselListe.find { it["eventId"].asText() == inaktivOppgave.eventId }.apply {
                 require(this != null)
                 get("fristUtløpt").asBooleanOrNull() shouldBe true
@@ -149,6 +150,7 @@ class VarselApiTest {
             varselJson["type"].asText() shouldBe "BESKJED"
             varselJson["fristUtløpt"].asBooleanOrNull() shouldBe null
 
+
         }
 
 
@@ -172,24 +174,30 @@ class VarselApiTest {
             val varsler = objectMapper.readTree(bodyAsText())
             varsler.forEach { it["tekst"].textValue() shouldNotBe null }
             varsler.forEach { it["link"].textValue() shouldNotBe null }
+            varsler.forEach { it["isMasked"].asBoolean() shouldBe false }
         }
 
         client.get("dittnav-event-handler/fetch/varsel/inaktive").assert {
             val varsler = objectMapper.readTree(bodyAsText())
             varsler.forEach { it["tekst"].textValue() shouldBe null }
             varsler.forEach { it["link"].textValue() shouldBe null }
+            varsler.forEach { it["isMasked"].asBoolean() shouldBe true}
+
         }
 
         client.getMedFnrHeader("dittnav-event-handler/fetch/varsel/on-behalf-of/aktive", fodselsnummer).assert {
             val varsler = objectMapper.readTree(bodyAsText())
             varsler.forEach { it["tekst"].textValue() shouldNotBe null }
             varsler.forEach { it["link"].textValue() shouldNotBe null }
+            varsler.forEach { it["isMasked"].asBoolean() shouldBe false }
+
         }
 
         client.get("dittnav-event-handler/fetch/varsel/aktive").assert {
             val varsler = objectMapper.readTree(bodyAsText())
             varsler.forEach { it["tekst"].textValue() shouldBe null }
             varsler.forEach { it["link"].textValue() shouldBe null }
+            varsler.forEach { it["isMasked"].asBoolean() shouldBe true }
 
         }
     }

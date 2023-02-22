@@ -63,14 +63,7 @@ class VarselRepository(private val database: Database) {
     }
 
     private fun ResultSet.toVarsel() = Varsel(
-        fodselsnummer = getString("fodselsnummer"),
-        grupperingsId = getString("grupperingsId"),
         eventId = getString("eventId"),
-        eventTidspunkt = ZonedDateTime.ofInstant(
-            getUtcTimeStamp("eventTidspunkt").toInstant(),
-            ZoneId.of("Europe/Oslo")
-        ),
-        produsent = getString("appnavn") ?: "",
         sikkerhetsnivaa = getInt("sikkerhetsnivaa"),
         sistOppdatert = ZonedDateTime.ofInstant(
             getUtcTimeStamp("sistOppdatert").toInstant(),

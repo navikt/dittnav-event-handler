@@ -5,7 +5,6 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.plugins.statuspages.StatusPagesConfig
 import io.ktor.server.response.respond
-import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedNotFoundException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.database.RetriableDatabaseException
 import no.nav.personbruker.dittnav.eventhandler.common.exceptions.database.UnretriableDatabaseException
 import no.nav.personbruker.dittnav.eventhandler.config.log
@@ -65,11 +64,6 @@ fun StatusPagesConfig.configureErrorResponses() {
                 call.respond(HttpStatusCode.FailedDependency)
                 val msg = "Fikk feil når vi prøvde å skrive til backup-topic-en. Returnerer feilkode. {}"
                 log.error(msg, cause.toString(), cause)
-            }
-
-            is BeskjedNotFoundException -> {
-                log.warn { cause.message }
-                call.respond(status = HttpStatusCode.BadRequest, message = cause.message.toString())
             }
 
             else -> {

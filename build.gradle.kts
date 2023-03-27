@@ -28,6 +28,7 @@ repositories {
 dependencies {
     implementation(DittNAVCommonLib.utils)
     implementation(Hikari.cp)
+    implementation(JacksonDatatype.datatypeJsr310)
     implementation(KotlinLogging.logging)
     implementation(NAV.vaultJdbc)
     implementation(Postgresql.postgresql)
@@ -51,6 +52,7 @@ dependencies {
     implementation(TmsKtorTokenSupport.azureExchange)
     implementation(TmsKtorTokenSupport.azureValidation)
     implementation(Ktor2.Serialization.kotlinX)
+    implementation(Ktor2.Serialization.jackson)
     implementation(Ktor2.Server.authJwt)
     implementation(Ktor2.Server.htmlDsl)
     implementation(Micrometer.registryPrometheus)
@@ -62,7 +64,6 @@ dependencies {
     testImplementation(Junit.params)
     testImplementation(Mockk.mockk)
     testImplementation(TestContainers.postgresql)
-    testImplementation(Ktor2.Serialization.jackson)
     testImplementation(Ktor2.Test.clientMock)
     testImplementation(Ktor2.Test.serverTestHost)
     testImplementation(TmsKtorTokenSupport.authenticationInstallerMock)

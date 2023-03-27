@@ -26,15 +26,15 @@ data class VarselDTO(
 )
 
 class Varsel(
-    private val eventId: String,
-    private val sikkerhetsnivaa: Int,
-    private val sistOppdatert: ZonedDateTime,
-    private val tekst: String,
-    private val link: String,
-    private val aktiv: Boolean,
-    private val type: VarselType,
-    private val forstBehandlet: ZonedDateTime,
-    private val fristUtløpt: Boolean?,
+    val eventId: String,
+    val sikkerhetsnivaa: Int,
+    val sistOppdatert: ZonedDateTime,
+    val tekst: String,
+    val link: String,
+    val aktiv: Boolean,
+    val type: VarselType,
+    val forstBehandlet: ZonedDateTime,
+    val fristUtløpt: Boolean?,
     val eksternVarslingSendt: Boolean,
     val eksternVarslingKanaler: List<String>
 ) {

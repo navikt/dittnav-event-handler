@@ -3,15 +3,15 @@ package no.nav.personbruker.dittnav.eventhandler.varsel
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.eventhandler.assert
 import no.nav.personbruker.dittnav.eventhandler.beskjed.Beskjed
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
+import no.nav.personbruker.dittnav.eventhandler.beskjed.createEksternVarslingStatuses
 import no.nav.personbruker.dittnav.eventhandler.common.VarselType.BESKJED
 import no.nav.personbruker.dittnav.eventhandler.common.VarselType.INNBOKS
 import no.nav.personbruker.dittnav.eventhandler.common.VarselType.OPPGAVE
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
-import no.nav.personbruker.dittnav.eventhandler.common.database.createDoknotifikasjon
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfo
 import no.nav.personbruker.dittnav.eventhandler.innboks.Innboks
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksObjectMother
 import no.nav.personbruker.dittnav.eventhandler.innboks.createInnboks
@@ -36,16 +36,9 @@ class VarselTest {
 
     @BeforeAll
     fun `populer testdata`() {
-        createBeskjeder(3, 5).apply {
-            filter { it.aktiv }.subList(0, 2).forEach { database.createDoknotifikasjon(it.eventId, BESKJED) }
-            filter { !it.aktiv }.subList(0, 3).forEach { database.createDoknotifikasjon(it.eventId, BESKJED) }
-        }
-        createOppgaver(1, 4).apply {
-            filter { !it.aktiv }.subList(0, 3).forEach { database.createDoknotifikasjon(it.eventId, OPPGAVE) }
-        }
-        createInnboks(2, 1).apply {
-            first { it.aktiv }.apply { database.createDoknotifikasjon(eventId, INNBOKS, "SMS") }
-        }
+        createBeskjeder(3, 5)
+        createOppgaver(1, 4)
+        createInnboks(2, 1)
     }
 
     @Test
@@ -55,8 +48,8 @@ class VarselTest {
         aktiveVarselDTO.size shouldBe 6
         aktiveVarselDTO.map { it.type }.toSet() shouldContainExactly alleVarselType
         aktiveVarselDTO.filter { it.eksternVarslingSendt }.size shouldBe 3
-        aktiveVarselDTO.filter { it.eksternVarslingKanaler == listOf("SMS", "EPOST") }.size shouldBe 2
-        aktiveVarselDTO.filter { it.eksternVarslingKanaler == listOf("SMS") }.size shouldBe 1
+        aktiveVarselDTO.filter { it.eksternVarslingKanaler == listOf("SMS", "EPOST") }.size shouldBe 3
+        aktiveVarselDTO.filter { it.eksternVarslingKanaler == listOf("SMS") }.size shouldBe 0
 
         val redactedVarsel = aktiveVarsel.map { it.toVarselDTO(3) }
         redactedVarsel.filter { it.sikkerhetsnivaa == 4 }.all { it.tekst == null } shouldBe true
@@ -68,8 +61,8 @@ class VarselTest {
         val inaktiveVarsel = eventRepository.getInactiveVarsel(fodselsnummer).map { it.toVarselDTO(4) }
         inaktiveVarsel.size shouldBe 10
         inaktiveVarsel.map { it.type }.toSet() shouldContainExactly alleVarselType
-        inaktiveVarsel.filter { it.eksternVarslingSendt }.size shouldBe 6
-        inaktiveVarsel.filter { it.eksternVarslingKanaler == listOf("SMS", "EPOST") }.size shouldBe 6
+        inaktiveVarsel.filter { it.eksternVarslingSendt }.size shouldBe 5
+        inaktiveVarsel.filter { it.eksternVarslingKanaler == listOf("SMS", "EPOST") }.size shouldBe 5
     }
 
 
@@ -78,18 +71,30 @@ class VarselTest {
             BeskjedObjectMother.createBeskjed(
                 fodselsnummer = fodselsnummer,
                 aktiv = true,
-                sikkerhetsnivaa = 3
+                sikkerhetsnivaa = 3,
+                eksternVarsling = EksternVarslingInfo(
+                    sendt = true,
+                    renotifikasjonSendt = false,
+                    prefererteKanaler = listOf("SMS", "EPOST"),
+                    sendteKanaler = listOf("SMS", "EPOST"),
+                    historikk = emptyList()
+                )
             )
         } + (1..antallInaktive).map {
             BeskjedObjectMother.createBeskjed(
                 fodselsnummer = fodselsnummer,
                 aktiv = false,
+                eksternVarsling = EksternVarslingInfo(
+                    sendt = true,
+                    renotifikasjonSendt = false,
+                    prefererteKanaler = listOf("SMS", "EPOST"),
+                    sendteKanaler = listOf("SMS", "EPOST"),
+                    historikk = emptyList()
+                )
             )
         }
 
-        runBlocking {
-            database.dbQuery { createBeskjed(beskjeder) }
-        }
+        database.createBeskjed(beskjeder)
 
         return beskjeder
     }

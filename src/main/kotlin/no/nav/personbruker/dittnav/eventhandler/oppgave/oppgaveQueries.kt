@@ -1,24 +1,25 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
-import no.nav.personbruker.dittnav.eventhandler.common.database.convertIfUnlikelyDate
-import no.nav.personbruker.dittnav.eventhandler.common.database.getListFromSeparatedString
-import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
-import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonMapperBuilder
+import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.personbruker.dittnav.eventhandler.common.database.*
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingHistorikkEntry
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfo
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import java.sql.Connection
 import java.sql.ResultSet
-import java.time.ZoneId
-import java.time.ZonedDateTime
 
 private val baseSelectQuery = """
     SELECT 
         oppgave.*,
-        dok_status.status as doknotifikasjon_status,
-        dok_status.kanaler as doknotifikasjon_kanaler
+        evs.kanaler as ekstern_varsling_kanaler,
+        evs.eksternVarslingSendt as ekstern_varsling_sendt,
+        evs.renotifikasjonSendt as ekstern_varsling_renotifikasjon,
+        evs.historikk as ekstern_varsling_historikk
     FROM oppgave
-        LEFT JOIN DOKNOTIFIKASJON_STATUS_OPPGAVE as dok_status on oppgave.eventId = dok_status.eventId
+        LEFT JOIN ekstern_varsling_status_oppgave as evs on oppgave.eventId = evs.eventId
 """.trimMargin()
 
 fun Connection.getInaktivOppgaveForFodselsnummer(fodselsnummer: String): List<Oppgave> =
@@ -61,34 +62,53 @@ private fun ResultSet.toOppgave(): Oppgave {
     val rawEventTidspunkt = getUtcTimeStamp("eventTidspunkt")
     val verifiedEventTidspunkt = convertIfUnlikelyDate(rawEventTidspunkt)
     return Oppgave(
-        id = getInt("id"),
         fodselsnummer = getString("fodselsnummer"),
         grupperingsId = getString("grupperingsId"),
         eventId = getString("eventId"),
         eventTidspunkt = verifiedEventTidspunkt,
-        forstBehandlet = ZonedDateTime.ofInstant(getUtcTimeStamp("forstBehandlet").toInstant(), ZoneId.of("Europe/Oslo")),
+        forstBehandlet = getZonedDateTime("forstBehandlet"),
         produsent = getString("appnavn") ?: "",
         systembruker = getString("systembruker"),
         namespace = getString("namespace"),
         appnavn = getString("appnavn"),
         sikkerhetsnivaa = getInt("sikkerhetsnivaa"),
-        sistOppdatert = ZonedDateTime.ofInstant(getUtcTimeStamp("sistOppdatert").toInstant(), ZoneId.of("Europe/Oslo")),
+        sistOppdatert = getZonedDateTime("sistOppdatert"),
         tekst = getString("tekst"),
         link = getString("link"),
         aktiv = getBoolean("aktiv"),
-        eksternVarslingInfo = toEksternVarslingInfo(),
-        fristUtløpt = getBoolean("frist_utløpt").let { if(wasNull()) null else it}
+        synligFremTil = getNullableZonedDateTime("synligFremTil"),
+        fristUtløpt = getBoolean("frist_utløpt").let { if(wasNull()) null else it},
+        eksternVarslingSendt = getBoolean("ekstern_varsling_sendt"),
+        eksternVarslingKanaler = getListFromString("ekstern_varsling_kanaler"),
+        eksternVarsling = getEksternVarslingInfo()
     )
 }
 
-private fun ResultSet.toEksternVarslingInfo(): EksternVarslingInfo {
-    val eksternVarslingSendt = getString("doknotifikasjon_status") == EksternVarslingStatus.OVERSENDT.name
+private val objectMapper = jacksonMapperBuilder()
+    .addModule(JavaTimeModule())
+    .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+    .build()
+
+private fun ResultSet.getEksternVarslingInfo(): EksternVarslingInfo? {
+
+    if (!getBoolean("eksternVarsling")) {
+        return null
+    }
+
+    val historikkJson = getString("ekstern_varsling_historikk")
+
+    val historikk: List<EksternVarslingHistorikkEntry> = if (historikkJson == null) {
+        emptyList()
+    } else {
+        objectMapper.readValue(historikkJson)
+    }
 
     return EksternVarslingInfo(
-        bestilt = getBoolean("eksternVarsling"),
-        prefererteKanaler = getListFromSeparatedString("prefererteKanaler"),
-        sendt = eksternVarslingSendt,
-        sendteKanaler = getListFromSeparatedString("doknotifikasjon_kanaler")
+        prefererteKanaler = getListFromString("prefererteKanaler"),
+        sendt = getBoolean("ekstern_varsling_sendt"),
+        renotifikasjonSendt = getBoolean("ekstern_varsling_renotifikasjon"),
+        sendteKanaler = getListFromString("ekstern_varsling_kanaler"),
+        historikk = historikk
     )
 }
 

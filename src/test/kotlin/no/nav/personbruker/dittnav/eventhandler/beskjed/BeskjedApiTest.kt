@@ -15,11 +15,7 @@ import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.beskjed2
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.beskjed3Inaktiv
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.beskjed4Aktiv
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.beskjedTestFnr
-import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.doknotStatusForBeskjed1
-import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.doknotStatusForBeskjed2
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.DoknotifikasjonTestStatus
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus
 import no.nav.personbruker.dittnav.eventhandler.mockEventHandlerApi
 import no.nav.tms.token.support.authentication.installer.mock.installMockedAuthenticators
 import org.junit.jupiter.api.AfterAll
@@ -44,26 +40,16 @@ class BeskjedApiTest {
                 beskjed4Aktiv
             )
         )
-        database.createDoknotStatuses(
-            listOf(
-                doknotStatusForBeskjed1,
-                doknotStatusForBeskjed2
-            )
-        )
     }
 
     @AfterAll
     fun `slett testdata`() {
-        database.deleteAllDoknotStatusBeskjed()
-        database.deleteBeskjed(listOf(beskjed1Aktiv, beskjed2Aktiv, beskjed3Inaktiv, beskjed4Aktiv))
+        database.deleteBeskjed()
     }
 
     @Test
     fun `henter aktive beskjedvarsel`() {
-        val expectedVarsler = listOf(
-            beskjed1Aktiv.updateWith(doknotStatusForBeskjed1),
-            beskjed2Aktiv.updateWith(doknotStatusForBeskjed2)
-        )
+        val expectedVarsler = listOf(beskjed1Aktiv, beskjed2Aktiv)
         testApplication {
             mockEventHandlerApi(
                 database = database,
@@ -87,9 +73,7 @@ class BeskjedApiTest {
             )
             val aktiveVarsler = client.get("$fetchBeskjedEndpoint/inaktive")
 
-            objectMapper.readTree(aktiveVarsler.bodyAsText()) shouldContainExactly listOf(
-                beskjed3Inaktiv.updateWith(null)
-            )
+            objectMapper.readTree(aktiveVarsler.bodyAsText()) shouldContainExactly listOf(beskjed3Inaktiv)
         }
 
     }
@@ -97,11 +81,7 @@ class BeskjedApiTest {
 
     @Test
     fun `henter alle varsel`() {
-        val expectedVarsel = listOf(
-            beskjed1Aktiv.updateWith(doknotStatusForBeskjed1),
-            beskjed2Aktiv.updateWith(doknotStatusForBeskjed2),
-            beskjed3Inaktiv.updateWith(null)
-        )
+        val expectedVarsel = listOf(beskjed1Aktiv, beskjed2Aktiv, beskjed3Inaktiv)
         testApplication {
             mockEventHandlerApi(
                 database = database,
@@ -162,18 +142,4 @@ private fun Application.beskjedAuthConfig() {
         installAzureAuthMock { }
     }
 }
-
-private fun Beskjed.updateWith(doknotStatus: DoknotifikasjonTestStatus?): Beskjed =
-    if (doknotStatus != null) {
-        this.copy(
-            eksternVarslingKanaler = this.eksternVarslingKanaler,
-            eksternVarslingSendt = this.eksternVarslingSendt
-        )
-    } else {
-        this.copy(
-            eksternVarslingKanaler = this.eksternVarslingKanaler,
-            eksternVarslingSendt = false
-
-        )
-    }
 

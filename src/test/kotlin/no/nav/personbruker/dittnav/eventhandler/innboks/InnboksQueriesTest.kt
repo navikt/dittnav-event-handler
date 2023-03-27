@@ -4,6 +4,7 @@ import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
 import no.nav.personbruker.dittnav.eventhandler.common.findCountFor
@@ -20,13 +21,11 @@ class InnboksQueriesTest {
     @BeforeAll
     fun `populer test-data`() {
         database.createInnboks(listOf(innboks1Aktiv, innboks2Aktiv, innboks3Aktiv, innboks4Inaktiv))
-        database.createDoknotStatuses(listOf(doknotStatusForInnboks1, doknotStatusForInnboks2))
     }
 
     @AfterAll
     fun `slett Innboks-eventer fra tabellen`() {
-        database.deleteAllDoknotStatusInnboks()
-        database.deleteInnboks(listOf(innboks1Aktiv, innboks2Aktiv, innboks3Aktiv, innboks4Inaktiv))
+        database.deleteInnboks()
     }
 
     @Test
@@ -152,12 +151,12 @@ class InnboksQueriesTest {
             it.eventId == innboks1Aktiv.eventId
         }.first()
 
-        val eksternVarslingInfo = innboks.eksternVarslingInfo
+        val eksternVarslingInfo = innboks.eksternVarsling
 
-        eksternVarslingInfo.bestilt shouldBe innboks1Aktiv.eksternVarslingInfo.bestilt
-        eksternVarslingInfo.prefererteKanaler shouldContainAll innboks1Aktiv.eksternVarslingInfo.prefererteKanaler
+        eksternVarslingInfo shouldNotBe null
+        eksternVarslingInfo!!.prefererteKanaler shouldContainAll innboks1Aktiv.eksternVarsling!!.prefererteKanaler
         eksternVarslingInfo.sendt shouldBe true
-        eksternVarslingInfo.sendteKanaler shouldContain doknotStatusForInnboks1.kanaler
+        eksternVarslingInfo.sendteKanaler shouldContainAll innboks1Aktiv.eksternVarsling!!.sendteKanaler
     }
 
     @Test
@@ -168,12 +167,12 @@ class InnboksQueriesTest {
             it.eventId == innboks2Aktiv.eventId
         }.first()
 
-        val eksternVarslingInfo = innboks.eksternVarslingInfo
+        val eksternVarslingInfo = innboks.eksternVarsling
 
-        eksternVarslingInfo.bestilt shouldBe innboks2Aktiv.eksternVarslingInfo.bestilt
-        eksternVarslingInfo.prefererteKanaler shouldContainAll innboks2Aktiv.eksternVarslingInfo.prefererteKanaler
+        eksternVarslingInfo shouldNotBe null
+        eksternVarslingInfo!!.prefererteKanaler shouldContainAll innboks2Aktiv.eksternVarsling!!.prefererteKanaler
         eksternVarslingInfo.sendt shouldBe false
-        eksternVarslingInfo.sendteKanaler.isEmpty() shouldBe true
+        eksternVarslingInfo.sendteKanaler shouldContainAll innboks2Aktiv.eksternVarsling!!.sendteKanaler
     }
 
     @Test
@@ -184,11 +183,8 @@ class InnboksQueriesTest {
             it.eventId == innboks3Aktiv.eventId
         }.first()
 
-        val eksternVarslingInfo = innboks.eksternVarslingInfo
+        val eksternVarslingInfo = innboks.eksternVarsling
 
-        eksternVarslingInfo.bestilt shouldBe innboks3Aktiv.eksternVarslingInfo.bestilt
-        eksternVarslingInfo.prefererteKanaler shouldContainAll innboks3Aktiv.eksternVarslingInfo.prefererteKanaler
-        eksternVarslingInfo.sendt shouldBe false
-        eksternVarslingInfo.sendteKanaler.isEmpty() shouldBe true
+        eksternVarslingInfo shouldBe null
     }
 }

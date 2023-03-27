@@ -1,57 +1,92 @@
 package no.nav.personbruker.dittnav.eventhandler.eksternvarsling
 
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonMapperBuilder
+import no.nav.personbruker.dittnav.eventhandler.beskjed.Beskjed
+import no.nav.personbruker.dittnav.eventhandler.innboks.Innboks
+import no.nav.personbruker.dittnav.eventhandler.oppgave.Oppgave
+import org.postgresql.util.PGobject
 import java.sql.Connection
 
 private fun insertQuery(type: String) = """
-    insert into doknotifikasjon_status_$type (eventId, status, melding, distribusjonsId, kanaler, antall_oppdateringer)
-        values (?, ?, ?, ?, ?, 1)
+    insert into ekstern_varsling_status_$type (eventId, kanaler, eksternVarslingSendt, renotifikasjonSendt, historikk)
+        values (?, ?, ?, ?, ?)
 """.trimIndent()
 
 private val insertStatusBeskjed = insertQuery("beskjed")
 private val insertStatusOppgave = insertQuery("oppgave")
 private val insertStatusInnboks = insertQuery("innboks")
 
-fun Connection.createDoknotStatusBeskjed(status: DoknotifikasjonTestStatus) {
+private val objectMapper = jacksonMapperBuilder()
+    .addModule(JavaTimeModule())
+    .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+    .build()
+    .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+
+fun Connection.createEksternVarslingStatusBeskjed(beskjed: Beskjed) {
     prepareStatement(insertStatusBeskjed).use {
-        it.setString(1, status.eventId)
-        it.setString(2, status.status)
-        it.setString(3, status.melding)
-        it.setObject(4, status.distribusjonsId)
-        it.setString(5, status.kanaler)
+        val eksternVarsling = beskjed.eksternVarsling ?: return
+
+        val historikkBlob = PGobject().apply {
+            type = "json"
+            value = objectMapper.writeValueAsString(eksternVarsling.historikk)
+        }
+
+        it.setString(1, beskjed.eventId)
+        it.setString(2, eksternVarsling.sendteKanaler.joinToString())
+        it.setBoolean(3, eksternVarsling.sendt)
+        it.setBoolean(4, eksternVarsling.renotifikasjonSendt)
+        it.setObject(5, historikkBlob)
         it.executeUpdate()
     }
 }
 
-fun Connection.createDoknotStatusOppgave(status: DoknotifikasjonTestStatus) {
+fun Connection.createEksternVarslingStatusOppgave(oppgave: Oppgave) {
     prepareStatement(insertStatusOppgave).use {
-        it.setString(1, status.eventId)
-        it.setString(2, status.status)
-        it.setString(3, status.melding)
-        it.setObject(4, status.distribusjonsId)
-        it.setString(5, status.kanaler)
+        val eksternVarsling = oppgave.eksternVarsling ?: return
+
+        val historikkBlob = PGobject().apply {
+            type = "json"
+            value = objectMapper.writeValueAsString(eksternVarsling.historikk)
+        }
+
+        it.setString(1, oppgave.eventId)
+        it.setString(2, eksternVarsling.sendteKanaler.joinToString())
+        it.setBoolean(3, eksternVarsling.sendt)
+        it.setBoolean(4, eksternVarsling.renotifikasjonSendt)
+        it.setObject(5, historikkBlob)
         it.executeUpdate()
     }
 }
 
-fun Connection.createDoknotStatusInnboks(status: DoknotifikasjonTestStatus) {
+fun Connection.createEksternVarslingStatusInnboks(innboks: Innboks) {
     prepareStatement(insertStatusInnboks).use {
-        it.setString(1, status.eventId)
-        it.setString(2, status.status)
-        it.setString(3, status.melding)
-        it.setObject(4, status.distribusjonsId)
-        it.setString(5, status.kanaler)
+        val eksternVarsling = innboks.eksternVarsling ?: return
+
+        val historikkBlob = PGobject().apply {
+            type = "json"
+            value = objectMapper.writeValueAsString(eksternVarsling.historikk)
+        }
+
+        it.setString(1, innboks.eventId)
+        it.setString(2, eksternVarsling.sendteKanaler.joinToString())
+        it.setBoolean(3, eksternVarsling.sendt)
+        it.setBoolean(4, eksternVarsling.renotifikasjonSendt)
+        it.setObject(5, historikkBlob)
         it.executeUpdate()
     }
 }
 
-fun Connection.deleteDoknotStatusBeskjed() {
-    prepareStatement("delete from doknotifikasjon_status_beskjed").executeUpdate()
+fun Connection.deleteEksternVarslingStatusBeskjed() {
+    prepareStatement("delete from ekstern_varsling_status_beskjed").executeUpdate()
 }
 
-fun Connection.deleteDoknotStatusOppgave() {
-    prepareStatement("delete from doknotifikasjon_status_oppgave").executeUpdate()
+fun Connection.deleteEksternVarslingStatusOppgave() {
+    prepareStatement("delete from ekstern_varsling_status_oppgave").executeUpdate()
 }
 
-fun Connection.deleteDoknotStatusInnboks() {
-    prepareStatement("delete from doknotifikasjon_status_innboks").executeUpdate()
+fun Connection.deleteEksternVarslingStatusInnboks() {
+    prepareStatement("delete from ekstern_varsling_status_innboks").executeUpdate()
 }

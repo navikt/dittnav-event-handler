@@ -54,9 +54,9 @@ class StatisticsApitest {
 
     @AfterAll
     fun cleanData() {
-        database.deleteBeskjed(TestBruker1.beskjeder + TestBruker2.beskjeder)
-        database.deleteInnboks(TestBruker1.innbokser + TestBruker2.innbokser)
-        database.deleteOppgave(TestBruker1.oppgaver + TestBruker2.oppgaver)
+        database.deleteBeskjed()
+        database.deleteInnboks()
+        database.deleteOppgave()
     }
 
     @Test

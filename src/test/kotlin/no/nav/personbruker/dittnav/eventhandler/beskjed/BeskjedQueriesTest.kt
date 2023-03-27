@@ -1,8 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.beskjed
 
 import io.kotest.matchers.collections.shouldBeEmpty
-import io.kotest.matchers.collections.shouldContain
-import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.assert
@@ -12,17 +10,12 @@ import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.beskjed2
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.beskjed3Inaktiv
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.beskjed4Aktiv
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.beskjedTestFnr
-import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.doknotStatusForBeskjed1
-import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.doknotStatusForBeskjed2
-import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.eventId
-import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData.grupperingsid
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
 import no.nav.personbruker.dittnav.eventhandler.common.findCountFor
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.assertThrows
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BeskjedQueriesTest {
@@ -32,13 +25,11 @@ class BeskjedQueriesTest {
     @BeforeAll
     fun `populer testdata`() {
         database.createBeskjed(listOf(beskjed1Aktiv, beskjed2Aktiv, beskjed3Inaktiv, beskjed4Aktiv))
-        database.createDoknotStatuses(listOf(doknotStatusForBeskjed1, doknotStatusForBeskjed2))
     }
 
     @AfterAll
     fun `slett testdata`() {
-        database.deleteAllDoknotStatusBeskjed()
-        database.deleteBeskjed(listOf(beskjed1Aktiv, beskjed2Aktiv, beskjed3Inaktiv, beskjed4Aktiv))
+        database.deleteBeskjed()
     }
 
     @Test
@@ -55,26 +46,6 @@ class BeskjedQueriesTest {
                 val aktivBeskjedByUser = getAktivBeskjedForFodselsnummer(beskjedTestFnr)
                 aktivBeskjedByUser
             }.size shouldBe 2
-        }
-    }
-
-    @Test
-    fun `deaktiverer beskjeder`() {
-        runBlocking {
-
-            database.dbQuery { setBeskjedInaktiv(beskjedTestFnr, beskjed1Aktiv.eventId) } shouldBe 1
-            database.dbQuery { setBeskjedInaktiv(beskjedTestFnr, beskjed1Aktiv.eventId) } shouldBe 1
-            database.dbQuery { getAktivBeskjedForFodselsnummer(beskjedTestFnr) }.size shouldBe 1
-        }
-        assertThrows<BeskjedNotFoundException> {
-            runBlocking {
-                database.dbQuery { setBeskjedInaktiv("9631486855", beskjed1Aktiv.eventId) }
-            }
-        }
-        assertThrows<BeskjedNotFoundException> {
-            runBlocking {
-                database.dbQuery { setBeskjedInaktiv(beskjedTestFnr, "8879") } shouldBe 0
-            }
         }
     }
 
@@ -123,29 +94,6 @@ class BeskjedQueriesTest {
     }
 
     @Test
-    fun `Beskjeder som matcher fodselsnummer og eventId`() {
-        runBlocking {
-            database.dbQuery { getBeskjedByIds(beskjedTestFnr, eventId) }.size shouldBe 1
-        }
-    }
-
-    @Test
-    fun `Tom liste hvis eventId ikke finnes`() {
-        runBlocking {
-            database.dbQuery { getBeskjedByIds(beskjedTestFnr, "dummyEventId") }.shouldBeEmpty()
-        }
-    }
-
-    @Test
-    fun `Returnerer tom liste hvis fodlselsnummer ikke matcher med eventid`() {
-        val brukerSomIkkeFinnes = "000"
-        runBlocking {
-            database.dbQuery { getBeskjedByIds(brukerSomIkkeFinnes, eventId) }.shouldBeEmpty()
-            database.dbQuery { getBeskjedByIds("", eventId) }.shouldBeEmpty()
-        }
-    }
-
-    @Test
     fun `Returnerer en liste av alle grupperte Beskjed-eventer basert paa systembruker`() {
         runBlocking {
             val groupedEventsBySystemuser = database.dbQuery { getAllGroupedBeskjedEventsBySystemuser() }
@@ -170,7 +118,7 @@ class BeskjedQueriesTest {
     @Test
     fun `Returnerer riktig info om ekstern varsling dersom status er mottat og oversendt`() = runBlocking {
         database.dbQuery {
-            getBeskjedByIds(beskjed1Aktiv.fodselsnummer, beskjed1Aktiv.eventId)
+            getAllBeskjedForFodselsnummer(beskjed1Aktiv.fodselsnummer)
         }.first().assert {
             eksternVarslingSendt shouldBe true
             eksternVarslingKanaler shouldBe beskjed1Aktiv.eksternVarslingKanaler
@@ -182,7 +130,7 @@ class BeskjedQueriesTest {
     @Test
     fun `Ekstern varsling dersom status er mottat og feilet`() = runBlocking {
         database.dbQuery {
-            getBeskjedByIds(beskjed2Aktiv.fodselsnummer, beskjed2Aktiv.eventId)
+            getAllBeskjedForFodselsnummer(beskjed2Aktiv.fodselsnummer)
         }.first().assert {
             eksternVarslingSendt shouldBe false
             eksternVarslingKanaler shouldBe emptyList()
@@ -192,7 +140,7 @@ class BeskjedQueriesTest {
     @Test
     fun `Ekstern varsling dersom status ikke er mottatt`() = runBlocking {
         database.dbQuery {
-            getBeskjedByIds(beskjed3Inaktiv.fodselsnummer, beskjed3Inaktiv.eventId)
+            getAllBeskjedForFodselsnummer(beskjed3Inaktiv.fodselsnummer)
         }.first().assert {
             eksternVarslingSendt shouldBe false
             eksternVarslingKanaler shouldBe emptyList()

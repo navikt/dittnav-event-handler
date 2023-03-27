@@ -11,8 +11,6 @@ import io.ktor.server.testing.testApplication
 import no.nav.personbruker.dittnav.eventhandler.ComparableVarsel
 import no.nav.personbruker.dittnav.eventhandler.asZonedDateTime
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.DoknotifikasjonTestStatus
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus
 import no.nav.personbruker.dittnav.eventhandler.mockEventHandlerApi
 import no.nav.tms.token.support.authentication.installer.mock.installMockedAuthenticators
 import org.junit.jupiter.api.AfterAll
@@ -29,22 +27,17 @@ class InnboksApiTest {
     @BeforeAll
     fun `populer test-data`() {
         database.createInnboks(listOf(innboks1Aktiv, innboks2Aktiv, innboks3Aktiv, innboks4Inaktiv))
-        database.createDoknotStatuses(listOf(doknotStatusForInnboks1, doknotStatusForInnboks2))
     }
 
     @AfterAll
     fun `slett Innboks-eventer fra tabellen`() {
-        database.deleteAllDoknotStatusInnboks()
-        database.deleteInnboks(listOf(innboks1Aktiv, innboks2Aktiv, innboks3Aktiv, innboks4Inaktiv))
+        database.deleteInnboks()
     }
 
     @Test
     fun `henter aktive innboks varsler`() {
         testApplication {
-            val expected = listOf(
-                innboks1Aktiv.updateWith(doknotStatusForInnboks1),
-                innboks2Aktiv.updateWith(doknotStatusForInnboks2)
-            )
+            val expected = listOf(innboks1Aktiv, innboks2Aktiv)
             mockApiWithFnr(database, innboksTestFnr1)
             val aktiveVarsler = client.get("$innboksEndpoint/aktive")
             aktiveVarsler.status shouldBe HttpStatusCode.OK
@@ -80,10 +73,7 @@ class InnboksApiTest {
     fun `henter alle innboks varsler`() {
         testApplication {
             mockApiWithFnr(database, innboksTestFnr1)
-            val expected = listOf(
-                innboks1Aktiv.updateWith(doknotStatusForInnboks1),
-                innboks2Aktiv.updateWith(doknotStatusForInnboks2)
-            )
+            val expected = listOf(innboks1Aktiv, innboks2Aktiv)
             val alleVarsler = client.get("$innboksEndpoint/all")
             alleVarsler.status shouldBe HttpStatusCode.OK
             objectMapper.readTree(alleVarsler.bodyAsText()) shouldContainExactly expected
@@ -97,38 +87,7 @@ class InnboksApiTest {
         }
 
     }
-
-
-    /*
-    TODO
-    * "/fetch/innboks/grouped"
-    * /fetch/grouped/producer/innboks
-    * /fetch/modia/innboks/aktive
-    * /fetch/modia/innboks/inaktive
-    * /fetch/modia/innboks/all
-    *
-    *
-    * */
-
 }
-
-
-private fun Innboks.updateWith(doknotStatus: DoknotifikasjonTestStatus?) =
-    if (doknotStatus != null) {
-        this.copy(
-            eksternVarslingInfo = this.eksternVarslingInfo.copy(
-                sendt = doknotStatus.status == EksternVarslingStatus.OVERSENDT.name,
-                sendteKanaler = if (doknotStatus.kanaler != "") listOf(doknotStatus.kanaler) else emptyList()
-            )
-        )
-    } else {
-        this.copy(
-            eksternVarslingInfo = this.eksternVarslingInfo.copy(
-                sendt = false,
-                sendteKanaler = emptyList()
-            )
-        )
-    }
 
 private infix fun JsonNode.shouldContainExactly(expected: List<Innboks>) {
     val comparableResultList = this.map { it.toComparableInnboks() }

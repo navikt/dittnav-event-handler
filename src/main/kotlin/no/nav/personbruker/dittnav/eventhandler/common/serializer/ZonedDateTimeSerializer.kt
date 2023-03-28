@@ -1,5 +1,8 @@
 package no.nav.personbruker.dittnav.eventhandler.common.serializer
 
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.DeserializationContext
+import com.fasterxml.jackson.databind.JsonDeserializer
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -11,16 +14,13 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeParseException
 
+
 class ZonedDateTimeSerializer : KSerializer<ZonedDateTime> {
 
     override fun deserialize(decoder: Decoder): ZonedDateTime {
         val value = decoder.decodeString()
 
-        return try {
-            ZonedDateTime.parse(value)
-        } catch (e: DateTimeParseException) {
-            LocalDateTime.parse(value).atZone(ZoneId.of("UTC"))
-        }
+        return ZonedDateTime.parse(value)
     }
 
     override fun serialize(encoder: Encoder, value: ZonedDateTime) {
@@ -29,4 +29,15 @@ class ZonedDateTimeSerializer : KSerializer<ZonedDateTime> {
 
     override val descriptor: SerialDescriptor
         get() = PrimitiveSerialDescriptor("ZonedDateTime", PrimitiveKind.STRING)
+}
+
+class DefaultUtcZonedDateTimeDeserializer : JsonDeserializer<ZonedDateTime>() {
+
+    override fun deserialize(parser: JsonParser, context: DeserializationContext?): ZonedDateTime {
+        return try {
+            return ZonedDateTime.parse(parser.text)
+        } catch (e: DateTimeParseException) {
+            LocalDateTime.parse(parser.text).atZone(ZoneId.of("UTC"))
+        }
+    }
 }

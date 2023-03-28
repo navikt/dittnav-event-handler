@@ -1,12 +1,8 @@
 package no.nav.personbruker.dittnav.eventhandler.innboks
 
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonMapperBuilder
-import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.personbruker.dittnav.eventhandler.common.database.*
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingHistorikkEntry
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfo
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.getEksternVarslingHistorikk
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import java.sql.Connection
 import java.sql.ResultSet
@@ -82,24 +78,13 @@ private fun ResultSet.toInnboks(): Innboks {
     )
 }
 
-private val objectMapper = jacksonMapperBuilder()
-    .addModule(JavaTimeModule())
-    .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-    .build()
-
 private fun ResultSet.getEksternVarslingInfo(): EksternVarslingInfo? {
 
     if (!getBoolean("eksternVarsling")) {
         return null
     }
 
-    val historikkJson = getString("ekstern_varsling_historikk")
-
-    val historikk: List<EksternVarslingHistorikkEntry> = if (historikkJson == null) {
-        emptyList()
-    } else {
-        objectMapper.readValue(historikkJson)
-    }
+    val historikk = getEksternVarslingHistorikk("ekstern_varsling_historikk")
 
     return EksternVarslingInfo(
         prefererteKanaler = getListFromString("prefererteKanaler"),

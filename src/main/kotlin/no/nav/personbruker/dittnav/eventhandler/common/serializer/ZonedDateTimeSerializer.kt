@@ -6,9 +6,10 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import java.time.DateTimeException
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
 class ZonedDateTimeSerializer : KSerializer<ZonedDateTime> {
 
@@ -17,8 +18,8 @@ class ZonedDateTimeSerializer : KSerializer<ZonedDateTime> {
 
         return try {
             ZonedDateTime.parse(value)
-        } catch (e: DateTimeException) {
-            ZonedDateTime.parse("$value+00:00")
+        } catch (e: DateTimeParseException) {
+            LocalDateTime.parse(value).atZone(ZoneId.of("UTC"))
         }
     }
 

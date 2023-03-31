@@ -1,42 +1,30 @@
+@file:UseSerializers(ZonedDateTimeSerializer::class)
 package no.nav.personbruker.dittnav.eventhandler.innboks
 
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfo
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
+import no.nav.personbruker.dittnav.eventhandler.common.serializer.ZonedDateTimeSerializer
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarsling
 import java.time.ZonedDateTime
 
+
+@Serializable
 data class Innboks(
-    val id: Int,
+    val fodselsnummer: String,
+    val grupperingsId: String,
+    val eventId: String,
+    val eventTidspunkt: ZonedDateTime,
+    val forstBehandlet: ZonedDateTime,
     val produsent: String,
     val systembruker: String,
     val namespace: String,
     val appnavn: String,
-    val eventTidspunkt: ZonedDateTime,
-    val forstBehandlet: ZonedDateTime,
-    val fodselsnummer: String,
-    val eventId: String,
-    val grupperingsId: String,
-    val tekst: String,
-    val link: String,
     val sikkerhetsnivaa: Int,
     val sistOppdatert: ZonedDateTime,
+    val tekst: String,
+    val link: String,
     val aktiv: Boolean,
-    val eksternVarslingInfo: EksternVarslingInfo
-) {
-    override fun toString(): String {
-        return "Innboks(" +
-            "id=$id, " +
-            "produsent=$produsent, " +
-            "systembruker=$systembruker, " +
-            "namespace=$namespace, " +
-            "appnavn=$appnavn, " +
-            "eventTidspunkt=$eventTidspunkt, " +
-            "forstBehandlet=$forstBehandlet, " +
-            "fodselsnummer=***, " +
-            "eventId=$eventId, " +
-            "grupperingsId=$grupperingsId, " +
-            "tekst=***, " +
-            "link=***, " +
-            "sikkerhetsnivaa=$sikkerhetsnivaa, " +
-            "sistOppdatert=$sistOppdatert, " +
-            "aktiv=$aktiv"
-    }
-}
+    val eksternVarslingSendt: Boolean,
+    val eksternVarslingKanaler: List<String>,
+    val eksternVarsling: EksternVarsling?
+)

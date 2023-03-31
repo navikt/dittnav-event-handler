@@ -2,9 +2,8 @@ package no.nav.personbruker.dittnav.eventhandler.innboks
 
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.DoknotifikasjonTestStatus
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.createDoknotStatusInnboks
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.deleteDoknotStatusInnboks
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.createEksternVarslingStatusInnboks
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.deleteEksternVarslingStatusInnboks
 import java.sql.Connection
 import java.sql.Types
 import java.time.Instant
@@ -14,69 +13,58 @@ import java.time.ZonedDateTime
 
 fun Connection.createInnboks(innbokser: List<Innboks>) =
     prepareStatement(
-        """INSERT INTO innboks(id, systembruker, eventTidspunkt, fodselsnummer, eventId, grupperingsId, tekst, link, sikkerhetsnivaa, sistOppdatert, aktiv, namespace, appnavn, forstBehandlet, eksternVarsling, prefererteKanaler)
-            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        """INSERT INTO innboks(systembruker, eventTidspunkt, fodselsnummer, eventId, grupperingsId, tekst, link, sikkerhetsnivaa, sistOppdatert, aktiv, namespace, appnavn, forstBehandlet, eksternVarsling, prefererteKanaler)
+            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
     )
         .use {
             innbokser.forEach { innboks ->
                 run {
-                    it.setInt(1, innboks.id)
-                    it.setString(2, innboks.systembruker)
-                    it.setObject(3, innboks.eventTidspunkt.utcLocalDate(), Types.TIMESTAMP)
-                    it.setString(4, innboks.fodselsnummer)
-                    it.setString(5, innboks.eventId)
-                    it.setString(6, innboks.grupperingsId)
-                    it.setString(7, innboks.tekst)
-                    it.setString(8, innboks.link)
-                    it.setInt(9, innboks.sikkerhetsnivaa)
-                    it.setObject(10, innboks.sistOppdatert.utcLocalDate(), Types.TIMESTAMP)
-                    it.setBoolean(11, innboks.aktiv)
-                    it.setString(12, innboks.namespace)
-                    it.setString(13, innboks.appnavn)
-                    it.setObject(14, innboks.forstBehandlet.utcLocalDate(), Types.TIMESTAMP)
-                    it.setObject(15, innboks.eksternVarslingInfo.bestilt)
-                    it.setObject(16, innboks.eksternVarslingInfo.prefererteKanaler.joinToString(","))
+                    it.setString(1, innboks.systembruker)
+                    it.setObject(2, innboks.eventTidspunkt.utcLocalDate(), Types.TIMESTAMP)
+                    it.setString(3, innboks.fodselsnummer)
+                    it.setString(4, innboks.eventId)
+                    it.setString(5, innboks.grupperingsId)
+                    it.setString(6, innboks.tekst)
+                    it.setString(7, innboks.link)
+                    it.setInt(8, innboks.sikkerhetsnivaa)
+                    it.setObject(9, innboks.sistOppdatert.utcLocalDate(), Types.TIMESTAMP)
+                    it.setBoolean(10, innboks.aktiv)
+                    it.setString(11, innboks.namespace)
+                    it.setString(12, innboks.appnavn)
+                    it.setObject(13, innboks.forstBehandlet.utcLocalDate(), Types.TIMESTAMP)
+                    it.setBoolean(14, innboks.eksternVarsling != null)
+                    it.setString(15, innboks.eksternVarsling?.prefererteKanaler?.joinToString() ?: "")
                     it.addBatch()
                 }
             }
             it.executeBatch()
         }
 
-fun Connection.deleteInnboks(innbokser: List<Innboks>) =
-    prepareStatement("""DELETE FROM innboks WHERE eventId = ?""")
-        .use {
-            innbokser.forEach { innboks ->
-                run {
-                    it.setString(1, innboks.eventId)
-                    it.addBatch()
-                }
-            }
-            it.executeBatch()
-        }
+private fun Connection.deleteAllInnboks() = prepareStatement("""DELETE FROM innboks""").execute()
 
-internal fun LocalPostgresDatabase.createInnboks(innboks: List<Innboks>) {
-    runBlocking {
-        dbQuery { createInnboks(innboks) }
+fun LocalPostgresDatabase.createInnboks(innboksList: List<Innboks>) = runBlocking {
+    dbQuery {
+        createInnboks(innboksList)
+    }
+    dbQuery {
+        createEksternVarslingStatuses(innboksList)
     }
 }
 
-internal fun LocalPostgresDatabase.deleteInnboks(innboks: List<Innboks>) {
-    runBlocking {
-        dbQuery { deleteInnboks(innboks) }
+fun LocalPostgresDatabase.deleteInnboks() = runBlocking {
+    dbQuery {
+        deleteEksternVarslingStatusInnboks()
+    }
+    dbQuery {
+        deleteAllInnboks()
     }
 }
 
-internal fun LocalPostgresDatabase.createDoknotStatuses(statuses: List<DoknotifikasjonTestStatus>) = runBlocking {
+fun LocalPostgresDatabase.createEksternVarslingStatuses(statuses: List<Innboks>) = runBlocking {
     dbQuery {
         statuses.forEach { status ->
-            createDoknotStatusInnboks(status)
+            createEksternVarslingStatusInnboks(status)
         }
-    }
-}
-
-internal fun LocalPostgresDatabase.deleteAllDoknotStatusInnboks() = runBlocking {
-    dbQuery {
-        deleteDoknotStatusInnboks()
     }
 }
 

@@ -1,30 +1,18 @@
 package no.nav.personbruker.dittnav.eventhandler.innboks
 
 import no.nav.personbruker.dittnav.eventhandler.OsloDateTime
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.DoknotifikasjonTestStatus
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfo
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfoObjectMother
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus
-import java.time.ZoneId
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingHistorikkEntry
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarsling
 import java.time.ZonedDateTime
-import java.time.temporal.ChronoUnit
 
 object InnboksObjectMother {
 
-    private var idIncrementor = 0
     private var eventIdIncrementor = 0
 
     private const val defaultFodselsnummer = "123456789"
     private const val defaultSystembruker = "x-dittnav"
-    private val defaultEksternVarslinginfo = EksternVarslingInfo(
-        bestilt = false,
-        prefererteKanaler = emptyList(),
-        sendt = false,
-        sendteKanaler = emptyList()
-    )
 
     fun createInnboks(
-        id: Int = ++idIncrementor,
         eventId: String = (++eventIdIncrementor).toString(),
         fodselsnummer: String = defaultFodselsnummer,
         aktiv: Boolean = true,
@@ -39,10 +27,9 @@ object InnboksObjectMother {
         link: String = "https://nav.no/systemX/$defaultFodselsnummer",
         sistOppdatert: ZonedDateTime = OsloDateTime.now(),
         sikkerhetsnivaa: Int = 4,
-        eksternVarslingInfo: EksternVarslingInfo = defaultEksternVarslinginfo
+        eksternVarsling: EksternVarsling? = null
     ): Innboks {
         return Innboks(
-            id = id,
             produsent = produsent,
             systembruker = systembruker,
             namespace = namespace,
@@ -57,7 +44,9 @@ object InnboksObjectMother {
             sistOppdatert = sistOppdatert,
             sikkerhetsnivaa = sikkerhetsnivaa,
             aktiv = aktiv,
-            eksternVarslingInfo = eksternVarslingInfo
+            eksternVarslingSendt = eksternVarsling?.sendt ?: false,
+            eksternVarslingKanaler = eksternVarsling?.sendteKanaler ?: emptyList(),
+            eksternVarsling = eksternVarsling
         )
     }
 }
@@ -71,7 +60,6 @@ internal const val innboksTestgrupperingsid = "100$innboksTestFnr1"
 
 
 internal val innboks1Aktiv = InnboksObjectMother.createInnboks(
-    id = 1,
     eventId = "123",
     fodselsnummer = innboksTestFnr1,
     grupperingsId = innboksTestgrupperingsid,
@@ -79,22 +67,40 @@ internal val innboks1Aktiv = InnboksObjectMother.createInnboks(
     systembruker = innboksTestSystembruker,
     namespace = innboksTestnamespace,
     appnavn = innboksTestAppnavn,
-    eksternVarslingInfo = EksternVarslingInfoObjectMother.createEskternVarslingInfo(
-        bestilt = true,
-        prefererteKanaler = listOf("SMS", "EPOST")
+    eksternVarsling = eksternVarslingForInnboks1
+)
+
+val eksternVarslingForInnboks1 get() = EksternVarsling(
+    sendt = true,
+    renotifikasjonSendt = false,
+    prefererteKanaler = listOf("SMS","EPOST"),
+    sendteKanaler = listOf("SMS","EPOST"),
+    historikk = listOf(
+        EksternVarslingHistorikkEntry(
+            status = "bestilt",
+            melding = "Notifikasjon er behandlet og distribusjon er bestilt",
+            tidspunkt = OsloDateTime.now()
+        ),
+        EksternVarslingHistorikkEntry(
+            status =  "sendt",
+            melding =  "notifikajon sendt via sms",
+            distribusjonsId =  123,
+            kanal =  "SMS",
+            renotifikasjon =  false,
+            tidspunkt =  OsloDateTime.now()
+        ),
+        EksternVarslingHistorikkEntry(
+            status =  "sendt",
+            melding =  "notifikajon sendt via epost",
+            distribusjonsId =  123,
+            kanal =  "EPOST",
+            renotifikasjon =  false,
+            tidspunkt =  OsloDateTime.now()
+        )
     )
 )
 
-internal val doknotStatusForInnboks1 = DoknotifikasjonTestStatus(
-    eventId = innboks1Aktiv.eventId,
-    status = EksternVarslingStatus.OVERSENDT.name,
-    melding = "melding",
-    distribusjonsId = 123L,
-    kanaler = "SMS"
-)
-
 internal val innboks2Aktiv = InnboksObjectMother.createInnboks(
-    id = 2,
     eventId = "345",
     fodselsnummer = innboksTestFnr1,
     grupperingsId = innboksTestgrupperingsid,
@@ -102,22 +108,29 @@ internal val innboks2Aktiv = InnboksObjectMother.createInnboks(
     systembruker = innboksTestSystembruker,
     namespace = innboksTestnamespace,
     appnavn = innboksTestAppnavn,
-    eksternVarslingInfo = EksternVarslingInfoObjectMother.createEskternVarslingInfo(
-        bestilt = true,
-        prefererteKanaler = listOf("SMS", "EPOST")
+    eksternVarsling = eksternVarslingForInnboks2
+)
+
+val eksternVarslingForInnboks2 get() = EksternVarsling(
+    sendt = false,
+    renotifikasjonSendt = false,
+    prefererteKanaler = listOf("SMS","EPOST"),
+    sendteKanaler = emptyList(),
+    historikk = listOf(
+        EksternVarslingHistorikkEntry(
+            status = "bestilt",
+            melding = "Notifikasjon er behandlet og distribusjon er bestilt",
+            tidspunkt = OsloDateTime.now()
+        ),
+        EksternVarslingHistorikkEntry(
+            status =  "feilet",
+            melding =  "Notifikasjon feiler",
+            tidspunkt =  OsloDateTime.now()
+        )
     )
 )
 
-internal val doknotStatusForInnboks2 = DoknotifikasjonTestStatus(
-    eventId = innboks2Aktiv.eventId,
-    status = EksternVarslingStatus.FEILET.name,
-    melding = "feilet",
-    distribusjonsId = null,
-    kanaler = ""
-)
-
 internal val innboks3Aktiv = InnboksObjectMother.createInnboks(
-    id = 3,
     eventId = "567",
     fodselsnummer = innboksTestFnr2,
     aktiv = true,
@@ -127,7 +140,6 @@ internal val innboks3Aktiv = InnboksObjectMother.createInnboks(
     forstBehandlet = OsloDateTime.now().minusDays(5),
 )
 internal val innboks4Inaktiv = InnboksObjectMother.createInnboks(
-    id = 4,
     eventId = "789",
     fodselsnummer = innboksTestFnr2,
     aktiv = false,

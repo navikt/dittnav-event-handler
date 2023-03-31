@@ -1,15 +1,13 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
 import io.kotest.matchers.collections.shouldBeEmpty
-import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
 import no.nav.personbruker.dittnav.eventhandler.common.findCountFor
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveTestData.appnavn
-import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveTestData.doknotStatusForOppgave1
-import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveTestData.doknotStatusForOppgave2
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveTestData.grupperingsid
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveTestData.oppgave1Aktiv
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveTestData.oppgave2Aktiv
@@ -30,13 +28,11 @@ class OppgaveQueriesTest {
     @BeforeAll
     fun `populer test-data`() {
         database.createOppgave(listOf(oppgave1Aktiv, oppgave2Aktiv, oppgave3Inaktiv, oppgave4))
-        database.createDoknotStatuses(listOf(doknotStatusForOppgave1, doknotStatusForOppgave2))
     }
 
     @AfterAll
     fun `slett Oppgave-eventer fra tabellen`() {
-        database.deleteAllDoknotStatusOppgave()
-        database.deleteOppgave(listOf(oppgave1Aktiv, oppgave2Aktiv, oppgave3Inaktiv, oppgave4))
+        database.deleteOppgave()
     }
 
     @Test
@@ -159,12 +155,12 @@ class OppgaveQueriesTest {
             it.eventId == oppgave1Aktiv.eventId
         }.first()
 
-        val eksternVarslingInfo = oppgave.eksternVarslingInfo
+        val eksternVarsling = oppgave.eksternVarsling
 
-        eksternVarslingInfo.bestilt shouldBe oppgave1Aktiv.eksternVarslingInfo.bestilt
-        eksternVarslingInfo.prefererteKanaler shouldContainAll oppgave1Aktiv.eksternVarslingInfo.prefererteKanaler
-        eksternVarslingInfo.sendt shouldBe true
-        eksternVarslingInfo.sendteKanaler shouldContain doknotStatusForOppgave1.kanaler
+        eksternVarsling shouldNotBe null
+        eksternVarsling!!.prefererteKanaler shouldContainAll oppgave1Aktiv.eksternVarsling!!.prefererteKanaler
+        eksternVarsling.sendt shouldBe true
+        eksternVarsling.sendteKanaler shouldContainAll oppgave1Aktiv.eksternVarsling!!.sendteKanaler
     }
 
     @Test
@@ -175,12 +171,12 @@ class OppgaveQueriesTest {
             it.eventId == oppgave2Aktiv.eventId
         }.first()
 
-        val eksternVarslingInfo = oppgave.eksternVarslingInfo
+        val eksternVarsling = oppgave.eksternVarsling
 
-        eksternVarslingInfo.bestilt shouldBe oppgave2Aktiv.eksternVarslingInfo.bestilt
-        eksternVarslingInfo.prefererteKanaler shouldContainAll oppgave2Aktiv.eksternVarslingInfo.prefererteKanaler
-        eksternVarslingInfo.sendt shouldBe false
-        eksternVarslingInfo.sendteKanaler.isEmpty() shouldBe true
+        eksternVarsling shouldNotBe null
+        eksternVarsling!!.prefererteKanaler shouldContainAll oppgave1Aktiv.eksternVarsling!!.prefererteKanaler
+        eksternVarsling.sendt shouldBe false
+        eksternVarsling.sendteKanaler shouldContainAll oppgave1Aktiv.eksternVarsling!!.sendteKanaler
     }
 
     @Test
@@ -191,11 +187,8 @@ class OppgaveQueriesTest {
             it.eventId == oppgave3Inaktiv.eventId
         }.first()
 
-        val eksternVarslingInfo = oppgave.eksternVarslingInfo
+        val eksternVarsling = oppgave.eksternVarsling
 
-        eksternVarslingInfo.bestilt shouldBe oppgave3Inaktiv.eksternVarslingInfo.bestilt
-        eksternVarslingInfo.prefererteKanaler shouldContainAll oppgave3Inaktiv.eksternVarslingInfo.prefererteKanaler
-        eksternVarslingInfo.sendt shouldBe false
-        eksternVarslingInfo.sendteKanaler.isEmpty() shouldBe true
+        eksternVarsling shouldBe null
     }
 }

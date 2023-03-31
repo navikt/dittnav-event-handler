@@ -96,35 +96,35 @@ CREATE OR REPLACE VIEW brukernotifikasjon_view as
   SELECT innboks.eventid, innboks.systembruker, 'innboks' :: text AS type, innboks.fodselsnummer, innboks.aktiv
   FROM innboks;
 
-CREATE TABLE doknotifikasjon_status_beskjed (
+CREATE TABLE ekstern_varsling_status_beskjed (
     eventId                 VARCHAR(50) UNIQUE,
-    status                  TEXT,
-    melding                 TEXT,
-    distribusjonsId         BIGINT,
-    tidspunkt               TIMESTAMP WITHOUT TIME ZONE,
+    sistMottattStatus       TEXT,
+    sistOppdatert           TIMESTAMP WITHOUT TIME ZONE,
     kanaler                 TEXT,
-    antall_oppdateringer    SMALLINT,
-    constraint fk_dokstatus_beskjed_eventid FOREIGN KEY(eventId) REFERENCES beskjed(eventId)
+    eksternVarslingSendt    BOOLEAN,
+    renotifikasjonSendt     BOOLEAN,
+    historikk               JSONB,
+    constraint fk_evs_beskjed_eventid FOREIGN KEY(eventId) REFERENCES beskjed(eventId)
 );
 
-CREATE TABLE doknotifikasjon_status_oppgave (
+CREATE TABLE ekstern_varsling_status_oppgave (
     eventId                 VARCHAR(50) UNIQUE,
-    status                  TEXT,
-    melding                 TEXT,
-    distribusjonsId         BIGINT,
-    tidspunkt               TIMESTAMP WITHOUT TIME ZONE,
+    sistMottattStatus       TEXT,
+    sistOppdatert           TIMESTAMP WITHOUT TIME ZONE,
     kanaler                 TEXT,
-    antall_oppdateringer    SMALLINT,
-    constraint fk_dokstatus_oppgave_eventid FOREIGN KEY(eventId) REFERENCES oppgave(eventId)
+    eksternVarslingSendt    BOOLEAN,
+    renotifikasjonSendt     BOOLEAN,
+    historikk               JSONB,
+    constraint fk_evs_oppgave_eventid FOREIGN KEY(eventId) REFERENCES oppgave(eventId)
 );
 
-CREATE TABLE doknotifikasjon_status_innboks (
+CREATE TABLE ekstern_varsling_status_innboks (
     eventId                 VARCHAR(50) UNIQUE,
-    status                  TEXT,
-    melding                 TEXT,
-    distribusjonsId         BIGINT,
-    tidspunkt               TIMESTAMP WITHOUT TIME ZONE,
+    sistMottattStatus       TEXT,
+    sistOppdatert           TIMESTAMP WITHOUT TIME ZONE,
     kanaler                 TEXT,
-    antall_oppdateringer    SMALLINT,
-    constraint fk_dokstatus_innboks_eventid FOREIGN KEY(eventId) REFERENCES innboks(eventId)
+    eksternVarslingSendt    BOOLEAN,
+    renotifikasjonSendt     BOOLEAN,
+    historikk               JSONB,
+    constraint fk_evs_innboks_eventid FOREIGN KEY(eventId) REFERENCES innboks(eventId)
 );

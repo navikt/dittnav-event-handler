@@ -98,9 +98,9 @@ class EventStatisticsServiceTest {
 
     @AfterAll
     fun `slett testdata`() {
-        database.deleteBeskjed(listOf(beskjed1, beskjed2, beskjed3, beskjed4))
-        database.deleteInnboks(listOf(innboks1, innboks2, innboks3, innboks4))
-        database.deleteOppgave(listOf(oppgave1, oppgave2, oppgave3, oppgave4))
+        database.deleteBeskjed()
+        database.deleteInnboks()
+        database.deleteOppgave()
     }
 
     @Test

@@ -2,10 +2,9 @@ package no.nav.personbruker.dittnav.eventhandler.varsel
 
 import no.nav.personbruker.dittnav.eventhandler.common.VarselType
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
+import no.nav.personbruker.dittnav.eventhandler.common.database.getListFromString
 import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
 import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus.FERDIGSTILT
 import java.sql.ResultSet
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -54,10 +53,10 @@ class VarselRepository(private val database: Database) {
                 v.forstBehandlet,
                 v.frist_utløpt,
                 '$table' as type,
-                ds.kanaler as doknot_kanaler,
-                ds.status as doknot_status
+                evs.kanaler as ekstern_varsling_kanaler,
+                evs.eksternVarslingSendt as ekstern_varsling_sendt
             FROM $table as v
-            LEFT JOIN doknotifikasjon_status_$table ds ON v.eventId=ds.eventId
+            LEFT JOIN ekstern_varsling_status_$table evs ON v.eventId=evs.eventId
             WHERE fodselsnummer = ? AND aktiv = $active
         """
     }
@@ -78,8 +77,8 @@ class VarselRepository(private val database: Database) {
             ZoneId.of("Europe/Oslo")
         ),
         fristUtløpt = getBoolean("frist_utløpt").let { if (wasNull()) null else it },
-        eksternVarslingSendt = EksternVarslingStatus[getString("doknot_status")] == FERDIGSTILT,
-        eksternVarslingKanaler = getString("doknot_kanaler").let { if (wasNull()) emptyList() else it.split(",") }
+        eksternVarslingSendt = getBoolean("ekstern_varsling_sendt"),
+        eksternVarslingKanaler = getListFromString("ekstern_varsling_kanaler")
     )
 }
 

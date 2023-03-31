@@ -1,20 +1,17 @@
 package no.nav.personbruker.dittnav.eventhandler.beskjed
 
 import no.nav.personbruker.dittnav.eventhandler.OsloDateTime
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.DoknotifikasjonTestStatus
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingHistorikkEntry
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarsling
 import java.time.ZonedDateTime
+import java.util.*
 
 object BeskjedObjectMother {
-    private var idIncrementor = 0
-    private var eventIdIncrementor = 0
-
     private const val defaultFodselsnummer = "123456789"
     private const val defaultSystembruker = "x-dittnav"
 
     fun createBeskjed(
-        id: Int = ++idIncrementor,
-        eventId: String = (++eventIdIncrementor).toString(),
+        eventId: String = UUID.randomUUID().toString(),
         fodselsnummer: String = defaultFodselsnummer,
         synligFremTil: ZonedDateTime? = OsloDateTime.now().plusDays(7),
         aktiv: Boolean = true,
@@ -29,12 +26,10 @@ object BeskjedObjectMother {
         link: String = "https://nav.no/systemX/$defaultFodselsnummer",
         sistOppdatert: ZonedDateTime = OsloDateTime.now(),
         sikkerhetsnivaa: Int = 4,
-        eksternVarslingSendt: Boolean = false,
-        eksternVarslingKanaler: List<String> = listOf(),
+        eksternVarsling: EksternVarsling? = null,
         fristUtløpt: Boolean? = null
     ): Beskjed {
         return Beskjed(
-            id = id,
             produsent = produsent,
             systembruker = systembruker,
             namespace = namespace,
@@ -50,8 +45,9 @@ object BeskjedObjectMother {
             synligFremTil = synligFremTil,
             sikkerhetsnivaa = sikkerhetsnivaa,
             aktiv = aktiv,
-            eksternVarslingSendt = eksternVarslingSendt,
-            eksternVarslingKanaler = eksternVarslingKanaler,
+            eksternVarslingSendt = eksternVarsling?.sendt ?: false,
+            eksternVarslingKanaler = eksternVarsling?.sendteKanaler ?: emptyList(),
+            eksternVarsling = eksternVarsling,
             fristUtløpt = fristUtløpt
         )
     }
@@ -67,7 +63,6 @@ object BeskjedTestData {
     internal const val appnavn = "dittnav"
 
     internal val beskjed1Aktiv = BeskjedObjectMother.createBeskjed(
-        id = 1,
         eventId = "123",
         fodselsnummer = beskjedTestFnr,
         synligFremTil = OsloDateTime.now().plusHours(1),
@@ -77,21 +72,40 @@ object BeskjedTestData {
         appnavn = appnavn,
         forstBehandlet = OsloDateTime.now(),
         grupperingsId = grupperingsid,
-        eksternVarslingSendt = true,
-        eksternVarslingKanaler = listOf("SMS","EPOST"),
+        eksternVarsling = eksternVarslingForBeskjed1
+    )
 
+    val eksternVarslingForBeskjed1 get() = EksternVarsling(
+        sendt = true,
+        renotifikasjonSendt = false,
+        prefererteKanaler = listOf("SMS","EPOST"),
+        sendteKanaler = listOf("SMS","EPOST"),
+        historikk = listOf(
+            EksternVarslingHistorikkEntry(
+                status = "bestilt",
+                melding = "Notifikasjon er behandlet og distribusjon er bestilt",
+                tidspunkt = OsloDateTime.now()
+            ),
+            EksternVarslingHistorikkEntry(
+                status =  "sendt",
+                melding =  "notifikajon sendt via sms",
+                distribusjonsId =  123,
+                kanal =  "SMS",
+                renotifikasjon =  false,
+                tidspunkt =  OsloDateTime.now()
+            ),
+            EksternVarslingHistorikkEntry(
+                status =  "sendt",
+                melding =  "notifikajon sendt via epost",
+                distribusjonsId =  123,
+                kanal =  "EPOST",
+                renotifikasjon =  false,
+                tidspunkt =  OsloDateTime.now()
+            )
         )
-
-    val doknotStatusForBeskjed1 = DoknotifikasjonTestStatus(
-        eventId = beskjed1Aktiv.eventId,
-        status = EksternVarslingStatus.OVERSENDT.name,
-        melding = "melding",
-        distribusjonsId = 123L,
-        kanaler = "SMS,EPOST"
     )
 
     internal val beskjed2Aktiv = BeskjedObjectMother.createBeskjed(
-        id = 2,
         eventId = eventId,
         fodselsnummer = beskjedTestFnr,
         synligFremTil = OsloDateTime.now().plusHours(1),
@@ -101,20 +115,28 @@ object BeskjedTestData {
         appnavn = appnavn,
         forstBehandlet = OsloDateTime.now().minusDays(5),
         grupperingsId = grupperingsid,
-        eksternVarslingSendt = false,
-        eksternVarslingKanaler = emptyList(),
+        eksternVarsling = eksternVarslingForBeskjed2
     )
 
-    val doknotStatusForBeskjed2 = DoknotifikasjonTestStatus(
-        eventId = beskjed2Aktiv.eventId,
-        status = EksternVarslingStatus.FEILET.name,
-        melding = "feilet",
-        distribusjonsId = null,
-        kanaler = ""
+    val eksternVarslingForBeskjed2 get() = EksternVarsling(
+        sendt = false,
+        renotifikasjonSendt = false,
+        prefererteKanaler = listOf("SMS","EPOST"),
+        sendteKanaler = emptyList(),
+        historikk = listOf(
+            EksternVarslingHistorikkEntry(
+                status = "bestilt",
+                melding = "Notifikasjon er behandlet og distribusjon er bestilt",
+                tidspunkt = OsloDateTime.now()
+            ),
+            EksternVarslingHistorikkEntry(
+                status =  "feilet",
+                melding =  "Notifikasjon feilet",
+                tidspunkt =  OsloDateTime.now()
+            )
+        )
     )
-
     internal val beskjed3Inaktiv = BeskjedObjectMother.createBeskjed(
-        id = 3,
         eventId = "567",
         fodselsnummer = beskjedTestFnr,
         synligFremTil = OsloDateTime.now().plusHours(1),
@@ -126,7 +148,6 @@ object BeskjedTestData {
         grupperingsId = grupperingsid,
     )
     internal val beskjed4Aktiv = BeskjedObjectMother.createBeskjed(
-        id = 4,
         eventId = "789",
         fodselsnummer = "54321",
         synligFremTil = OsloDateTime.now().plusHours(1),

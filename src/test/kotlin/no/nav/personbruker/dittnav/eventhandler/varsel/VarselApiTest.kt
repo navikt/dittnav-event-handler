@@ -14,9 +14,7 @@ import no.nav.personbruker.dittnav.eventhandler.asDateTime
 import no.nav.personbruker.dittnav.eventhandler.assert
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
-import no.nav.personbruker.dittnav.eventhandler.common.VarselType
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
-import no.nav.personbruker.dittnav.eventhandler.common.database.createDoknotifikasjon
 import no.nav.personbruker.dittnav.eventhandler.comparableTime
 import no.nav.personbruker.dittnav.eventhandler.getMedFnrHeader
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksObjectMother
@@ -79,7 +77,6 @@ class VarselApiTest {
                     OppgaveObjectMother.createOppgave(fodselsnummer = "321", aktiv = false, fristUtløpt = null)
                 )
             )
-            createDoknotifikasjon(inaktivOppgave.eventId, VarselType.OPPGAVE)
             createInnboks(
                 listOf(
                     InnboksObjectMother.createInnboks(aktiv = true, fodselsnummer = fodselsnummer),
@@ -117,11 +114,12 @@ class VarselApiTest {
             varselJson["eksternVarslingSendt"].asBoolean() shouldBe false
             varselJson["eksternVarslingKanaler"].toList() shouldBe emptyList<String>()
             varselJson["isMasked"].asBoolean() shouldBe false
+
             varselListe.find { it["eventId"].asText() == inaktivOppgave.eventId }.apply {
                 require(this != null)
                 get("fristUtløpt").asBooleanOrNull() shouldBe true
-                get("eksternVarslingSendt").asBoolean() shouldBe true
-                get("eksternVarslingKanaler").toList().map { it.asText() } shouldContainExactly listOf("SMS", "EPOST")
+                get("eksternVarslingSendt").asBoolean() shouldBe false
+                get("eksternVarslingKanaler").toList().isEmpty() shouldBe true
             }
         }
 

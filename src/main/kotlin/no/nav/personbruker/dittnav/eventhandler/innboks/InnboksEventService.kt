@@ -6,22 +6,22 @@ import java.sql.Connection
 
 class InnboksEventService(private val database: Database) {
 
-    suspend fun getActiveEventsForFodselsnummer(fodselsnummer: String): List<InnboksDTO> {
+    suspend fun getActiveEventsForFodselsnummer(fodselsnummer: String): List<Innboks> {
         return getEvents {
             getAktivInnboksForFodselsnummer(fodselsnummer)
-        }.map { innboks -> innboks.toDTO() }
+        }
     }
 
-    suspend fun getInactiveEventsForFodselsnummer(fodselsnummer: String): List<InnboksDTO> {
+    suspend fun getInactiveEventsForFodselsnummer(fodselsnummer: String): List<Innboks> {
         return getEvents {
             getInaktivInnboksForFodselsnummer(fodselsnummer)
-        }.map { innboks -> innboks.toDTO() }
+        }
     }
 
-    suspend fun getAllEventsForFodselsnummer(fodselsnummer: String): List<InnboksDTO> {
+    suspend fun getAllEventsForFodselsnummer(fodselsnummer: String): List<Innboks> {
         return getEvents {
             getAllInnboksForFodselsnummer(fodselsnummer)
-        }.map { innboks -> innboks.toDTO() }
+        }
     }
 
     suspend fun getAllGroupedEventsByProducerFromCache(): List<EventCountForProducer> {

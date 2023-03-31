@@ -1,25 +1,21 @@
 package no.nav.personbruker.dittnav.eventhandler.beskjed
 
-import no.nav.personbruker.dittnav.eventhandler.common.LocalDateTimeHelper
-import no.nav.personbruker.dittnav.eventhandler.common.database.getListFromSeparatedString
-import no.nav.personbruker.dittnav.eventhandler.common.database.getNullableUtcTimeStamp
-import no.nav.personbruker.dittnav.eventhandler.common.database.getUtcTimeStamp
-import no.nav.personbruker.dittnav.eventhandler.common.database.mapList
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus
+import no.nav.personbruker.dittnav.eventhandler.common.database.*
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarsling
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.getEksternVarslingHistorikk
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import java.sql.Connection
 import java.sql.ResultSet
-import java.sql.Types
-import java.time.ZoneId
-import java.time.ZonedDateTime
 
 private val baseSelectQuery = """
     SELECT 
         beskjed.*,
-        dok_status.status as doknotifikasjon_status,
-        dok_status.kanaler as doknotifikasjon_kanaler
+        evs.kanaler as ekstern_varsling_kanaler,
+        evs.eksternVarslingSendt as ekstern_varsling_sendt,
+        evs.renotifikasjonSendt as ekstern_varsling_renotifikasjon,
+        evs.historikk as ekstern_varsling_historikk
     FROM beskjed
-        LEFT JOIN DOKNOTIFIKASJON_STATUS_BESKJED as dok_status on beskjed.eventId = dok_status.eventId
+        LEFT JOIN ekstern_varsling_status_beskjed as evs on beskjed.eventId = evs.eventId
 """.trimMargin()
 
 fun Connection.getInaktivBeskjedForFodselsnummer(fodselsnummer: String): List<Beskjed> =
@@ -47,15 +43,48 @@ fun Connection.getAllBeskjedForFodselsnummer(fodselsnummer: String): List<Beskje
             }
         }
 
-fun Connection.getBeskjedByIds(fodselsnummer: String, eventId: String): List<Beskjed> =
-    prepareStatement("""$baseSelectQuery WHERE fodselsnummer = ? AND beskjed.eventId = ?""".trimMargin())
-        .use {
-            it.setString(1, fodselsnummer)
-            it.setString(2, eventId)
-            it.executeQuery().mapList {
-                toBeskjed()
-            }
-        }
+private fun ResultSet.toBeskjed(): Beskjed {
+    val rawEventTidspunkt = getUtcTimeStamp("eventTidspunkt")
+    val verifiedEventTidspunkt = convertIfUnlikelyDate(rawEventTidspunkt)
+    return Beskjed(
+        fodselsnummer = getString("fodselsnummer"),
+        grupperingsId = getString("grupperingsId"),
+        eventId = getString("eventId"),
+        eventTidspunkt = verifiedEventTidspunkt,
+        forstBehandlet = getZonedDateTime("forstBehandlet"),
+        produsent = getString("appnavn") ?: "",
+        systembruker = getString("systembruker"),
+        namespace = getString("namespace"),
+        appnavn = getString("appnavn"),
+        sikkerhetsnivaa = getInt("sikkerhetsnivaa"),
+        sistOppdatert = getZonedDateTime("sistOppdatert"),
+        tekst = getString("tekst"),
+        link = getString("link"),
+        aktiv = getBoolean("aktiv"),
+        synligFremTil = getNullableZonedDateTime("synligFremTil"),
+        fristUtløpt = getBoolean("frist_utløpt").let { if(wasNull()) null else it },
+        eksternVarslingSendt = getBoolean("ekstern_varsling_sendt"),
+        eksternVarslingKanaler = getListFromString("ekstern_varsling_kanaler"),
+        eksternVarsling = getEksternVarsling()
+    )
+}
+
+private fun ResultSet.getEksternVarsling(): EksternVarsling? {
+
+    if (!getBoolean("eksternVarsling")) {
+        return null
+    }
+
+    val historikk = getEksternVarslingHistorikk("ekstern_varsling_historikk")
+
+    return EksternVarsling(
+        prefererteKanaler = getListFromString("prefererteKanaler"),
+        sendt = getBoolean("ekstern_varsling_sendt"),
+        renotifikasjonSendt = getBoolean("ekstern_varsling_renotifikasjon"),
+        sendteKanaler = getListFromString("ekstern_varsling_kanaler"),
+        historikk = historikk
+    )
+}
 
 fun Connection.getAllGroupedBeskjedEventsBySystemuser(): Map<String, Int> {
     return prepareStatement(
@@ -84,64 +113,4 @@ fun Connection.getAllGroupedBeskjedEventsByProducer(): List<EventCountForProduce
                 )
             }
         }
-}
-
-fun ResultSet.toBeskjed(): Beskjed {
-    return Beskjed(
-        id = getInt("id"),
-        fodselsnummer = getString("fodselsnummer"),
-        grupperingsId = getString("grupperingsId"),
-        eventId = getString("eventId"),
-        eventTidspunkt = ZonedDateTime.ofInstant(
-            getUtcTimeStamp("eventTidspunkt").toInstant(),
-            ZoneId.of("Europe/Oslo")
-        ),
-        produsent = getString("appnavn") ?: "",
-        systembruker = getString("systembruker"),
-        namespace = getString("namespace"),
-        appnavn = getString("appnavn"),
-        sikkerhetsnivaa = getInt("sikkerhetsnivaa"),
-        sistOppdatert = ZonedDateTime.ofInstant(getUtcTimeStamp("sistOppdatert").toInstant(), ZoneId.of("Europe/Oslo")),
-        synligFremTil = getNullableZonedDateTime("synligFremTil"),
-        tekst = getString("tekst"),
-        link = getString("link"),
-        aktiv = getBoolean("aktiv"),
-        forstBehandlet = ZonedDateTime.ofInstant(
-            getUtcTimeStamp("forstBehandlet").toInstant(),
-            ZoneId.of("Europe/Oslo")
-        ),
-        eksternVarslingSendt = getString("doknotifikasjon_status") == EksternVarslingStatus.OVERSENDT.name,
-        eksternVarslingKanaler = getListFromSeparatedString("doknotifikasjon_kanaler"),
-        fristUtløpt = getBoolean("frist_utløpt").let { if(wasNull()) null else it}
-    )
-}
-
-private fun ResultSet.getNullableZonedDateTime(label: String): ZonedDateTime? {
-    return getNullableUtcTimeStamp(label)?.let { timestamp ->
-        ZonedDateTime.ofInstant(
-            timestamp.toInstant(),
-            ZoneId.of("Europe/Oslo")
-        )
-    }
-}
-
-fun Connection.setBeskjedInaktiv(fodselsnummer: String, eventId: String): Int {
-    if (getBeskjedByIds(fodselsnummer, eventId).isEmpty()) {
-        throw BeskjedNotFoundException(eventId)
-    }
-    return prepareStatement("""UPDATE beskjed SET aktiv = false, sistOppdatert = ? WHERE fodselsnummer = ? AND eventId = ?""".trimMargin())
-        .use {
-            it.setObject(1, LocalDateTimeHelper.nowAtUtc(), Types.TIMESTAMP)
-            it.setString(2, fodselsnummer)
-            it.setString(3, eventId)
-            it.executeUpdate()
-        }
-}
-
-class BeskjedNotFoundException(val eventid: String) : IllegalArgumentException("beskjed med eventId $eventid ikke funnet")
-
-private fun ResultSet.getFristUtløpt(): Boolean? {
-
-    val result = getBoolean("frist_utløpt")
-    return if (wasNull()) null else result
 }

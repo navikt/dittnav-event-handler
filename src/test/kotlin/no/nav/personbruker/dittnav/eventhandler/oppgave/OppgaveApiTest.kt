@@ -11,11 +11,7 @@ import io.ktor.server.testing.testApplication
 import no.nav.personbruker.dittnav.eventhandler.ComparableVarsel
 import no.nav.personbruker.dittnav.eventhandler.asZonedDateTime
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.DoknotifikasjonTestStatus
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingStatus
 import no.nav.personbruker.dittnav.eventhandler.mockEventHandlerApi
-import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveTestData.doknotStatusForOppgave1
-import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveTestData.doknotStatusForOppgave2
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveTestData.oppgave1Aktiv
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveTestData.oppgave2Aktiv
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveTestData.oppgave3Inaktiv
@@ -44,35 +40,18 @@ class OppgaveApiTest {
                 oppgave4
             )
         )
-        database.createDoknotStatuses(
-            listOf(
-                doknotStatusForOppgave1,
-                doknotStatusForOppgave2
-            )
-        )
     }
 
     @AfterAll
     fun `slett Oppgave-eventer fra tabellen`() {
-        database.deleteAllDoknotStatusOppgave()
-        database.deleteOppgave(
-            listOf(
-                oppgave1Aktiv,
-                oppgave2Aktiv,
-                oppgave3Inaktiv,
-                oppgave4
-            )
-        )
+        database.deleteOppgave()
     }
 
     @Test
     fun `henter aktive oppgaver`() {
         testApplication {
             mockApi(database)
-            val expected = listOf(
-                oppgave1Aktiv.updateWith(doknotStatusForOppgave1),
-                oppgave2Aktiv.updateWith(doknotStatusForOppgave2)
-            )
+            val expected = listOf(oppgave1Aktiv, oppgave2Aktiv)
             val aktiveVarsler = client.get("$oppgaveEndpoint/aktive")
             aktiveVarsler.status shouldBe HttpStatusCode.OK
             objectMapper.readTree(aktiveVarsler.bodyAsText()) shouldContainExactly expected
@@ -98,8 +77,8 @@ class OppgaveApiTest {
             mockApi(database)
             val expected = listOf(
                 oppgave3Inaktiv,
-                oppgave2Aktiv.updateWith(doknotStatusForOppgave2),
-                oppgave1Aktiv.updateWith(doknotStatusForOppgave1)
+                oppgave2Aktiv,
+                oppgave1Aktiv
             )
             val alleVarsler = client.get("$oppgaveEndpoint/all")
             alleVarsler.status shouldBe HttpStatusCode.OK
@@ -153,20 +132,3 @@ private fun TestApplicationBuilder.mockApi(database: LocalPostgresDatabase) {
         }
     )
 }
-
-private fun Oppgave.updateWith(doknotStatus: DoknotifikasjonTestStatus?) =
-    if (doknotStatus != null) {
-        this.copy(
-            eksternVarslingInfo = this.eksternVarslingInfo.copy(
-                sendt = doknotStatus.status == EksternVarslingStatus.OVERSENDT.name,
-                sendteKanaler = if (doknotStatus.kanaler != "") listOf(doknotStatus.kanaler) else emptyList()
-            )
-        )
-    } else {
-        this.copy(
-            eksternVarslingInfo = this.eksternVarslingInfo.copy(
-                sendt = false,
-                sendteKanaler = emptyList()
-            )
-        )
-    }

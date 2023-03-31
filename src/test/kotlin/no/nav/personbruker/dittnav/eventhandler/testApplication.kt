@@ -153,8 +153,8 @@ private fun Innboks.toCompparableVarsel() = ComparableVarsel(
     tekst = this.tekst,
     link = this.link,
     aktiv = this.aktiv,
-    eksternVarslingSendt = eksternVarslingInfo.sendt,
-    eksternVarslingKanaler = eksternVarslingInfo.sendteKanaler
+    eksternVarslingSendt = eksternVarslingSendt,
+    eksternVarslingKanaler = eksternVarslingKanaler
 )
 
 
@@ -169,8 +169,8 @@ private fun Oppgave.toCompparableVarsel(): ComparableVarsel = ComparableVarsel(
     tekst = this.tekst,
     link = this.link,
     aktiv = this.aktiv,
-    eksternVarslingSendt = eksternVarslingInfo.sendt,
-    eksternVarslingKanaler = eksternVarslingInfo.sendteKanaler
+    eksternVarslingSendt =eksternVarslingSendt,
+    eksternVarslingKanaler =eksternVarslingKanaler
 )
 
 internal fun JsonNode.asZonedDateTime(): ZonedDateTime =

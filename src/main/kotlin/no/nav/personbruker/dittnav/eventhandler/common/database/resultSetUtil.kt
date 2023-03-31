@@ -40,13 +40,21 @@ private fun covertFromEpochSecondsToEpochMillis(originalTimestamp: Timestamp): Z
 
 fun ResultSet.getUtcTimeStamp(label: String): Timestamp = getTimestamp(label, Calendar.getInstance(TimeZone.getTimeZone("UTC")))
 
-fun ResultSet.getNullableUtcTimeStamp(label: String): Timestamp? = getTimestamp(label, Calendar.getInstance())
+fun ResultSet.getZonedDateTime(label: String, zone: ZoneId = ZoneId.of("UTC")) = getUtcTimeStamp(label).let {
+    ZonedDateTime.ofInstant(it.toInstant(), zone)
+}
 
-fun ResultSet.getListFromSeparatedString(columnLabel: String, separator: String = ","): List<String> {
+fun ResultSet.getNullableZonedDateTime(label: String, zone: ZoneId = ZoneId.of("UTC")): ZonedDateTime? {
+    val result = getTimestamp(label, Calendar.getInstance(TimeZone.getTimeZone("UTC")))
+
+    return result?.let { ZonedDateTime.ofInstant(it.toInstant(), zone) }
+}
+
+fun ResultSet.getListFromString(columnLabel: String, separator: String = ","): List<String> {
     val stringValue = getString(columnLabel)
     return if (stringValue.isNullOrEmpty()) {
         emptyList()
     } else {
-        stringValue.split(separator)
+        stringValue.replace("$separator\\s*".toRegex(), separator).split(separator)
     }
 }

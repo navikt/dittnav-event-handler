@@ -1,10 +1,14 @@
+@file:UseSerializers(ZonedDateTimeSerializer::class)
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfo
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
+import no.nav.personbruker.dittnav.eventhandler.common.serializer.ZonedDateTimeSerializer
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarsling
 import java.time.ZonedDateTime
 
+@Serializable
 data class Oppgave(
-    val id: Int,
     val fodselsnummer: String,
     val grupperingsId: String,
     val eventId: String,
@@ -16,28 +20,12 @@ data class Oppgave(
     val appnavn: String,
     val sikkerhetsnivaa: Int,
     val sistOppdatert: ZonedDateTime,
+    val synligFremTil: ZonedDateTime?,
     val tekst: String,
     val link: String,
     val aktiv: Boolean,
-    val eksternVarslingInfo: EksternVarslingInfo,
+    val eksternVarslingSendt: Boolean,
+    val eksternVarslingKanaler: List<String>,
+    val eksternVarsling: EksternVarsling?,
     val fristUtløpt: Boolean?
-) {
-    override fun toString(): String {
-        return "Oppgave(" +
-            "id=$id, " +
-            "fodselsnummer=***, " +
-            "grupperingsId=$grupperingsId, " +
-            "eventId=$eventId, " +
-            "eventTidspunkt=$eventTidspunkt, " +
-            "forstBehandlet=$forstBehandlet, " +
-            "produsent=$produsent, " +
-            "systembruker=$systembruker, " +
-            "namespace=$namespace, " +
-            "appnavn=$appnavn, " +
-            "sikkerhetsnivaa=$sikkerhetsnivaa, " +
-            "sistOppdatert=$sistOppdatert, " +
-            "tekst=***, " +
-            "link=***, " +
-            "aktiv=$aktiv"
-    }
-}
+)

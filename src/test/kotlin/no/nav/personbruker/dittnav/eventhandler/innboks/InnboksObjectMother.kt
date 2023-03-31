@@ -1,11 +1,8 @@
 package no.nav.personbruker.dittnav.eventhandler.innboks
 
 import no.nav.personbruker.dittnav.eventhandler.OsloDateTime
-import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingHistorikkEntry
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfo
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfoObjectMother
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingTestStatus
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarsling
 import java.time.ZonedDateTime
 
 object InnboksObjectMother {
@@ -30,7 +27,7 @@ object InnboksObjectMother {
         link: String = "https://nav.no/systemX/$defaultFodselsnummer",
         sistOppdatert: ZonedDateTime = OsloDateTime.now(),
         sikkerhetsnivaa: Int = 4,
-        eksternVarslingInfo: EksternVarslingInfo? = null
+        eksternVarsling: EksternVarsling? = null
     ): Innboks {
         return Innboks(
             produsent = produsent,
@@ -47,9 +44,9 @@ object InnboksObjectMother {
             sistOppdatert = sistOppdatert,
             sikkerhetsnivaa = sikkerhetsnivaa,
             aktiv = aktiv,
-            eksternVarslingSendt = eksternVarslingInfo?.sendt ?: false,
-            eksternVarslingKanaler = eksternVarslingInfo?.sendteKanaler ?: emptyList(),
-            eksternVarsling = eksternVarslingInfo
+            eksternVarslingSendt = eksternVarsling?.sendt ?: false,
+            eksternVarslingKanaler = eksternVarsling?.sendteKanaler ?: emptyList(),
+            eksternVarsling = eksternVarsling
         )
     }
 }
@@ -70,10 +67,10 @@ internal val innboks1Aktiv = InnboksObjectMother.createInnboks(
     systembruker = innboksTestSystembruker,
     namespace = innboksTestnamespace,
     appnavn = innboksTestAppnavn,
-    eksternVarslingInfo = eksternVarslingForInnboks1
+    eksternVarsling = eksternVarslingForInnboks1
 )
 
-val eksternVarslingForInnboks1 get() = EksternVarslingInfo(
+val eksternVarslingForInnboks1 get() = EksternVarsling(
     sendt = true,
     renotifikasjonSendt = false,
     prefererteKanaler = listOf("SMS","EPOST"),
@@ -111,10 +108,10 @@ internal val innboks2Aktiv = InnboksObjectMother.createInnboks(
     systembruker = innboksTestSystembruker,
     namespace = innboksTestnamespace,
     appnavn = innboksTestAppnavn,
-    eksternVarslingInfo = eksternVarslingForInnboks2
+    eksternVarsling = eksternVarslingForInnboks2
 )
 
-val eksternVarslingForInnboks2 get() = EksternVarslingInfo(
+val eksternVarslingForInnboks2 get() = EksternVarsling(
     sendt = false,
     renotifikasjonSendt = false,
     prefererteKanaler = listOf("SMS","EPOST"),

@@ -1,7 +1,7 @@
 package no.nav.personbruker.dittnav.eventhandler.beskjed
 
 import no.nav.personbruker.dittnav.eventhandler.common.database.*
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfo
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarsling
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.getEksternVarslingHistorikk
 import no.nav.personbruker.dittnav.eventhandler.statistics.EventCountForProducer
 import java.sql.Connection
@@ -65,11 +65,11 @@ private fun ResultSet.toBeskjed(): Beskjed {
         fristUtløpt = getBoolean("frist_utløpt").let { if(wasNull()) null else it },
         eksternVarslingSendt = getBoolean("ekstern_varsling_sendt"),
         eksternVarslingKanaler = getListFromString("ekstern_varsling_kanaler"),
-        eksternVarsling = getEksternVarslingInfo()
+        eksternVarsling = getEksternVarsling()
     )
 }
 
-private fun ResultSet.getEksternVarslingInfo(): EksternVarslingInfo? {
+private fun ResultSet.getEksternVarsling(): EksternVarsling? {
 
     if (!getBoolean("eksternVarsling")) {
         return null
@@ -77,7 +77,7 @@ private fun ResultSet.getEksternVarslingInfo(): EksternVarslingInfo? {
 
     val historikk = getEksternVarslingHistorikk("ekstern_varsling_historikk")
 
-    return EksternVarslingInfo(
+    return EksternVarsling(
         prefererteKanaler = getListFromString("prefererteKanaler"),
         sendt = getBoolean("ekstern_varsling_sendt"),
         renotifikasjonSendt = getBoolean("ekstern_varsling_renotifikasjon"),

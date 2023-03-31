@@ -16,11 +16,5 @@ private val objectMapper = jacksonMapperBuilder()
 
 fun ResultSet.getEksternVarslingHistorikk(label: String): List<EksternVarslingHistorikkEntry> {
 
-    val historikkJson = getString(label)
-
-    return if (historikkJson == null) {
-        emptyList()
-    } else {
-        objectMapper.readValue(historikkJson)
-    }
+    return getString(label)?.let { objectMapper.readValue(it) } ?: emptyList()
 }

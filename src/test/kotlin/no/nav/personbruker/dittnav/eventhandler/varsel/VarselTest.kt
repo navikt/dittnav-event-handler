@@ -6,12 +6,11 @@ import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.eventhandler.beskjed.Beskjed
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedObjectMother
 import no.nav.personbruker.dittnav.eventhandler.beskjed.createBeskjed
-import no.nav.personbruker.dittnav.eventhandler.beskjed.createEksternVarslingStatuses
 import no.nav.personbruker.dittnav.eventhandler.common.VarselType.BESKJED
 import no.nav.personbruker.dittnav.eventhandler.common.VarselType.INNBOKS
 import no.nav.personbruker.dittnav.eventhandler.common.VarselType.OPPGAVE
 import no.nav.personbruker.dittnav.eventhandler.common.database.LocalPostgresDatabase
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfo
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarsling
 import no.nav.personbruker.dittnav.eventhandler.innboks.Innboks
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksObjectMother
 import no.nav.personbruker.dittnav.eventhandler.innboks.createInnboks
@@ -72,7 +71,7 @@ class VarselTest {
                 fodselsnummer = fodselsnummer,
                 aktiv = true,
                 sikkerhetsnivaa = 3,
-                eksternVarsling = EksternVarslingInfo(
+                eksternVarsling = EksternVarsling(
                     sendt = true,
                     renotifikasjonSendt = false,
                     prefererteKanaler = listOf("SMS", "EPOST"),
@@ -84,7 +83,7 @@ class VarselTest {
             BeskjedObjectMother.createBeskjed(
                 fodselsnummer = fodselsnummer,
                 aktiv = false,
-                eksternVarsling = EksternVarslingInfo(
+                eksternVarsling = EksternVarsling(
                     sendt = true,
                     renotifikasjonSendt = false,
                     prefererteKanaler = listOf("SMS", "EPOST"),

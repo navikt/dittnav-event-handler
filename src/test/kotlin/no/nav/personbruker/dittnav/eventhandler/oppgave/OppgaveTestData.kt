@@ -1,7 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
 import no.nav.personbruker.dittnav.eventhandler.OsloDateTime
-import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedTestData
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.*
 import java.time.ZonedDateTime
 
@@ -26,7 +25,7 @@ object OppgaveObjectMother {
         tekst: String = "Dette er oppgave til brukeren",
         link: String = "https://nav.no/systemX/$defaultFodselsnummer",
         sikkerhetsnivaa: Int = 4,
-        eksternVarslingInfo: EksternVarslingInfo? = null,
+        eksternVarsling: EksternVarsling? = null,
         synligFremTil: ZonedDateTime = OsloDateTime.now(),
         fristUtløpt: Boolean? =null
     ): Oppgave {
@@ -46,9 +45,9 @@ object OppgaveObjectMother {
             link = link,
             aktiv = aktiv,
             fristUtløpt = fristUtløpt,
-            eksternVarslingSendt = eksternVarslingInfo?.sendt ?: false,
-            eksternVarslingKanaler = eksternVarslingInfo?.sendteKanaler ?: emptyList(),
-            eksternVarsling = eksternVarslingInfo,
+            eksternVarslingSendt = eksternVarsling?.sendt ?: false,
+            eksternVarslingKanaler = eksternVarsling?.sendteKanaler ?: emptyList(),
+            eksternVarsling = eksternVarsling,
             synligFremTil = synligFremTil
         )
     }
@@ -70,13 +69,13 @@ object OppgaveTestData {
         appnavn = appnavn,
         grupperingsId = grupperingsid,
         forstBehandlet = OsloDateTime.now(),
-        eksternVarslingInfo = EksternVarslingInfoObjectMother.createEskternVarslingInfo(
+        eksternVarsling = EksternVarslingObjectMother.createEksternVarsling(
             prefererteKanaler = listOf("SMS", "EPOST")
         ),
         fristUtløpt = null
     )
 
-    val eksternVarslingForOppgave1 get() = EksternVarslingInfo(
+    val eksternVarslingForOppgave1 get() = EksternVarsling(
         sendt = false,
         renotifikasjonSendt = false,
         prefererteKanaler = listOf("SMS","EPOST"),
@@ -99,12 +98,12 @@ object OppgaveTestData {
         appnavn = appnavn,
         grupperingsId = grupperingsid,
         forstBehandlet = OsloDateTime.now().minusDays(5),
-        eksternVarslingInfo = eksternVarslingForOppgave2,
+        eksternVarsling = eksternVarslingForOppgave2,
         fristUtløpt = null
     )
 
 
-    val eksternVarslingForOppgave2 get() = EksternVarslingInfo(
+    val eksternVarslingForOppgave2 get() = EksternVarsling(
         sendt = false,
         renotifikasjonSendt = false,
         prefererteKanaler = listOf("SMS","EPOST"),

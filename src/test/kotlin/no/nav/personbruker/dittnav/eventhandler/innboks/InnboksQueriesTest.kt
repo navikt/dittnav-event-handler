@@ -1,7 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.innboks
 
 import io.kotest.matchers.collections.shouldBeEmpty
-import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -151,12 +150,12 @@ class InnboksQueriesTest {
             it.eventId == innboks1Aktiv.eventId
         }.first()
 
-        val eksternVarslingInfo = innboks.eksternVarsling
+        val eksternVarsling = innboks.eksternVarsling
 
-        eksternVarslingInfo shouldNotBe null
-        eksternVarslingInfo!!.prefererteKanaler shouldContainAll innboks1Aktiv.eksternVarsling!!.prefererteKanaler
-        eksternVarslingInfo.sendt shouldBe true
-        eksternVarslingInfo.sendteKanaler shouldContainAll innboks1Aktiv.eksternVarsling!!.sendteKanaler
+        eksternVarsling shouldNotBe null
+        eksternVarsling!!.prefererteKanaler shouldContainAll innboks1Aktiv.eksternVarsling!!.prefererteKanaler
+        eksternVarsling.sendt shouldBe true
+        eksternVarsling.sendteKanaler shouldContainAll innboks1Aktiv.eksternVarsling!!.sendteKanaler
     }
 
     @Test
@@ -167,12 +166,12 @@ class InnboksQueriesTest {
             it.eventId == innboks2Aktiv.eventId
         }.first()
 
-        val eksternVarslingInfo = innboks.eksternVarsling
+        val eksternVarsling = innboks.eksternVarsling
 
-        eksternVarslingInfo shouldNotBe null
-        eksternVarslingInfo!!.prefererteKanaler shouldContainAll innboks2Aktiv.eksternVarsling!!.prefererteKanaler
-        eksternVarslingInfo.sendt shouldBe false
-        eksternVarslingInfo.sendteKanaler shouldContainAll innboks2Aktiv.eksternVarsling!!.sendteKanaler
+        eksternVarsling shouldNotBe null
+        eksternVarsling!!.prefererteKanaler shouldContainAll innboks2Aktiv.eksternVarsling!!.prefererteKanaler
+        eksternVarsling.sendt shouldBe false
+        eksternVarsling.sendteKanaler shouldContainAll innboks2Aktiv.eksternVarsling!!.sendteKanaler
     }
 
     @Test
@@ -183,8 +182,8 @@ class InnboksQueriesTest {
             it.eventId == innboks3Aktiv.eventId
         }.first()
 
-        val eksternVarslingInfo = innboks.eksternVarsling
+        val eksternVarsling = innboks.eksternVarsling
 
-        eksternVarslingInfo shouldBe null
+        eksternVarsling shouldBe null
     }
 }

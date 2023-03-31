@@ -54,8 +54,6 @@ fun ResultSet.getListFromString(columnLabel: String, separator: String = ","): L
     val stringValue = getString(columnLabel)
     return if (stringValue.isNullOrEmpty()) {
         emptyList()
-    } else if (separator.isBlank()) {
-        stringValue.split(separator)
     } else {
         stringValue.replace("$separator\\s*".toRegex(), separator).split(separator)
     }

@@ -2,7 +2,7 @@ package no.nav.personbruker.dittnav.eventhandler.beskjed
 
 import no.nav.personbruker.dittnav.eventhandler.OsloDateTime
 import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingHistorikkEntry
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfo
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarsling
 import java.time.ZonedDateTime
 import java.util.*
 
@@ -26,7 +26,7 @@ object BeskjedObjectMother {
         link: String = "https://nav.no/systemX/$defaultFodselsnummer",
         sistOppdatert: ZonedDateTime = OsloDateTime.now(),
         sikkerhetsnivaa: Int = 4,
-        eksternVarsling: EksternVarslingInfo? = null,
+        eksternVarsling: EksternVarsling? = null,
         fristUtløpt: Boolean? = null
     ): Beskjed {
         return Beskjed(
@@ -75,7 +75,7 @@ object BeskjedTestData {
         eksternVarsling = eksternVarslingForBeskjed1
     )
 
-    val eksternVarslingForBeskjed1 get() = EksternVarslingInfo(
+    val eksternVarslingForBeskjed1 get() = EksternVarsling(
         sendt = true,
         renotifikasjonSendt = false,
         prefererteKanaler = listOf("SMS","EPOST"),
@@ -118,7 +118,7 @@ object BeskjedTestData {
         eksternVarsling = eksternVarslingForBeskjed2
     )
 
-    val eksternVarslingForBeskjed2 get() = EksternVarslingInfo(
+    val eksternVarslingForBeskjed2 get() = EksternVarsling(
         sendt = false,
         renotifikasjonSendt = false,
         prefererteKanaler = listOf("SMS","EPOST"),

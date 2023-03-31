@@ -1,7 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.oppgave
 
 import io.kotest.matchers.collections.shouldBeEmpty
-import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -156,12 +155,12 @@ class OppgaveQueriesTest {
             it.eventId == oppgave1Aktiv.eventId
         }.first()
 
-        val eksternVarslingInfo = oppgave.eksternVarsling
+        val eksternVarsling = oppgave.eksternVarsling
 
-        eksternVarslingInfo shouldNotBe null
-        eksternVarslingInfo!!.prefererteKanaler shouldContainAll oppgave1Aktiv.eksternVarsling!!.prefererteKanaler
-        eksternVarslingInfo.sendt shouldBe true
-        eksternVarslingInfo.sendteKanaler shouldContainAll oppgave1Aktiv.eksternVarsling!!.sendteKanaler
+        eksternVarsling shouldNotBe null
+        eksternVarsling!!.prefererteKanaler shouldContainAll oppgave1Aktiv.eksternVarsling!!.prefererteKanaler
+        eksternVarsling.sendt shouldBe true
+        eksternVarsling.sendteKanaler shouldContainAll oppgave1Aktiv.eksternVarsling!!.sendteKanaler
     }
 
     @Test
@@ -172,12 +171,12 @@ class OppgaveQueriesTest {
             it.eventId == oppgave2Aktiv.eventId
         }.first()
 
-        val eksternVarslingInfo = oppgave.eksternVarsling
+        val eksternVarsling = oppgave.eksternVarsling
 
-        eksternVarslingInfo shouldNotBe null
-        eksternVarslingInfo!!.prefererteKanaler shouldContainAll oppgave1Aktiv.eksternVarsling!!.prefererteKanaler
-        eksternVarslingInfo.sendt shouldBe false
-        eksternVarslingInfo.sendteKanaler shouldContainAll oppgave1Aktiv.eksternVarsling!!.sendteKanaler
+        eksternVarsling shouldNotBe null
+        eksternVarsling!!.prefererteKanaler shouldContainAll oppgave1Aktiv.eksternVarsling!!.prefererteKanaler
+        eksternVarsling.sendt shouldBe false
+        eksternVarsling.sendteKanaler shouldContainAll oppgave1Aktiv.eksternVarsling!!.sendteKanaler
     }
 
     @Test
@@ -188,8 +187,8 @@ class OppgaveQueriesTest {
             it.eventId == oppgave3Inaktiv.eventId
         }.first()
 
-        val eksternVarslingInfo = oppgave.eksternVarsling
+        val eksternVarsling = oppgave.eksternVarsling
 
-        eksternVarslingInfo shouldBe null
+        eksternVarsling shouldBe null
     }
 }

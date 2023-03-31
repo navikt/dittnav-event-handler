@@ -1,14 +1,14 @@
 package no.nav.personbruker.dittnav.eventhandler.eksternvarsling
 
-object EksternVarslingInfoObjectMother {
+object EksternVarslingObjectMother {
 
-    fun createEskternVarslingInfo(
+    fun createEksternVarsling(
         prefererteKanaler: List<String> = emptyList(),
         sendt: Boolean = true,
         renotifikasjon: Boolean = false,
         sendteKanaler: List<String> = emptyList(),
         historikk: List<EksternVarslingHistorikkEntry> = emptyList()
-    ) = EksternVarslingInfo(
+    ) = EksternVarsling(
         prefererteKanaler = prefererteKanaler,
         sendt = sendt,
         sendteKanaler = sendteKanaler,

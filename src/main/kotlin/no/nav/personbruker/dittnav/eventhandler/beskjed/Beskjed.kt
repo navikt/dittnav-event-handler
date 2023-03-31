@@ -4,7 +4,7 @@ package no.nav.personbruker.dittnav.eventhandler.beskjed
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import no.nav.personbruker.dittnav.eventhandler.common.serializer.ZonedDateTimeSerializer
-import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarslingInfo
+import no.nav.personbruker.dittnav.eventhandler.eksternvarsling.EksternVarsling
 import java.time.ZonedDateTime
 
 @Serializable
@@ -26,6 +26,6 @@ data class Beskjed(
     val aktiv: Boolean,
     val eksternVarslingSendt: Boolean,
     val eksternVarslingKanaler: List<String>,
-    val eksternVarsling: EksternVarslingInfo?,
+    val eksternVarsling: EksternVarsling?,
     val fristUtløpt: Boolean?
 )

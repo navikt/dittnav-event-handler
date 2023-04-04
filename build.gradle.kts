@@ -30,6 +30,8 @@ dependencies {
     implementation(Hikari.cp)
     implementation(JacksonDatatype.datatypeJsr310)
     implementation(KotlinLogging.logging)
+    implementation(Logback.classic)
+    implementation(Logstash.logbackEncoder)
     implementation(NAV.vaultJdbc)
     implementation(Postgresql.postgresql)
     implementation(Prometheus.common)

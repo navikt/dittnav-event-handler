@@ -22,6 +22,8 @@ spec:
   prometheus:
     enabled: true
     path: /dittnav-event-handler/metrics
+  secureLogs:
+    enabled: true
   replicas:
     max: 4
     min: 2

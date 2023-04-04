@@ -81,7 +81,7 @@ dependencies {
 }
 
 application {
-    mainClass.set("no.nav.personbruker.dittnav.eventhandler.config.ApplicationKt")
+    mainClass.set("no.nav.personbruker.dittnav.eventhandler.ApplicationKt")
 }
 
 tasks {

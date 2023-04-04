@@ -1,10 +1,13 @@
-package no.nav.personbruker.dittnav.eventhandler.config
+package no.nav.personbruker.dittnav.eventhandler
 
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import no.nav.personbruker.dittnav.eventhandler.beskjed.BeskjedEventService
 import no.nav.personbruker.dittnav.eventhandler.common.database.Database
 import no.nav.personbruker.dittnav.eventhandler.common.health.HealthService
+import no.nav.personbruker.dittnav.eventhandler.config.Environment
+import no.nav.personbruker.dittnav.eventhandler.config.PostgresDatabase
+import no.nav.personbruker.dittnav.eventhandler.config.eventHandlerApi
 import no.nav.personbruker.dittnav.eventhandler.varsel.VarselRepository
 import no.nav.personbruker.dittnav.eventhandler.innboks.InnboksEventService
 import no.nav.personbruker.dittnav.eventhandler.oppgave.OppgaveEventService

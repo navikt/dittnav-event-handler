@@ -1,7 +1,6 @@
 package no.nav.personbruker.dittnav.eventhandler.config
 
 import no.nav.personbruker.dittnav.common.util.config.StringEnvVar.getEnvVar
-import no.nav.personbruker.dittnav.eventhandler.config.ConfigUtil.isCurrentlyRunningOnNais
 
 data class Environment(
     val kafkaBrokers: String = getEnvVar("KAFKA_BROKERS"),
@@ -13,7 +12,6 @@ data class Environment(
     val dbPassword: String = getEnvVar("DB_EVENTHANDLER_PASSWORD"),
     val dbPort: String = getEnvVar("DB_EVENTHANDLER_PORT"),
     val dbUrl: String = getDbUrl(dbHost, dbPort, dbName),
-    val securityConfig: SecurityConfig = SecurityConfig(isCurrentlyRunningOnNais())
 )
 
 fun getDbUrl(host: String, port: String, name: String): String {

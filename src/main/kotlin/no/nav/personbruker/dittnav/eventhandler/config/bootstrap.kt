@@ -36,8 +36,6 @@ import no.nav.tms.token.support.azure.validation.AzureAuthenticator
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUser
 import no.nav.tms.token.support.tokenx.validation.user.TokenXUserFactory
 
-val log = KotlinLogging.logger {}
-
 fun Application.eventHandlerApi(
     healthService: HealthService,
     beskjedEventService: BeskjedEventService,

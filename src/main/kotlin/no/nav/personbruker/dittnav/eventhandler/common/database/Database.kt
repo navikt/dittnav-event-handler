@@ -42,7 +42,7 @@ interface Database : HealthCheck {
         }
     }
 
-    suspend fun <T> queryWithExceptionTranslation(operationToExecute: Connection.() -> T): T {
+    suspend fun <T> queryWithExceptionTranslation(ident: String? = null, operationToExecute: Connection.() -> T): T {
         return translateExternalExceptionsToInternalOnes {
             dbQuery {
                 operationToExecute()
@@ -64,27 +64,27 @@ interface Database : HealthCheck {
     }
 }
 
-inline fun <T> translateExternalExceptionsToInternalOnes(databaseActions: () -> T): T {
+inline fun <T> translateExternalExceptionsToInternalOnes(ident: String? = null, databaseActions: () -> T): T {
     return try {
         databaseActions()
     } catch (te: SQLTransientException) {
         val message = "Lesing fra databasen feilet grunnet en periodisk feil."
-        throw RetriableDatabaseException(message, te)
+        throw RetriableDatabaseException(message, te,ident)
     } catch (re: SQLRecoverableException) {
         val message = "Lesing fra databasen feilet grunnet en periodisk feil."
-        throw RetriableDatabaseException(message, re)
+        throw RetriableDatabaseException(message, re,ident)
     } catch (pe: PSQLException) {
         val message = "Det skjedde en SQL relatert feil ved lesing fra databasen."
-        val ure = UnretriableDatabaseException(message, pe)
+        val ure = UnretriableDatabaseException(message, pe,ident)
         pe.sqlState?.map { sqlState -> ure.addContext("sqlState", sqlState) }
         throw ure
     } catch (se: SQLException) {
         val message = "Det skjedde en SQL relatert feil ved lesing fra databasen."
-        val ure = UnretriableDatabaseException(message, se)
+        val ure = UnretriableDatabaseException(message, se,ident)
         se.sqlState?.map { sqlState -> ure.addContext("sqlState", sqlState) }
         throw ure
     } catch (e: Exception) {
         val message = "Det skjedde en ukjent feil ved lesing fra databasen."
-        throw UnretriableDatabaseException(message, e)
+        throw UnretriableDatabaseException(message, e,ident)
     }
 }

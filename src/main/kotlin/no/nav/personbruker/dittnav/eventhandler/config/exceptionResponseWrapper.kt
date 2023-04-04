@@ -1,13 +1,10 @@
-package no.nav.personbruker.dittnav.eventhandler.common.exceptions
+package no.nav.personbruker.dittnav.eventhandler.config
 
 
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.plugins.statuspages.StatusPagesConfig
 import io.ktor.server.response.respond
-import no.nav.personbruker.dittnav.eventhandler.common.exceptions.database.RetriableDatabaseException
-import no.nav.personbruker.dittnav.eventhandler.common.exceptions.database.UnretriableDatabaseException
-import no.nav.personbruker.dittnav.eventhandler.config.log
 import org.slf4j.Logger
 
 suspend fun respondWithError(call: ApplicationCall, log: Logger, exception: Exception) {

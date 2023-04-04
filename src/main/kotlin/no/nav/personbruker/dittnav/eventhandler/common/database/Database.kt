@@ -3,13 +3,13 @@ package no.nav.personbruker.dittnav.eventhandler.common.database
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import no.nav.personbruker.dittnav.eventhandler.common.exceptions.database.RetriableDatabaseException
-import no.nav.personbruker.dittnav.eventhandler.common.exceptions.database.UnretriableDatabaseException
+import mu.KLogger
 import no.nav.personbruker.dittnav.eventhandler.common.health.HealthCheck
 import no.nav.personbruker.dittnav.eventhandler.common.health.HealthStatus
 import no.nav.personbruker.dittnav.eventhandler.common.health.Status
+import no.nav.personbruker.dittnav.eventhandler.config.RetriableDatabaseException
+import no.nav.personbruker.dittnav.eventhandler.config.UnretriableDatabaseException
 import org.postgresql.util.PSQLException
-import org.slf4j.Logger
 import java.sql.Connection
 import java.sql.SQLException
 import java.sql.SQLRecoverableException
@@ -17,7 +17,7 @@ import java.sql.SQLTransientException
 
 interface Database : HealthCheck {
 
-    val log: Logger
+    val log: KLogger
 
     val dataSource: HikariDataSource
 

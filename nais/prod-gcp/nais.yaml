@@ -7,7 +7,6 @@ metadata:
   namespace: min-side
 spec:
   envFrom:
-    - secret: dittnav-event-handler-secrets
     - configmap: loginservice-idporten
   image: {{version}}
   port: 8080
@@ -83,3 +82,8 @@ spec:
     outbound:
       external:
         - host: kafka-schema-registry.nais.adeo.no
+    env:
+      - name: GROUP_ID
+        value: min-side-event-handler-001
+      - name: OPEN_INPUT_DONE_TOPIC
+        value: min-side.aapen-brukernotifikasjon-done-v1

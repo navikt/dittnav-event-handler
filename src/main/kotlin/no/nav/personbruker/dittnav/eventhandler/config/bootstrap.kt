@@ -116,11 +116,7 @@ private fun closeTheDatabaseConectionPool(database: Database) {
 }
 
 val PipelineContext<Unit, ApplicationCall>.innloggetBruker: TokenXUser
-    get():  TokenXUser {
-        val claimName = StringEnvVar.getOptionalEnvVar("OIDC_CLAIM_CONTAINING_THE_IDENTITY")
-        return if (claimName.isNullOrEmpty()) {
+    get():  TokenXUser =
             TokenXUserFactory.createTokenXUser(call)
-        } else {
-            TokenXUserFactory.createTokenXUser(call, claimName)
-        }
-    }
+
+

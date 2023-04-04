@@ -9,7 +9,6 @@ metadata:
     config.alpha.linkerd.io/proxy-wait-before-exit-seconds: "10"
 spec:
   envFrom:
-    - secret: dittnav-event-handler-secrets
     - configmap: loginservice-idporten
   image: {{version}}
   port: 8080
@@ -78,3 +77,9 @@ spec:
     outbound:
       external:
         - host: kafka-schema-registry.nais-q.adeo.no
+  env:
+    - name: GROUP_ID
+      value: dev-dittnav-event-handler-test-001
+    - name: OPEN_INPUT_DONE_TOPIC
+      value:  min-side.aapen-brukernotifikasjon-done-v1
+

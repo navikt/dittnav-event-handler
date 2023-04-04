@@ -13,7 +13,6 @@ data class Environment(
     val dbPassword: String = getEnvVar("DB_EVENTHANDLER_PASSWORD"),
     val dbPort: String = getEnvVar("DB_EVENTHANDLER_PORT"),
     val dbUrl: String = getDbUrl(dbHost, dbPort, dbName),
-    val doneInputTopicName: String = getEnvVar("OPEN_INPUT_DONE_TOPIC"),
     val securityConfig: SecurityConfig = SecurityConfig(isCurrentlyRunningOnNais())
 )
 

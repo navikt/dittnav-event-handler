@@ -82,6 +82,6 @@ spec:
     outbound:
       external:
         - host: kafka-schema-registry.nais.adeo.no
-    env:
-      - name: GROUP_ID
-        value: min-side-event-handler-001
+  env:
+    - name: GROUP_ID
+      value: min-side-event-handler-001

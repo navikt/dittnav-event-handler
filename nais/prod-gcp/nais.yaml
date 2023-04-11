@@ -85,5 +85,3 @@ spec:
     env:
       - name: GROUP_ID
         value: min-side-event-handler-001
-      - name: OPEN_INPUT_DONE_TOPIC
-        value: min-side.aapen-brukernotifikasjon-done-v1

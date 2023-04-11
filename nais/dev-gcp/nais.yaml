@@ -80,6 +80,4 @@ spec:
   env:
     - name: GROUP_ID
       value: dev-dittnav-event-handler-test-001
-    - name: OPEN_INPUT_DONE_TOPIC
-      value:  min-side.aapen-brukernotifikasjon-done-v1
 

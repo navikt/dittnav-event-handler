@@ -2,8 +2,8 @@ package no.nav.personbruker.dittnav.eventhandler.common.database
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
-import no.nav.personbruker.dittnav.eventhandler.common.exceptions.database.RetriableDatabaseException
-import no.nav.personbruker.dittnav.eventhandler.common.exceptions.database.UnretriableDatabaseException
+import no.nav.personbruker.dittnav.eventhandler.config.RetriableDatabaseException
+import no.nav.personbruker.dittnav.eventhandler.config.UnretriableDatabaseException
 import org.junit.jupiter.api.Test
 import org.postgresql.util.PSQLException
 import org.postgresql.util.PSQLState

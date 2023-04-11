@@ -30,6 +30,8 @@ dependencies {
     implementation(Hikari.cp)
     implementation(JacksonDatatype.datatypeJsr310)
     implementation(KotlinLogging.logging)
+    implementation(Logback.classic)
+    implementation(Logstash.logbackEncoder)
     implementation(NAV.vaultJdbc)
     implementation(Postgresql.postgresql)
     implementation(Prometheus.common)
@@ -79,7 +81,7 @@ dependencies {
 }
 
 application {
-    mainClass.set("no.nav.personbruker.dittnav.eventhandler.config.ApplicationKt")
+    mainClass.set("no.nav.personbruker.dittnav.eventhandler.ApplicationKt")
 }
 
 tasks {
